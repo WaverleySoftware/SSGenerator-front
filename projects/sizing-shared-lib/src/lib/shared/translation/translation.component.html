@@ -1,0 +1,125 @@
+
+<form>
+<div class="panel-body">
+
+    <div class="row">
+      <div class="col-md-1">
+        <label class="control-label">{{"FILTER" | translate:true}}</label>
+      </div>
+
+      <div class="col-md-4">
+        <input autocomplete="off" type='text' title="{{'TYPE_TO_FILTER' | translate:true}}" class="form-control" placeholder="{{'TYPE_TO_FILTER' | translate:true}}..." (keyup)='updateFilter($event)' />
+      </div>
+
+      <!--Language-->
+      <div class="form-group">
+        <label style="font-weight: bolder">{{'LANGUAGE' | translate:true}} : {{languageName | translate:true}}</label>
+        <!--<label *ngIf="languageName  === 'LANGUAGE_ENGLISH_UK'" style="font-weight: bolder">{ {'LANGUAGE' | translate:true}} : { {languageName | translate:true}} ({ {DEFAULT | translate:true}} { {INTERFACE_TRANSLATIONS | translate:true}})</label>-->
+
+        <!--<select class="form-control" formControlName="languageIsoNameControl" [disabled]="false">
+    <option [value]="language.isoName" *ngFor="let language of languages">
+      { {language.name}}
+    </option>
+  </select>-->
+      </div>
+    </div>  
+
+    <div class="row">
+      <div class="col-xs-12">
+
+        <!-- Note that rowIndex is not sort safe, use rows[rows.indexOf(row)] for the real index of the row data. -->
+        <ngx-datatable #translationsTable class="bootstrap" [headerHeight]="40" [limit]="4" [columnMode]="'force'" [footerHeight]="40" [rowHeight]="'auto'" [rows]="rows" (page)="onPage($event)" [messages]="{emptyMessage: translatePipe.transform('NO_DATA_TO_DISPLAY', true), totalMessage: translatePipe.transform('TOTAL', true), selectedMessage: false}">
+
+          <ngx-datatable-column name="*" prop="" maxWidth="30" [comparator]="translationComparator">
+            <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+              <strong>
+                <span title="{{'CLICK_TO_EDIT' | translate:true}}" (click)="editing = {}; editing[rows[rows.indexOf(row)].masterTextKey + '-translationText'] = (this.languageName  === 'LANGUAGE_ENGLISH_UK') ? false : true;" *ngIf="rows[rows.indexOf(row)].translationText !== rows[rows.indexOf(row)].defaultText">
+                  *
+                </span>
+              </strong>
+              <span title="{{'CLICK_TO_EDIT' | translate:true}}" (click)="editing = {}; editing[rows[rows.indexOf(row)].masterTextKey + '-translationText'] = (this.languageName  === 'LANGUAGE_ENGLISH_UK') ? false : true;" *ngIf="rows[rows.indexOf(row)].translationText === rows[rows.indexOf(row)].defaultText">
+                -
+              </span>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column name="{{'DEFAULT_TEXT' | translate:true}}" prop="defaultText">
+            <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+
+              <!--Bold text, a translation exists for this language -->
+              <strong *ngIf="rows[rows.indexOf(row)].translationText != rows[rows.indexOf(row)].defaultText">
+                <span title="{{'CLICK_TO_EDIT' | translate:true}}" (click)=" editing = {}; editing[rows[rows.indexOf(row)].masterTextKey + '-translationText'] = (this.languageName  === 'LANGUAGE_ENGLISH_UK') ? false : true;">
+                  {{value}}
+                </span>
+              </strong>
+              <!--regular text-->
+              <div *ngIf="rows[rows.indexOf(row)].translationText == rows[rows.indexOf(row)].defaultText">
+                <span title="{{'CLICK_TO_EDIT' | translate:true}}" (click)="editing = {}; editing[rows[rows.indexOf(row)].masterTextKey + '-translationText'] = (this.languageName  === 'LANGUAGE_ENGLISH_UK') ? false : true;">
+                  {{value}}
+                </span>
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column name="{{'TRANSLATION_TEXT' | translate:true}}" prop="translationText">
+            <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" minwidth="80" let-value="value" let-row="row">
+
+              <!--Bold text, a translation exists for this language -->
+              <strong *ngIf="rows[rows.indexOf(row)].translationText != rows[rows.indexOf(row)].defaultText">
+                <span title="{{'CLICK_TO_EDIT' | translate:true}}" (click)="editing = {}; editing[rows[rows.indexOf(row)].masterTextKey + '-translationText'] = (this.languageName  === 'LANGUAGE_ENGLISH_UK') ? false : true;" *ngIf="!editing[rows[rows.indexOf(row)].masterTextKey + '-translationText']">
+                  {{value}}
+                </span>
+              </strong>
+              <!--regular text-->
+              <div *ngIf="rows[rows.indexOf(row)].translationText == rows[rows.indexOf(row)].defaultText">
+                <span title="{{'CLICK_TO_EDIT' | translate:true}}" (click)="editing = {}; editing[rows[rows.indexOf(row)].masterTextKey + '-translationText'] = (this.languageName  === 'LANGUAGE_ENGLISH_UK') ? false : true;" *ngIf="!editing[rows[rows.indexOf(row)].masterTextKey + '-translationText']">
+                  {{value}}
+                </span>
+              </div>
+
+              <!-- {rows.indexOf(row) is the shaddow row index regardless of sort order, rowIndex is the UI index, useless if the data is sorted. -->
+              <input autocomplete="off" autofocus (blur)="updateValue($event, 'translationText', rows[rows.indexOf(row)].masterTextKey)" *ngIf="!!editing[rows[rows.indexOf(row)].masterTextKey+ '-translationText']" type="text" [value]="value" style="font-weight: bolder; color: red;" />
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column name="{{'TEXT_TYPE' | translate:true}}" prop="textTypeId" maxWidth="100">
+            <ng-template let-column="column" let-sort="sortFn" ngx-datatable-header-template>
+              <span (click)="sort()">{{'TEXT_TYPE' | translate:true}}</span>
+            </ng-template>
+
+            <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+              <!--Bold text, a translation exists for this language -->
+              <strong *ngIf="rows[rows.indexOf(row)].translationText != rows[rows.indexOf(row)].defaultText">
+                <span title="{{'CLICK_TO_EDIT' | translate:true}}" (click)="editing = {}; editing[rows[rows.indexOf(row)].masterTextKey + '-translationText'] = (this.languageName  === 'LANGUAGE_ENGLISH_UK') ? false : true;">
+                  {{getTextTypeFromId(value) | translate:true}}
+                </span>
+              </strong>
+              <!--regular text-->
+              <div *ngIf="rows[rows.indexOf(row)].translationText == rows[rows.indexOf(row)].defaultText">
+                <span title="{{'CLICK_TO_EDIT' | translate:true}}" (click)="editing = {}; editing[rows[rows.indexOf(row)].masterTextKey + '-translationText'] = (this.languageName  === 'LANGUAGE_ENGLISH_UK') ? false : true;">
+                  {{getTextTypeFromId(value) | translate:true}}
+                </span>
+              </div>
+
+            </ng-template>
+          </ngx-datatable-column>
+
+        </ngx-datatable>
+
+      </div>
+    </div>
+  </div>
+</form>
+
+  <!--<strong class="thisTingHere">Login as 'hakon thomas' 'spirax13'</strong> for French demo (sort, filter, paging). ToDo:
+  <br />
+  - Language Name label (or list to change trans language for admins, get all translations form server).
+  <br />
+  - Is Translation Type filtering required? Handle base table list item grouping vs Enumeration Lists (both have no support for TextType eg. Units(list of words) vs Media (EnumerationDefinitions))?
+  <br />
+  - Duplication of MasterTextKey partially supported, a label and in an Enumeration Definition (list item) eg. filter for "Standard" in SafetyValves page, note that the data saves but UI require a refresh.
+  <br />
+  - Block and warn when UK en-gb editing (better to fix base master text in database).
+  <br />
+  - Support messages on modal exit/cancel. 'Changes saved' message, 'Discard changes' message. Add dirty form/grid support?
+  <br />-->

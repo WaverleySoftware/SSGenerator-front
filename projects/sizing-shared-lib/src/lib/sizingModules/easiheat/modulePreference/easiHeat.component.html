@@ -1,0 +1,1185 @@
+<!--Easiheat module preferences component works!-->
+<form [formGroup]="modulePreferencesForm" class="form-horizontal" role="form" (click)="toggleSave();" (submit)="submitForm($event)" novalidate>
+  <!--[disabled]="!modulePreferencesForm.dirty || !modulePreferencesForm.valid || modulePreferencesForm.status !== 'VALID' || formSubmitted"-->
+  <div class="row">
+    <div class="col-xs-12">
+      <button [disabled]="!modulePreferencesForm.dirty || formSubmitted" type="submit" class="btn btn-dynamic btn-primary pull-right" [title]="'SAVE' | translate:true"><i class="fa fa-save">  {{'SAVE' | translate:true}}</i></button>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12">
+      <br>
+    </div>
+  </div>
+
+  <!-- Success confirmation message -->
+  <alert-block *ngIf="!!alertVisible && !!isSuccess" type="success" [auto-close]="true" [message]="'MODULE_PREFERENCES_SAVED_SUCCESSFULLY_MESSAGE' | translate" (close-callback)="closeAlert()"></alert-block>
+
+  <!-- Failure confirmation message-->
+  <alert-block *ngIf="!!alertVisible && !isSuccess" type="danger" [message]="'MODULE_PREFERENCES_FAILED_TO_SAVE_MESSAGE' | translate" (close-callback)="closeAlert()"></alert-block>
+
+  <div class="panel panel-primary">
+    <div class="panel-heading" role="tab" id="currencyOptionsHeading">
+      <h4 class="panel-title">
+        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseCurrencyOptions" aria-expanded="true" aria-controls="collapseCurrencyOptions">
+          {{"CURRENCY_OPTIONS" | translate}}
+        </a>
+      </h4>
+    </div>
+    <div id="collapseCurrencyOptions" class="panel-collapse collapse show" role="tabpanel" aria-labelledby="currencyOptionsHeading">
+      <div class="panel-body" style="margin-bottom:-10px">
+        <div class="form-group">
+
+          <div class="row" style="padding-bottom:15px">
+
+            <!--Manufacturer-->
+            <div class="col-lg-3 col-md-6 col-xs-12 text-right">
+              <label class="control-label">{{"MANUFACTURER" | translate}}</label>
+            </div>
+            <div class="col-lg-2 col-md-6 col-xs-12">
+              <select class="form-control" formControlName="easiHeatManufacturerModulePreference">
+                <option *ngFor="let manufacturer of manufacturerList" [value]="manufacturer.id">{{manufacturer.name}}</option>
+              </select>
+            </div>
+
+            <!--Selling currency-->
+            <div class="col-lg-3 col-md-6 col-xs-12 text-right">
+              <label class="control-label">{{"SELLING_CURRENCY" | translate}}</label>
+            </div>
+            <div class="col-lg-2 col-md-6 col-xs-12">
+              <select class="form-control" formControlName="easiHeatSellingCurrencyModulePreference" (ngModelChange)="onSellingCurrencyChange($event)">
+                <option *ngFor="let currency of currencyList" [value]="currency.id">{{currency.currencyCode}} - {{currency.symbol}}</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row">
+            <!--Manufacturer currency-->
+            <div class="col-lg-3 col-md-6 col-xs-12 text-right">
+              <label class="control-label">{{"MANUFACTURER_CURRENCY" | translate}}</label>
+            </div>
+            <div class="col-lg-2 col-md-6 col-xs-12">
+              <select class="form-control" formControlName="easiHeatManufacturerCurrencyModulePreference">
+                <option *ngFor="let currency of currencyList" [value]="currency.id">{{currency.currencyCode}} - {{currency.symbol}}</option>
+              </select>
+            </div>
+
+            <!--Currency conversion-->
+            <div class="col-lg-3 col-md-6 col-xs-12 text-right">
+              <label class="control-label">{{"CURRENCY_CONVERSION" | translate}}</label>
+            </div>
+            <div class="col-lg-2 col-md-6 col-xs-12">
+              <label class="control-label">{{easiHeatCurrencyConversion}}</label>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Heat Exchanger Options -->
+  <div class="panel panel-primary">
+    <div class="panel-heading" role="tab" id="pricingOptionsHeading">
+      <h4 class="panel-title">
+        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseHeatExchangerOptions" aria-expanded="true" aria-controls="collapsePricingOptions">
+          {{"HEAT_EXCHANGER_OPTIONS" | translate}}
+        </a>
+      </h4>
+    </div>
+    <div id="collapseHeatExchangerOptions" class="panel-collapse collapse show" role="tabpanel" aria-labelledby="heatExchangerOptionsHeading">
+      <div class="panel-body" style="margin-bottom:-30px">
+        <div class="form-group">
+          <!--Column 1-->
+          <div class="col-lg-6">
+            <div class="row" style="padding-bottom:15px">
+              <div class="col-xs-8 text-right">
+                <label class="control-label">{{"DISCOUNT_RATE" | translate}}</label>
+              </div>
+            </div>
+            <div class="row" style="padding-bottom:15px">
+              <!--TS6-->
+              <div class="col-xs-6 text-right">
+                <label class="control-label">{{"TS6" | translate}}</label>
+              </div>
+              <div class="col-xs-4">
+                <div class="input-group">
+                  <input autocomplete="off" class="form-control" type="number" style="min-width:55px;" formControlName="easiHeatHeatExchangerTS6" value="easiHeatTS6" twoDigitDecimalNumber />
+                  <span class="input-group-addon">{{"PERCENT" | translate}}</span>
+                </div>
+              </div>
+              <div class="col-xs-2">
+                <span class="text-danger" *ngIf="modulePreferencesForm.controls['easiHeatHeatExchangerTS6'].hasError('required') && (modulePreferencesForm.controls['easiHeatHeatExchangerTS6'].dirty || modulePreferencesForm.controls['easiHeatHeatExchangerTS6'].touched)">{{ "REQUIRED_FIELD" | translate }}</span>
+              </div>
+            </div>
+            <!--T6-->
+            <div class="row" style="padding-bottom:15px">
+              <div class="col-xs-6 text-right">
+                <label class="control-label">{{"T6" | translate}}</label>
+              </div>
+              <div class="col-xs-4">
+                <div class="input-group">
+                  <input autocomplete="off" class="form-control" type="number" style="min-width:55px;" formControlName="easiHeatHeatExchangerT6" value="easiHeatT6" twoDigitDecimalNumber />
+                  <span class="input-group-addon">{{"PERCENT" | translate}}</span>
+                </div>
+              </div>
+              <div class="col-xs-2">
+                <span class="text-danger" *ngIf="modulePreferencesForm.controls['easiHeatHeatExchangerT6'].hasError('required') && (modulePreferencesForm.controls['easiHeatHeatExchangerT6'].dirty || modulePreferencesForm.controls['easiHeatHeatExchangerT6'].touched)">{{ "REQUIRED_FIELD" | translate }}</span>
+              </div>
+            </div>
+            <!--T8-->
+            <div class="row" style="padding-bottom:15px">
+              <div class="col-xs-6 text-right">
+                <label class="control-label">{{"T8" | translate}}</label>
+              </div>
+              <div class="col-xs-4">
+                <div class="input-group">
+                  <input autocomplete="off" class="form-control" type="number" style="min-width:55px;" formControlName="easiHeatHeatExchangerT8" value="easiHeatT8" twoDigitDecimalNumber />
+                  <span class="input-group-addon">{{"PERCENT" | translate}}</span>
+                </div>
+              </div>
+              <div class="col-xs-2">
+                <span class="text-danger" *ngIf="modulePreferencesForm.controls['easiHeatHeatExchangerT8'].hasError('required') && (modulePreferencesForm.controls['easiHeatHeatExchangerT8'].dirty || modulePreferencesForm.controls['easiHeatHeatExchangerT8'].touched)">{{ "REQUIRED_FIELD" | translate }}</span>
+              </div>
+            </div>
+            <!--T10-->
+            <div class="row" style="padding-bottom:15px">
+              <div class="col-xs-6 text-right">
+                <label class="control-label">{{"T10" | translate}}</label>
+              </div>
+              <div class="col-xs-4">
+                <div class="input-group">
+                  <input autocomplete="off" class="form-control" type="number" style="min-width:55px;" formControlName="easiHeatHeatExchangerT10" value="easiHeatT10" twoDigitDecimalNumber />
+                  <span class="input-group-addon">{{"PERCENT" | translate}}</span>
+                </div>
+              </div>
+              <div class="col-xs-2">
+                <span class="text-danger" *ngIf="modulePreferencesForm.controls['easiHeatHeatExchangerT10'].hasError('required') && (modulePreferencesForm.controls['easiHeatHeatExchangerT10'].dirty || modulePreferencesForm.controls['easiHeatHeatExchangerT10'].touched)">{{ "REQUIRED_FIELD" | translate }}</span>
+              </div>
+            </div>
+          </div>
+          <!--Column 2-->
+          <div class="col-lg-6">
+            <div class="row" style="padding-bottom: 20px;">
+              <!-- Pricing Currency -->
+              <div class="row" style="padding-bottom:15px">
+                <div class="col-xs-6 text-right">
+                  <label class="control-label">{{"PRICING_CURRENCY" | translate}}</label>
+                </div>
+                <div class="col-xs-4">
+                  <select class="form-control" formControlName="easiHeatPricingCurrency" (ngModelChange)="onSellingCurrencyChange($event)">
+                    <option *ngFor="let currency of currencyList" [value]="currency.id">{{currency.currencyCode}} - {{currency.symbol}}</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Override Markup Active available -->
+              <div class="row" style="padding-bottom:15px">
+                <div class="col-xs-6 text-right">
+                  <label class="control-label">{{"OVERRIDE_GROUP_MARKUP" | translate}}</label>
+                </div>
+                <div class="col-xs-4">
+                  <div class="input-group">
+                    <input autocomplete="off"
+                           class="control-check"
+                           type="checkbox"
+                           style="width:15px; height:15px;"
+                           formControlName="easiHeatOverrideMarkupActive"
+                           value="easiHeatOverrideMarkupActive"
+                           (change)="setOverrideMarkup()"
+                          />
+                  </div>
+                </div>
+              </div>
+
+              <!--Override Markup-->
+              <div class="row" style="padding-bottom:15px">
+                <div class="col-xs-6 text-right">
+                  <label class="control-label">{{"OVERRIDE_MARKUP" | translate}}</label>
+                </div>
+                <div class="col-xs-4">
+                  <div class="input-group">
+                    <input *ngIf="overrideMarkupActive" autocomplete="off" class="form-control" type="number" style="min-width:55px;" formControlName="easiHeatOverrideMarkup" value="easiHeatOverrideMarkup" twoDigitDecimalNumber />
+                    <input *ngIf="!overrideMarkupActive" disabled="disabled" class="form-control" type="number" style="min-width:55px;"/>
+                    <span class="input-group-addon">{{"PERCENT" | translate}}</span>
+                  </div>
+                </div>
+                <div class="col-xs-2">
+                  <span class="text-danger" *ngIf="modulePreferencesForm.controls['easiHeatOverrideMarkup'].hasError('required') && (modulePreferencesForm.controls['easiHeatOverrideMarkup'].dirty || modulePreferencesForm.controls['easiHeatOverrideMarkup'].touched)">{{ "REQUIRED_FIELD" | translate }}</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <!--Pricing Options-->
+  <div class="panel panel-primary">
+    <div class="panel-heading" role="tab" id="pricingOptionsHeading">
+      <h4 class="panel-title">
+        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapsePricingOptions" aria-expanded="true" aria-controls="collapsePricingOptions">
+          {{"PRICING_OPTIONS" | translate}}
+        </a>
+      </h4>
+    </div>
+    <div id="collapsePricingOptions" class="panel-collapse collapse show" role="tabpanel" aria-labelledby="pricingOptionsHeading">
+      <div class="panel-body" style="margin-bottom:-30px">
+        <div class="form-group">
+          <!--Column 1-->
+          <div class="col-lg-6">
+            <div class="row" style="padding-bottom:15px">
+              <!--Selling Markup-->
+              <div class="col-xs-6 text-right">
+                <label class="control-label">{{"SELLING_MARKUP" | translate}}</label>
+              </div>
+              <div class="col-xs-4">
+                <input autocomplete="off" class="form-control" type="number" style="min-width:55px;" (input)="onChange();" formControlName="easiHeatSellingMarkup" value="easiHeatSellingMarkup" twoDigitDecimalNumber />
+
+              </div>
+              <div class="col-xs-2">
+                <span class="text-danger" *ngIf="modulePreferencesForm.controls['easiHeatSellingMarkup'].hasError('required') && (modulePreferencesForm.controls['easiHeatSellingMarkup'].dirty || modulePreferencesForm.controls['easiHeatSellingMarkup'].touched)">{{ "REQUIRED_FIELD" | translate }}</span>
+              </div>
+            </div>
+            <div class="row" style="padding-bottom:15px">
+              <!--Landed Cost-->
+              <div class="col-xs-6 text-right">
+                <label class="control-label">{{"LANDED_COST_INCREASE" | translate}}</label>
+              </div>
+              <div class="col-xs-4">
+                <div class="input-group">
+                  <input autocomplete="off" class="form-control" type="number" style="min-width:55px;" formControlName="easiHeatLandedCostIncreaseModPref" value="easiHeatLandedCostIncreaseModPref" twoDigitDecimalNumber />
+                  <span class="input-group-addon">{{"PERCENT" | translate}}</span>
+                </div>
+              </div>
+              <div class="col-xs-2">
+                <span class="text-danger" *ngIf="modulePreferencesForm.controls['easiHeatLandedCostIncreaseModPref'].hasError('required') && (modulePreferencesForm.controls['easiHeatLandedCostIncreaseModPref'].dirty || modulePreferencesForm.controls['easiHeatLandedCostIncreaseModPref'].touched)">{{ "REQUIRED_FIELD" | translate }}</span>
+              </div>
+            </div>
+            <!--Delivery Cost-->
+            <div class="row" style="padding-bottom:15px">
+              <div class="col-xs-6 text-right">
+                <label class="control-label">{{"DELIVERY_COST" | translate}}</label>
+              </div>
+              <div class="col-xs-4">
+                <div class="input-group">
+                  <span class="input-group-addon">{{easiHeatSellingCurrencySymbol}}</span>
+                  <input autocomplete="off" class="form-control" type="number" style="min-width:55px;" formControlName="easiHeatDeliveryCostModPref" value="easiHeatDeliveryCost" (input)="onChange();" twoDigitDecimalNumber />
+                </div>
+              </div>
+              <div class="col-xs-2">
+                <span class="text-danger" *ngIf="modulePreferencesForm.controls['easiHeatDeliveryCostModPref'].hasError('required') && (modulePreferencesForm.controls['easiHeatDeliveryCostModPref'].dirty || modulePreferencesForm.controls['easiHeatDeliveryCostModPref'].touched)">{{ "REQUIRED_FIELD" | translate }}</span>
+              </div>
+            </div>
+            <!-- Commission only price -->
+            <div class="row" style="padding-bottom:15px">
+              <div class="col-xs-6 text-right">
+                <label class="control-label">{{"COMMISSION_ONLY_PRICE" | translate}}</label>
+              </div>
+              <div class="col-xs-4">
+                <div class="input-group">
+                  <span class="input-group-addon">{{easiHeatSellingCurrencySymbol}}</span>
+                  <input autocomplete="off" class="form-control" type="number" style="min-width:55px;" formControlName="easiHeatCommissionOnly" value="easiHeatCommissionOnly" twoDigitDecimalNumber />
+                </div>
+              </div>
+              <div class="col-xs-2">
+                <span class="text-danger" *ngIf="modulePreferencesForm.controls['easiHeatCommissionOnly'].hasError('required') && (modulePreferencesForm.controls['easiHeatCommissionOnly'].dirty || modulePreferencesForm.controls['easiHeatCommissionOnly'].touched)">{{ "REQUIRED_FIELD" | translate }}</span>
+              </div>
+            </div>
+            <!-- CV Split Range available -->
+            <div class="row" style="padding-bottom:15px">
+              <div class="col-xs-6 text-right">
+                <label class="control-label">{{"CV_SPLIT_RANGE_AVAILABLE" | translate}}</label>
+              </div>
+              <div class="col-xs-4">
+                <div class="input-group">
+                  <input autocomplete="off"
+                         class="control-check"
+                         type="checkbox"
+                         style="width:15px; height:15px;"
+                         formControlName="easiHeatCvSplitRange"
+                         value="easiHeatCvSplitRange"
+                         (change) ="toggleSave()"/>
+                </div>
+              </div>
+            </div>
+            <!-- Steam side control on HTG -->
+            <div class="row" style="padding-bottom:15px">
+              <div class="col-xs-6 text-right">
+                <label class="control-label">{{"STEAM_SIDE_CONTROL_ON_HTG" | translate}}</label>
+              </div>
+              <div class="col-xs-4">
+                <div class="input-group">
+                  <input autocomplete="off" class="form-control" type="checkbox" style="width:15px; height:15px;" formControlName="easiHeatSteamSideControlOnHTG" value="easiHeatSteamSideControlOnHTG" (change) ="toggleSave()" />
+                </div>
+              </div>
+            </div>
+            <!-- Motive Inlet Pressure Available -->
+            <div class="row" style="padding-bottom:15px">
+              <div class="col-xs-6 text-right">
+                <label class="control-label">{{"MOTIVE_INLET_PRESSURE_AVAILABLE" | translate}}</label>
+              </div>
+              <div class="col-xs-4">
+                <div class="input-group">
+                  <input autocomplete="off" class="form-control" type="checkbox" style="width:15px; height:15px;" formControlName="easiHeatMotiveInletPressureAvailable" value="easiHeatMotiveInletPressureAvailable" (change) ="toggleSave()" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!--Column 2-->
+          <div class="col-lg-6">
+            <div class="panel-body" style="margin-bottom:-30px">
+              <div class="row" style="padding-bottom:15px">
+                <div class="col-xs-8 text-right">
+                  <h4>{{"EXTENDED_WARRANTY_PRICE" | translate}}</h4>
+                </div>
+                <!--<div class="col-xs-3 cross-validation-error-class" *ngIf="serviceOffereingMessage">
+                  <i class="fa fa-info-circle cross-validation-error-class" [tooltip]="serviceOffereingMessage"></i>
+                </div>-->
+              </div>
+              <!--</fieldset>-->
+              <div class="row" style="padding-bottom:15px">
+                <!--One Year-->
+                <div class="col-xs-6 text-right">
+                  <label class="control-label">{{"ONE_YEAR" | translate}}</label>
+                </div>
+                <div class="col-xs-4">
+                  <div class="input-group">
+                    <span class="input-group-addon">{{easiHeatSellingCurrencySymbol}}</span>
+                    <input autocomplete="off" class="form-control" type="number" style="min-width:55px;" formControlName="easiHeatWarrantyOneYearModulePreference" value="easiHeatWarrantyOneYearModulePreference" twoDigitDecimalNumber />
+                  </div>
+                </div>
+                <div class="col-xs-2">
+                  <span class="text-danger" *ngIf="modulePreferencesForm.controls['easiHeatWarrantyOneYearModulePreference'].hasError('required') && (modulePreferencesForm.controls['easiHeatWarrantyOneYearModulePreference'].dirty || modulePreferencesForm.controls['easiHeatWarrantyOneYearModulePreference'].touched)">{{ "REQUIRED_FIELD" | translate }}</span>
+                </div>
+              </div>
+              <div class="row" style="padding-bottom:15px">
+                <!--Two Years-->
+                <div class="col-xs-6 text-right">
+                  <label class="control-label">{{"TWO_YEARS" | translate}}</label>
+                </div>
+                <div class="col-xs-4">
+                  <div class="input-group">
+                    <span class="input-group-addon">{{easiHeatSellingCurrencySymbol}}</span>
+                    <input autocomplete="off" class="form-control" type="number" style="min-width:55px;" formControlName="easiHeatWarrantyTwoYearsModulePreference" value="easiHeatWarrantyTwoYearsModulePreference" twoDigitDecimalNumber />
+                  </div>
+                </div>
+                <div class="col-xs-2">
+                  <span class="text-danger" *ngIf="modulePreferencesForm.controls['easiHeatWarrantyTwoYearsModulePreference'].hasError('required') && (modulePreferencesForm.controls['easiHeatWarrantyTwoYearsModulePreference'].dirty || modulePreferencesForm.controls['easiHeatWarrantyTwoYearsModulePreference'].touched)">{{ "REQUIRED_FIELD" | translate }}</span>
+                </div>
+              </div>
+              <div class="row" style="padding-bottom:15px">
+                <!--Three Years-->
+                <div class="col-xs-6 text-right">
+                  <label class="control-label">{{"THREE_YEARS" | translate}}</label>
+                </div>
+                <div class="col-xs-4">
+                  <div class="input-group">
+                    <span class="input-group-addon">{{easiHeatSellingCurrencySymbol}}</span>
+                    <input autocomplete="off" class="form-control" type="number" style="min-width:55px;" formControlName="easiHeatWarrantyThreeYearsModulePreference" value="easiHeatWarrantyTwoYearsModulePreference" twoDigitDecimalNumber />
+                  </div>
+                </div>
+                <div class="col-xs-2">
+                  <span class="text-danger" *ngIf="modulePreferencesForm.controls['easiHeatWarrantyThreeYearsModulePreference'].hasError('required') && (modulePreferencesForm.controls['easiHeatWarrantyThreeYearsModulePreference'].dirty || modulePreferencesForm.controls['easiHeatWarrantyThreeYearsModulePreference'].touched)">{{ "REQUIRED_FIELD" | translate }}</span>
+                </div>
+              </div>
+
+              <!-- PRV available on EHHCC -->
+              <div class="row" style="padding-bottom:15px">
+                <div class="col-xs-6 text-right">
+                  <label class="control-label">{{"PRV_AVAILABLE_ON_EHHCC" | translate}}</label>
+                </div>
+                <div class="col-xs-4">
+                  <div class="input-group">
+                    <input autocomplete="off" class="form-control" type="checkbox" style="width:15px; height:15px;" formControlName="easiHeatPRVAvailableOnEHHCC" value="easiHeatPRVAvailableOnEHHCC" (change) ="toggleSave()" />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Hide HE model from sizing -->
+              <div class="row" style="padding-bottom:15px">
+                <div class="col-xs-6 text-right">
+                  <label class="control-label">{{"HIDE_HE_MODEL_FROM_SIZING" | translate}}</label>
+                </div>
+                <div class="col-xs-4">
+                  <div class="input-group">
+                    <input autocomplete="off" class="form-control" type="checkbox" style="width:15px; height:15px;" formControlName="easiHeatHideHEModelFromSizing" value="easiHeatHideHEModelFromSizing" (change) ="toggleSave()" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--Configurartion Options-->
+  <div class="panel panel-primary">
+    <div class="panel-heading" role="tab" id="optionConfigurartionHeading">
+      <h4 class="panel-title">
+        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOptionConfigurartion" aria-expanded="true" aria-controls="collapseOptionConfigurartion">
+          {{"OPTION_CONFIGURATION" | translate}}
+        </a>
+      </h4>
+    </div>
+    <div id="collapseOptionConfigurartion" class="panel-collapse collapse show" role="tabpanel" aria-labelledby="optionConfigurartionHeading">
+      <div class="panel-body" style="margin-bottom:-20px">
+        <div class="form-group">
+
+          <div class="row">
+            <div class="col-xs-2 text-right">
+              <label class="control-label">{{"PLEASE_SELECT" | translate}}</label>
+            </div>
+            <div class="col-lg-3 col-md-6 col-xs-12">
+              <enumeration formControlName="easiHeatOptionsSelection" enumeration-name="EasiHeat_Options" (on-change)="onEasiHeatOptionsChange($event)"></enumeration>
+            </div>
+            <div class="col-lg-3 col-md-6 col-xs-12">
+              <button [disabled]="augmentPriceDataProcessing" class="btn btn-dynamic btn-primary pull-right" type='button' (click)="togglePrices();" [title]="'TOGGLE_PRICES' | translate"><i class="fa fa-exchange">  {{'TOGGLE_PRICES' | translate}}</i></button>
+            </div>
+          </div>
+          <hr>
+          <!--Actuator-->
+          <div class="panel-body" [hidden]="easiHeatOptionsSelectedItem !== 'Actuator'">
+            <div class="row">
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="DHW and HTG SC Options {{DHW_AND_HTG_SC_OPTIONS}}">DHW and HTG SC Options</h4><label>{{DHW_AND_HTG_SC_OPTIONS}}</label>
+                <enumeration-picker formControlName="easi_Heat_DHW_And_HTG_Sc_Options_Actuator" enumeration-picker-name="NomActuatorDHW_EasiHeat" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="HTG CC Options {{HTG_CC_OPTIONS}}">HTG CC Options</h4><label>{{HTG_CC_OPTIONS}}</label>
+                <enumeration-picker formControlName="easi_HTG_CC_Options_Actuator" enumeration-picker-name="NomActuatorHTG_EasiHeat" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+            </div>
+          </div>
+
+          <!--Design Code-->
+          <div class="panel-body" [hidden]="easiHeatOptionsSelectedItem !== 'Design Code'">
+            <div class="row">
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="DHW and HTG SC Options {{DHW_AND_HTG_SC_OPTIONS}}">DHW and HTG SC Options</h4><label>{{DHW_AND_HTG_SC_OPTIONS}}</label>
+                <enumeration-picker formControlName="easiHeatDHWandHTGScOptions_DesignCode" enumeration-picker-name="NomDesignCodeDHW_EasiHeat" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="HTG CC Options {{HTG_CC_OPTIONS}}">HTG CC Options</h4><label>{{HTG_CC_OPTIONS}}</label>
+                <enumeration-picker formControlName="easi_HTG_CC_Options_DesignCode" enumeration-picker-name="NomDesignCodeHTG_EasiHeat" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+            </div>
+          </div>
+
+          <!--High Limit-->
+          <div class="panel-body" [hidden]="easiHeatOptionsSelectedItem !== 'High Limit'">
+            <div class="row">
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="DHW and HTG SC Options {{DHW_AND_HTG_SC_OPTIONS}}">DHW and HTG SC Options</h4><label>{{DHW_AND_HTG_SC_OPTIONS}}</label>
+                <enumeration-picker formControlName="easiHeatDHWandHTGScOptions_HighLimit" enumeration-picker-name="NomHighLimitDHW_EasiHeat" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="HTG CC Options {{HTG_CC_OPTIONS}}">HTG CC Options</h4><label>{{HTG_CC_OPTIONS}}</label>
+                <enumeration-picker formControlName="easi_HTG_CC_Options_HighLimit" enumeration-picker-name="NomHighLimitHTG_EasiHeat" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+            </div>
+          </div>
+
+          <!--High Limit Actuation-->
+          <div class="panel-body" [hidden]="easiHeatOptionsSelectedItem !== 'High Limit Actuation'">
+            <div class="row">
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="DHW and HTG SC Options {{DHW_AND_HTG_SC_OPTIONS}}">DHW and HTG SC Options</h4><label>{{DHW_AND_HTG_SC_OPTIONS}}</label>
+                <enumeration-picker formControlName="easiHeatDHWandHTGScOptions_HighLimitActuation" enumeration-picker-name="NomHighLimitActuationDHW_EasiHeat" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="HTG CC Options {{HTG_CC_OPTIONS}}">HTG CC Options</h4><label>{{HTG_CC_OPTIONS}}</label>
+                <enumeration-picker formControlName="easi_HTG_CC_Options_HighLimitActuation" enumeration-picker-name="NomHighLimitActuationHTG_EasiHeat" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+            </div>
+          </div>
+
+          <!--Isolation-->
+          <div class="panel-body" [hidden]="easiHeatOptionsSelectedItem !== 'Isolation'">
+            <div class="row">
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="DHW and HTG SC Options {{DHW_AND_HTG_SC_OPTIONS}}">DHW and HTG SC Options</h4><label>{{DHW_AND_HTG_SC_OPTIONS}}</label>
+                <enumeration-picker formControlName="easiHeatDHWandHTGScOptions_Isolation" enumeration-picker-name="NomIsolationDHW_EasiHeat" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="HTG CC Options {{HTG_CC_OPTIONS}}">HTG CC Options</h4><label>{{HTG_CC_OPTIONS}}</label>
+                <enumeration-picker formControlName="easi_HTG_CC_Options_Isolation" enumeration-picker-name="NomIsolationHTG_EasiHeat" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+            </div>
+          </div>
+
+          <!--Control Panel-->
+          <div class="panel-body" [hidden]="easiHeatOptionsSelectedItem !== 'Control Panel'">
+            <div class="row">
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="DHW and HTG SC Options {{DHW_AND_HTG_SC_OPTIONS}}">DHW and HTG SC Options</h4><label>{{DHW_AND_HTG_SC_OPTIONS}}</label>
+                <enumeration-picker formControlName="easiHeatDHWandHTGScOptions_ControlPanel" enumeration-picker-name="NomPanelTypeDHW_EasiHeat" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="HTG CC Options {{HTG_CC_OPTIONS}}">HTG CC Options</h4><label>{{HTG_CC_OPTIONS}}</label>
+                <enumeration-picker formControlName="easi_HTG_CC_Options_ControlPanel" enumeration-picker-name="NomPanelTypeHTG_EasiHeat" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+            </div>
+          </div>
+
+          <!--Service Offering-->
+          <div class="panel-body" [hidden]="easiHeatOptionsSelectedItem !== 'Service Offering'">
+            <div class="row">
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="DHW and HTG SC Options {{DHW_AND_HTG_SC_OPTIONS}}">DHW and HTG SC Options</h4><label>{{DHW_AND_HTG_SC_OPTIONS}}</label>
+                <enumeration-picker formControlName="easiHeatDHWandHTGScOptions_ServiceOffering" enumeration-picker-name="WarrantyDHW_EasiHeat" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="HTG CC Options {{HTG_CC_OPTIONS}}">HTG CC Options</h4><label>{{HTG_CC_OPTIONS}}</label>
+                <enumeration-picker formControlName="easi_HTG_CC_Options_ServiceOffering" enumeration-picker-name="WarrantyHTG_EasiHeat" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+            </div>
+          </div>
+
+          <!--Gasket-->
+          <div class="panel-body" [hidden]="easiHeatOptionsSelectedItem !== 'Gasket'">
+            <div class="row">
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="DHW and HTG SC Options {{DHW_OPTIONS}}">DHW Options</h4><label>{{DHW_OPTIONS}}</label>
+                <enumeration-picker formControlName="easiHeatDHWandHTGScOptions_Gasket" enumeration-picker-name="NomGasketDHW_EasiHeat" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="HTG CC Options {{HTG_CC_AND_SC_OPTIONS}}">HTG CC & SC Options</h4><label>{{HTG_CC_AND_SC_OPTIONS}}</label>
+                <enumeration-picker formControlName="easi_HTG_CC_Options_Gasket" enumeration-picker-name="NomGasketHTG_EasiHeat" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+            </div>
+          </div>
+
+          <!--Remote Access-->
+          <div class="panel-body" [hidden]="easiHeatOptionsSelectedItem !== 'Remote Access'">
+            <div class="row">
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="DHW and HTG SC Options {{DHW_AND_HTG_SC_OPTIONS}}">DHW and HTG SC Options</h4><label>{{DHW_AND_HTG_SC_OPTIONS}}</label>
+                <enumeration-picker formControlName="easiHeatDHWandHTGScOptions_RemoteAccess" enumeration-picker-name="NomRemoteAccessDHW_EasiHeat" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="HTG CC Options {{HTG_CC_OPTIONS}}">HTG CC Options</h4><label>{{HTG_CC_OPTIONS}}</label>
+                <enumeration-picker formControlName="easi_HTG_CC_Options_RemoteAccess" enumeration-picker-name="NomRemoteAccessHTG_EasiHeat" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+            </div>
+          </div>
+
+          <!--Communications-->
+          <div class="panel-body" [hidden]="easiHeatOptionsSelectedItem !== 'Communications'">
+            <div class="row">
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="DHW and HTG SC Options {{DHW_AND_HTG_SC_OPTIONS}}">DHW and HTG SC Options</h4><label>{{DHW_AND_HTG_SC_OPTIONS}}</label>
+                <enumeration-picker formControlName="easiHeatDHWandHTGScOptions_Communications" enumeration-picker-name="NomCommunicationsDHW_EasiHeat" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="HTG CC Options {{HTG_CC_OPTIONS}}">HTG CC Options</h4><label>{{HTG_CC_OPTIONS}}</label>
+                <enumeration-picker formControlName="easi_HTG_CC_Options_Communications" enumeration-picker-name="NomCommunicationsHTG_EasiHeat" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+            </div>
+          </div>
+
+          <!--Additonal Options-->
+          <div class="panel-body" [hidden]="easiHeatOptionsSelectedItem !== 'Additional Options'">
+            <div class="form-group">
+              <!--Column 1-->
+              <div class="col-lg-6">
+                <div class="row" style="padding-bottom:15px; ">
+                  <div class="col-xs-6 text-right">
+                    <label class="control-label">{{"DHW" | translate}}</label>
+                  </div>
+                  <div class="col-xs-4 " style="display:inline-block; border:thick; border-color:red;">
+                    <label class="control-label" style="display:inline-block; padding-right:10px;">
+                      {{"AVAILABLE" | translate}}
+                    </label>
+                    <label class="control-label" style="display:inline-block; border:thick; border-color:red;">
+                      {{"DEFAULT" | translate}}
+                    </label>
+                  </div>
+                </div>
+
+                <!-- Energy Monitoring -->
+                <div class="row" style="padding-bottom:15px; ">
+                  <div class="col-xs-6 text-right">
+                    <label class="control-label">{{"ENERGY_MONITORING" | translate}}</label>
+                  </div>
+                  <div class="col-xs-4">
+                    <div class="input-group" style="display:inline-block; padding-right: 60px;">
+                      <input autocomplete="off"
+                             class="control-check"
+                             type="checkbox"
+                             style="width:15px; height:15px;"
+                             formControlName="easiHeatEnergyMonitoring_Available_DHW"
+                             value="easiHeatEM_Available_DHW" />
+                    </div>
+                    <div class="input-group" style="display:inline-block;">
+                      <input autocomplete="off"
+                             class="control-check"
+                             type="checkbox"
+                             style="width:15px; height:15px;"
+                             formControlName="easiHeatEnergyMonitoring_Default_DHW"
+                             value="easiHeatEM_Default_DHW" />
+                    </div>
+                  </div>
+                </div>
+                <!--<div class="row" style="padding-bottom:15px">
+                  <div class="col-xs-6 text-right">
+                    <label class="control-label">{{"ENERGY_MONITORING" | translate}}</label>
+                  </div>
+                  <div class="col-xs-4">
+                    <div class="input-group">
+                      <input autocomplete="off"
+                             class="control-check"
+                             type="checkbox"
+                             style="width:15px; height:15px;"
+                             formControlName="easiHeatCvSplitRange"
+                             value="easiHeatCvSplitRange" />
+                    </div>
+
+                  </div>
+                </div>-->
+                <!-- Jacking Wheels -->
+                <div class="row" style="padding-bottom:15px">
+                  <div class="col-xs-6 text-right">
+                    <label class="control-label">{{"JACKING_WHEELS" | translate}}</label>
+                  </div>
+                  <div class="col-xs-4">
+                    <div class="input-group" style="display:inline-block; padding-right: 60px;">
+                      <input autocomplete="off"
+                             class="control-check"
+                             type="checkbox"
+                             style="width:15px; height:15px;"
+                             formControlName="easiHeatJackingWheels_Available_DHW"
+                             value="easiHeatJW_Available_DHW" />
+                    </div>
+                    <div class="input-group" style="display:inline-block;">
+                      <input autocomplete="off"
+                             class="control-check"
+                             type="checkbox"
+                             style="width:15px; height:15px;"
+                             formControlName="easiHeatJackingWheels_Default_DHW"
+                             value="easiHeatJW_Default_DHW" />
+                    </div>
+                  </div>
+                </div>
+                <!-- EN12828 Compliant -->
+                <div class="row" style="padding-bottom:15px">
+                  <div class="col-xs-6 text-right">
+                    <label class="control-label">{{"EN12828_COMPLIANT" | translate}}</label>
+                  </div>
+                  <div class="col-xs-4">
+                    <div class="input-group" style="display:inline-block; padding-right: 60px;">
+                      <input autocomplete="off"
+                             class="control-check"
+                             type="checkbox"
+                             style="width:15px; height:15px;"
+                             formControlName="easiHeatENCompliant_Available_DHW"
+                             value="easiHeatENC_Available_DHW" />
+                    </div>
+                    <div class="input-group" style="display:inline-block;">
+                      <input autocomplete="off"
+                             class="control-check"
+                             type="checkbox"
+                             style="width:15px; height:15px;"
+                             formControlName="easiHeatENCompliant_Default_DHW"
+                             value="easiHeatENC_Default_DHW" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!--Column 2-->
+              <div class="col-lg-6">
+                <div class="row" style="padding-bottom:15px; ">
+                  <div class="col-xs-6 text-right">
+                    <label class="control-label">{{"HTG" | translate}}</label>
+                  </div>
+                  <div class="col-xs-4 " style="display:inline-block;">
+                    <label class="control-label" style="display:inline-block; padding-right:10px; border:thick; border-color:red;">
+                      {{"AVAILABLE" | translate}}
+                    </label>
+                    <label class="control-label" style="display:inline-block; border:thick; border-color:red;">
+                      {{"DEFAULT" | translate}}
+                    </label>
+                  </div>
+                </div>
+
+                <!-- Energy Monitoring -->
+                <div class="row" style="padding-bottom:15px; ">
+                  <div class="col-xs-6 text-right">
+                    <label class="control-label">{{"ENERGY_MONITORING" | translate}}</label>
+                  </div>
+                  <div class="col-xs-4">
+                    <div class="input-group" style="display:inline-block; padding-right: 60px;">
+                      <input autocomplete="off"
+                             class="control-check"
+                             type="checkbox"
+                             style="width:15px; height:15px;"
+                             formControlName="easiHeatEnergyMonitoring_Available_HTG"
+                             value="easiHeatEM_Available_HTG" />
+                    </div>
+                    <div class="input-group" style="display:inline-block;">
+                      <input autocomplete="off"
+                             class="control-check"
+                             type="checkbox"
+                             style="width:15px; height:15px;"
+                             formControlName="easiHeatEnergyMonitoring_Default_HTG"
+                             value="easiHeatEM_Default_HTG" />
+                    </div>
+                  </div>
+                </div>
+                <!--<div class="row" style="padding-bottom:15px">
+                  <div class="col-xs-6 text-right">
+                    <label class="control-label">{{"ENERGY_MONITORING" | translate}}</label>
+                  </div>
+                  <div class="col-xs-4">
+                    <div class="input-group">
+                      <input autocomplete="off"
+                             class="control-check"
+                             type="checkbox"
+                             style="width:15px; height:15px;"
+                             formControlName="easiHeatCvSplitRange"
+                             value="easiHeatCvSplitRange" />
+                    </div>
+
+                  </div>
+                </div>-->
+                <!-- Jacking Wheels -->
+                <div class="row" style="padding-bottom:15px">
+                  <div class="col-xs-6 text-right">
+                    <label class="control-label">{{"JACKING_WHEELS" | translate}}</label>
+                  </div>
+                  <div class="col-xs-4">
+                    <div class="input-group" style="display:inline-block; padding-right: 60px;">
+                      <input autocomplete="off"
+                             class="control-check"
+                             type="checkbox"
+                             style="width:15px; height:15px;"
+                             formControlName="easiHeatJackingWheels_Available_HTG"
+                             value="easiHeatJW_Available_HTG" />
+                    </div>
+                    <div class="input-group" style="display:inline-block;">
+                      <input autocomplete="off"
+                             class="control-check"
+                             type="checkbox"
+                             style="width:15px; height:15px;"
+                             formControlName="easiHeatJackingWheels_Default_HTG"
+                             value="easiHeatJW_Default_HTG" />
+                    </div>
+                  </div>
+                </div>
+                <!-- EN12828 Compliant -->
+                <div class="row" style="padding-bottom:15px">
+                  <div class="col-xs-6 text-right">
+                    <label class="control-label">{{"EN12828_COMPLIANT" | translate}}</label>
+                  </div>
+                  <div class="col-xs-4">
+                    <div class="input-group" style="display:inline-block; padding-right: 60px;">
+                      <input autocomplete="off"
+                             class="control-check"
+                             type="checkbox"
+                             style="width:15px; height:15px;"
+                             formControlName="easiHeatENCompliant_Available_HTG"
+                             value="easiHeatENC_Available_HTG" />
+                    </div>
+                    <div class="input-group" style="display:inline-block;">
+                      <input autocomplete="off"
+                             class="control-check"
+                             type="checkbox"
+                             style="width:15px; height:15px;"
+                             formControlName="easiHeatENCompliant_Default_HTG"
+                             value="easiHeatENC_Default_HTG" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!--<div class="row">
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="DHW {{DHW}}">DHW</h4><label>{{DHW}}</label>
+                <enumeration-picker formControlName="easiHeat_DHW_AdditionalOptions" enumeration-picker-name="NomAdditionalOptionsDHW_EasiHeat" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="HTG {{HTG}}">HTG</h4><label>{{HTG}}</label>
+                <enumeration-picker formControlName="easiHeat_HTG_AdditionalOptions" enumeration-picker-name="NomAdditionalOptionsHTG_EasiHeat" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+            </div>-->
+
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!--<div class="panel panel-primary">
+    <div class="panel-heading" role="tab" id="additionalOptionsHeading">
+      <h4 class="panel-title">
+        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseAdditionalOptions" aria-expanded="true" aria-controls="collapseAdditionalOptions">
+          {{"ADDITIONAL_OPTIONS" | translate}}
+        </a>
+      </h4>
+    </div>
+    <div id="collapseAdditionalOptions" class="panel-collapse collapse show" role="tabpanel" aria-labelledby="additionalOptionsHeading">
+      <div class="panel-body" style="margin-bottom:-30px">
+        <div class="form-group">-->
+  <!--Column 1-->
+  <!--<div class="col-lg-6">
+    <div class="row" style="padding-bottom:15px; ">
+      <div class="col-xs-6 text-right">
+        <label class="control-label">{{"DHW" | translate}}</label>
+      </div>
+      <div class="col-xs-4 " style="display:inline-block; border:thick; border-color:red;">
+        <label class="control-label" style="display:inline-block; padding-right:10px;">
+          {{"AVAILABLE" | translate}}
+        </label>
+        <label class="control-label" style="display:inline-block; border:thick; border-color:red;">
+          {{"DEFAULT" | translate}}
+        </label>
+      </div>
+    </div>-->
+  <!-- Energy Monitoring -->
+  <!--<div class="row" style="padding-bottom:15px; ">
+    <div class="col-xs-6 text-right">
+      <label class="control-label">{{"ENERGY_MONITORING" | translate}}</label>
+    </div>
+    <div class="col-xs-4">
+      <div class="input-group" style="display:inline-block; padding-right: 60px;">
+        <input autocomplete="off"
+               class="control-check"
+               type="checkbox"
+               style="width:15px; height:15px;"
+               formControlName="easiHeatEnergyMonitoring_Available_DHW"
+               value="easiHeatEM_Available_DHW" />
+      </div>
+      <div class="input-group" style="display:inline-block;">
+        <input autocomplete="off"
+               class="control-check"
+               type="checkbox"
+               style="width:15px; height:15px;"
+               formControlName="easiHeatEnergyMonitoring_Default_DHW"
+               value="easiHeatEM_Default_DHW" />
+      </div>
+    </div>
+  </div>-->
+  <!--<div class="row" style="padding-bottom:15px">
+    <div class="col-xs-6 text-right">
+      <label class="control-label">{{"ENERGY_MONITORING" | translate}}</label>
+    </div>
+    <div class="col-xs-4">
+      <div class="input-group">
+        <input autocomplete="off"
+               class="control-check"
+               type="checkbox"
+               style="width:15px; height:15px;"
+               formControlName="easiHeatCvSplitRange"
+               value="easiHeatCvSplitRange" />
+      </div>
+
+    </div>
+  </div>-->
+  <!-- Jacking Wheels -->
+  <!--<div class="row" style="padding-bottom:15px">
+    <div class="col-xs-6 text-right">
+      <label class="control-label">{{"JACKING_WHEELS" | translate}}</label>
+    </div>
+    <div class="col-xs-4">
+      <div class="input-group" style="display:inline-block; padding-right: 60px;">
+        <input autocomplete="off"
+               class="control-check"
+               type="checkbox"
+               style="width:15px; height:15px;"
+               formControlName="easiHeatJackingWheels_Available_DHW"
+               value="easiHeatJW_Available_DHW" />
+      </div>
+      <div class="input-group" style="display:inline-block;">
+        <input autocomplete="off"
+               class="control-check"
+               type="checkbox"
+               style="width:15px; height:15px;"
+               formControlName="easiHeatJackingWheels_Default_DHW"
+               value="easiHeatJW_Default_DHW" />
+      </div>
+    </div>
+  </div>-->
+  <!-- EN12828 Compliant -->
+  <!--<div class="row" style="padding-bottom:15px">
+      <div class="col-xs-6 text-right">
+        <label class="control-label">{{"EN12828_COMPLIANT" | translate}}</label>
+      </div>
+      <div class="col-xs-4">
+        <div class="input-group" style="display:inline-block; padding-right: 60px;">
+          <input autocomplete="off"
+                 class="control-check"
+                 type="checkbox"
+                 style="width:15px; height:15px;"
+                 formControlName="easiHeatENCompliant_Available_DHW"
+                 value="easiHeatENC_Available_DHW" />
+        </div>
+        <div class="input-group" style="display:inline-block;">
+          <input autocomplete="off"
+                 class="control-check"
+                 type="checkbox"
+                 style="width:15px; height:15px;"
+                 formControlName="easiHeatENCompliant_Default_DHW"
+                 value="easiHeatENC_Default_DHW" />
+        </div>
+      </div>
+    </div>
+  </div>-->
+  <!--Column 2-->
+  <!--<div class="col-lg-6">
+    <div class="row" style="padding-bottom:15px; ">
+      <div class="col-xs-6 text-right">
+        <label class="control-label">{{"HTG" | translate}}</label>
+      </div>
+      <div class="col-xs-4 " style="display:inline-block;">
+        <label class="control-label" style="display:inline-block; padding-right:10px; border:thick; border-color:red;">
+          {{"AVAILABLE" | translate}}
+        </label>
+        <label class="control-label" style="display:inline-block; border:thick; border-color:red;">
+          {{"DEFAULT" | translate}}
+        </label>
+      </div>
+    </div>-->
+  <!-- Energy Monitoring -->
+  <!--<div class="row" style="padding-bottom:15px; ">
+    <div class="col-xs-6 text-right">
+      <label class="control-label">{{"ENERGY_MONITORING" | translate}}</label>
+    </div>
+    <div class="col-xs-4">
+      <div class="input-group" style="display:inline-block; padding-right: 60px;">
+        <input autocomplete="off"
+               class="control-check"
+               type="checkbox"
+               style="width:15px; height:15px;"
+               formControlName="easiHeatEnergyMonitoring_Available_HTG"
+               value="easiHeatEM_Available_HTG" />
+      </div>
+      <div class="input-group" style="display:inline-block;">
+        <input autocomplete="off"
+               class="control-check"
+               type="checkbox"
+               style="width:15px; height:15px;"
+               formControlName="easiHeatEnergyMonitoring_Default_HTG"
+               value="easiHeatEM_Default_HTG" />
+      </div>
+    </div>
+  </div>-->
+  <!-- Jacking Wheels -->
+  <!--<div class="row" style="padding-bottom:15px">
+    <div class="col-xs-6 text-right">
+      <label class="control-label">{{"JACKING_WHEELS" | translate}}</label>
+    </div>
+    <div class="col-xs-4">
+      <div class="input-group" style="display:inline-block; padding-right: 60px;">
+        <input autocomplete="off"
+               class="control-check"
+               type="checkbox"
+               style="width:15px; height:15px;"
+               formControlName="easiHeatJackingWheels_Available_HTG"
+               value="easiHeatJW_Available_HTG" />
+      </div>
+      <div class="input-group" style="display:inline-block;">
+        <input autocomplete="off"
+               class="control-check"
+               type="checkbox"
+               style="width:15px; height:15px;"
+               formControlName="easiHeatJackingWheels_Default_HTG"
+               value="easiHeatJW_Default_HTG" />
+      </div>
+    </div>
+  </div>-->
+  <!-- EN12828 Compliant -->
+  <!--<div class="row" style="padding-bottom:15px">
+              <div class="col-xs-6 text-right">
+                <label class="control-label">{{"EN12828_COMPLIANT" | translate}}</label>
+              </div>
+              <div class="col-xs-4">
+                <div class="input-group" style="display:inline-block; padding-right: 60px;">
+                  <input autocomplete="off"
+                         class="control-check"
+                         type="checkbox"
+                         style="width:15px; height:15px;"
+                         formControlName="easiHeatENCompliant_Available_HTG"
+                         value="easiHeatENC_Available_HTG" />
+                </div>
+                <div class="input-group" style="display:inline-block;">
+                  <input autocomplete="off"
+                         class="control-check"
+                         type="checkbox"
+                         style="width:15px; height:15px;"
+                         formControlName="easiHeatENCompliant_Default_HTG"
+                         value="easiHeatENC_Default_HTG" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>-->
+
+
+  <a #collapsePriceDataTop href="#collapsePriceDataTop"> </a>
+
+  <!--</div>-->
+  <!--Price Data Grid -->
+  <!--<div *ngIf="!!csgBOMOutputData.bomItems && csgBOMOutputData.bomItems.length > 0 && showPrices" class="panel panel-primary">
+    <div class="panel-heading" role="tab" id="priceDataHeading">
+      <h4 class="panel-title">
+        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapsePriceData" aria-expanded="true" aria-controls="collapsePriceData">
+          {{"Price Data"}}
+        </a>
+      </h4>
+    </div>-->
+  <!-- Price Data Grid  -->
+  <!--<div class="panel-body">
+    <div class="col-xs-12">
+
+      <ngx-datatable #csgBOMOutputDataTable
+                     class="bootstrap"
+                     [headerHeight]="40"
+                     [limit]="50"
+                     [columnMode]="'force'"
+                     [footerHeight]="40"
+                     [rowHeight]="'auto'"
+                     [rows]="csgBOMOutputData.bomItems">-->
+  <!--[rowClass]="getRowClass">-->
+  <!--  [selected]="selectedOutputData"
+       [selectionType]="'single'"
+       (select)="onSelect($event)"
+  -->
+  <!-- Row Detail Template -->
+  <!--<ngx-datatable-row-detail [rowHeight]="getHeight" #myDetailRow>
+    <ng-template let-row="row" let-expanded="expanded" ngx-datatable-row-detail-template>
+      <div *ngFor="let m of row.modelSizingMessages">
+        <div class="row col-xs-12">
+          <div class="col-xs-1 text-center">
+            <i [class]="getSeverityIcon(m.severity)"></i>
+          </div>
+          <div class="col-xs-10">
+            <span>{{m.messageKey | translate}}</span>
+            <span *ngIf="m.value !== 0 && m.unitKey"> ({{m.value}} {{m.unitKey | translate:false}})</span>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+  </ngx-datatable-row-detail>-->
+  <!-- Column Template -->
+  <!--<ngx-datatable-column>
+    <ng-template let-row="row" let-expanded="expanded" ngx-datatable-cell-template>
+      <i [class]="getRowSeverityIcon(row)"></i>
+    </ng-template>
+  </ngx-datatable-column>-->
+  <!--Columns-->
+  <!--<ngx-datatable-column [name]="'Number'" prop="rowOrder" [width]="20">
+    <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+      {{value}}
+    </ng-template>
+  </ngx-datatable-column>
+
+  <ngx-datatable-column [name]="'Type'" prop="itemType" [width]="20">
+    <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+      {{value}}
+    </ng-template>
+  </ngx-datatable-column>
+
+  <ngx-datatable-column [name]="'ModelId'" prop="modelId" [width]="20">
+    <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+      {{value}}
+    </ng-template>
+  </ngx-datatable-column>
+
+  <ngx-datatable-column [name]="'Option Group'" prop="parentMasterTextKey" [width]="200">
+    <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+      <span *ngIf="!!value && value.indexOf('CSG_')!==0">{{value | translate}}</span>
+      <span *ngIf="!!value && value.indexOf('CSG_')==0">{{value.replace("_"," ").replace("_"," ")}}</span>
+    </ng-template>
+  </ngx-datatable-column>
+
+  <ngx-datatable-column [name]="'Option'" prop="itemMasterTextKey" [width]="200">
+    <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+      <span [style.background]="!row.isEnabled ? 'Plum' : ' '" *ngIf="!!value && value.indexOf('CSG_')!==0">{{value | translate}}</span>
+      <span [style.background]="!row.isEnabled ? 'Plum' : ' '" *ngIf="!!value && value.indexOf('CSG_')==0">{{value.replace("_"," ").replace("_"," ")}}</span>
+    </ng-template>
+  </ngx-datatable-column>-->
+  <!--<ngx-datatable-column [name]="'SSP'" prop="ssp" [width]="100">
+    <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+      <span *ngIf="easiHeatManufacturerCurrencySymbol==easiHeatSellingCurrencySymbol">{{easiHeatManufacturerCurrencySymbol}} {{localizeValue(value,0)}}</span>
+      <span *ngIf="easiHeatManufacturerCurrencySymbol!==easiHeatSellingCurrencySymbol || row.modelId==0">{{easiHeatManufacturerCurrencySymbol}} {{localizeValue(value,0)}} ({{csgSellingCurrencySymbol}} {{localizeValue(row.sSSP,0)}})</span>
+    </ng-template>
+  </ngx-datatable-column>-->
+  <!--<ngx-datatable-column [name]="'x'" prop="ssPtoRSPfactor" [width]="40">
+    <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+      <span *ngIf="value!==0">x {{value}} =</span>
+    </ng-template>
+  </ngx-datatable-column>-->
+  <!--<ngx-datatable-column [name]="'RSP'" prop="recommendedSalesPrice" [width]="100">
+    <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+      <span *ngIf="easiHeatManufacturerCurrencySymbol==easiHeatSellingCurrencySymbol">{{easiHeatManufacturerCurrencySymbol}} {{localizeValue(value,0)}}</span>
+      <span *ngIf="easiHeatManufacturerCurrencySymbol!==easiHeatSellingCurrencySymbol || row.modelId==0">{{easiHeatManufacturerCurrencySymbol}} {{localizeValue(value,0)}} ({{csgSellingCurrencySymbol}} {{localizeValue(row.sRecommendedSalesPrice,0)}})</span>
+    </ng-template>
+  </ngx-datatable-column>
+
+  <ngx-datatable-column [name]="'RSP override'" prop="recommendedSalesPriceOverride" [width]="100">
+    <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+      <span *ngIf="easiHeatManufacturerCurrencySymbol==easiHeatSellingCurrencySymbol">{{easiHeatManufacturerCurrencySymbol}} {{localizeValue(value,0)}}</span>
+      <span *ngIf="easiHeatManufacturerCurrencySymbol!==easiHeatSellingCurrencySymbol || row.modelId==0">{{easiHeatManufacturerCurrencySymbol}} {{localizeValue(value,0)}} ({{csgSellingCurrencySymbol}} {{localizeValue(row.sRecommendedSalesPriceOverride,0)}})</span>
+    </ng-template>
+  </ngx-datatable-column>
+
+  <ngx-datatable-column [name]="'Display Price'" prop="displayedRSP" [width]="100">
+    <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+      <span *ngIf="easiHeatManufacturerCurrencySymbol==easiHeatSellingCurrencySymbol">{{easiHeatManufacturerCurrencySymbol}} {{localizeValue(value,0)}}</span>
+      <span *ngIf="easiHeatManufacturerCurrencySymbol!==easiHeatSellingCurrencySymbol || row.modelId==0">{{easiHeatManufacturerCurrencySymbol}} {{localizeValue(value,0)}} ({{csgSellingCurrencySymbol}} {{localizeValue(row.sDisplayedRSP,0)}})</span>
+    </ng-template>
+  </ngx-datatable-column>-->
+  <!--<ngx-datatable-column [name]="'Model'" prop="modelId" [width]="30">
+    <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+      <span *ngIf="!!row.parentMasterTextKey && row.parentMasterTextKey.indexOf('CSG_')!==0">{{value}}</span>
+      <span *ngIf="!!row.parentMasterTextKey && row.parentMasterTextKey.indexOf('CSG_')==0">{{value}} {{row.parentMasterTextKey.split('_')[1]}} {{row.parentMasterTextKey.split('_')[2]}}</span>
+    </ng-template>
+  </ngx-datatable-column>
+
+  <ngx-datatable-column [name]="'Nomenclature'" prop="item" [width]="50">
+    <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+      <span *ngIf="!!value.split('_')[1]">{{value.split('_')[1]}}</span>-->
+  <!--<span *ngIf="!value.split('_')[1]">{{value}}</span>-->
+  <!--<span *ngIf="!!row.parentMasterTextKey && row.parentMasterTextKey.indexOf('CSG_')==0">{{row.parentMasterTextKey.replace("_"," ").replace("_"," ")}}</span>
+    </ng-template>
+  </ngx-datatable-column>-->
+  <!--[style.background]="row.isEnabled ? 'White' : 'SlateGray'"-->
+  <!--<ngx-datatable-column [name]="'Enabled'" prop="isEnabled" [width]="20">
+              <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+                <span *ngIf="value">+</span>
+                <span *ngIf="!value">-</span>
+              </ng-template>
+            </ngx-datatable-column>
+
+          </ngx-datatable>
+
+        </div>
+      </div>
+
+  </div>-->
+  <!--<div class="row">
+    <div class="col-xs-12">
+      { {modulePreferencesForm.value | json}}
+    </div>
+  </div>-->
+  <!--<div class="row">
+    <div class="col-xs-12">
+      <button [disabled]="!modulePreferencesForm.dirty || !modulePreferencesForm.valid || modulePreferencesForm.status !== 'VALID' || formSubmitted" type="submit" class="btn btn-block btn-dynamic btn-primary pull-right" [title]="'SAVE' | translate:true"><i class="fa fa-save">  {{'SAVE' | translate:true}}</i></button>
+    </div>
+  </div>-->
+
+</form>

@@ -1,0 +1,261 @@
+/*!
+ *
+ * Angle - Bootstrap Admin App + AngularJS
+ *
+ * Version: 3.8.9.1
+ * Author: @themicon_co
+ * Website: http://themicon.co
+ * License: https://wrapbootstrap.com/help/licenses
+ *
+ */
+
+// Override bootstrap variables
+@import "app/variables";
+
+// Override variables (if any) with sizing suite variables
+@import "app/variables-override-sizing-suite";
+
+// Bootstrap
+@import "bootstrap/bootstrap/_mixins";
+
+// Global definition of media queries
+@import "app/media-queries";
+// Utilities
+@import "app/utils-definitions";
+
+// Bootstrap reset
+@import "app/bootstrap-reset";
+
+// Typography
+@import "app/typo";
+
+// Layout
+@import "app/layout";
+@import "app/layout-extra";
+@import "app/layout-animation";
+@import "app/top-navbar";
+@import "app/sidebar";
+@import "app/offsidebar";
+
+// Components
+@import "app/breadcrumbs";
+@import "app/loading-bar";
+@import "app/animate";
+@import "app/button-extra";
+@import "app/placeholder";
+@import "app/panels";
+@import "app/progress-extra";
+@import "app/radial-bar";
+@import "app/user-block";
+@import "app/circles";
+@import "app/timeline";
+@import "app/dropdown-extra";
+@import "app/row-extra";
+@import "app/half-float";
+@import "app/masonry-grid";
+@import "app/widget";
+@import "app/typeahead";
+@import "app/table-grid";
+@import "app/todo";
+@import "app/file-upload";
+
+@import "app/form-elements";
+
+@import "app/summernote";
+@import "app/code-editor";
+
+// Tables
+@import "app/table-extras";
+@import "app/table-angulargrid";
+// Plugins
+@import "app/slim-scroll";
+@import "app/calendar";
+@import "app/spinner";
+@import "app/gmap";
+@import "app/vector-map";
+
+// Mailbox
+@import "app/mailbox";
+
+// Plans
+@import "app/plans";
+
+// Utilities
+@import "app/utils";
+
+// Print CSS
+@import "app/print";
+
+// Settings
+@import "app/settings";
+
+
+/******************************/
+/** Custom Styles start here **/
+/******************************/
+
+// Medium screen size
+//
+// On larger screens a button can be small. On smaller screens, the button should be wider and more visible
+
+@media (min-width: $screen-md-min) {
+  .btn.btn-dynamic {
+    width: initial;
+  }
+}
+
+@media (max-height: 675px) {
+  .content-to-hide-vertical {
+    display: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .hide-white-sxs {
+    display: none;
+  }
+}
+
+@media (min-width: 767px) {
+  .hide-blue-sxs {
+    display: none;
+    width: 0px;
+    height: 0px
+  }
+}
+
+.show-logo-when-collapsed {
+  display: none;
+}
+
+.hide-logo-when-collapsed {
+  margin-left: 28px;
+  bottom: 8px;
+}
+
+.btn-info {
+  color: #fff;
+  background-color: $brand-primary;
+  border-color: $brand-primary;
+}
+
+.btn-info:hover {
+  color: #fff;
+  background-color: $brand-primary-dark;
+  border-color: $brand-primary-dark;
+}
+
+// Large screen size
+//
+// Aligning a label to the right is OK on large devices.
+// For medium to smaller devices, labels should take up an entire space and align left.
+.text-right {
+  text-align: initial;
+}
+
+
+@media (min-width: $screen-lg-min) {
+  .text-right {
+    text-align: right;
+  }
+}
+
+/* Form green & red left border lines. */
+.ng-valid[required], .ng-valid.required {
+  border-left: 5px solid #42A948; /* green */
+}
+
+.ng-invalid:not(form):not(div) {
+  border-left: 5px solid #a94442; /* red */
+}
+
+/* Custom bootstrap grey alert */
+
+.alert-grey {
+  @include alert-variant(#f5f5f5, $alert-grey-border, $alert-grey-text);
+}
+
+/***************************************/
+/* Ngx Data tables styling placed here */
+/***************************************/
+
+.ngx-datatable.bootstrap {
+  background-color: transparent;
+  box-shadow: 0 0 0 #000;
+}
+
+.ngx-datatable.scroll-vertical {
+  height: 300px;
+}
+
+// workaround for use of detail rows
+// with other table in the same page
+.no-detail-row .datatable-row-detail {
+  display: none !important;
+}
+
+// change color of active cells selected
+.ngx-datatable.bootstrap.single-selection .datatable-body-row.active, .ngx-datatable.bootstrap.single-selection .datatable-body-row.active .datatable-row-group, .ngx-datatable.bootstrap.multi-selection .datatable-body-row.active, .ngx-datatable.bootstrap.multi-selection .datatable-body-row.active .datatable-row-group, .ngx-datatable.bootstrap.multi-click-selection .datatable-body-row.active, .ngx-datatable.bootstrap.multi-click-selection .datatable-body-row.active .datatable-row-group,
+.ngx-datatable.bootstrap.single-selection .datatable-body-row.active:hover, .ngx-datatable.bootstrap.single-selection .datatable-body-row.active:hover .datatable-row-group, .ngx-datatable.bootstrap.multi-selection .datatable-body-row.active:hover, .ngx-datatable.bootstrap.multi-selection .datatable-body-row.active:hover .datatable-row-group, .ngx-datatable.bootstrap.multi-click-selection .datatable-body-row.active:hover, .ngx-datatable.bootstrap.multi-click-selection .datatable-body-row.active:hover .datatable-row-group {
+  background-color: $brand-primary;
+
+  .datatable-body-cell {
+    color: #fff;
+  }
+}
+// remove link decoration
+.datatable-icon-right {
+  text-decoration: none !important;
+}
+// align table with no data legend
+.ngx-datatable.bootstrap .empty-row {
+  text-align: center;
+  margin-top: 20px;
+}
+// tabele footer
+.ngx-datatable.bootstrap .datatable-footer {
+  background-color: transparent;
+  color: $text-color;
+}
+// table pagination
+
+.ngx-datatable.bootstrap .datatable-body .datatable-body-row.active {
+  background-color: #649cb4;
+  color: #FFF;
+}
+
+.ngx-datatable.bootstrap .datatable-footer .datatable-pager a {
+  color: $pagination-color;
+}
+
+.pager li > a, .pager li > span {
+  border-color: $pagination-border;
+}
+
+.ngx-datatable.bootstrap .datatable-footer .datatable-pager ul li:not(.disabled).active a, .ngx-datatable.bootstrap .datatable-footer .datatable-pager ul li:not(.disabled):hover a {
+  background-color: $brand-primary;
+  border-color: $brand-primary;
+  color: #fff;
+}
+
+
+// Bespoke ngx-datatable styles are applied here.
+.ngx-datatable .datatable-header .datatable-header-cell .datatable-header-cell-template-wrap {
+  font-weight: bold;
+  font-size: 1.12em;
+  color: $brand-primary;
+}
+
+.datatable-row-group {
+  cursor: pointer;
+
+  &:hover {
+    background-color: $gray-medium;
+  }
+}
+
+.datatable-body-cell-label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

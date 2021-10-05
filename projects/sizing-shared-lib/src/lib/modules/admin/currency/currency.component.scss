@@ -1,0 +1,16 @@
+
+div.panel-heading {
+  font-size: x-large;
+}
+table {
+  width: 100%;
+}
+thead {
+  color: #ff6a00;
+}
+th[sortable-column] {
+  text-align: left;
+  cursor: pointer;
+  width: auto;
+  color: #3fb1e4;
+}

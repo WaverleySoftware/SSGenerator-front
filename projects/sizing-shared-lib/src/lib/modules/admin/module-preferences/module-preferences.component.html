@@ -1,0 +1,19 @@
+<div class="row" *ngIf="!!requiredModules && requiredModules.length > 0; else noModules">
+  <div class="col-lg-1 col-md-2 col-xs-12">
+    <!-- Show the module ribbon here -->
+    <module-ribbon [module-groups]="requiredModules" [module-identifier]="'isModulePreference'"></module-ribbon>
+  </div>
+
+  <div class="col-lg-11 col-md-10 col-xs-12">
+    <router-outlet></router-outlet>
+  </div>
+</div>
+
+<!-- Shown when there are no modules -->
+<ng-template #noModules>
+  <div class="row">
+    <div class="col-xs-12">
+      <alert type="info">{{'NO_ACCESS_TO_MODULES_MESSAGE' | translate:true}}</alert>
+    </div>
+  </div>
+</ng-template>

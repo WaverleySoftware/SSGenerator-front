@@ -1,0 +1,153 @@
+@font-face {
+  font-family: 'SizingSuiteV2';
+  /*src: url('ssv2-ws/projects/sizing-shared-lib/src/lib/shared/styles/fontsSSv2_2.2/SizingSuiteV2.ttf?fehyx8') format('truetype'),
+      url('ssv2-ws/projects/sizing-shared-lib/src/lib/shared/styles/fontsSSv2_2.2/SizingSuiteV2.woff?fehyx8') format('woff'),
+      url('ssv2-ws/projects/sizing-shared-lib/src/lib/shared/styles/fontsSSv2_2.2/SizingSuiteV2.svg?fehyx8#SizingSuiteV2') format('svg');*/
+  src: url('assets/ssv2Font/files/SizingSuiteV2.ttf?fehyx8') format('truetype'),
+       url('assets/ssv2Font/files/SizingSuiteV2.woff?fehyx8') format('woff'),
+       url('assets/ssv2Font/files/SizingSuiteV2.svg?fehyx8#SizingSuiteV2') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+[class^="ssv2-"], [class*=" ssv2-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'SizingSuiteV2' !important;
+  speak: never;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.ssv2-home-dark:before {
+  content: "\e900";
+  // color: #3d5567;
+}
+.ssv2-home-white:before {
+  content: "\e901";
+  // color: #fff;
+}
+.ssv2-control-valve-dark:before {
+  content: "\e902";
+  // color: #3d5567;
+}
+.ssv2-control-valve-white:before {
+  content: "\e903";
+  // color: #fff;
+}
+.ssv2-csg-fb-dark .path1:before {
+  content: "\e904";
+  // color: rgb(61, 85, 103);
+}
+.ssv2-csg-fb-dark .path2:before {
+  content: "\e905";
+  margin-left: -1em;
+  // color: rgb(61, 85, 103);
+}
+.ssv2-csg-fb-dark .path3:before {
+  content: "\e906";
+  margin-left: -1em;
+  // color: rgb(61, 85, 103);
+}
+.ssv2-csg-fb-dark .path4:before {
+  content: "\e907";
+  margin-left: -1em;
+  // color: rgb(61, 85, 103);
+}
+.ssv2-csg-fb-dark .path5:before {
+  content: "\e908";
+  margin-left: -1em;
+  // color: rgb(255, 255, 255);
+}
+.ssv2-csg-fb-dark .path6:before {
+  content: "\e909";
+  margin-left: -1em;
+  // color: rgb(255, 255, 255);
+}
+.ssv2-csg-fb-white:before {
+  content: "\e90a";
+  // color: #fff;
+}
+.ssv2-csg-healthcare-dark .path1:before {
+  content: "\e90b";
+  // color: rgb(61, 85, 103);
+}
+.ssv2-csg-healthcare-dark .path2:before {
+  content: "\e90c";
+  margin-left: -1em;
+  // color: rgb(61, 85, 103);
+}
+.ssv2-csg-healthcare-dark .path3:before {
+  content: "\e90d";
+  margin-left: -1em;
+  // color: rgb(61, 85, 103);
+}
+.ssv2-csg-healthcare-dark .path4:before {
+  content: "\e90e";
+  margin-left: -1em;
+  // color: rgb(61, 85, 103);
+}
+.ssv2-csg-healthcare-dark .path5:before {
+  content: "\e90f";
+  margin-left: -1em;
+  // color: rgb(255, 255, 255);
+}
+.ssv2-csg-healthcare-white:before {
+  content: "\e910";
+  // color: #fff;
+}
+.ssv2-easiheat-dark:before {
+  content: "\e911";
+  // color: #3d5567;
+}
+.ssv2-easiheat-white:before {
+  content: "\e912";
+  // color: #fff;
+}
+.ssv2-flowmetering-dark:before {
+  content: "\e913";
+  // color: #3d5567;
+}
+.ssv2-flowmetering-white:before {
+  content: "\e914";
+  // color: #fff;
+}
+.ssv2-pressure-reducing-valve-dark:before {
+  content: "\e915";
+  // color: #3d5567;
+}
+.ssv2-pressure-reducing-valve-white:before {
+  content: "\e916";
+  // color: #fff;
+}
+.ssv2-safety-valve-dark:before {
+  content: "\e917";
+  // color: #3d5567;
+}
+.ssv2-safety-valve-white:before {
+  content: "\e918";
+  // color: #fff;
+}
+.ssv2-shell-tube-dark:before {
+  content: "\e919";
+  // color: #3d5567;
+}
+.ssv2-shell-tube-white:before {
+  content: "\e91a";
+  // color: #fff;
+}
+.ssv2-steam-generation-efficiency-dark:before {
+  content: "\e91b";
+  // color: #3d5567;
+}
+.ssv2-steam-generation-efficiency-white:before {
+  content: "\e91c";
+  // color: #fff;
+}

@@ -1,0 +1,264 @@
+<form *ngIf="!!user" [formGroup]="userForm" class="form-horizontal" role="form" (submit)="submitForm($event)" novalidate>
+
+  <div class="row">
+    <div class="col-xs-12">
+      <button [disabled]="!userForm.valid" class="btn btn-primary pull-right" [title]="'SAVE' | translate:true"><i class="fa fa-save">  {{'SAVE' | translate:true}}</i></button>
+    </div>
+  </div>
+
+  <!-- Notification ribbons should go here -->
+  <div class="row">
+    <div class="col-xs-12">
+      <!-- Alert messages for user profile submissions -->
+      <alert type="success" *ngIf="userProfileFormSubmitted && isSuccess" dismissible="true" dismissOnTimeout="10000">{{'USER_PROFILE_SUCCESS_MESSAGE' | translate}}</alert>
+      <alert type="danger" *ngIf="userProfileFormSubmitted && !isSuccess" dismissible="true">{{'USER_PROFILE_FAILURE_MESSAGE' | translate}}</alert>
+
+      <!-- Alert messages for change password -->
+      <alert type="success" *ngIf="changePasswordFormSubmitted && isSuccess" dismissible="true" dismissOnTimeout="10000">{{'CHANGE_PASSW0RD_SUCCESS_MESSAGE' | translate}}</alert>
+      <alert type="danger" *ngIf="changePasswordFormSubmitted && !isSuccess" dismissible="true">{{'CHANGE_PASSW0RD_FAILURE_MESSAGE' | translate}}</alert>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-6 col-md-6 col-xs-12">
+
+      <!--Username-->
+      <div class="form-group">
+        <label for="username" class="col-sm-2 control-label">{{'USERNAME' | translate}}</label>
+        <div class="col-sm-7">
+          <input autocomplete="off" type="text" id="username" name="username" formControlName="username" class="form-control" required autocomplete="off" />
+        </div>
+
+        <div class="col-sm-3">
+          <span class="text-danger" *ngIf="userForm.controls['username'].hasError('required') && (userForm.controls['username'].dirty || userForm.controls['username'].touched)">{{'USERNAME_IS_REQUIRED' | translate}}</span>
+          <span class="text-danger" *ngIf="userForm.controls['username'].hasError('minlength')">{{'MINUMUM_SIX_CHARACTERS' | translate}}</span>
+          <span class="text-danger" *ngIf="userForm.controls['username'].hasError('existingUserByUsername')">{{'USERNAME_ALREADY_EXISTS' | translate}}</span>
+          <span class="text-danger" *ngIf="userForm.errors?.unsupportedUserNameCharacters && (userForm.controls['username'].dirty || userForm.controls['username'].touched)">{{'SPECIAL_CHARACTERS_ARE_NOT_SUPPORTED' | translate}}</span>
+
+        </div>
+
+      </div>
+
+      <!-- Reset password -->
+      <div class="form-group">
+        <label class="col-sm-2 control-label">{{'RESET_PASSWORD' | translate}}</label>
+        <div class="col-sm-7">
+          <button class="btn btn-primary" type="button" (click)="changePasswordModal.open()">
+            <i class="fa fa-key"></i>
+          </button>
+        </div>
+      </div>
+
+      <!--Firstname-->
+      <div class="form-group">
+        <label for="firstname" class="col-sm-2 control-label">{{'FIRST_NAME' | translate}}</label>
+        <div class="col-sm-7">
+          <input autocomplete="off" type="text" id="firstname" name="firstname" formControlName="firstname" class="form-control" required />
+        </div>
+        <div class="col-md-3">
+          <span class="text-danger" *ngIf="userForm.controls['firstname'].hasError('required') && (userForm.controls['firstname'].dirty || userForm.controls['firstname'].touched)">{{'FIRST_NAME_IS_REQUIRED' | translate}}</span>
+        </div>
+      </div>
+
+      <!--Lastname-->
+      <div class="form-group">
+        <label for="lastname" class="col-sm-2 control-label">{{'LAST_NAME' | translate}}</label>
+        <div class="col-sm-7">
+          <input autocomplete="off" type="text" id="lastname" name="lastname" formControlName="lastname" class="form-control" required />
+        </div>
+        <div class="col-md-3">
+          <span class="text-danger" *ngIf="userForm.controls['lastname'].hasError('required') && (userForm.controls['lastname'].dirty || userForm.controls['lastname'].touched)">{{'LAST_NAME_IS_REQUIRED' | translate}}</span>
+        </div>
+      </div>
+
+      <!--Email-->
+      <div class="form-group">
+        <label for="email" class="col-sm-2 control-label">{{'EMAIL' | translate}}</label>
+        <div class="col-sm-7">
+          <input autocomplete="off" type="text" id="email" name="email" formControlName="email" class="form-control" required />
+        </div>
+        <div class="col-md-3">
+          <span class="text-danger" *ngIf="userForm.controls['email'].hasError('required') && (userForm.controls['email'].dirty || userForm.controls['email'].touched)">{{'EMAIL_ADDRESS_IS_REQUIRED' | translate}}</span>
+          <span class="text-danger" *ngIf="userForm.controls['email'].hasError('email') && (userForm.controls['email'].dirty || userForm.controls['email'].touched)">{{'EMAIL_ADDRESS_IS_NOT_VALID' | translate}}</span>
+          <span class="text-danger" *ngIf="userForm.controls['email'].hasError('existingUserByEmail')">Email already exists</span>
+        </div>
+      </div>
+
+      <!--Memorable word-->
+      <div class="form-group">
+        <label for="memorableWord" class="col-sm-2 control-label">{{'MEMORABLE_WORD' | translate}}</label>
+        <div class="col-sm-7">
+          <input autocomplete="off" type="text" id="memorableWord" name="memorableWord" formControlName="memorableWord" class="form-control" required />
+        </div>
+        <div class="col-md-3">
+          <span class="text-danger" *ngIf="userForm.controls['memorableWord'].hasError('required') && (userForm.controls['memorableWord'].dirty || userForm.controls['memorableWord'].touched)">{{'MEMORABLE_WORD_IS_REQUIRED' | translate}}</span>
+        </div>
+      </div>
+
+      <!--Language-->
+      <div class="form-group">
+        <label for="languageIsoName" class="col-sm-2 control-label">{{'LANGUAGE' | translate}}</label>
+        <div class="col-sm-7">
+          <select class="form-control" formControlName="languageIsoName" required>
+            <option [value]="language.isoName" *ngFor="let language of languages">
+              {{language.name}}
+            </option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <span class="text-danger" *ngIf="userForm.controls['languageIsoName'].hasError('required') && (userForm.controls['languageIsoName'].dirty || userForm.controls['languageIsoName'].touched)">{{'LANGUAGE_IS_REQUIRED' | translate}}</span>
+        </div>
+      </div>
+
+      <!--Trade-->
+      <div class="form-group">
+        <label for="tradeEnum" class="col-sm-2 control-label">{{'TRADE' | translate}}</label>
+        <div class="col-sm-7">
+          <enumeration formControlName="tradeEnum" enumeration-name="Trade_Platform" (on-change)="onTradeChange($event)"></enumeration>
+        </div>
+      </div>
+
+      <!--Industry-->
+      <div class="form-group">
+        <label for="industryEnum" class="col-sm-2 control-label">{{'INDUSTRY' | translate}}</label>
+        <div class="col-sm-7">
+          <enumeration formControlName="industryEnum" [enumeration-name]="selectedIndustry"></enumeration>
+        </div>
+      </div>
+
+      <!--DPA-->
+      <div clas="form-group">
+        <label for="hasAgreedDpa" class="col-sm-2 control-label">{{'HAS_AGREED_DPA' | translate}}</label>
+        <div class="col-sm-7" style="padding-left:7.5px">
+          <div for="hasAgreedDpa" class="checkbox c-checkbox">
+            <label>
+              <input autocomplete="off" id="hasAgreedDpa" name="hasAgreedDpa" formControlName="hasAgreedDpa" type="checkbox">
+              <span class="fa fa-check"></span>
+            </label>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="col-lg-6 col-md-6 col-xs-12">
+
+      <!--Address-->
+      <div class="form-group">
+        <label for="address" class="col-sm-2 control-label">{{"ADDRESS" | translate}}</label>
+        <div class="col-sm-7">
+          <textarea class="form-control" id="address" name="address" formControlName="address" rows="3"></textarea>
+        </div>
+      </div>
+
+      <!--Country-->
+      <div class="form-group">
+        <label for="countryCode" class="col-sm-2 control-label">{{'COUNTRY' | translate}}</label>
+        <div class="col-sm-7">
+          <select class="form-control" formControlName="countryCode">
+            <option [value]="country.countryCode" *ngFor="let country of countries">
+              {{country.name}}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <!--Operating Company-->
+      <div class="form-group">
+        <label for="operatingCompany" class="col-sm-2 control-label">{{'SPIRAX_OPERATING_COMPANY' | translate}}</label>
+        <div class="col-sm-7">
+          <input autocomplete="off" type="text" id="operatingCompany" name="operatingCompany" formControlName="operatingCompany" class="form-control" />
+        </div>
+      </div>
+
+      <!--Telephone-->
+      <div class="form-group">
+        <label for="telephone" class="col-sm-2 control-label">{{'TELEPHONE' | translate}}</label>
+        <div class="col-sm-7">
+          <input autocomplete="off" type="tel" id="telephone" name="telephone" formControlName="telephone" class="form-control" numberOnly autocomplete="off" />
+        </div>
+      </div>
+
+      <!--Company-->
+      <div class="form-group">
+        <label for="company" class="col-sm-2 control-label">{{'COMPANY' | translate}}</label>
+        <div class="col-sm-7">
+          <input autocomplete="off" type="text" id="company" name="company" formControlName="company" class="form-control" />
+        </div>
+      </div>
+
+      <!--Position-->
+      <div class="form-group">
+        <label for="companyPosition" class="col-sm-2 control-label">{{'COMPANY_POSITION' | translate}}</label>
+        <div class="col-sm-7">
+          <input autocomplete="off" type="text" id="companyPosition" name="companyPosition" formControlName="companyPosition" class="form-control" />
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</form>
+
+
+
+<sizing-suite-modal *ngIf="!!user"
+                    #changePasswordModal
+                    (modal-cancel)="modalCallbackCancel()"
+                    (modal-ok)="submitPasswordChangeForm()"
+                    [modal-title]="'CHANGE_USER_PASSWORD' | translate"
+                    [modal-ok-text]="'SUBMIT' | translate:true"
+                    [modal-ok-icon]="'fa fa-save'"
+                    [modal-cancel-text]="'CANCEL' | translate:true"
+                    [modal-cancel-icon]="'fa fa-times'"
+                    loaded-child-component-submit-is-disabled-function="checkIfSubmitIsDisabled"
+>
+
+  <form [formGroup]="passwordResetForm" class="form-validate; form-horizontal"  role="form" >
+
+    <!-- Current password -->
+    <div class="form-group">
+      <label class="col-sm-3 control-label">{{'CURRENT_PASSWORD' | translate}}</label>
+      <div class="col-sm-4">
+        <input autocomplete="off" type="password" class="form-control" formControlName="password" required />
+      </div>
+    </div>
+
+    <!-- New password -->
+    <div class="form-group">
+      <label class="col-sm-3 control-label">{{'NEW_PASSWORD' | translate}}</label>
+      <div class="col-sm-4">
+        <input autocomplete="off" type="password" class="form-control" formControlName="newPassword" required />
+      </div>
+    </div>
+
+    <!-- Confirm new password -->
+    <div class="form-group">
+      <label class="col-sm-3 control-label">{{'CONFIRM_NEW_PASSWORD' | translate}}</label>
+      <div class="col-sm-4">
+        <input autocomplete="off" type="password" class="form-control" formControlName="confirmNewPassword" required />
+      </div>
+    </div>
+
+    <div class="form-group has-feedback">
+      <label class="col-sm-3 control-label"> </label>
+      <div class="col-sm-4">
+        <span class="text-danger" *ngIf="passwordResetForm.errors?.mismatch && (passwordResetForm.controls['confirmNewPassword'].dirty || passwordResetForm.controls['confirmNewPassword'].touched)">
+          {{'PASSWORDS_MUST_MATCH' | translate}}
+        </span>
+        <span class="text-danger" *ngIf="passwordResetForm.errors?.unsupportedcharacters
+                                      && (passwordResetForm.controls['confirmNewPassword'].dirty || passwordResetForm.controls['confirmNewPassword'].touched
+                                            || passwordResetForm.controls['newPassword'].dirty   || passwordResetForm.controls['newPassword'].touched
+                                          )">
+            {{'SPECIAL_CHARACTERS_ARE_NOT_SUPPORTED' | translate}}
+        </span>
+
+      </div>
+    </div>
+
+
+  </form>
+
+</sizing-suite-modal>

@@ -1,0 +1,19 @@
+<div class="item user-block">
+  <!-- User picture-->
+  <div class="user-block-picture">
+    <div class="user-block-status">
+      <a routerLink="/profile" routerLinkActive="active"><i class="fa fa-user" style="font-size:60px; bottom:0px; color:#7D848F"></i></a>
+    </div>
+  </div>
+  <!-- Name and Job-->
+  <div class="user-block-info">
+    <p class="user-block-name">
+      {{'LOGGED_IN_AS' | translate:true}} <br />
+      <span class="user-block-username">{{currentUser.name}}</span>
+    </p>
+  </div>
+
+  <button [title]="settings.layout.isCollapsed ? 'Logout' : ''" (click)="logout()" class="btn btn-info center-block user-block-logout">
+    <em class="fa fa-sign-out"></em>&nbsp;<span [hidden]="settings.layout.isCollapsed">{{'LOGOUT' | translate:true}}</span>
+  </button>
+</div>

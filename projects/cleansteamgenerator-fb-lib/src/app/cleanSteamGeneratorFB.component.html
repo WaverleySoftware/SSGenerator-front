@@ -1,0 +1,708 @@
+
+<form [formGroup]="sizingModuleForm" class="form-horizontal" role="form" novalidate>
+    
+  <!--This is required for the 'Select Units' popup to work appropriately-->
+  <div [display-preference]="'LoadUnit'" [display-masterTextKey]="'LOAD'" display-preference-unit-type="LoadUnits" [display-preference-module-group-id]="moduleGroupId" #loadRef="display-preference"></div>        
+
+  <div class="panel-body">
+    <div class="row col-xs-6">
+      <h4 class="panel-title">
+        <label *ngIf="!projectName">{{"UNTITLED_PROJECT" | translate}}</label><label *ngIf="projectName">{{projectName}}</label> - <label *ngIf="!jobName">{{"UNTITLED_JOB" | translate}}</label><label *ngIf="jobName">{{jobName}}</label>
+      </h4>
+    </div>    
+  </div>
+
+  <div class="panel panel-primary">
+    <a [href]="downloadFilePath" *ngIf="!!downloadFilePath" target="_blank">download complete</a>
+    <div class="panel-heading" role="tab" id="processConditionsHeading">
+      
+      <h4 class="panel-title">
+        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseProcessConditions" aria-expanded="true" aria-controls="collapseProcessConditions">
+          {{"PROCESS_CONDITIONS" | translate}}
+        </a>
+      </h4>
+    </div>
+
+    <div id="collapseProcessConditions" class="panel-collapse collapse show" role="tabpanel" aria-labelledby="processConditionsHeading">
+      <div class="panel-body">
+
+        <div class="form-group">
+
+          <div class="col-lg-6">
+            <div class="row">
+              <div class="col-xs-5 text-right">
+                <label class="control-label">{{"PLANT_STEAM_PRESSURE" | translate}}</label>                
+              </div>
+            
+              <div class="col-xs-4">
+              <div class="input-group">
+                <input autocomplete="off" class="form-control" type="number" style="min-width:55px;" formControlName="plantsteampressure" [ngClass]="{'validation-error-class': plantSteamValidationErrorMessage.value}" [popover]="plantSteamValidationErrorMessage.value" placement="top" [display-preference]="'PressureUnit'" [display-masterTextKey]="'PRESSURE'" display-preference-unit-type="PressureUnits" [display-preference-module-group-id]="moduleGroupId" #pressureRef="display-preference"/>
+                <span class="input-group-addon">{{pressureRef.preference.masterTextKey | translate}}</span>
+              </div>
+            </div>
+
+            <!--<div class="col-xs-3" *ngIf="pressureDifferentialErrorMessage">
+              <i class="fa fa-info-circle cross-validation-error-class" [tooltip]="pressureDifferentialErrorMessage"></i>
+            </div>-->
+            </div>
+
+            <div class="row">
+              <div class="col-xs-5 text-right">
+                <label class="control-label">{{"CLEAN_STEAM_PRESSURE" | translate}}</label>
+              </div>
+              <div class="col-xs-4">
+                <div class="input-group">
+                  <input autocomplete="off" class="form-control" type="number" style="min-width:55px;" formControlName="cleansteampressure" [ngClass]="{'validation-error-class': cleanSteamValidationErrorMessage.value}" [popover]="cleanSteamValidationErrorMessage.value" placement="top" [display-preference]="'PressureUnit'" [display-masterTextKey]="'PRESSURE'" display-preference-unit-type="PressureUnits" [display-preference-module-group-id]="moduleGroupId" #pressureRef="display-preference" />
+                  <span class="input-group-addon">{{pressureRef.preference.masterTextKey | translate}}</span>
+                </div>
+              </div>
+              <!--<div class="col-xs-3" *ngIf="pressureDifferentialErrorMessage">
+                <i class="fa fa-info-circle cross-validation-error-class" [tooltip]="pressureDifferentialErrorMessage"></i>
+              </div>-->
+            </div>
+
+            <div class="row">
+              <div class="col-xs-5 text-right">
+                <label class="control-label">{{"FEEDWATER_PRESSURE" | translate}}</label>
+              </div>
+              <div class="col-xs-4">
+                <div class="input-group">
+                  <input autocomplete="off" class="form-control" type="number" style="min-width:55px;" formControlName="feedwaterpressure" [ngClass]="{'validation-error-class': feedwaterPressureValidationErrorMessage.value}" [popover]="feedwaterPressureValidationErrorMessage.value" placement="top" [display-preference]="'PressureUnit'" [display-masterTextKey]="'PRESSURE'" display-preference-unit-type="PressureUnits" [display-preference-module-group-id]="moduleGroupId" #pressureRef="display-preference" />
+                  <span class="input-group-addon">{{pressureRef.preference.masterTextKey | translate}}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-xs-5 text-right">
+                <label class="control-label">{{"FEEDWATER_TEMPERATURE" | translate}}</label>
+              </div>
+              <div class="col-xs-4">
+                <div class="input-group">
+                  <input autocomplete="off" class="form-control" type="number" style="min-width:55px;" formControlName="feedwatertemperature" [ngClass]="{'validation-error-class': feedwaterTemperatureValidationErrorMessage.value}" [popover]="feedwaterTemperatureValidationErrorMessage.value" placement="top" [display-preference]="'TemperatureUnit'" [display-masterTextKey]="'TEMPERATURE'" display-preference-unit-type="TemperatureUnits" [display-preference-module-group-id]="moduleGroupId" #temperatureRef="display-preference" />
+                  <span class="input-group-addon">{{temperatureRef.preference.masterTextKey | translate}}</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="col-lg-6">           
+
+            <div class="row">
+              <div class="col-xs-5 text-right">
+                <label class="control-label">{{"REQUIRED_CLEAN_STEAM_FLOWRATE" | translate}}</label>
+              </div>
+          
+              <div class="col-xs-4">
+                <div class="input-group">
+                  <input autocomplete="off" class="form-control" type="number" style="min-width:55px;" formControlName="requiredcleansteamflowrate" [ngClass]="{'validation-error-class': cleanSteamFlowrateValidationErrorMessage.value}" [popover]="cleanSteamFlowrateValidationErrorMessage.value" placement="top" [display-preference]="'MassFlowUnit'" [display-masterTextKey]="'MASS_FLOW'" display-preference-unit-type="MassFlowUnits" [display-preference-module-group-id]="moduleGroupId" #massFlowRef="display-preference" />
+                  <span class="input-group-addon">{{massFlowRef.preference.masterTextKey | translate}}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-xs-5 text-right">
+                <label class="control-label">{{"TDS_BLOWDOWN_PERCENTAGE" | translate}}</label>
+              </div>
+              <div class="col-xs-4">
+                <div class="input-group">
+                  <input autocomplete="off" class="form-control" type="number" style="min-width:55px;" formControlName="tdsblowdownpercentage" [ngClass]="{'validation-error-class': tdsBlowdownValidationErrorMessage.value}" [popover]="tdsBlowdownValidationErrorMessage.value" placement="top"/>
+                  <span class="input-group-addon">{{"PERCENT" | translate}}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-xs-5 text-right">
+                <label class="control-label">{{"FLOWRATE_OF_NON_CONDENSIBLE_GASES" | translate}}</label>
+              </div>
+
+              <div class="col-xs-4">
+                <div class="input-group">
+                  <input autocomplete="off" class="form-control" type="number" style="min-width:55px;" formControlName="flowrateofnoncondensiblegases" [ngClass]="{'validation-error-class': flowrateOfNonCondensibleGasesErrorMessage.value}" [popover]="flowrateOfNonCondensibleGasesErrorMessage.value" placement="top" [display-preference]="'MassFlowUnit'" [display-masterTextKey]="'MASS_FLOW'" display-preference-unit-type="MassFlowUnits" [display-preference-module-group-id]="moduleGroupId" #massFlowRef="display-preference" />
+                  <span class="input-group-addon">{{massFlowRef.preference.masterTextKey | translate}}</span>
+                </div>
+              </div>
+            </div>            
+
+          </div>
+          
+        </div>
+       
+      </div>
+    </div>
+  </div>  
+
+  <div class="panel panel-primary" *ngIf="!!isCSGFBSizingDone">
+
+    <div class="panel-heading" role="tab" id="resultsHeading">
+      <h4 class="panel-title">
+        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseResults" aria-expanded="true" aria-controls="collapseResults">
+          {{"RESULTS" | translate}}
+        </a>
+      </h4>
+    </div>
+    <div id="collapseResults" class="panel-collapse collapse show" role="tabpanel" aria-labelledby="resultsHeading">
+
+      <div class="panel-body">
+        <div class="col-xs-12">
+
+          <ngx-datatable #csgFBOutputDataTable
+                         class="bootstrap"
+                         [headerHeight]="40"
+                         [limit]="10"
+                         [columnMode]="'force'"
+                         [footerHeight]="40"
+                         [rowHeight]="'auto'"
+                         [rows]="csgFBOutputDataRows"
+                         [selected]="selectedOutputData"
+                         [selectionType]="'single'"
+                         (select)="onSelect($event)">
+
+            
+            <ngx-datatable-row-detail [rowHeight]="getHeight" #myDetailRow>
+              <ng-template let-row="row" let-expanded="expanded" ngx-datatable-row-detail-template>
+                <div *ngFor="let m of row.modelSizingMessages">
+                  <div class="row col-xs-12">
+                    <div class="col-xs-1 text-center">
+                      <i [class]="getSeverityIcon(m.severity)"></i>
+                    </div>
+                    <div class="col-xs-10">
+                      <span>{{m.messageKey | translate}}</span>
+                      <span *ngIf="m.value !== 0 && m.unitKey"> ({{m.value}} {{m.unitKey | translate:false}})</span>
+                    </div>
+                  </div>
+                </div>
+              </ng-template>
+            </ngx-datatable-row-detail>
+
+            
+            <ngx-datatable-column >
+              <ng-template let-row="row" let-expanded="expanded" ngx-datatable-cell-template>
+                <i [class]="getRowSeverityIcon(row)"></i>
+              </ng-template>
+            </ngx-datatable-column>
+
+            
+            <ngx-datatable-column [name]="'MODEL' | translate" prop="numberOfPlates">
+              <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">                
+                  {{value}}                
+              </ng-template>
+            </ngx-datatable-column>
+            
+            <ngx-datatable-column [name]="'CLEAN_STEAM_FLOWRATE' | translate" prop="displayCleanSteamFlowrate">
+              <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+                {{value}} {{massFlowRef.preference.masterTextKey | translate}}
+              </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column [name]="'PLANT_STEAM_FLOWRATE' | translate" prop="displayPlantSteamFlowrate">
+              <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+                {{value}} {{massFlowRef.preference.masterTextKey | translate}}
+              </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column [name]="'FEEDWATER_FLOWRATE' | translate" prop="displayFeedwaterFlowrate">
+              <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+                {{value}} {{massFlowRef.preference.masterTextKey | translate}}
+              </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column [name]="'BLOW_DOWN_FLOWRATE' | translate" prop="displayBlowDownFlowrate">
+              <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+                {{value}} {{massFlowRef.preference.masterTextKey | translate}}
+              </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column [name]="'ENTHALPY_OF_WATER_AT_HOTSIDE_OUTLET_TEMPERATURE' | translate" prop="displayEnthalpyOfWaterAtHotsideOutletTemperature">
+              <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+                {{value}} {{"UNIT_KJ_FSLASH_KG" | translate}}
+              </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column [name]="'HEAT_EXCHANGER_DUTY' | translate" prop="displayHeatExchangerDuty">
+              <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+                {{value}} {{loadRef.preference.masterTextKey | translate}}
+              </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column [width]="25">
+              <ng-template let-row="row" let-expanded="expanded" ngx-datatable-cell-template>                
+                <div [class]="getOverdesignColor(row)"></div>
+              </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column [name]="'OVERDESIGN' | translate" prop="displayOverdesign">
+              <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+                {{value}} {{"PERCENT" | translate}}
+              </ng-template>
+            </ngx-datatable-column>
+
+          </ngx-datatable>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pricing Options -->
+  <!--<div class="panel panel-primary" *ngIf="!!isCSGModelSelected">
+
+    <div class="panel-heading" role="tab" id="optionsHeading">
+      <h4 class="panel-title">
+        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOptions" aria-expanded="true" aria-controls="collapseOptions">
+          {{"PRICING_OPTIONS" | translate}}
+        </a>
+      </h4>
+    </div>
+    <div id="collapseOptions" class="panel-collapse collapse show" role="tabpanel" aria-labelledby="optionsHeading">
+
+    <div class="panel-body">
+      
+    
+    <div class="col-lg-12 panel panel-body" [hidden]="hideAllPricing">
+      <div class="col-lg-6">
+        <div class="row" [hidden]="hideManufactureCosts">
+          <div class="form-group">
+            <div class="col-xs-4 text-right">
+              <label class="control-label">{{"SELLING_MARKUP" | translate}}</label>
+            </div>
+            <div class="col-xs-5">
+              <input autocomplete="off" class="form-control" type="number" style="min-width:55px;" formControlName="sellingMarkupFormControl" (change)="onSellingMarkupChange($event.target.value)" twoDigitDecimalNumber/>
+            </div>
+          </div>
+        </div>
+        <div class="row" [hidden]="hideManufactureCosts">
+          <div class="form-group">
+            <div class="col-xs-4 text-right">
+              <label class="control-label">{{"GROSS_MARGIN" | translate}}</label>
+            </div>
+            <div class="col-xs-5">
+              <div class="input-group">
+                <input autocomplete="off" class="form-control" type="number" style="min-width:55px;" formControlName="grossMarginFormControl" (change)="onGrossMarginChange($event.target.value)" twoDigitDecimalNumber/>
+                <span class="input-group-addon">{{"PERCENT" | translate}}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group">
+            <div class="col-xs-4 text-right">
+              <label class="control-label">{{"SERVICE_OFFERING" | translate}}</label>
+            </div>
+            <div class="col-xs-5">
+              <enumeration formControlName="serviceOfferingOptionsFormControl" enumeration-name="CSG_Service_Offering" (on-change)="onServiceOfferingChange($event)" (on-load)="onServiceOfferingLoad($event)"></enumeration>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="col-lg-6">
+        <div class="row" [hidden]="hideManufactureCosts">
+          <div class="form-group">
+            <div class="col-xs-4 text-right">
+              <label class="control-label">{{"SSP" | translate}}</label>
+            </div>
+            <div class="col-xs-5">
+              <div class="input-group">
+                <span class="input-group-addon">{{sellingCurrencySymbol}}</span>
+                <input autocomplete="off" class="form-control" type="text" formControlName="totalSSPFormControl" value="{{display_SSP}}"/>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group">
+            <div class="col-xs-4 text-right">
+              <label class="control-label">{{"SELLING_PRICE" | translate}}</label>
+            </div>
+            <div class="col-xs-5">
+              <div class="input-group">
+                <span class="input-group-addon">{{sellingCurrencySymbol}}</span>
+                <input autocomplete="off" class="form-control" type="text" formControlName="totalSellingPriceFormControl" value="{{display_SellingPrice}}"/>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group">
+            <div class="col-xs-4 text-right">
+              <label class="control-label">{{serviceOfferingKey}}</label>
+            </div>
+            <div class="col-xs-5">
+              <div class="input-group">
+                <span class="input-group-addon">{{sellingCurrencySymbol}}</span>
+                <input autocomplete="off" class="form-control" type="text" formControlName="serviceOfferingFormControl" value="{{display_ServiceOfferingPrice}}"/>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group">
+            <div class="col-xs-4 text-right">
+              <label class="control-label">{{"DELIVERY_COST" | translate}}</label>
+            </div>
+            <div class="col-xs-5">
+              <div class="input-group">
+                <span class="input-group-addon">{{sellingCurrencySymbol}}</span>
+                <input autocomplete="off" class="form-control" type="text" formControlName="deliveryCostFormControl" value="{{display_DeliveryPrice}}"/>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group">
+            <div class="col-xs-4 text-right">
+              <label class="control-label">{{"TOTAL_PRICE" | translate}}</label>
+            </div>
+            <div class="col-xs-5">
+              <div class="input-group">
+                <span class="input-group-addon">{{sellingCurrencySymbol}}</span>
+                <input autocomplete="off" class="form-control" type="text" formControlName="totalPriceFormControl" value="{{display_TotalPrice}}"/>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>-->
+
+    <!--Pricing Options-->
+    <!--<div class="col-lg-12" (change)="calculatePrice()">-->
+    <!--Column 1-->
+    <!--<div class="col-lg-6">-->
+      <!--Design Code-->
+      <!--<div class="row" *ngIf="showDesignCodeOption">-->
+      <!--<div class="row">
+        <div class="form-group">
+          <div class="col-xs-4 text-right">
+            <label class="control-label">{{"DESIGN_CODE" | translate}}</label>
+          </div>
+          <div class="col-xs-5">
+            <enumeration formControlName="design_Code_Enumeration" [filter-by]="design_Code_List" [enumeration-name]="design_Code_Enum_Name" [opco-override]="true" #design_Code_Enum></enumeration>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group">
+          <div class="col-xs-4 text-right">
+            <label class="control-label">{{"VALVE_ACTUATION" | translate}}</label>
+          </div>
+          <div class="col-xs-5">
+            <enumeration formControlName="valve_Actuation_Enumeration" [filter-by]="valve_Actuation_List" [enumeration-name]="valve_Actuation_Enum_Name" [opco-override]="true" (on-load)="onLoadOptionEvent('valve_Actuation_Enum', $event)" (on-change)="onChangeOptionEvent('valve_Actuation_Enum', $event)" #valve_Actuation_Enum></enumeration>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group">
+          <div class="col-xs-4 text-right">
+            <label class="control-label">{{"COMMUNICATION_INTERFACE" | translate}}</label>
+          </div>
+          <div class="col-xs-5">
+            <enumeration formControlName="communication_Interface_Enumeration" [filter-by]="communication_Interface_List" [enumeration-name]="communication_Interface_Enum_Name" [opco-override]="true" #communication_Interface_Enum></enumeration>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group">
+          <div class="col-xs-4 text-right">
+            <label class="control-label">{{"CONTROL_PANEL_LOCATION" | translate}}</label>
+          </div>
+          <div class="col-xs-5">
+            <enumeration formControlName="control_Panel_Location_Enumeration" [filter-by]="control_Panel_Location_List" [enumeration-name]="control_Panel_Location_Enum_Name" [opco-override]="true" #control_Panel_Location_Enum></enumeration>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group">
+          <div class="col-xs-4 text-right">
+            <label class="control-label">{{"HANDLING_WHEELS_AND_FEET" | translate}}</label>
+          </div>
+          <div class="col-xs-5">
+            <enumeration formControlName="wheels_And_Feet_Enumeration" [filter-by]="wheels_And_Feet_List" [enumeration-name]="wheels_And_Feet_Enum_Name" [opco-override]="true" #wheels_And_Feet_Enum></enumeration>
+          </div>
+        </div>
+      </div>
+      <div class="row" [hidden]="!show_plant_Steam_Line_Trapping">
+        <div class="form-group">
+          <div class="col-xs-4 text-right">
+            <label class="control-label">{{"PLANT_STEAM_LINE_TRAPPING" | translate}}</label>
+          </div>
+          <div class="col-xs-5">
+            <enumeration formControlName="plant_Steam_Line_Trapping_Enumeration" [filter-by]="plant_Steam_Line_Trapping_List" [enumeration-name]="plant_Steam_Line_Trapping_Enum_Name" [opco-override]="true" (on-load)="onLoadOptionEvent('plant_Steam_Line_Trapping_Enum', $event)" #plant_Steam_Line_Trapping_Enum></enumeration>
+          </div>
+        </div>
+      </div>
+      <div class="row" [hidden]="!show_sample_Cooler">
+        <div class="form-group">
+          <div class="col-xs-4 text-right">
+            <label class="control-label">{{"SAMPLE_COOLERS" | translate}}</label>
+          </div>
+          <div class="col-xs-5">
+            <enumeration formControlName="sample_Cooler_Enumeration" [filter-by]="sample_Cooler_List" [enumeration-name]="sample_Cooler_Enum_Name" [opco-override]="true" (on-load)="onLoadOptionEvent('sample_Cooler_Enum', $event)" #sample_Cooler_Enum></enumeration>
+          </div>
+        </div>
+      </div>
+      <div class="row" [hidden]="!show_independent_Low_Level_Alarm">
+        <div class="form-group">
+          <div class="col-xs-4 text-right">
+            <label class="control-label">{{"INDEPENDENT_LOW_LEVEL_ALARM" | translate}}</label>
+          </div>
+          <div class="col-xs-5">
+            <enumeration formControlName="independent_Low_Level_Alarm_Enumeration" [filter-by]="independent_Low_Level_Alarm_List" [enumeration-name]="independent_Low_Level_Alarm_Enum_Name" [opco-override]="true" (on-load)="onLoadOptionEvent('independent_Low_Level_Alarm_Enum', $event)" #independent_Low_Level_Alarm_Enum></enumeration>
+          </div>
+        </div>
+      </div>
+      <div class="row" [hidden]="!show_intelligent_Diagnostics">
+        <div class="form-group">
+          <div class="col-xs-4 text-right">
+            <label class="control-label">{{"INTELLIGENT_DIAGNOSTICS" | translate}}</label>
+          </div>
+          <div class="col-xs-5">
+            <enumeration formControlName="intelligent_Diagnostics_Enumeration" [filter-by]="intelligent_Diagnostics_List" [enumeration-name]="intelligent_Diagnostics_Enum_Name" [opco-override]="true" (on-load)="onLoadOptionEvent('intelligent_Diagnostics_Enum', $event)" #intelligent_Diagnostics_Enum></enumeration>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group">
+          <div class="col-xs-4 text-right">
+            <label class="control-label">{{"TEST_AND_CERTIFICATIONS" | translate}}</label>
+          </div>
+          <div class="col-xs-5">
+            <enumeration formControlName="test_And_Certification_Enumeration" [filter-by]="test_And_Certification_List" [enumeration-name]="test_And_Certification_Enum_Name" [opco-override]="true" #test_And_Certification_Enum></enumeration>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group">
+          <div class="col-xs-4 text-right">
+            <label class="control-label">{{"OTHER_TEXT_DUPLICATE_ID_1297" | translate}}</label>
+          </div>
+          <div class="col-xs-5">
+            <enumeration formControlName="other_Enumeration" [filter-by]="other_List" [enumeration-name]="other_Enum_Name" [opco-override]="true" #other_Enum></enumeration>
+          </div>
+        </div>
+      </div>
+    </div>-->
+
+    <!--Column 2-->
+    <!--<div class="col-lg-6">
+
+      <div class="row">
+        <div class="form-group">
+          <div class="col-xs-4 text-right">
+            <label class="control-label">{{"SHELL_TYPE" | translate}}</label>
+          </div>
+          <div class="col-xs-5">
+            <enumeration formControlName="shell_Type_Enumeration" [filter-by]="shell_Type_List" [enumeration-name]="shell_Type_Enum_Name" [opco-override]="true" #shell_Type_Enum></enumeration>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group">
+          <div class="col-xs-4 text-right">
+            <label class="control-label">{{"CONTROL" | translate}}</label>
+          </div>
+          <div class="col-xs-5">
+            <enumeration formControlName="control_Enumeration" [filter-by]="control_List" [enumeration-name]="control_Enum_Name" [opco-override]="true" #control_Enum></enumeration>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group">
+          <div class="col-xs-4 text-right">
+            <label class="control-label">{{"FRAME_AND_CABINET" | translate}}</label>
+          </div>
+          <div class="col-xs-5">
+            <enumeration formControlName="frame_And_Cabinet_Enumeration" [filter-by]="frame_And_Cabinet_List" [enumeration-name]="frame_And_Cabinet_Enum_Name" [opco-override]="true" (on-load)="onLoadOptionEvent('frame_And_Cabinet_Enum', $event)" (on-change)="onChangeOptionEvent('frame_And_Cabinet_Enum', $event)" #frame_And_Cabinet_Enum></enumeration>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group">
+          <div class="col-xs-4 text-right">
+            <label class="control-label">{{"INSULATION" | translate}}</label>
+          </div>
+          <div class="col-xs-5">
+            <enumeration formControlName="insulation_Enumeration" [filter-by]="insulation_List" [enumeration-name]="insulation_Enum_Name" [opco-override]="true" #insulation_Enum></enumeration>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group">
+          <div class="col-xs-4 text-right">
+            <label class="control-label">{{"PLANT_STEAM_INLET_SHUTOFF_VALVE" | translate}}</label>
+          </div>
+          <div class="col-xs-5">
+            <enumeration formControlName="plant_Steam_Inlet_Shut_Off_Valve_Enumeration" [filter-by]="plant_Steam_Inlet_Shut_Off_Valve_List" [enumeration-name]="plant_Steam_Inlet_Shut_Off_Valve_Enum_Name" [opco-override]="true" #plant_Steam_Inlet_Shut_Off_Valve_Enum></enumeration>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group">
+          <div class="col-xs-4 text-right">
+            <label class="control-label">{{"TDS_CONTROL_SYSTEM" | translate}}</label>
+          </div>
+          <div class="col-xs-5">
+            <enumeration formControlName="tds_Control_System_Enumeration" [filter-by]="tds_Control_System_List" [enumeration-name]="tds_Control_System_Enum_Name" [opco-override]="true" #tds_Control_System_Enum></enumeration>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group">
+          <div class="col-xs-4 text-right">
+            <label class="control-label">{{"FEEDWATER_PRESSURISATION" | translate}}</label>
+          </div>
+          <div class="col-xs-5">
+            <enumeration formControlName="feedwater_Pressurisation_Enumeration" [filter-by]="feedwater_Pressurisation_List" [enumeration-name]="feedwater_Pressurisation_Enum_Name" (on-change)="onChangeOptionEvent('feedwater_Pressurisation_Enum', $event)" (on-load)="onLoadOptionEvent('feedwater_Pressurisation_Enum', $event)" #feedwater_Pressurisation_Enum></enumeration>
+          </div>
+        </div>
+      </div>
+      <div class="row" [hidden]="!show_clean_Steam_Outlet_Shut_Off_Valve">
+        <div class="form-group">
+          <div class="col-xs-4 text-right">
+            <label class="control-label">{{"CLEAN_STEAM_OUTLET_SHUTOFF_VALVE" | translate}}</label>
+          </div>
+          <div class="col-xs-5">
+            <enumeration formControlName="clean_Steam_Outlet_Shut_Off_Valve_Enumeration" [filter-by]="clean_Steam_Outlet_Shut_Off_Valve_List" [enumeration-name]="clean_Steam_Outlet_Shut_Off_Valve_Enum_Name" [opco-override]="true" (on-load)="onLoadOptionEvent('clean_Steam_Outlet_Shut_Off_Valve_Enum', $event)" #clean_Steam_Outlet_Shut_Off_Valve_Enum></enumeration>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group">
+          <div class="col-xs-4 text-right">
+            <label class="control-label">{{"PHASE_AND_VOLTAGE" | translate}}</label>
+          </div>
+          <div class="col-xs-5">
+            <enumeration formControlName="phase_Voltage_Enumeration" enumeration-name="CSG_Phase_Voltage" [filter-by]="phaseVoltageList" #pumpEnum></enumeration>
+          </div>
+        </div>
+      </div>
+      <div class="row" [hidden]="!show_feedwater_Pre_Heating_Degassing">
+        <div class="form-group">
+          <div class="col-xs-4 text-right">
+            <label class="control-label">{{"FEEDWATER_PRE_HEATING_DEGASSING" | translate}}</label>
+          </div>
+          <div class="col-xs-5">
+            <enumeration formControlName="feedwater_Pre_Heating_Degassing_Enumeration" [filter-by]="feedwater_Pre_Heating_Degassing_List" [enumeration-name]="feedwater_Pre_Heating_Degassing_Enum_Name" [opco-override]="true" (on-load)="onLoadOptionEvent('feedwater_Pre_Heating_Degassing_Enum', $event)" #feedwater_Pre_Heating_Degassing_Enum></enumeration>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    </div>
+
+    </div>
+    </div>
+  </div>-->
+
+  <!-- Spec Sheet Header -->
+  <!--<div class="panel panel-primary" *ngIf="!!isCSGModelSelected">
+    <div class="panel-heading" role="tab" id="specSheetHeading">
+      <h4 class="panel-title">
+        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOptions" aria-expanded="true" aria-controls="collapseOptions">
+          {{"SPEC_SHEET_HEADER_DETAILS" | translate}}
+        </a>
+      </h4>
+    </div>
+
+    <div id="collapseSpecSheetHeader" class="panel-collapse collapse show" role="tabpanel" aria-labelledby="specSheetHeader">
+      <div class="panel-body">
+
+       
+        <div class="col-lg-6">
+            <div class="form-group">
+              <div class="col-xs-4 text-right">
+                <label class="control-label">{{"SHEET" | translate}}</label>
+              </div>
+              <div class="col-xs-5">
+                <div class="input-group">
+                  <input autocomplete="off" class="form-control" type="text" formControlName="sheet" />
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <div class="col-xs-4 text-right">
+                <label class="control-label">{{"REVISION_NUMBER" | translate}}</label>
+              </div>
+              <div class="col-xs-5">
+                <div class="input-group">
+                  <input autocomplete="off" class="form-control" type="text" formControlName="revisionNumber" />
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <div class="col-xs-4 text-right">
+                <label class="control-label">{{"PROJECT_TYPE" | translate}}</label>
+              </div>
+              <div class="col-xs-5">
+                <div class="input-group">
+                  <input autocomplete="off" class="form-control" type="text" formControlName="projectType" />
+                </div>
+              </div>
+            </div>
+          
+        </div>-->
+
+        <!--Col 2-->
+        <!--<div class="col-lg-6">
+          <div class="form-group">
+            <div class="col-xs-4 text-right">
+              <label class="control-label">{{"QUANTITY" | translate}}</label>
+            </div>
+            <div class="col-xs-5">
+              <div class="input-group">
+                <input autocomplete="off" class="form-control" type="text" formControlName="quantity" />
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="col-xs-4 text-right">
+              <label class="control-label">{{"AO_NUMBER" | translate}}</label>
+            </div>
+            <div class="col-xs-5">
+              <div class="input-group">
+                <input autocomplete="off" class="form-control" type="text" formControlName="aoNumber" />
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="col-xs-4 text-right">
+              <label class="control-label">{{"ORDER_NUMBER" | translate}}</label>
+            </div>
+            <div class="col-xs-5">
+              <div class="input-group">
+                <input autocomplete="off" class="form-control" type="text" formControlName="orderNumber" />
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div>&nbsp;</div>
+
+        <div class="form-group; " > 
+          <div class="col-xs-3"> 
+            <label class="control-label">{{"NOTES_TEXT_DUPLICATE_ID_959" | translate}}</label>
+          </div>
+          <div class="col-xs-5;">
+            <div class="input-group; " > 
+              <textarea class="form-control" formControlName="notes" rows="3"></textarea>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      
+    </div>
+
+  </div>-->
+  
+</form>

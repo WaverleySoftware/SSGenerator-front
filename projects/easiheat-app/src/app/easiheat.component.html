@@ -1,0 +1,998 @@
+
+<form [formGroup]="sizingModuleForm" class="form-horizontal" role="form" novalidate>
+
+  <!--This is required for the 'Select Units' popup to work appropriately-->
+  <div [display-preference]="'LoadUnit'" [display-masterTextKey]="'LOAD'" display-preference-unit-type="LoadUnits" [display-preference-module-group-id]="moduleGroupId" #loadRef="display-preference"></div>
+
+  <div class="panel-body">
+    <div class="row col-xs-6">
+      <h4 class="panel-title">
+        <label *ngIf="!projectName">{{"UNTITLED_PROJECT" | translate}}</label><label *ngIf="projectName">{{projectName}}</label> - <label *ngIf="!jobName">{{"UNTITLED_JOB" | translate}}</label><label *ngIf="jobName">{{jobName}}</label>
+      </h4>
+    </div>
+  </div>
+
+
+  <div class="panel panel-primary" *blockUI="'conditions-section'">
+    <a [href]="downloadFilePath" *ngIf="!!downloadFilePath" target="_blank">download complete</a>
+    <div class="panel-heading" role="tab" id="processConditionsHeading">
+
+      <h4 class="panel-title">
+        <a role="button" data-toggle="collapse" data-target="#collapseProcessConditions" href="#collapseProcessConditions" aria-expanded="true" aria-controls="collapseProcessConditions">
+          {{"DUTY_VALUES" | translate}}
+        </a>
+      </h4>
+
+    </div>
+    <div class="row">
+
+      <div class="col-md-3">
+        <div style="padding-left:15px">
+          <h5 style="margin-bottom: 5px" *ngIf="dhw">{{"DOMESTIC_HOT_WATER" | translate}}</h5>
+          <h5 style="margin-bottom: 5px" *ngIf="!dhw">{{"HEATING" | translate}}</h5>
+          <button style="color: white; border-radius: 3px; border : solid 2px #649cb4; height:26px" [ngStyle]="{'background-color' : dhw ? '#649cb4' : '#97bccc'}" (click)="dhw = true; htgcc = false; inputPRV = false; SetApplicationType();">DHW</button>
+          <button style="color: white; border-radius: 3px; border : solid 2px #649cb4; height:26px" [ngStyle]="{'background-color' : dhw ? '#97bccc' : '#649cb4'}" (click)="dhw = false; htgcc = true; SetApplicationType();">HTG</button>
+        </div>
+      </div>
+
+      <!--<div class="col-md-2">
+        <div style="padding-top:15px; margin-left:-75px">
+          <img *ngIf="dhw" style="width:175px ; height: 120px;" src="src/assets/DHWPhoto_Big.png">
+          <img *ngIf="!dhw" style="width:120px ; height: 120px;" src="src/assets/HTGPhoto_Big.png">
+        </div>
+      </div>-->
+
+    </div>
+    
+    <div class="panel panel-primary" style="margin-top:25px">
+      <div class="panel-heading" role="tab" id="processConditionsHeading">
+
+        <h4 class="panel-title">
+          <a>
+            {{"PRIMARY" | translate}}
+          </a>
+        </h4>
+
+      </div>
+
+
+      <div id="collapseProcessConditions" class="panel-collapse collapse show" data-parent="#processConditionsHeading" role="tabpanel" aria-labelledby="processConditionsHeading">
+        <div class="panel-body" (keydown.enter)="onEnterKeydown($event)">
+
+          <div class="row">
+            <div class="col-md-6 col-sm-12" style="width:75%">
+              <!--{{"CONTROL_TYPE_DUPLICATE_ID_2894" | translate}} Rafal translations are need it-->
+              <!--<p style="display: inline-block; margin-right: 5px">Control Type: </p>-->
+              <div class="form-group" *ngIf="!dhw">
+                <div class="col-md-3 text-right">
+                  <label class="control-label">Control Type</label>
+                </div>
+                <div class="col-md-6">
+                  <div class="input-group">
+                    <button style="color: white; margin-top:5px; border : solid 2px #649cb4; border-radius: 3px" [ngStyle]="{'background-color' : htgcc ? '#649cb4' : '#97bccc'}" (click)="htgcc = true; SetApplicationType()">{{"CONDENSATE_CONTROL" | translate}}</button>
+                    <button *ngIf="sellSteamControl" style="color: white; margin-top:5px; border : solid 2px #649cb4; border-radius: 3px" [ngStyle]="{'background-color' : htgcc ? '#97bccc' : '#649cb4'}" (click)="htgcc = false; inputPRV = false; SetApplicationType()">{{"STEAM_CONTROL" | translate}}</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="row">
+
+            <!--Left Column-->
+            <div class="col-md-6 col-sm-12" style="width:45%">
+
+              <div class="form-group" *ngIf="inputPRV">
+                <div class="col-md-5 text-right">
+                  <label class="control-label">{{"PACKAGE_INLET_PRESSURE" | translate}}</label>
+                </div>
+                <div class="col-md-6">
+                  <div class="input-group">
+                    <input autocomplete="off" id="packageinletpressure" class="form-control" type="number" style="min-width:55px;" formControlName="packageinletpressure" (change)="validateProcessConditions()" [ngClass]="{'validation-error-class': packageInletPressureErrorMessage.value}" [popover]="packageInletPressureErrorMessage.value" triggers="mouseenter:mouseleave keyup:keydown mouseenter:focusout" placement="top" [display-preference]="'PressureUnit'" [display-masterTextKey]="'PRESSURE'" display-preference-unit-type="PressureUnits" [display-preference-module-group-id]="moduleGroupId" #pressureRef="display-preference" />
+                    <span class="input-group-addon">{{pressureRef.preference.masterTextKey | translate}}</span>
+                  </div>
+                </div>
+
+                <div class="col-xs-3" *ngIf="pressureDifferentialErrorMessage">
+                  <i class="fa fa-info-circle cross-validation-error-class" [tooltip]="packageInletPressureErrorMessage"></i>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <div class="col-md-5 text-right">
+                  <label class="control-label">{{"INLET_PRESSURE" | translate}}</label>
+                </div>
+                <div class="col-md-6">
+                  <div class="input-group">
+                    <input autocomplete="off" id="inletpressure" class="form-control" type="number" style="min-width:55px;" formControlName="inletpressure" (change)="validateProcessConditions()" [ngStyle]="{'border' : inletPressureValidationErrorMessage.value ? 'solid 1px #ff000d' : ''}" [ngClass]="{'validation-error-class': inletPressureValidationErrorMessage.value}" [popover]="inletPressureValidationErrorMessage.value" triggers="mouseenter:mouseleave keyup:keydown mouseenter:focusout" placement="top" [display-preference]="'PressureUnit'" [display-masterTextKey]="'PRESSURE'" display-preference-unit-type="PressureUnits" [display-preference-module-group-id]="moduleGroupId" #pressureRef="display-preference" />
+                    <span class="input-group-addon">{{pressureRef.preference.masterTextKey | translate}}</span>
+                  </div>
+                </div>
+
+                <div class="col-xs-3" *ngIf="pressureDifferentialErrorMessage">
+                  <i class="fa fa-info-circle cross-validation-error-class" [tooltip]="inletPressureValidationErrorMessage"></i>
+                </div>
+              </div>
+
+              <div class="form-group" *ngIf="dhw || (!dhw && !htgcc)">
+                <div class="col-md-5 text-right">
+                  <label class="control-label">{{"NOISE_LIMIT" | translate}}</label>
+                </div>
+                <div class="col-md-6">
+                  <div class="input-group">
+                    <enumeration  (keydown.enter)="onDisableEnter($event)" id="noiseLimit" formControlName="noiseLimit_Enumeration" style="min-width:55px;" [filter-by]="noise_Limit_List" (change)="validateProcessConditions()" enumeration-name="NoiseLimit_EasiHeat"></enumeration>
+                  </div>
+                </div>
+
+                <div class="col-xs-3" *ngIf="pressureDifferentialErrorMessage">
+                  <i class="fa fa-info-circle cross-validation-error-class" [tooltip]="pressureDifferentialErrorMessage"></i>
+                </div>
+              </div>
+
+              <div class="form-group" *ngIf="!dhw && htgcc && prvAllowed">
+                <div class="col-md-5 text-right">
+                  <label class="control-label">{{"PRV" | translate}}</label>
+                </div>
+                <div class="col-md-5">
+                  <div class="input-group">
+                    <div class="checkbox c-checkbox">
+                      <label>
+                        <input autocomplete="off" id="inputPRV" name="inputPRV" type="checkbox" [checked]="inputPRV" (change)="inputPRVChanged()" />
+                        <span class="fa fa-check"></span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+
+            </div>
+            <!--End of Left Column-->
+            <!--Right Column-->
+            <div class="col-md-6 col-sm-12" style="width:55%">
+
+              <div class="form-group">
+                <div class="col-md-5 text-right">
+                  <label class="control-label">{{"TOTAL_BACK_PRESSURE" | translate}}</label>
+                </div>
+                <div class="col-md-5">
+                  <div class="input-group">
+                    <input autocomplete="off" id="totalbackpressure" class="form-control" type="number" style="min-width:55px;" formControlName="totalbackpressure" [ngStyle]="{'border' : totalBackPressureValidationErrorMessage.value ? 'solid 1px #ff000d' : ''}" [ngClass]="{'validation-error-class': totalBackPressureValidationErrorMessage.value}" [popover]="totalBackPressureValidationErrorMessage.value" triggers="mouseenter:mouseleave keyup:keydown mouseenter:focusout" placement="top" [display-preference]="'PressureUnit'" [display-masterTextKey]="'PRESSURE'" display-preference-unit-type="PressureUnits" [display-preference-module-group-id]="moduleGroupId" #pressureRef="display-preference" />
+                    <span class="input-group-addon">{{pressureRef.preference.masterTextKey | translate}}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group" *ngIf="(dhw || !htgcc) && cvSplitRangeAvailable">
+                <div class="col-md-5 text-right">
+                  <label class="control-label">{{"CV_SPLIT_RANGE" | translate}}</label>
+                </div>
+                <div class="col-md-5">
+                  <div class="input-group">
+                    <div class="checkbox c-checkbox">
+                      <label>
+                        <input id="cvSplitRange" name="cvSplitRange" type="checkbox" [checked]="cvSplitRange" (change)="cvSplitRangeChanged()">
+                        <span class="fa fa-check"></span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+
+              <div class="form-group" *ngIf="(dhw || (!dhw && !htgcc)) && motiveInletPressureAvailable">
+                <div class="col-md-5 text-right">
+                  <label class="control-label">{{"MOTIVE_INLET_PRESSURE" | translate}}</label>
+                </div>
+                <div class="col-md-5">
+                  <div class="input-group">
+                    <input autocomplete="off" id="motiveinletpressure" class="form-control" type="number" style="min-width:55px;" formControlName="motiveinletpressure" (change)="validateProcessConditions()" [ngStyle]="{'border' : motiveInletPressureValidationErrorMessage.value ? 'solid 1px #ff000d' : ''}" [ngClass]="{'validation-error-class': motiveInletPressureValidationErrorMessage.value}" [popover]="motiveInletPressureValidationErrorMessage.value" triggers="mouseenter:mouseleave keyup:keydown mouseenter:focusout" placement="top" [display-preference]="'PressureUnit'" [display-masterTextKey]="'PRESSURE'" display-preference-unit-type="PressureUnits" [display-preference-module-group-id]="moduleGroupId" #pressureRef="display-preference" />
+                    <span class="input-group-addon">{{pressureRef.preference.masterTextKey | translate}}</span>
+                  </div>
+                </div>
+
+                <div class="col-xs-3" *ngIf="pressureDifferentialErrorMessage">
+                  <i class="fa fa-info-circle cross-validation-error-class" [tooltip]="pressureDifferentialErrorMessage"></i>
+                </div>
+              </div>
+
+            </div>
+            <!--End of Right Column-->
+          </div>
+          <!--End of Row that contains Left and Right Column  width(L45% - R55%)-->
+        </div>
+      </div>
+    </div>
+
+    <div class="panel panel-primary">
+      <div class="panel-heading" role="tab" id="processConditionsHeading">
+
+        <h4 class="panel-title">
+          <!--<a role="button" data-toggle="collapse" data-target="#collapseProcessConditions" href="#collapseProcessConditions" aria-expanded="true" aria-controls="collapseProcessConditions">-->
+          <a aria-expanded="true" aria-controls="collapseProcessConditions">
+            {{"SECONDARY_SIDE_WATER" | translate}}
+          </a>
+        </h4>
+      </div>
+      <div id="collapseProcessConditions" class="panel-collapse collapse show" data-parent="#processConditionsHeading" role="tabpanel" aria-labelledby="processConditionsHeading">
+        <div class="panel-body" (keydown.enter)="onEnterKeydown($event)">
+          <div class="row">
+
+            <!--Left Column-->
+            <div class="col-md-6 col-sm-12" style="width:45%">
+
+              <div class="form-group">
+                <div class="col-md-5 text-right">
+                  <label class="control-label">{{"INLET_TEMPERATURE" | translate}}</label>
+                </div>
+                <div class="col-md-6">
+                  <div class="input-group">
+                    <input autocomplete="off" id="inlettemperature" class="form-control" type="number" style="min-width:55px;" formControlName="inlettemperature" (change)="validateProcessConditions()" [ngStyle]="{'border' : inletTemperatureValidationErrorMessage.value || temperatureDifferentialValidationErrorMessage.value ? 'solid 1px #ff000d' : ''}" [ngClass]="{'validation-error-class': inletTemperatureValidationErrorMessage.value}" [popover]="inletTemperatureValidationErrorMessage.value" triggers="mouseenter:mouseleave keyup:keydown mouseenter:focusout" placement="top" [display-preference]="'TemperatureUnit'" [display-masterTextKey]="'TEMPERATURE'" display-preference-unit-type="TemperatureUnits" [display-preference-module-group-id]="moduleGroupId" #temperatureRef="display-preference"  />
+                    <i *ngIf="temperatureDifferentialValidationErrorMessage.value" class="fa fa-info-circle errspan" [tooltip]="temperatureDifferentialValidationErrorMessage.value"></i>
+                    <span class="input-group-addon">{{temperatureRef.preference.masterTextKey | translate}}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6 col-sm-12" style="width:55%">
+
+              <div class="form-group">
+                <div class="col-md-5 text-right">
+                  <label class="control-label">{{"OUTLET_TEMPERATURE" | translate}}</label>
+                </div>
+                <div class="col-md-5">
+                  <div class="input-group">
+                    <input autocomplete="off" id="outlettemperature" class="form-control" type="number" style="min-width:55px;" formControlName="outlettemperature" [ngStyle]="{'border' : outletTemperatureValidationErrorMessage.value || temperatureDifferentialValidationErrorMessage.value ? 'solid 1px #ff000d' : ''}" [ngClass]="{'validation-error-class': outletTemperatureValidationErrorMessage.value}" [popover]="outletTemperatureValidationErrorMessage.value" triggers="mouseenter:mouseleave keyup:keydown mouseenter:focusout" placement="top" [display-preference]="'TemperatureUnit'" [display-masterTextKey]="'TEMPERATURE'" display-preference-unit-type="TemperatureUnits" [display-preference-module-group-id]="moduleGroupId" #temperatureRef="display-preference"  />
+                    <i *ngIf="temperatureDifferentialValidationErrorMessage.value" class="fa fa-info-circle errspan" [tooltip]="temperatureDifferentialValidationErrorMessage.value"></i>
+                    <span class="input-group-addon">{{temperatureRef.preference.masterTextKey | translate}}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="row">
+            <div class="col-md-6 col-sm-12" style="width:45%">
+              <div class="form-group">
+                <div class="col-md-5 text-right">
+                  <label class="control-label">{{"WATER_FLOW_RATE" | translate}}</label>
+                </div>
+                <div class="col-md-6">
+                  <div class="input-group">
+                    <input id="waterflowrate" class="form-control" type="number" style="min-width:55px;" formControlName="waterflowrate"  [ngStyle]="{'border' : waterFlowRateValidationErrorMessage.value ? 'solid 1px #ff000d' : ''}" [ngClass]="{'validation-error-class': waterFlowRateValidationErrorMessage.value}" [popover]="waterFlowRateValidationErrorMessage.value" triggers="mouseenter:mouseleave keyup:keydown mouseenter:focusout" placement="top" [display-preference]="'VolumetricFlowUnit'" [display-masterTextKey]="'VOLUMETRIC_FLOW'" display-preference-unit-type="VolumetricFlowUnits" [display-preference-module-group-id]="moduleGroupId" #volumetricFlowRef="display-preference"  (focus)="volumetricFlowOnFocus()" (focusout)="volumetricFlowOnFocusOut()" />
+                    <span class="input-group-addon">{{volumetricFlowRef.preference.masterTextKey | translate}}</span>
+                  </div>
+                </div>
+
+                <div class="col-xs-3" *ngIf="pressureDifferentialErrorMessage">
+                  <i class="fa fa-info-circle cross-validation-error-class" [tooltip]="pressureDifferentialErrorMessage"></i>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6 col-sm-12" style="width:55%">
+
+              <div class="form-group">
+                <div class="col-md-5 text-right">
+                  <label class="control-label">{{"LOAD" | translate}}</label>
+                </div>
+                <div class="col-md-5">
+                  <div class="input-group">
+                    <input autocomplete="off" id="load" class="form-control" type="number" style="min-width:55px;" formControlName="load" [ngStyle]="{'border' : loadValidationErrorMessage.value ? 'solid 1px #ff000d' : ''}" [ngClass]="{'validation-error-class': loadValidationErrorMessage.value}" [popover]="loadValidationErrorMessage.value" triggers="mouseenter:mouseleave keyup:keydown mouseenter:focusout" placement="top" [display-preference]="'LoadUnit'" [display-masterTextKey]="'LOAD'" display-preference-unit-type="LoadUnits" [display-preference-module-group-id]="moduleGroupId" #loadRef="display-preference" (focus)="loadOnFocus()" (focusout)="loadOnFocusOut()" twoDigitDecimalNumber />
+                    <span class="input-group-addon">{{loadRef.preference.masterTextKey | translate}}</span>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 col-sm-12" style="width:45%">
+              <div class="form-group">
+                <div class="col-md-5 text-right">
+                  <label class="control-label">{{"MAXIMUM_PRESSURE_DROP" | translate}}</label>
+                </div>
+                <div class="col-md-7" style="width:50%">
+                  <div class="input-group">
+                    <enumeration (keydown.enter)="onDisableEnter($event)" id="maxPressureDrop" formControlName="maxPressureDrop_Enumeration" [filter-by]="max_Pressure_Drop_List" [enumeration-name]="maximum_Pressure_Drop_Name" (change)="validateProcessConditions()"></enumeration>
+                    <span class="input-group-addon">{{maximum_Pressure_Drop_Unit | translate}}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="panel panel-primary" *ngIf="isEasiHeatSizingDone">
+    <!--ngIf="!!isCSGSizingDone"-->
+
+    <div class="panel-heading" role="tab" id="resultsHeading">
+      <h4 class="panel-title">
+        <a role="button" data-toggle="collapse" data-target="#collapseResults" href="#collapseResults" aria-expanded="true" aria-controls="collapseResults">
+          {{"SELECTED_EASIHEAT_UNIT" | translate}}
+        </a>
+      </h4>
+    </div>
+
+    <div id="collapseResults" class="panel-collapse collapse show" data-parent="#resultsHeading" role="tabpanel" aria-labelledby="resultsHeading">
+      <div class="panel-body">
+
+        <div class="row">
+
+          <!--Left Column-->
+          <div class="col-md-6 col-sm-12" style="width:45%">
+
+            <div class="form-group">
+              <div class="col-md-5 text-right">
+                <label class="control-label">{{"EASIHEAT_UNIT" | translate}}:</label>
+              </div>
+              <div class="col-md-6">
+                <div class="input-group">
+                  <input autocomplete="off" [attr.disabled]="true" id="easiHeatUnit" class="form-control" formControlName="easiHeatUnit" style="width:120%" />
+                </div>
+              </div>
+            </div>
+          </div><!--End of Left Column-->
+          <!--Right Column-->
+          <div class="col-md-6 col-sm-12" style="width:55%">
+
+            <div class="form-group">
+              <div class="col-md-5 text-right">
+                <label class="control-label">{{"TRIM_TYPE" | translate}}</label>
+              </div>
+              <div class="col-md-6">
+                <div class="input-group">
+                  <input autocomplete="off" [attr.disabled]="true" id="trimType" class="form-control" formControlName="trimType" />
+                </div>
+              </div>
+
+            </div>
+          </div><!--End of Right Column-->
+
+
+        </div><!--End of Row-->
+
+        <hr>
+
+        <div class="row">
+
+          <!--First Column-->
+          <div class="col-md-5 col-sm-12" style="width:24%">
+
+            <div class="form-group">
+              <div class="col-md-6 text-right">
+                <label class="control-label">{{"LENGTH" | translate}}:</label>
+              </div>
+              <div class="col-md-6">
+                <div class="input-group">
+                  <input autocomplete="off" [attr.disabled]="true" id="length" class="form-control" formControlName="length" />
+                </div>
+              </div>
+            </div>
+          </div><!--End of First Column-->
+          <!--Second Column-->
+
+          <div class="col-md-7 col-sm-12" style="width:24%">
+
+            <div class="form-group">
+              <div class="col-md-5 text-right">
+                <label class="control-label">{{"HEIGHT" | translate}}</label>
+              </div>
+              <div class="col-md-6">
+                <div class="input-group">
+                  <input autocomplete="off" [attr.disabled]="true" id="height" class="form-control" formControlName="height" />
+                </div>
+              </div>
+            </div>
+          </div><!--End of Second Column-->
+          <!--Third Column-->
+          <div class="col-md-7 col-sm-12" style="width:24%">
+
+            <div class="form-group">
+              <div class="col-md-5 text-right">
+                <label class="control-label">{{"WIDTH" | translate}}</label>
+              </div>
+              <div class="col-md-6">
+                <div class="input-group">
+                  <input autocomplete="off" [attr.disabled]="true" id="width" class="form-control" formControlName="width" />
+                </div>
+              </div>
+            </div>
+          </div><!--End of Third Column-->
+          <!--Fourth Column-->
+          <div class="col-md-7 col-sm-12" style="width:24%">
+
+            <div class="form-group">
+              <div class="col-md-5 text-right">
+                <label class="control-label">{{"WEIGHT" | translate}}</label>
+              </div>
+              <div class="col-md-6">
+                <div class="input-group">
+                  <input autocomplete="off" [attr.disabled]="true" id="weight" class="form-control" formControlName="weight" />
+                </div>
+              </div>
+            </div>
+          </div><!--End of Fourth Column-->
+
+
+        </div><!--End of Row-->
+
+        <hr>
+
+        <div class="row">
+
+          <!--Left Column-->
+          <div class="col-md-6 col-sm-12" style="width:45%">
+
+            <div class="form-group">
+              <div class="col-md-6 text-right">
+                <label class="control-label">{{"PACKAGE_INLET_CONNECTION_SIZE" | translate}}</label>
+              </div>
+              <div class="col-md-6">
+                <div class="input-group">
+                  <input autocomplete="off" [attr.disabled]="true" id="packInletConnSize" class="form-control" formControlName="packInletConnSize" />
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <div class="col-md-6 text-right">
+                <label class="control-label">{{"CONTROL_VALVE_SIZE" | translate}}</label>
+              </div>
+              <div class="col-md-6">
+                <div class="input-group">
+                  <input autocomplete="off" [attr.disabled]="true" id="controlValveSize" class="form-control" formControlName="controlValveSize" />
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <div class="col-md-6 text-right">
+                <label class="control-label">{{"CONDENSATE_PIPE_SIZE" | translate}}</label>
+              </div>
+              <div class="col-md-6">
+                <div class="input-group">
+                  <input autocomplete="off" [attr.disabled]="true" id="condensatePipeSize" class="form-control" formControlName="condensatePipeSize" />
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <div class="col-md-6 text-right">
+                <label class="control-label">{{"SECONDARY_INLET_AND_OUTLET_PIPE_SIZE" | translate}}</label>
+              </div>
+              <div class="col-md-6">
+                <div class="input-group">
+                  <input autocomplete="off" [attr.disabled]="true" id="secondaryInAndOutPipeSize" class="form-control" formControlName="secondaryInAndOutPipeSize" />
+                </div>
+              </div>
+            </div>
+
+            <!--End of Left Column-->
+          </div>
+
+          <div class="col-md-6 col-sm-12" style="width:55%">
+
+            <div class="form-group" *ngIf="!hideHEmodelFromSizing">
+              <div class="col-md-5 text-right">
+                <label class="control-label">{{"HEAT_EXCHANGE_PLATE_TYPE" | translate}}</label>
+              </div>
+              <div class="col-md-6">
+                <div class="input-group">
+                  <input autocomplete="off" [attr.disabled]="true" id="heatExchangePlateType" class="form-control" formControlName="heatExchangePlateType" />
+                </div>
+              </div>
+
+            </div>
+
+            <div class="form-group">
+              <div class="col-md-5 text-right">
+                <label class="control-label">{{"ACTUAL_SECONDARY_PRESSURE_DROP" | translate}}</label>
+              </div>
+              <div class="col-md-4" style="width:26%">
+                <div class="input-group">
+                  <input style="border-radius: 0px" autocomplete="off" [attr.disabled]="true" id="actualSecPressureDrop" class="form-control" formControlName="actualSecPressureDrop" twoDigitDecimalNumber />
+                  <span style="border-radius: 0px" class="input-group-addon">{{maximum_Pressure_Drop_Unit | translate}}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <div class="col-md-5 text-right">
+                <label class="control-label">{{"NUMBER_OF_PLATES_TEXT_DUPLICATE_ID_2128" | translate}}</label>
+              </div>
+              <div class="col-md-6">
+                <div class="input-group">
+                  <input autocomplete="off" [attr.disabled]="true" id="numberOfPlates" class="form-control" formControlName="numberOfPlates" />
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <div class="col-md-5 text-right">
+                <label class="control-label">{{"MAXIMUM_CONDENSATE_TEMPERATURE" | translate}}</label>
+              </div>
+              <div class="col-md-4" style="width:26%">
+                <div class="input-group">
+                  <input style="border-radius: 0px" autocomplete="off" [attr.disabled]="true" id="maxCondensateTemp" class="form-control" formControlName="maxCondensateTemp" />
+                  <span style="border-radius: 0px" class="input-group-addon">{{temperatureRef.preference.masterTextKey | translate}}</span>
+                </div>
+              </div>
+            </div>
+
+
+          </div>
+
+          <!--End of Row-->
+        </div>
+
+
+      </div>
+    </div>
+
+  </div>
+
+    <div style="white-space:pre-wrap;" *ngIf="!!user && !!user.username && (user.username.indexOf('PRS dev admin ') >= 0) && debugDataEnabled">
+      <code style="white-space:pre-wrap;"> {{debugData}} </code>
+    </div>
+
+    <a #priceResultsTop href="#priceResultsTop"> </a>
+
+
+
+
+    <!-- Pricing Options -->
+    <div class="panel panel-primary" *ngIf="isEasiHeatSizingDone" [hidden]="hideAllPricing">
+      <!--*ngIf="!!isCSGModelSelected">-->
+
+      <div class="panel-heading" role="tab" id="optionsHeading">
+        <h4 class="panel-title">
+          <a role="button" data-toggle="collapse" data-target="#collapseOptions" href="#collapseOptions" aria-expanded="true" aria-controls="collapseOptions">
+            {{"PRICING_OPTIONS" | translate}}
+          </a>
+        </h4>
+      </div>
+      <div id="collapseOptions" class="panel-collapse collapse show" data-parent="#optionsHeading" role="tabpanel" aria-labelledby="optionsHeading">
+
+        <div class="panel-body">
+
+
+          <alert-block *ngIf="quoteExpired" type="danger" [auto-close]="false" [message]="priceValidityMessage"></alert-block>
+          <alert-block *ngIf="!quoteExpired" type="info" [auto-close]="false" [message]="priceValidityMessage"></alert-block>
+
+          <!--Total Price-->
+          <div class="col-lg-12 panel panel-body">
+            <div class="col-lg-6">
+
+              <div class="row" [hidden]="hideManufactureCosts">
+                <div class="form-group">
+                  <div class="col-xs-4 text-right">
+                    <label class="control-label" (dblclick)="toggleDebug();">{{"MARKUP" | translate}}</label>
+                  </div>
+                  <div class="col-xs-5">
+                    <input autocomplete="off" (keydown.enter)="onEnterKeydown($event)" id="sellingMarkupFormControl" class="form-control" type="number" style="min-width:55px;" formControlName="sellingMarkupFormControl" (change)="onSellingMarkupChange($event.target.value)" twoDigitDecimalNumber />
+                  </div>
+                </div>
+              </div>
+
+              <div class="row" [hidden]="hideManufactureCosts">
+                <div class="form-group">
+                  <div class="col-xs-4 text-right">
+                    <label class="control-label">{{"GROSS_MARGIN" | translate}}</label>
+                  </div>
+                  <div class="col-xs-5">
+                    <div class="input-group">
+                      <input autocomplete="off" (keydown.enter)="onEnterKeydown($event)" id="grossMarginFormControl" class="form-control" type="number" style="min-width:55px;" formControlName="grossMarginFormControl" (change)="onGrossMarginChange($event.target.value)" twoDigitDecimalNumber />
+                      <span class="input-group-addon">{{"PERCENT" | translate}}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="form-group">
+                  <div class="col-xs-4 text-right">
+                    <label class="control-label">{{"SERVICE_OFFERING" | translate}}</label>
+                  </div>
+                  <div class="col-xs-5">
+                    <enumeration id="serviceOfferingOptionsFormControl" formControlName="serviceOfferingOptionsFormControl" [opco-override]="true" [filter-by]="service_Offering_List" enumeration-name="{{service_Offering_Name}}" (on-change)="onServiceOfferingChange($event)" (on-load)="onServiceOfferingLoad($event)"></enumeration>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Rigt hand column -->
+            <div class="col-lg-6">
+
+              <div class="row" [hidden]="hideManufactureCosts">
+                <div class="form-group">
+                  <div class="col-xs-4 text-right">
+                    <label class="control-label">{{"SSP" | translate}}</label>
+                  </div>
+                  <div class="col-xs-5">
+                    <div class="input-group">
+                      <span class="input-group-addon">{{sellingCurrencySymbol}}</span>
+                      <input autocomplete="off" id="totalSSPFormControl" (keydown.enter)="onDisableEnter($event)" class="form-control" type="text" formControlName="totalSSPFormControl" value="{{display_SSP}}" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="form-group">
+                  <div class="col-xs-4 text-right">
+                    <label class="control-label">{{"SELLING_PRICE" | translate}}</label>
+                  </div>
+                  <div class="col-xs-5">
+                    <div class="input-group">
+                      <span class="input-group-addon">{{sellingCurrencySymbol}}</span>
+                      <input autocomplete="off" id="totalSellingPriceFormControl" (keydown.enter)="onEnterKeydown($event)" class="form-control" type="number" formControlName="totalSellingPriceFormControl" (change)="onSellingPriceChange($event.target.value)" value="{{display_SellingPrice}}" twoDigitDecimalNumber />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="form-group">
+                  <div class="col-xs-4 text-right">
+                    <label class="control-label">{{serviceOfferingKey}}</label>
+                  </div>
+                  <div class="col-xs-5">
+                    <div class="input-group">
+                      <span class="input-group-addon">{{sellingCurrencySymbol}}</span>
+                      <input autocomplete="off" id="serviceOfferingFormControl" (keydown.enter)="onEnterKeydown($event)" class="form-control" type="text" formControlName="serviceOfferingFormControl" value="{{display_ServiceOfferingPrice}}" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="form-group">
+                  <div class="col-xs-4 text-right">
+                    <label class="control-label">{{"DELIVERY" | translate}}</label>
+                  </div>
+                  <div class="col-xs-5">
+                    <div class="input-group">
+                      <span class="input-group-addon">{{sellingCurrencySymbol}}</span>
+                      <input autocomplete="off" id="deliveryCostFormControl" (keydown.enter)="onEnterKeydown($event)" class="form-control" type="text" formControlName="deliveryCostFormControl" value="{{display_DeliveryPrice}}" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="form-group">
+                  <div class="col-xs-4 text-right">
+                    <label class="control-label">{{"TOTAL_PRICE" | translate}}</label>
+                  </div>
+                  <div class="col-xs-5">
+                    <div class="input-group">
+                      <span class="input-group-addon">{{sellingCurrencySymbol}}</span>
+                      <input autocomplete="off" id="totalPriceFormControl" (keydown.enter)="onEnterKeydown($event)" class="form-control" type="text" formControlName="totalPriceFormControl" value="{{display_TotalPrice}}" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><!-- Success confirmation message -->
+
+    <alert-block *ngIf="!!alertVisible" type="danger" [auto-close]="true" [message]="'OPTIONS_HAVE_BEEN_RESET_TO_DEFAULTS_MESSAGE' | translate" (close-callback)="closeAlert()"></alert-block>
+
+
+    <div class="panel panel-primary" *ngIf="isEasiHeatSizingDone">
+
+      <div class="panel-heading" role="tab" id="optionsHeading">
+
+        <h4 class="panel-title">
+          <a role="button" data-toggle="collapse" data-target="#collapseProcessConditions" href="#collapseProcessConditions" aria-expanded="true" aria-controls="collapseProcessConditions">
+            {{"UNIT_OPTIONS" | translate}}
+          </a>
+        </h4>
+
+      </div>
+
+      <div class="panel-collapse collapse show" (change)="calculatePrice()" formGroupName="pricingOptions" role="tabpanel">
+
+        <div class="panel-body">
+
+          <!-- Nomenclature row-->
+          <div class="row">
+            <div class="col-lg-6">
+              <div class="row">
+                <div class="form-group">
+                  <div class="col-xs-4 text-right">
+                    <label class="control-label"></label>
+                  </div>
+                  <div class="col-xs-5">
+                    <input autocomplete="off" [attr.disabled]="true" id="nomenclatureFormControl" class="form-control" formControlName="nomenclatureFormControl" />
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <!-- Options row-->
+          <div class="row">
+
+            <!--Left Column-->
+            <div class="col-lg-6">
+
+              <div class="row" *ngIf="dhw || !htgcc">
+                <div class="form-group">
+                  <div class="col-xs-4 text-right">
+                    <label class="control-label">{{'CONDENSATE_REMOVAL' | translate}}</label>
+                  </div>
+                  <div class="col-xs-5">
+                    <enumeration id="condensate_Removal" formControlName="condensate_Removal_Enumeration" [filter-by]="condensate_Removal_List" [enumeration-name]="condensate_Removal_Name" (on-load)="onLoadOptionEvent('condensate_Removal_Enum', $event)" (on-change)="onChangeOptionEvent('condensate_Removal_Enum', $event)" [opco-override]="true" #condensate_Removal_Enum></enumeration>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="form-group">
+                  <div class="col-xs-4 text-right">
+                    <label class="control-label">{{"ACTUATOR" | translate}}</label>
+                  </div>
+                  <div class="col-xs-5">
+                    <enumeration id="actuator" formControlName="actuator_Enumeration" [filter-by]="actuator_List" [enumeration-name]="actuator_Name" (on-load)="onLoadOptionEvent('actuator_Enum', $event)" (on-change)="onChangeOptionEvent('actuator_Enum', $event)" [opco-override]="true" #actuator_Enum></enumeration>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="form-group">
+                  <div class="col-xs-4 text-right">
+                    <label class="control-label">{{"HIGH_LIMIT_OPTIONS" | translate}}</label>
+                  </div>
+                  <div class="col-xs-5">
+                    <enumeration id="high_Limit_Options_Enumeration" formControlName="high_Limit_Options_Enumeration" [filter-by]="high_Limit_Options_List" [enumeration-name]="high_Limit_Options_Name" (on-load)="onLoadOptionEvent('high_Limit_Options_Enum', $event)" (on-change)="onChangeOptionEvent('high_Limit_Options_Enum', $event)" [opco-override]="true" #high_Limit_Options_Enum></enumeration>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row" *ngIf="highLimitActuation">
+                <div class="form-group">
+                  <div class="col-xs-4 text-right">
+                    <label class="control-label">{{"HIGH_LIMIT_ACTUATION" | translate}}</label>
+                  </div>
+                  <div class="col-xs-5">
+                    <enumeration id="high_Limit_Actuation_Enumeration" formControlName="high_Limit_Actuation_Enumeration" [filter-by]="high_Limit_Actuation_List" [enumeration-name]="high_Limit_Actuation_Name" (on-load)="onLoadOptionEvent('high_Limit_Actuation_Enum', $event)" (on-change)="onChangeOptionEvent('high_Limit_Actuation_Enum', $event)" [opco-override]="true" #high_Limit_Actuation_Enum></enumeration>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="form-group">
+                  <div class="col-xs-4 text-right">
+                    <label class="control-label">{{"DESIGN_CODE" | translate}}</label>
+                  </div>
+                  <div class="col-xs-5">
+                    <enumeration id="design_Code_Enumeration" formControlName="design_Code_Enumeration" [filter-by]="design_Code_List" [enumeration-name]="design_Code_Name" (on-load)="onLoadOptionEvent('design_Code_Enum', $event)" (on-change)="onChangeOptionEvent('design_Code_Enum', $event)" [opco-override]="true" #design_Code_Enum></enumeration>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="form-group">
+                  <div class="col-xs-4 text-right">
+                    <label class="control-label">{{"CONTROL_SYSTEM" | translate}}</label>
+                  </div>
+                  <div class="col-xs-5">
+                    <enumeration id="control_System_Enumeration" formControlName="control_System_Enumeration" [filter-by]="control_System_List" [enumeration-name]="control_System_Name" (on-load)="onLoadOptionEvent('control_System_Enum', $event)" (on-change)="onChangeOptionEvent('control_System_Enum', $event)" [opco-override]="true" #control_System_Enum></enumeration>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="form-group">
+                  <div class="col-xs-4 text-right">
+                    <label class="control-label">{{"GASKET" | translate}}</label>
+                  </div>
+                  <div class="col-xs-5">
+                    <enumeration id="gasket_Enumeration" formControlName="gasket_Enumeration" [filter-by]="gasket_List" [enumeration-name]="gasket_Name" (on-load)="onLoadOptionEvent('gasket_Enum', $event)" (on-change)="onChangeOptionEvent('gasket_Enum', $event)" [opco-override]="true" #gasket_Enum></enumeration>
+                  </div>
+                </div>
+              </div>
+
+
+
+            </div> <!--End of Left Column-->
+            <!--Right Column-->
+            <div class="col-lg-6">
+
+              <div class="row">
+                <div class="form-group">
+                  <div class="col-xs-4 text-right" >
+                    <label class="control-label">{{"ISOLATION" | translate}}</label>
+                  </div>
+                  <div class="col-xs-5" [ngStyle]="{'opacity' : !isIsolationEnabled ? '0.5' : '1', 'pointer-events' : !isIsolationEnabled ? 'none' : auto}">
+                    <enumeration id="isolation_Enumeration" formControlName="isolation_Enumeration" [filter-by]="isolation_List" [enumeration-name]="isolation_Name" (on-load)="onLoadOptionEvent('isolation_Enum', $event)" (on-change)="onChangeOptionEvent('isolation_Enum', $event)" [opco-override]="true" #isolation_Enum></enumeration>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="form-group">
+                  <div class="col-xs-4 text-right">
+                    <label class="control-label">{{"REMOTE_ACCESS" | translate}}</label>
+                  </div>
+                  <div class="col-xs-5" [ngStyle]="{'opacity' : !remoteAccess ? '0.5' : '1', 'pointer-events' : !remoteAccess ? 'none' : auto}">
+                    <enumeration id="remote_Access_Enumeration" formControlName="remote_Access_Enumeration" [filter-by]="remote_Access_List" [enumeration-name]="remote_Access_Name" (on-load)="onLoadOptionEvent('remote_Access_Enum', $event)" (on-change)="onChangeOptionEvent('remote_Access_Enum', $event)" [opco-override]="true" #remote_Access_Enum></enumeration>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="form-group">
+                  <div class="col-xs-4 text-right">
+                    <label class="control-label">{{"COMMUNICATIONS" | translate}}</label>
+                  </div>
+                  <div class="col-xs-5" [ngStyle]="{'opacity' : !communications ? '0.5' : '1', 'pointer-events' : !communications ? 'none' : auto}">
+                    <enumeration id="communications_Enumeration" formControlName="communications_Enumeration" [filter-by]="communications_List" [enumeration-name]="communications_Name" (on-load)="onLoadOptionEvent('communications_Enum', $event)" (on-change)="onChangeOptionEvent('communications_Enum', $event)" [opco-override]="true" #communications_Enum></enumeration>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="form-group">
+                  <div class="col-xs-4 text-right">
+                    <label class="control-label">{{"ENERGY_MONITORING" | translate}}</label>
+                  </div>
+                  <div class="col-xs-5" [ngStyle]="{'opacity' : !isEnergyMonitoringEnabled ? '0.5' : '1', 'pointer-events' : !isEnergyMonitoringEnabled ? 'none' : auto}">
+                    <enumeration id="energy_Monitoring_Enumeration" formControlName="energy_Monitoring_Enumeration" [filter-by]="energy_Monitoring_List" [enumeration-name]="energy_Monitoring_Name" disable="true" (on-load)="onLoadOptionEvent('energy_Monitoring_Enum', $event)" (on-change)="onChangeOptionEvent('energy_Monitoring_Enum', $event)" [opco-override]="true" #energy_Monitoring_Enum></enumeration>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="form-group">
+                  <div class="col-xs-4 text-right">
+                    <label class="control-label">{{"JACKING_WHEELS" | translate}}</label>
+                  </div>
+                  <div class="col-xs-5" [ngStyle]="{'opacity' : !isJackingWheelsEnabled ? '0.5' : '1', 'pointer-events' : !isJackingWheelsEnabled ? 'none' : auto}">
+                    <enumeration id="jacking_Wheels_Enumeration" formControlName="jacking_Wheels_Enumeration" [filter-by]="jacking_Wheels_List" [enumeration-name]="jacking_Wheels_Name" (on-load)="onLoadOptionEvent('jacking_Wheels_Enum', $event)" (on-change)="onChangeOptionEvent('jacking_Wheels_Enum', $event)" [opco-override]="true" #jacking_Wheels_Enum></enumeration>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="form-group">
+                  <div class="col-xs-4 text-right">
+                    <label class="control-label">{{"EN12828_COMPLIANT" | translate}}</label>
+                  </div>
+                  <div class="col-xs-5" [ngStyle]="{'opacity' : !isEn12828CompliantEnabled ? '0.5' : '1', 'pointer-events' : !isEn12828CompliantEnabled ? 'none' : auto}">
+                    <enumeration id="en12828_Compliant_Enumeration" formControlName="en12828_Compliant_Enumeration" [filter-by]="en12828_Compliant_List" [enumeration-name]="en12828_Compliant_Name" (on-load)="onLoadOptionEvent('en12828_Compliant_Enum', $event)" (on-change)="onChangeOptionEvent('en12828_Compliant_Enum', $event)" [opco-override]="true" #en12828_Compliant_Enum></enumeration>
+                  </div>
+                </div>
+              </div>
+
+            </div> <!--End of Right Column-->
+
+          </div><!--End of Row-->
+
+        </div><!--End of panel-body-->
+
+      </div>
+
+    </div> <!--End of panel panel-primary-->
+    <!-- Spec Sheet Header -->
+    <div class="panel panel-primary" *ngIf="isEasiHeatSizingDone">
+      <div class="panel-heading" role="tab" id="specSheetHeading">
+        <h4 class="panel-title">
+          <a role="button" data-toggle="collapse" data-target="#collapseSpecSheetHeader" href="#collapseSpecSheetHeader" aria-expanded="true" aria-controls="collapseSpecSheetHeader">
+            {{"SPEC_SHEET_HEADER_DETAILS" | translate}}
+          </a>
+        </h4>
+      </div>
+
+      <div id="collapseSpecSheetHeader" class="panel-collapse collapse show" data-parent="#specSheetHeading" role="tabpanel" aria-labelledby="specSheetHeader">
+        <div class="panel-body">
+
+          <!--Col 1-->
+          <div class="col-lg-6">
+            <div class="form-group">
+              <div class="col-xs-4 text-right">
+                <label class="control-label">{{"SHEET" | translate}}</label>
+              </div>
+              <div class="col-xs-5">
+                <div class="input-group">
+                  <input autocomplete="off" (keydown.enter)="onEnterKeydown($event)" id="sheet" class="form-control" type="text" formControlName="sheet" />
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <div class="col-xs-4 text-right">
+                <label class="control-label">{{"REVISION_NUMBER" | translate}}</label>
+              </div>
+              <div class="col-xs-5">
+                <div class="input-group">
+                  <input autocomplete="off" (keydown.enter)="onEnterKeydown($event)" id="revisionNumber" class="form-control" type="text" formControlName="revisionNumber" />
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <div class="col-xs-4 text-right">
+                <label class="control-label">{{"PROJECT_TYPE" | translate}}</label>
+              </div>
+              <div class="col-xs-5">
+                <div class="input-group">
+                  <input autocomplete="off" (keydown.enter)="onEnterKeydown($event)" id="projectType" class="form-control" type="text" formControlName="projectType" />
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!--Col 2-->
+          <div class="col-lg-6">
+            <div class="form-group">
+              <div class="col-xs-4 text-right">
+                <label class="control-label">{{"QUANTITY" | translate}}</label>
+              </div>
+              <div class="col-xs-5">
+                <div class="input-group">
+                  <input autocomplete="off" (keydown.enter)="onEnterKeydown($event)" id="quantity" class="form-control" type="text" formControlName="quantity" />
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <div class="col-xs-4 text-right">
+                <label class="control-label">{{"AO_NUMBER" | translate}}</label>
+              </div>
+              <div class="col-xs-5">
+                <div class="input-group">
+                  <input autocomplete="off" (keydown.enter)="onEnterKeydown($event)" id="aoNumber" class="form-control" type="text" formControlName="aoNumber" />
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <div class="col-xs-4 text-right">
+                <label class="control-label">{{"ORDER_NUMBER" | translate}}</label>
+              </div>
+              <div class="col-xs-5">
+                <div class="input-group">
+                  <input autocomplete="off" (keydown.enter)="onEnterKeydown($event)" id="orderNumber" class="form-control" type="text" formControlName="orderNumber" />
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <div>&nbsp;</div>
+
+          <div class="form-group" style="position:relative">
+            <div class="col-xs-2 text-right">
+              <label class="control-label">{{"NOTES_TEXT_DUPLICATE_ID_959" | translate}}</label>
+            </div>
+            <div class="col-xs-5" style="width: 66%; max-width:1050px">
+              <!--<div class="input-group; ">-->
+              <textarea class="form-control" (keydown.enter)="onEnterKeydown($event)" formControlName="notes" maxlength="300" style="resize: none; margin-left: 2px" rows="4" placeholder="Max 300 characters"></textarea>
+              <!--</div>-->
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+</form>

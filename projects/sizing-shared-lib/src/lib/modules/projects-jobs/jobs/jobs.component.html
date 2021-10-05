@@ -1,0 +1,203 @@
+<form [formGroup]="jobsForm" class="form-horizontal" role="form" novalidate>
+  <div class='panel panel-primary' *ngIf="!!areJobsLoaded">
+    <div class='panel-body'>
+      <div class="row">
+
+        <div class="col-xs-12">
+          <h4>{{"JOBS" | translate}}</h4>
+          <hr />
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-3 col-xs-12">
+
+          <div class="form-group">
+            <div class="col-xs-3">
+              <label class="control-label">{{"FILTER" | translate:true}}</label>
+            </div>
+            <div class="col-xs-6">
+              <input autocomplete="off" [disabled]="editingProject || editingJob || jobsForm.dirty" type='text' title="{{'TYPE_TO_FILTER' | translate:true}}" class="form-control" placeholder="{{'TYPE_TO_FILTER' | translate:true}}..."  (keyup)='updateFilter($event)' />
+            </div>
+          </div>
+
+        </div>
+
+        <div class="col-md-6 col-xs-12">
+          <button [disabled]="editingProject || editingJob || jobsForm.dirty || (!!this.selectedJob && !this.selectedJob.id) || !jobHasModuleAccess" class="btn btn-jobs btn-primary pull-left" (click)="openJob()" [title]="'OPEN_JOB' | translate"><p id="noMargins"><i class="fa fa-folder-open"></i>  {{'OPEN_JOB' | translate}}</p></button>
+          <button [disabled]="editingProject || editingJob || jobsForm.dirty || (!selectedProjectId)" class="btn btn-jobs btn-primary pull-left" (click)="newJob()" [title]="'ADD_NEW_JOB' | translate"><p id="noMargins"><i class="fa fa-plus"></i>  {{'ADD_NEW_JOB' | translate}}</p></button>
+          <button [disabled]="editingProject || !jobsForm.dirty || !jobsForm.valid || jobsForm.status !== 'VALID' || formSubmitted" class="btn btn-jobs btn-primary pull-left" (click)=" checkJobNameDuplication(jobName.value, selectedJob.id)" [title]="'SAVE_JOB' | translate"><p id="noMargins"><i class="fa fa-save"></i>  {{'SAVE_JOB' | translate}}</p></button>
+          <button [disabled]="editingProject || (!editingJob && !jobsForm.dirty)" class="btn btn-jobs btn-primary pull-left" (click)="(jobsForm.dirty && jobsForm.valid)? saveChangesModal.open() : cancelEditsForJob()" [title]="'CANCEL' | translate"><p id="noMargins"><i class="fa fa-times"></i>  {{'CANCEL' | translate}}</p></button>
+          <button [disabled]="editingProject || editingJob || jobsForm.dirty || (!!this.selectedJob && !this.selectedJob.id)" class="btn btn-jobs btn-primary pull-left" (click)="delteConfirmationModal.open()" [title]="'DELETE_JOB' | translate"><p id="noMargins"><i class="fa fa-trash"></i>  {{'DELETE_JOB' | translate}}</p></button>
+        </div>
+      </div>
+
+      <div class="row">
+        <!-- Left section -->
+        <div class="col-md-3 col-xs-12">
+          <!-- If User starts editing the job form, then marked as "jobsForm.dirty" and load disabled Jobs List (code below) other wise load active Jobs List from code section tha starts at line 52+-) -->
+          <!-- Note that rowIndex is not sort safe, use rows[rows.indexOf(row)] for the real index of the row data. -->
+          <ngx-datatable *ngIf="jobsForm.dirty" class="bootstrap" style="opacity: 0.4; pointer-events:none; font-size: larger; font-weight: lighter" [selected]="selected" [selectionType]="'singleClick'" (activate)="onActivate($event)" (select)="onSelect($event)" [headerHeight]="40" [limit]="6" [columnMode]="'force'" [footerHeight]="60" [rowHeight]="'auto'" [rows]="jobs" (page)="onPage($event)" [messages]="{emptyMessage: translatePipe.transform('NO_DATA_TO_DISPLAY', true), totalMessage: translatePipe.transform('TOTAL', true), selectedMessage: false}" #jobsTable>
+            <ngx-datatable-column class="" headerClass="text-bold" style="" name="{{'JOB_NAME' | translate}}" prop="name">
+              <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row" maxWidth="100px" let->
+                <div>
+                  <span title="{{'JOB_NAME' | translate:true}}">
+                    {{value}}
+                  </span>
+                </div>
+              </ng-template>
+            </ngx-datatable-column>
+          </ngx-datatable>
+
+          <!-- If User IS NOT editing the job form, then marked as"!jobsForm.dirty" and load Jobs List other wise load inactive Jobs List from code above-->
+          <!-- Note that rowIndex is not sort safe, use rows[rows.indexOf(row)] for the real index of the row data. -->
+          <ngx-datatable *ngIf="!jobsForm.dirty" class="bootstrap" style="font-size: larger; font-weight: lighter" [selected]="selected" [selectionType]="'singleClick'" (activate)="onActivate($event)" (select)="onSelect($event)" [headerHeight]="40" [limit]="6" [columnMode]="'force'" [footerHeight]="60" [rowHeight]="'auto'" [rows]="jobs" (page)="onPage($event)" [messages]="{emptyMessage: translatePipe.transform('NO_DATA_TO_DISPLAY', true), totalMessage: translatePipe.transform('TOTAL', true), selectedMessage: false}" #jobsTable>
+            <ngx-datatable-column class="" headerClass="text-bold" style="" name="{{'JOB_NAME' | translate}}" prop="name">
+              <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row" maxWidth="100px" let->
+                <div>
+                  <span title="{{'JOB_NAME' | translate:true}}">
+                    {{value}}
+                  </span>
+                </div>
+              </ng-template>
+            </ngx-datatable-column>
+          </ngx-datatable>
+        </div> <!-- end of data table -->
+        <!-- fields section -->
+        <div class="col-md-9 col-xs-12">
+
+          <div class="row">
+
+            <!-- Left hand controls -->
+            <div class="col-xs-12 col-md-6">
+
+              <!-- Job Name -->
+              <div class="form-group">
+                <div class="col-xs-3 text-right">
+                  <label class="control-label">{{"JOB_NAME" | translate}}</label>
+                </div>
+                <div class="col-xs-6">
+                  <div class="input-group">
+                    <input autocomplete="off" class="form-control" type="text" formControlName="jobName" #jobName value="selectedJob.name" />
+                    <span class="text-danger" *ngIf="jobsForm.controls['jobName'].hasError('required') && (jobsForm.controls['jobName'].dirty || jobsForm.controls['jobName'].touched)">{{ "REQUIRED_FIELD" | translate }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Plant Owner -->
+              <div class="form-group">
+                <div class="col-xs-3 text-right">
+                  <label class="control-label">{{"PLANT_OWNER" | translate}}</label>
+                </div>
+                <div class="col-xs-6">
+                  <div class="input-group">
+                    <input autocomplete="off" class="form-control" type="text" formControlName="plantOwner" value="selectedJob.plantOwner" />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Job Created -->
+              <div class="form-group">
+                <div class="col-xs-3 text-right">
+                  <label class="control-label">{{"JOB_DATE" | translate}}</label>
+                </div>
+                <div class="col-xs-6">
+                  <div class="input-group">
+                    <label class="control-label">{{selectedJob.created | date:'fullDate'}} {{selectedJob.created | date:'shortTime'}}</label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- End of Left hand controls -->
+            </div>
+
+
+
+            <!-- Right hand controls -->
+            <div class="col-xs-12 col-md-6" (dblclick)="debugToggleEnableModuleId()">
+
+              <!-- Product Range List (Sizing Module) -->
+              <div class="form-group">
+                <div class="col-xs-3 text-right">
+                  <label class="control-label">{{"PRODUCT_RANGE" | translate}}</label>
+                </div>
+                <div class="col-xs-6">
+                  <select *ngIf="jobHasModuleAccess" class="form-control" formControlName="moduleId" id="moduleId" name="moduleMasterTextKey">
+                    <option *ngFor="let module of availableModuleListItems" [value]="module.moduleId">        <!-- [selected]="module.moduleId">-->
+                      {{module.moduleGroupMasterTextKey | translate}} - {{module.moduleMasterTextKey | translate}}
+                    </option>
+                  </select>
+                  <label *ngIf="!jobHasModuleAccess" class="text-danger">{{"YOU_DO_NOT_HAVE_ACCESS_TO_THIS_MODULE" | translate}}</label>
+                  <span class="text-danger" *ngIf="jobsForm.controls['moduleId'].hasError('required') && (jobsForm.controls['moduleId'].dirty || jobsForm.controls['moduleId'].touched)">{{ "REQUIRED_FIELD" | translate }}</span>
+                </div>
+              </div>
+
+              <!-- Sizing Satus -->
+              <div class="form-group">
+                <div class="col-xs-3 text-right">
+                  <label class="control-label">{{"SIZING_STATUS" | translate}}</label>
+                </div>
+                <div class="col-xs-6">
+                  <select *ngIf="!!jobStatuses" class="form-control" formControlName="jobStatusId" id="id" name="masterTextKey">
+                    <option *ngFor="let jobstatus of jobStatuses" [value]="jobstatus.id">{{jobstatus.masterTextKey | translate}}</option>
+                  </select>
+                  <!--<label *ngIf="!!jobStatuses" class="control-label">{ {jobStatus.masterTextKey | translate}}</label>-->
+                </div>
+              </div>
+
+              <!-- Product / Nomenclature -->
+              <div class="form-group">
+                <div class="col-xs-3 text-right">
+                  <label class="control-label">{{"PRODUCT_TEXT_DUPLICATE_ID_493" | translate}}</label>
+                </div>
+                <div class="col-xs-6">
+                  <label class="control-label">{{selectedJob.productName}}</label>
+                </div>
+              </div>
+
+              <!-- End of Right hand controls -->
+            </div>
+            <!-- End of Row -->
+          </div>
+
+          <div>
+            <!-- Success confirmation message -->
+            <alert-block *ngIf="!!alertVisible && !!isSuccess" type="success" [auto-close]="true" [message]="'JOBS_SAVED_SUCCESSFULLY_MESSAGE' | translate" (close-callback)="closeAlert()"></alert-block>
+
+            <!-- Failure confirmation message-->
+            <alert-block *ngIf="!!alertVisible && !isSuccess" type="danger" [message]="'JOBS_FAILED_TO_SAVE_MESSAGE' | translate" (close-callback)="closeAlert()"></alert-block>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</form>
+
+
+<!-- Generic Modal Component -->
+<sizing-suite-modal #delteConfirmationModal
+                    (modal-cancel)="modalCallbackCancel()"
+                    (modal-ok)="deleteJob()"
+                    [modal-title]="'PROJECTS_AND_JOBS' | translate"
+                    [modal-ok-text]="'DELETE_JOB' | translate"
+                    [modal-ok-icon]="'fa fa-trash'"
+                    [modal-cancel-text]="'CANCEL' | translate:true"
+                    [modal-cancel-icon]="'fa fa-times'">
+
+  <label class="control-label">{{'DELETE_JOB' | translate}}: <strong>{{selectedJob.name}}</strong>?</label>
+</sizing-suite-modal>
+
+<!-- Generic Modal Component -->
+<sizing-suite-modal #saveChangesModal
+                    (modal-cancel)="cancelEditsForJob()"
+                    (modal-ok)="updateInsertJob()"
+                    [modal-title]="'PROJECTS_AND_JOBS' | translate"
+                    [modal-ok-text]="'SAVE_JOB' | translate"
+                    [modal-ok-icon]="'fa fa-save'"
+                    [modal-cancel-text]="'DISCARD_CHANGES' | translate"
+                    [modal-cancel-icon]="'fa fa-times'">
+
+  <label class="control-label">{{'SAVE_JOB' | translate}}: <strong>{{this.jobsForm.controls["jobName"].value}}</strong>?</label>
+</sizing-suite-modal>
+

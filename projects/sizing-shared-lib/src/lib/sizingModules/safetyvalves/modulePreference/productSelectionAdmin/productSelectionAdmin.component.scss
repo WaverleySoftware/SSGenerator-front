@@ -1,0 +1,74 @@
+
+@import '../../../../shared/styles/app/variables.scss';
+@import "../../../../shared/styles/app/variables-override-sizing-suite.scss";
+@import '../../../../shared/styles/app/media-queries.scss';
+@import "../../../../shared/styles/app/variables";
+
+.home-container {
+  margin: 0 auto;
+  max-width: $container-md;
+
+  .home-logo {
+    width: 240px;
+  }
+
+  .home-text {
+    @media only screen and (max-width: $mq-tablet) {
+      text-align: center;
+    }
+  }
+}
+
+.admin-module-button {
+  margin: 5px;
+
+  em {
+    font-size: 1.6em;
+  }
+
+  white-space: normal;
+
+  @media (min-width: $screen-lg-min) {
+    font-size: 1.4em;
+  }
+}
+
+
+
+
+
+
+.product-selector-container {
+  background-color: $gray-lighter;
+  border-radius: 8px;
+  padding: 5px;
+}
+
+.btn-default.product-selection-item {
+  background-color: $gray-light;
+
+  img {
+    background-color: #fff;
+    opacity: 0.5;
+  }
+}
+
+.btn-primary.product-selection-item {
+
+  img {
+    background-color: $gray-lighter;
+  }
+}
+
+.product-selection-item {
+  margin: 0 10px 10px 0;
+  width: 120px;
+
+  img {
+    width: 60px;
+    height: 112px;
+    border-radius: 8px;
+    padding: 5px;
+  }
+}
+

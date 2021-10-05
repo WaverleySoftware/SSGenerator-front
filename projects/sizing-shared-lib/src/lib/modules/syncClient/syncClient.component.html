@@ -1,0 +1,56 @@
+<div class="wrapper">
+    <div class="block-center mt-xl wd-xxl">
+
+      <!-- START panel-->
+        <div class="panel panel-dark panel-flat">
+            <div class="panel-heading text-center">
+                <a href="#">
+                    <img class="block-center img-rounded" src="assets/img/sizing-logo.png" alt="Image" />
+                </a>
+            </div>
+            <div class="panel-body">
+              <p class="text-center pv">{{'DATA_SYNCHRONISATION' | translate}}</p>
+
+              <form name="form" #syncForm="ngForm" novalidate="">
+                <div class="form-group has-feedback" [ngClass]="{ 'has-error': syncForm.submitted && !syncing }">
+
+                </div>
+
+                <!-- Error block -->
+                <alert-block *ngIf="!!errorMessage" type="danger" [message]="errorMessage" [auto-close]="true"></alert-block>
+
+                <div class="clearfix">
+                </div>
+                <!-- Simulates data sync progress -->
+                <div class="loading-overlay">
+                  <progressbar class="progress-striped active" [value]="pageLoadProgress" type="info"></progressbar>
+                </div>
+                <div class="form-group">
+                  <button [disabled]="syncing" class="btn btn-block btn-primary mt-lg" (click)="manualSync()">{{'PERFORM_DATA_SYNC' | translate}}</button>
+                  <button *ngIf="newClientUserRequiresSyncFinishButton" class="btn btn-block btn-primary mt-lg" (click)="finished()">{{'FINISH_AND_CONTINUE' | translate}}</button>
+                </div>
+
+
+                <alert-block *ngIf="syncClientService.isSyncingUserData" type="info" [auto-close]="false" [message]="'USER_DATA_SYNC_IN_PROGRESS_MESSAGE' | translate" (close-callback)="closeAlert()"></alert-block>
+                <alert-block *ngIf="syncClientService.isSyncingGetProjectsAndJobs" type="info" [auto-close]="false" [message]="'PROJECTS_AND_JOBS_SYNC_IN_PROGRESS_MESSAGE' | translate" (close-callback)="closeAlert()"></alert-block>
+                <alert-block *ngIf="syncClientService.isSyncingTechnicalInformation" type="info" [auto-close]="false" [message]="'TI_DOCUMENTS_SYNC_IN_PROGRESS_MESSAGE' | translate" (close-callback)="closeAlert()"></alert-block>
+
+                <alert-block *ngIf="!!alertVisible && !!isSuccess" type="success" [auto-close]="false" [message]="'DATA_SYNC_SUCCESSFULLY_MESSAGE' | translate" (close-callback)="closeAlert()"></alert-block>
+
+                <!-- Failure confirmation message-->
+                <alert-block *ngIf="!!alertVisible && !isSuccess" type="danger" [message]="'DATA_SYNC_FAILED_MESSAGE' | translate" (close-callback)="closeAlert()"></alert-block>
+
+                <div *ngIf="!newClientUserRequiresSyncFinishButton && !!projectsAndJobsSyncInfo && projectsAndJobsSyncInfo.isSuccessful && (projectsAndJobsSyncInfo.numberOfServerSizingsToDownload > 0 || projectsAndJobsSyncInfo.numberOfClientSizingsToUpload > 0)">
+                  <!-- projectsAndJobsSyncInfo -->
+                  <p class="text-center pv" style="font-weight: bolder; color: red; text-wrap: avoid">{{projectsAndJobsSyncInfo.numberOfServerSizingsToDownload}} {{'JOBS_TO_DOWNLOAD_FROM_SERVER' | translate}}, {{projectsAndJobsSyncInfo.numberOfClientSizingsToUpload}} {{'JOBS_TO_UPLOAD_FROM_CLIENT' | translate}}</p>
+                </div>
+
+
+              </form>
+
+              </div>
+        </div>
+        <!-- END panel-->
+        <footer app-footer></footer>
+    </div>
+</div>

@@ -1,0 +1,35 @@
+@import "../styles/app/variables";
+
+.product-selector-container {
+  background-color: $gray-lighter;
+  border-radius: 8px;
+  padding: 5px;
+}
+
+.btn-default.product-selection-item {
+  background-color: $gray-light;
+
+  img {
+    background-color: #fff;
+    opacity: 0.5;
+  }
+}
+
+.btn-primary.product-selection-item {
+
+  img {
+    background-color: $gray-lighter;
+  }
+}
+
+.product-selection-item {
+  margin: 0 10px 10px 0;
+  width: 120px;
+
+  img {
+    width: 60px;
+    height: 112px;
+    border-radius: 8px;
+    padding: 5px;
+  }
+}

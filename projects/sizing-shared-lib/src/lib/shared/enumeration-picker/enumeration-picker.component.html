@@ -1,0 +1,88 @@
+<!-- Layout for enumeration-picker\ -->
+<!--Available options-->
+<div class="row">
+  <div class="col-xs-12">
+    <ngx-datatable #enumerationPickerTable
+                   class="bootstrap"
+                   [headerHeight]="40"
+                   [limit]="15"
+                   [columnMode]="'force'"
+                   [footerHeight]="40"
+                   [rowHeight]="'auto'"
+                   [rows]="enumerationPickerCollection"
+                   [selected]="enumerationPickerSelectedItem"
+                   [selectionType]="'multi'"
+                   (select)="onEnumerationPickerSelect($event, true)">
+
+      <ngx-datatable-footer>
+        <ng-template ngx-datatable-footer-template
+                     let-rowCount="rowCount"
+                     let-pageSize="pageSize"
+                     let-selectedCount="selectedCount"
+                     let-curPage="curPage"
+                     let-offset="offset">
+        </ng-template>
+      </ngx-datatable-footer>
+
+      <ngx-datatable-column [name]="'AVAILABLE_OPTIONS' | translate" prop="translationText">
+        <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+          <div *ngIf="rowIndex === 0" title="{{value}} [{{translatePipe.transform('DEFAULT')}}]{{row['extraPostText']}}">{{value}} [{{translatePipe.transform('DEFAULT')}}]{{row['extraPostText']}}</div>
+          <div *ngIf="rowIndex !== 0" title="{{value}}{{row['extraPostText']}}">{{value}}{{row['extraPostText']}}</div>
+        </ng-template>
+      </ngx-datatable-column>
+    </ngx-datatable>
+  </div>
+</div>
+<!--Add/Remove buttons-->
+<div class="row">
+  <div class="col-xs-6">
+    <button (click)="moveSelectedOptions($event, true)" [disabled]="!moveOptionsDownSelected" class="btn btn-primary btn-block" [title]="'ADD' | translate">{{"ADD" | translate}}</button>
+  </div>
+  <div class="col-xs-6">
+    <button (click)="moveSelectedOptions($event, false)" [disabled]="!moveOptionsUpSelected" class="btn btn-primary btn-block" [title]="'REMOVE' | translate">{{"REMOVE" | translate}}</button>
+  </div>
+</div>
+<!--OpCo selected options-->
+<div class="row">
+  <div class="col-xs-12">
+    <ngx-datatable #enumerationPickerOpCoTable
+                   class="bootstrap"
+                   [headerHeight]="40"
+                   [limit]="15"
+                   [columnMode]="'force'"
+                   [footerHeight]="40"
+                   [rowHeight]="'auto'"
+                   [rows]="enumerationPickerOpCoCollection"
+                   [selected]="enumerationPickerOpCoSelectedItem"
+                   [selectionType]="'multi'"
+                   (select)="onEnumerationPickerSelect($event, false)">
+
+      <ngx-datatable-footer>
+        <ng-template ngx-datatable-footer-template
+                     let-rowCount="rowCount"
+                     let-pageSize="pageSize"
+                     let-selectedCount="selectedCount"
+                     let-curPage="curPage"
+                     let-offset="offset">
+        </ng-template>
+      </ngx-datatable-footer>
+
+      <ngx-datatable-column [name]="'SELECTED_OPTIONS' | translate" prop="translationText">
+        <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+          <div *ngIf="rowIndex === 0">{{value}}  [{{translatePipe.transform('DEFAULT')}}]</div>
+          <div *ngIf="rowIndex !== 0">{{value}}</div>
+        </ng-template>
+      </ngx-datatable-column>
+    </ngx-datatable>
+  </div>
+</div>
+<!--Change sequence buttons-->
+<div class="row">
+  <div class="col-xs-6">
+    <button (click)="moveSelectedOptionsSequence($event, true)" [disabled]="!moveOptionsUpSelected" class="btn btn-labeled btn-default pull-left" [title]="'MOVE_DOWN' | translate"><span class="btn-label"><i class="fa fa-arrow-down"></i></span>{{"MOVE_DOWN" | translate}}</button>
+  </div>
+  <div class="col-xs-6 pull-right">
+    <button (click)="moveSelectedOptionsSequence($event, false)" [disabled]="!moveOptionsUpSelected" class="btn btn-labeled btn-default pull-right" [title]="'MOVE_UP' | translate"><span class="btn-label"><i class="fa fa-arrow-up"></i></span>{{"MOVE_UP" | translate}}</button>
+  </div>
+</div>
+

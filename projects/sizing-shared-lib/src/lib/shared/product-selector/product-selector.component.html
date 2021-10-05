@@ -1,0 +1,17 @@
+<div class="row" style="margin-top:-30px">
+  <div style="height:50px" *ngIf="selectedProducts.length"></div><label style="font-size:medium; color:brown" *ngIf="!selectedProducts.length">Please select one or more Products</label>
+  <div class="col-xs-12 text-center product-selector-container">
+    <button #productSelectionButton
+            class="btn product-selection-item"
+            [class.btn-default]="!product.isSelected"
+            [class.btn-primary]="product.isSelected"
+            *ngFor="let product of products"
+            (click)="productRangeClick(product)">
+
+      <img [src]="'assets/img/' + internalModuleName + '/' + product.productRangeName + '.png'" /> <br />
+      {{product.productRangeName}}
+    </button>
+  </div>
+</div>
+
+<!--<pre>{{products | json}}</pre>-->

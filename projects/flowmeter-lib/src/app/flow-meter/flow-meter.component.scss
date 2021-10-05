@@ -1,0 +1,13 @@
+.checkbox {
+  padding-bottom: 28px;
+}
+
+::ng-deep {
+  .validation-error-class {
+    border: 1px solid red !important;
+  }
+
+  .validation-product-error-class {
+    border-left-color: transparent !important;
+  }
+}

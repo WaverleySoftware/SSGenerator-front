@@ -1,0 +1,4 @@
+/* For enumeration pickers, we don't want to display table footers */
+.ngx-datatable.bootstrap .datatable-footer {
+  display: none;
+}

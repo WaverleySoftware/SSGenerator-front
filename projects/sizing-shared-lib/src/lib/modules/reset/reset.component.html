@@ -1,0 +1,56 @@
+<div class="wrapper">
+  <div class="block-center mt-xl wd-xxl">
+    <!-- START panel-->
+    <div class="panel panel-dark panel-flat">
+      <div class="panel-heading text-center">
+        <a href="#">
+          <img class="block-center img-rounded" src="assets/img/sizing-logo.png" alt="Image" />
+        </a>
+      </div>
+      <div class="panel-body" *ngIf="isTokenExpired">
+        <div role="alert" class="alert alert-danger">
+          <!-- There is no translation support outside the app routing! -->
+          <!--{ {"TokenExpired" | translate}} <br /><a class="alert-link" [routerLink]="'/recover'">{ {"GenerateNewTokenAction" | translate }}</a>-->
+          The Token has expired. <br /><a class="alert-link" [routerLink]="'/recover'">Please request a Forgotten Password email again.</a>
+        </div>
+      </div>
+
+      <div class="panel-body" *ngIf="!isTokenExpired && isTokenExpired !== null">
+        <div role="alert" *ngIf="!!passwordResetResponse?.message && !isSuccess" class="alert alert-danger">
+          <!-- There is no translation support outside the app routing! { {"CHANGE_PASSW0RD_FAILURE_MESSAGE" | translate}} -->
+          Password reset failed.
+        </div>
+        <div role="alert" *ngIf="isSuccess" class="alert alert-success">
+          <!-- There is no translation support outside the app routing! -->
+          <!--{ {"PasswordResetSuccess" | translate}} <br /><a class="alert-link" [routerLink]="'/login'"> { {"ClickHereToLogin" | translate}}</a>-->
+          Password success reset. <br /><a class="alert-link" [routerLink]="'/login'"> Click here to login.</a>
+        </div>
+        <form [formGroup]="valForm" class="form-validate" role="form" *ngIf="!isSuccess" name="resetForm" (submit)="submitForm($event, valForm.value)">
+          <div class="form-group has-feedback">
+            <label class="text-muted">Password</label>
+            <input autocomplete="off" type="password" class="form-control" placeholder="Password" name="password" id="password" formControlName="password" [formGroup]="valForm" required />
+            <span class="fa fa-lock form-control-feedback text-muted"></span>
+            <span class="text-danger" *ngIf="valForm.controls['password'].hasError('required') && (valForm.controls['password'].dirty || valForm.controls['password'].touched)">
+              Password is required
+            </span>
+          </div>
+
+          <div class="form-group has-feedback">
+            <label class="text-muted">Confirm Password</label>
+            <input autocomplete="off" type="password" class="form-control" name="confirmPassword" id="confirmPassword" [formGroup]="valForm" formControlName="confirmPassword" placeholder="Confirm Password" />
+            <span class="fa fa-lock form-control-feedback text-muted"></span>
+            <span class="text-danger" *ngIf="valForm.errors?.mismatch && (valForm.controls['confirmPassword'].dirty || valForm.controls['confirmPassword'].touched)">
+              Passwords don't match.
+            </span>
+          </div>
+
+          <div class="form-group">
+            <button [disabled]="!valForm.dirty || !valForm.valid" type="submit" class="btn btn-block btn-primary mt-lg">Submit</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <!-- END panel-->
+    <footer app-footer></footer>
+  </div>
+</div>

@@ -1,0 +1,41 @@
+<form [formGroup]="userForm">
+  <!-- Notification ribbons should go here -->
+  <div class="row">
+    <div class="col-xs-12">
+      <!-- Alert messages for user profile submissions -->
+      <alert type="success" *ngIf="isSuccess" dismissible="true" dismissOnTimeout="3000">{{'PRODUCT_SELECTION_SAVED_SUCCESSFULLY' | translate}}</alert>
+      <alert type="danger" *ngIf="isError" dismissible="true">{{'PRODUCT_SELECTION_SAVE_FAILED' | translate}}</alert>
+
+    </div>
+  </div>
+
+
+  <div class="row">
+    <div class="col-xs-12 text-center product-selector-container">
+      <button #productSelectionButton
+              class="btn product-selection-item"
+              [class.btn-default]="product.isSelected"
+              [class.btn-primary]="!product.isSelected"
+              *ngFor="let product of products"
+              (click)="productRangeClick(product)">
+
+        <img [src]="'assets/img/' + internalModuleName + '/' + product.productRangeName + '.png'" /> <br />
+        {{product.productRangeName}}
+      </button>
+    </div>
+  </div>
+
+
+  <div class="col-xs-12">
+    <button (click)="onSave()"
+            [disabled]="saveButtonFade"
+            class="btn btn-primary pull-right"
+            [title]="'SAVE' | translate:true">
+
+      <i class="fa fa-save">  {{'SAVE' | translate:true}}</i>
+
+    </button>
+  </div>
+
+</form>
+

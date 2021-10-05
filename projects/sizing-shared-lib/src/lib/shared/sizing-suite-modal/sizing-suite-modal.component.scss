@@ -1,0 +1,17 @@
+@import "../styles/app/variables";
+
+.modal-body {
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: 300px;
+}
+
+.modal-dialog {
+  top: 135px;
+}
+
+
+.modal {
+  position: fixed;
+  background-color: rgba(86, 86, 86, 0.4);
+}

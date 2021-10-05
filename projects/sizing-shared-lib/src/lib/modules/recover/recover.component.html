@@ -1,0 +1,58 @@
+<div class="wrapper">
+  <div class="block-center mt-xl wd-xxl">
+
+    <div class="panel panel-dark panel-flat">
+      <div class="panel-heading text-center">
+        <a href="#">
+          <img class="block-center img-rounded" src="assets/img/sizing-logo.png" alt="Image" />
+        </a>
+      </div>
+      <div class="panel-body">
+
+        <!-- Password recovery -->
+        <form [formGroup]="valForm" class="form-validate" role="form" name="recoverForm" novalidate="" (submit)="submitForm($event, valForm.value)" *ngIf="!isFormSubmitted && !isSuccess">
+
+          <!-- There is no translation support outside the app routing! -->
+          <p>Fill with your registerd e-mail to receive instructions on how to reset your password.</p>
+          <div class="form-group has-feedback">
+            <label class="text-muted">Email</label>
+            <input autocomplete="off" class="form-control" type="email" name="email" placeholder="Enter email" autocomplete="off" formControlName="email" />
+            <span class="fa fa-envelope form-control-feedback text-muted"></span>
+            <span class="text-danger" *ngIf="valForm.controls['email'].hasError('required') && (valForm.controls['email'].dirty || valForm.controls['email'].touched)">Email is required</span>
+            <span class="text-danger" *ngIf="valForm.controls['email'].hasError('email') && (valForm.controls['email'].dirty || valForm.controls['email'].touched)">This field must be a valid email address</span>
+          </div>
+          <!-- There is no translation support outside the app routing! { {"RESET_PASSWORD" | translate}}-->
+          <button class="btn btn-danger btn-block" type="submit">Reset Password Request</button>
+          <div class="text-center">
+            <!-- There is no translation support outside the app routing! { {"ReturnToLogin" | translate}}-->
+            <br /><a class="alert-link" [routerLink]="'/login'">Return to login.</a>
+          </div>
+        </form>
+
+        <!-- Password recovery form submission processing -->
+        <div *ngIf="isFormSubmitted && !isEmailError && !isSuccess">
+          Processing password reset request, please wait...
+          <!-- There is no translation support outside the app routing! { {"PROCESSING_REQUEST_PLEASE_WAIT_MESSAGE" | translate}}-->
+        </div>
+
+        <!-- Password recovery form submission success alert -->
+        <div class="alert alert-info" *ngIf="isFormSubmitted && isSuccess">
+          An email has been sent to your mailbox. Please follow the information to reset your password.
+          <!-- There is no translation support outside the app routing! { {"PasswordRecoveryConfirmMessage" | translate}}-->
+        </div>
+
+        <!-- Password recovery form submission email error alert -->
+        <div class="alert text-danger" *ngIf="isEmailError && !isSuccess">
+          Requesting a password reset failed. Please check that the supplied email address is valid for your registered Sizing Suite account. For further assistance please contact Spirax Sarco by emailing
+          <!-- There is no translation support outside the app routing! { {"PasswordEmailErrorMessage" | translate}}-->
+          <a [href]="'mailto:prs.support@uk.spiraxsarco.com?Subject=Sizing%20Suite%20v2%20-%20&body=Hi%20PRS%20support,%0D%0A'" target="_blank">
+            prs.support@uk.spiraxsarco.com
+          </a>
+        </div>
+
+      </div>
+    </div>
+    <footer app-footer></footer>
+  </div>
+
+</div>

@@ -1,0 +1,45 @@
+<div class='panel panel-primary'>
+  <div class='panel-body'>
+    <div class='table-responsive'>
+
+      <ngx-datatable #currencyTable
+                     class="bootstrap"
+                     [headerHeight]="40"
+                     [limit]="10"
+                     [columnMode]="'force'"
+                     [footerHeight]="40"
+                     [rowHeight]="'auto'"
+                     [rows]="currencyList"
+                     [messages]="{emptyMessage: translatePipe.transform('NO_DATA_TO_DISPLAY', true), totalMessage: translatePipe.transform('TOTAL', true), selectedMessage: false}">
+
+        <ngx-datatable-column [name]="'CURRENCY' | translate" prop="translationText">
+          <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+            {{value}}
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column [name]="'SYMBOL' | translate" prop="symbol">
+          <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+            {{value}}
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column [name]="'CURRENCY_CODE' | translate" prop="currencyCode">
+          <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+            {{value}}
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column [name]="'CONVERSION_RATE' | translate" prop="rateToGbp">
+          <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+            {{value}}
+          </ng-template>
+        </ngx-datatable-column>
+
+      </ngx-datatable>
+
+
+      <div class="alert alert-danger" *ngIf="errorMessage">{{errorMessage}}</div>
+    </div>
+  </div>
+</div>

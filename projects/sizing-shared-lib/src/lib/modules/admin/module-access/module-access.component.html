@@ -1,0 +1,263 @@
+<div class="row" *ngIf="!!accessibleModules && accessibleModules.length > 0; else noModules">
+  <div class="col-lg-1" style="width:10%">
+    <!-- Show the module ribbon here -->
+    <module-ribbon [module-groups]="accessibleModules" [module-identifier]="'isModuleAccess'"></module-ribbon>
+  </div>
+
+
+
+  <div class="col-lg-11 col-md-10 col-xs-12 module-access-container" *ngIf="!!currentModule" style="width:90%">
+
+    <div class="row">
+      <div class="col-xs-12">
+        <!-- Alert messages for user profile submissions -->
+        <alert type="success" *ngIf="saveSuccessful" dismissible="true" dismissOnTimeout="3000">{{'SAVED_SUCCESSFULLY' | translate}}</alert>
+        <alert type="danger" *ngIf="saveError" dismissible="true">{{'SAVE_FAILED' | translate}}</alert>
+
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-12">
+        <button [disabled]="!saveButtonActive" (click)="saveModuleAccess()" class="btn btn-primary pull-right" [title]="'SAVE' | translate:true"><i class="fa fa-save"> {{'SAVE' | translate:true}}</i></button>
+      </div>
+    </div>
+
+    <div class="row">
+
+      <!-- Vetted / Free Access -->
+      <div class="col-xs-12">
+        <div class="form-group module-access-controls">
+          <label class="control-label">{{'MODULE_ACCESS_TYPE' | translate}}</label>
+
+          <div class="radio c-radio c-radio-nofont">
+            <label>
+              <input autocomplete="off" type="radio" [(ngModel)]="currentModule.isVetted" [value]="false" (click)="moduleChangesMade = true; saveButtonActive = true" />
+              <span></span>{{'FREE' | translate}}
+            </label>
+          </div>
+          <div class="radio c-radio c-radio-nofont">
+            <label>
+              <input autocomplete="off" type="radio" [(ngModel)]="currentModule.isVetted" [value]="true" (click)="moduleChangesMade = true; saveButtonActive = true" />
+              <span></span>{{'VETTED' | translate}}
+            </label>
+          </div>
+        </div>
+        <hr />
+      </div>
+    </div>
+
+    <div class="row" [hidden]="currentModule.isVetted === false">
+      <div class="col-xs-12">
+        <p>{{'THIS_MODULE_IS_SET_TO_VETTED_PLEASE_USE_THE_CONTROLS_BELOW_TO_SET_THE_ACCESS_AND_PERRMISIONS_FOR_THE_DESIRED_USERS' | translate}}</p>
+      </div>
+
+      <!-- Search users box -->
+      <div class="col-lg-3 col-md-4 col-xs-6">
+        <label class="control-label">{{"SEARCH" | translate}}</label>
+        <input autocomplete="off" type='text' title="{{'TYPE_TO_SEARCH' | translate}}" class="form-control" placeholder="{{'TYPE_TO_SEARCH' | translate}}..." (keyup)="searchUsers()" #searchFilter />
+      </div>
+
+      <!-- Filter down to specific users -->
+      <div class="row">
+        <div class="col-lg-3">
+          <label class="control-label">{{"FILTER" | translate}}</label>
+          <div class="form-group">
+            <div class="radio c-radio c-radio-nofont">
+              <label>
+                <input autocomplete="off" type="radio" [value]="true" (click)="filterUsers($event)" name="filterCheck" />
+                <span></span> <i class="fa fa-user spirax-internal"></i> {{'SPIRAX_EMPLOYEES' | translate}}
+              </label>
+            </div>
+            <div class="radio c-radio c-radio-nofont">
+              <label>
+                <input autocomplete="off" type="radio" [value]="false" (click)="filterUsers($event)" name="filterCheck" />
+                <span></span> <i class="fa fa-user spirax-external"></i> {{'CUSTOMERS' | translate}}
+              </label>
+            </div>
+            <div class="radio c-radio c-radio-nofont">
+              <label>
+                <input autocomplete="off" type="radio" [value]="null" (click)="filterUsers($event)" checked="checked" name="filterCheck" />
+                <span></span>
+
+                <i class="fa fa-user spirax-internal" style="margin-right: -5px; margin-left: -2.5px;"></i>
+                <i class="fa fa-user spirax-external"></i>
+                {{'ALL_USERS' | translate}}
+              </label>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="col-lg-3" style="margin-left:0px; padding-left:0px">
+          <div class="row" *ngIf="currentModule.showPricing">
+            <!--<div class="col-lg-7 hidden-md hidden-sm hidden-xs">Key</div>-->
+            <label class="control-label">{{'KEY' | translate}}</label>
+            <div class="form-group">
+              <div class="col-lg-5 col-xs-12" style="width:100%; padding-left:0px">
+                <i class="fa fa-star" style="margin-bottom:9px; margin-top:9px; font-size: 1.1em"></i> - {{noPricingLabel}}<br />
+                <i class="fa fa-star" style="margin-bottom:9px; font-size: 1.1em"></i><i class="fa fa-star" style="margin-bottom:9px; font-size: 1.1em"></i> - {{sellingPricesLabel}}<br />
+                <i class="fa fa-star" style="font-size: 1.1em"></i><i class="fa fa-star" style="font-size: 1.1em"></i><i class="fa fa-star" style="font-size: 1.1em"></i> - {{allPricesLabel}}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+    </div>
+
+
+
+    <!-- This is the Vetted Access block-->
+    <div class="row" *ngIf="currentModule.isVetted === true; else freeAccess">
+      <div class="col-xs-12" *blockUI="'vetted-user-section'">
+
+        <!-- Hide this when loading the users -->
+        <div class="row">
+          <!-- Vetted Users table -->
+          <div class="col-lg-5 col-xs-12">
+            <h4>{{'UNALLOCATED_USERS' | translate}}</h4>
+
+            <ngx-datatable #nonVettedUsersTable
+                           class="bootstrap"
+                           [headerHeight]="40"
+                           [limit]="10"
+                           [columnMode]="'force'"
+                           [footerHeight]="40"
+                           [rowHeight]="'auto'"
+                           [rows]="nonVettedUsers"
+                           [messages]="{emptyMessage: translatePipe.transform('NO_DATA_TO_DISPLAY', true), totalMessage: translatePipe.transform('TOTAL', true), selectedMessage: false}"
+                           [selected]="selectedNonVettedUsers"
+                           [selectionType]="'multi'"
+                           (select)="onUserSelect($event, false)"
+                           scrollbarH="true">
+
+              <ngx-datatable-column [name]="'USERNAME' | translate" prop="username">
+                <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+                  <i class="fa fa-user" [class.spirax-external]="!row.isInternal" [class.spirax-internal]="row.isInternal"></i>&nbsp;
+                  {{value}}
+                </ng-template>
+              </ngx-datatable-column>
+
+              <ngx-datatable-column [name]="'FIRST_NAME' | translate" prop="firstname">
+                <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+                  {{value}}
+                </ng-template>
+              </ngx-datatable-column>
+
+              <ngx-datatable-column [name]="'LAST_NAME' | translate" prop="lastname">
+                <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+                  {{value}}
+                </ng-template>
+              </ngx-datatable-column>
+
+              <ngx-datatable-column [name]="'EMAIL' | translate" prop="email" [width]="260">
+                <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+                  {{value}}
+                </ng-template>
+              </ngx-datatable-column>
+
+            </ngx-datatable>
+
+          </div>
+
+          <!-- The control buttons -->
+          <div class="col-sm-2" style="width:7%; padding:0px">
+            <div class="vetted-user-button-container">
+              <button (click)="deleteUser()" [disabled]="!userSelected" class="btn btn-primary btn-block" [title]="'DELETE' | translate"> <i class="fa fa-trash"></i> </button>
+              <button (click)="moveSelectedUsers(true)" [disabled]="!vettedTableSelected" class="btn btn-primary btn-block" [title]="'MOVE_TO_UNALLOCATED_USERS' | translate"> <i class="fa fa-arrow-left"></i> </button>
+              <button (click)="moveSelectedUsers(false)" [disabled]="!nonVettedTableSelected" class="btn btn-primary btn-block" [title]="'MOVE_TO_ALLOCATED_USERS' | translate"> <i class="fa fa-arrow-right"></i> </button>
+            </div>
+
+          </div>
+
+          <!-- Non-Vetted Users table -->
+          <div class="col-lg-5 col-xs-12">
+            <h4>{{'ALLOCATED_USERS' | translate}}</h4>
+
+            <ngx-datatable #vettedUsersTable
+                           class="bootstrap"
+                           [headerHeight]="40"
+                           [limit]="10"
+                           [columnMode]="'force'"
+                           [footerHeight]="40"
+                           [rowHeight]="'auto'"
+                           [rows]="vettedUsers"
+                           [messages]="{emptyMessage: translatePipe.transform('NO_DATA_TO_DISPLAY', true), totalMessage: translatePipe.transform('TOTAL', true), selectedMessage: false}"
+                           [selected]="selectedVettedUsers"
+                           [selectionType]="'multi'"
+                           (select)="onUserSelect($event, true)"
+                           scrollbarH="true">
+
+              <ngx-datatable-column *ngIf="currentModule.showPricing" [name]="'ACCESS' | translate" prop="accessLevel">
+                <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+
+                  <rating class="module-access-level" [(ngModel)]="row.accessLevel" (click)="moduleChangesMade = true; saveButtonActive = true; saveSuccessful = false" [max]="3" [titles]="pricesLabel" [readonly]="!row.isInternal"
+                          stateOn="fa fa-star" stateOff="fa fa-star-o"></rating>
+
+                </ng-template>
+              </ngx-datatable-column>
+
+              <ngx-datatable-column [name]="'USERNAME' | translate" prop="username">
+                <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+                  <i class="fa fa-user" [class.spirax-external]="!row.isInternal" [class.spirax-internal]="row.isInternal"></i>&nbsp;
+                  {{value}}
+                </ng-template>
+              </ngx-datatable-column>
+
+              <ngx-datatable-column [name]="'FIRST_NAME' | translate" prop="firstname">
+                <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+                  {{value}}
+                </ng-template>
+              </ngx-datatable-column>
+
+              <ngx-datatable-column [name]="'LAST_NAME' | translate" prop="lastname">
+                <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+                  {{value}}
+                </ng-template>
+              </ngx-datatable-column>
+
+              <ngx-datatable-column [name]="'EMAIL' | translate" prop="email" [width]="260">
+                <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+                  {{value}}
+                </ng-template>
+              </ngx-datatable-column>
+
+            </ngx-datatable>
+
+          </div>
+        </div>
+
+
+
+      </div>
+    </div>
+
+    <!-- This is the Free Access block-->
+    <ng-template #freeAccess>
+      <div class="row">
+        <div class="col-xs-12">
+          {{'THIS_MODULE_IS_SET_TO_FREE_ALL_USERS_FOR_YOUR_COUNTRY_WILL_HAVE_ACCESS_TO_THIS_MODULE' | translate}}
+        </div>
+      </div>
+    </ng-template>
+
+  </div>
+</div>
+
+<!-- Shown when there are no modules -->
+<ng-template #noModules>
+  <div class="row">
+    <div class="col-xs-12">
+      <alert type="info">{{'NO_ACCESS_TO_MODULES_MESSAGE' | translate:true}}</alert>
+    </div>
+  </div>
+</ng-template>
+
+<!--<div class="row">
+  <div class="col-xs-12">
+    <button [disabled]="canSaveModuleChanges()" (click)="saveModuleAccess()" class="btn btn-primary pull-right" [title]="'SAVE' | translate:true"><i class="fa fa-save"> {{'SAVE' | translate:true}}</i></button>
+  </div>
+</div>-->

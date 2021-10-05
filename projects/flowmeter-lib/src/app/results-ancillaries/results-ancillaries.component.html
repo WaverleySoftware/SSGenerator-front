@@ -1,0 +1,37 @@
+<div class="well" >
+    <p>
+        <strong>{{ 'ANCILLARIES_TEXT_DUPLICATE_ID_4028' | translate }}</strong>
+    </p>
+    <div class="form-group" [formGroup]="ancillariesForm">
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" formControlName="downstreamCheckValve"> {{ 'DOWNSTREAM_CHECK_VALVE_TEXT_DUPLICATE_ID_4023' | translate }}
+            </label>
+        </div>
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" formControlName="upstreamStrainer"> {{ 'UPSTREAM_STRAINER' | translate }}
+            </label>
+        </div>
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" formControlName="upstreamIsolationValve"> {{ 'UPSTREAM_ISOLATION_VALVE' | translate }}
+            </label>
+        </div>
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" formControlName="downstreamIsolationValve"> {{ 'DOWNSTREAM_ISOLATION_VALVE' | translate }}
+            </label>
+        </div>
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" formControlName="separator"> {{ 'SEPARATOR' | translate }}
+            </label>
+        </div>
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" formControlName="separatorTrapSet"> {{ 'SEPARATOR_TRAP_SET' | translate }}
+            </label>
+        </div>
+    </div>
+</div>

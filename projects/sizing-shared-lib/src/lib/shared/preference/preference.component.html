@@ -1,0 +1,30 @@
+<!-- Layout for preferences that DO require decimal places -->
+<div class="form-group" *ngIf="!!requiresDecimals">
+  <div class="col-lg-3 col-md-12 col-xs-12 text-right">
+    <label class="control-label">{{preference.label | translate}}</label>
+  </div>
+
+
+  <div class="col-lg-2 col-xs-4">
+    <input autocomplete="off" type="number" style="min-width:55px;" (blur)="onTouched()" (change)="changeDecimalPlaces(preference.decimalPlaces)" [(ngModel)]="preference.decimalPlaces" [min]="minDecimalPlaces" [max]="maxDecimalPlaces" class="form-control" />
+  </div>
+  <div class="col-lg-4 col-xs-8">
+    <select class="form-control" (blur)="onTouched()" (ngModelChange)="onChange($event, 'value')" [ngModel]="preference.value">
+      <option *ngFor="let unit of unitCollection" [value]="unit.id">{{unit.masterTextKey | translate}}</option>
+    </select>
+  </div>
+</div>
+
+
+<!-- Layout for preferences that DO NOT require decimal places -->
+<div class="form-group" *ngIf="!requiresDecimals">
+  <div class="col-lg-4 col-md-12 col-xs-12 text-right">
+    <label class="control-label">{{preference.label | translate}}</label>
+  </div>
+
+  <div class="col-lg-4 col-xs-12">
+    <select class="form-control" (blur)="onTouched()" (ngModelChange)="onChange($event, 'value')" [ngModel]="preference.value">
+      <option *ngFor="let unit of unitCollection" [value]="unit.id">{{unit.masterTextKey | translate}}</option>
+    </select>
+  </div>
+</div>

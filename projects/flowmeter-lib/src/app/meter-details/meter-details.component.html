@@ -1,0 +1,19 @@
+<div class="panel panel-primary">
+	<div class="panel-heading" >
+		<h4 class="panel-title">{{"METER_DETAILS" | translate}}</h4>
+	</div>
+
+	<ng-container [formGroup]="form">
+		<div class="panel-body" formGroupName="meterDetails">
+			<product-selector formControlName="selectedMeters"
+												[module-group-id]="moduleGroupId"
+												[module-name]="moduleName"
+												[ngClass]="{'validation-product-error-class': form.get('meterDetails.selectedMeters').errors?.incorrect }"
+												[popover]="form.get('meterDetails.selectedMeters').errors?.incorrect"
+												placement="left"
+												popover-is-open="true"
+												[value]="form.get('meterDetails.selectedMeters').value"
+			></product-selector>
+		</div>
+	</ng-container>
+</div>

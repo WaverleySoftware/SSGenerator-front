@@ -1,0 +1,14 @@
+<!-- Iterate through the modules here -->
+<!-- Enter the module Identifier as a CSS class here so that each layout could be customised if needed e.g. the Home screen -->
+<div class="module-ribbon-container" [class]="moduleIdentifier" *ngFor="let moduleGroup of moduleGroups">
+
+  <!--[title] is the tooltip text-->
+  <a class="btn btn-primary btn-outline module-ribbon" [title]="moduleGroup.masterTextKey | translate:true" *ngIf="!!moduleGroup" [routerLink]="getRoute(moduleGroup.masterTextKey)" routerLinkActive="active">
+    <div class="module-image-container" style="margin-bottom:10px; margin-top:10px; ">
+      <span class="module-icon"> <i [class]="getIcon(moduleGroup.masterTextKey)" style="font-size: 85px"></i> </span>
+    </div>
+
+    <!-- Button Text in vertical ribbon --->
+    <span class="text-center module-text">{{moduleGroup.masterTextKey | translate:true}}</span>
+  </a>
+</div>

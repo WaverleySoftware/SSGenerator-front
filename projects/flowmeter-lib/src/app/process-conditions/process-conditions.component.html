@@ -1,0 +1,169 @@
+<div class="panel panel-primary" *blockUI="'process-conditions-section'">
+	<div class="panel-heading">
+		<h4 class="panel-title">{{"PROCESS_CONDITIONS" | translate}}</h4>
+	</div>
+
+	<div class="panel-body">
+		<!-- Process conditions form -->
+		<div [formGroup]="form">
+			<div formGroupName="processConditions" class="row">
+				<!-- Left column -->
+				<div class="col-md-6 col-sm-12">
+					<!-- Media select -->
+					<div class="form-group">
+						<div class="col-md-3 col-sm-4 col-xs-12 text-right">
+							<label class="control-label">{{"MEDIA" | translate}}</label>
+						</div>
+						<div class="col-md-6 col-sm-8 col-xs-12">
+							<enumeration id="media" formControlName="media" enumeration-name="Media_FlowMeter"></enumeration>
+						</div>
+					</div>
+
+					<!-- Inlet pressure input -->
+					<div class="form-group">
+						<div class="col-md-3 col-sm-4 col-xs-12 text-right">
+							<label class="control-label">{{"INLET_PRESSURE" | translate}}</label>
+						</div>
+						<div class="col-md-6 col-sm-8 col-xs-12">
+							<div class="input-group">
+								<input
+										type="number"
+										class="form-control"
+										formControlName="inletPressure"
+										[display-preference]="'PressureUnit'"
+										[display-masterTextKey]="'PRESSURE'"
+										display-preference-unit-type="PressureUnits"
+										[display-preference-module-group-id]="moduleGroupId"
+										#pressureRef="display-preference"
+										[popover]="inletPressureErrors"
+										triggers="mouseenter:mouseleave keyup:keydown mouseenter:focusout"
+										placement="top"
+										[value]="inletPressure.value | preferenceDecimal:'PressureUnit'"
+								/>
+								<span class="input-group-addon">{{ pressureRef?.preference?.masterTextKey | translate }}</span>
+							</div>
+						</div>
+					</div>
+
+					<!-- Temperature input -->
+					<div class="form-group">
+						<div class="col-md-3 col-sm-4 col-xs-12 text-right">
+							<label class="control-label">{{"TEMPERATURE" | translate}}</label>
+						</div>
+						<div class="col-md-6 col-sm-8 col-xs-12">
+							<div class="input-group">
+								<input
+										type="number"
+										class="form-control"
+										formControlName="temperature"
+										[display-preference]="'TemperatureUnit'"
+										[display-masterTextKey]="'TEMPERATURE'"
+										display-preference-unit-type="TemperatureUnits"
+										[display-preference-module-group-id]="moduleGroupId"
+										#temperatureRef="display-preference"
+										[popover]="temperatureErrors"
+										triggers="mouseenter:mouseleave keyup:keydown mouseenter:focusout"
+										placement="top"
+										[value]="temperature.value | preferenceDecimal:'TemperatureUnit'"
+								/>
+								<span class="input-group-addon">{{ temperatureRef?.preference?.masterTextKey | translate }}</span>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Right column -->
+				<div class="col-md-6 col-sm-12">
+					<!-- State info -->
+					<div class="form-group">
+						<div class="col-md-3 col-sm-4 col-xs-12 text-right">
+							<label class="control-label">{{"STATE" | translate}}</label>
+						</div>
+						<div class="col-md-6 col-sm-8 col-xs-12">
+							<input type="text" class="form-control" formControlName="state" disabled/>
+						</div>
+					</div>
+
+					<!-- Mass flow input -->
+					<div class="form-group">
+						<div class="col-md-3 col-sm-4 col-xs-12 text-right">
+							<label class="control-label">{{"MASS_FLOW" | translate}}</label>
+						</div>
+						<div class="col-md-6 col-sm-8 col-xs-12">
+							<div class="input-group">
+								<input
+										type="number"
+										class="form-control"
+										formControlName="massFlow"
+										[display-preference]="'MassFlowUnit'"
+										[display-masterTextKey]="'MASS_FLOW'"
+										display-preference-unit-type="MassFlowUnits"
+										[display-preference-module-group-id]="moduleGroupId"
+										#massFlowRef="display-preference"
+										[popover]="massFlowErrors"
+										triggers="mouseenter:mouseleave keyup:keydown mouseenter:focusout"
+										placement="top"
+										[value]="massFlow.value | preferenceDecimal:'MassFlowUnit'"
+								/>
+								<span class="input-group-addon">{{ massFlowRef?.preference?.masterTextKey | translate }}</span>
+							</div>
+						</div>
+					</div>
+
+					<!-- Volumetric flow input -->
+					<div class="form-group">
+						<div class="col-md-3 col-sm-4 col-xs-12 text-right">
+							<label class="control-label">{{"VOLUMETRIC_FLOW" | translate}}</label>
+						</div>
+						<div class="col-md-6 col-sm-8 col-xs-12">
+							<div class="input-group">
+								<input
+										type="number"
+										class="form-control"
+										formControlName="volumetricFlow"
+										[display-preference]="'VolumetricFlowUnit'"
+										[display-masterTextKey]="'VOLUMETRIC_FLOW'"
+										display-preference-unit-type="VolumetricFlowUnits"
+										[display-preference-module-group-id]="moduleGroupId"
+										#volumetricFlowRef="display-preference"
+										[popover]="volumetricFlowErrors"
+										triggers="mouseenter:mouseleave keyup:keydown mouseenter:focusout"
+										placement="top"
+										[value]="volumetricFlow.value | preferenceDecimal:'VolumetricFlowUnit'"
+								/>
+								<span class="input-group-addon">{{ volumetricFlowRef?.preference?.masterTextKey | translate }}</span>
+							</div>
+						</div>
+					</div>
+
+					<!-- Normal temperature input -->
+					<div class="form-group">
+						<div class="col-md-3 col-sm-4 col-xs-12 text-right">
+							<label class="control-label">{{"NORMAL_TEMPERATURE" | translate}}</label>
+						</div>
+						<div class="col-md-6 col-sm-8 col-xs-12">
+							<div class="input-group">
+								<input
+										type="number"
+										class="form-control"
+										formControlName="normalTemperature"
+										[display-preference]="'TemperatureUnit'"
+										[display-masterTextKey]="'TEMPERATURE'"
+										display-preference-unit-type="TemperatureUnits"
+										[display-preference-module-group-id]="moduleGroupId"
+										#normalTemperatureRef="display-preference"
+										[popover]="normalTemperatureErrors"
+										triggers="mouseenter:mouseleave keyup:keydown mouseenter:focusout"
+										placement="top"
+										[value]="normalTemperature.value | preferenceDecimal:'TemperatureUnit'"
+								/>
+								<span class="input-group-addon">{{ normalTemperatureRef?.preference?.masterTextKey | translate }}</span>
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+</div>

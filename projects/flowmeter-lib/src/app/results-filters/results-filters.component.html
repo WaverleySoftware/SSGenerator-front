@@ -1,0 +1,63 @@
+<div class="" [formGroup]="filtersForm">
+    <div class="col-xs-4">
+        <div class="form-group">
+            <label for="productSelect">{{ 'METER_TYPE' | translate }}</label>
+            <select class="form-control" name="productSelect" id="productSelect" formControlName="product">
+                <option [ngValue]="null">{{ 'ALL' | translate }}</option>
+                <option *ngFor="let option of productOptions" [ngValue]="option">{{ option }}</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="flangeSpecificationSelect">{{ 'FLANGE_SPECIFICATION' | translate }}</label>
+            <select class="form-control" name="flangeSpecification" id="flangeSpecificationSelect" formControlName="flangeSpecification">
+                <option [ngValue]="null">{{ 'ALL' | translate }}</option>
+                <option *ngFor="let option of flangeSpecificationOptions" [ngValue]="option">{{ option }}</option>
+            </select>
+        </div>
+    </div>
+    <div class="col-xs-4">
+        <div class="form-group">
+            <label for="materialSelect">{{ 'MATERIAL' | translate }}</label>
+            <select class="form-control" name="materialSelect" id="materialSelect" formControlName="material">
+                <option [ngValue]="null">{{ 'ALL' | translate }}</option>
+                <option *ngFor="let option of materialOptions" [ngValue]="option">{{ option | translate }}</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="orientationSelect">{{ 'ORIENTATION' | translate }}</label>
+            <select class="form-control" name="orientationSelect" id="orientationSelect" formControlName="orientation">
+                <option [ngValue]="null">{{ 'ALL' | translate }}</option>
+                <option *ngFor="let option of orientationOptions" [ngValue]="option">{{ option | translate }}</option>
+            </select>
+        </div>
+    </div>
+    <div class="col-xs-4">
+        <div class="form-group">
+            <label for="meterSizeSelect">{{ 'METER_SIZE' | translate }}</label>
+            <select class="form-control" name="meterSizeSelect" id="meterSizeSelect" formControlName="meterSize">
+                <option [ngValue]="null">{{ 'ALL' | translate }}</option>
+                <option *ngFor="let option of meterSizeOptions" [ngValue]="option">{{ option }}</option>
+            </select>
+        </div>
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" formControlName="hideMetersWithWarnings">
+                {{ 'HIDE_METERS_WITH_WARNINGS' | translate }}
+            </label>
+        </div>
+        <div class="radio">
+            <label>
+                <input type="radio" value="volumetric" formControlName="flowType">
+                {{ 'VOLUMETRIC_FLOW' | translate }}
+            </label>
+        </div>
+        <div class="radio">
+            <label>
+                <input type="radio" value="mass" formControlName="flowType">
+                {{ 'MASS_FLOW' | translate }}
+            </label>
+        </div>
+    </div>
+</div>

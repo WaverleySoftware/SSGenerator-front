@@ -1,0 +1,156 @@
+
+<form [formGroup]="saveLoadForm" class="form-horizontal" role="form" novalidate>
+  
+  <div class="row">
+    <div class="column leftside">
+
+      <button [disabled]="isNewProjectDisabled" type="button" class="btn btn-block btn-dynamic btn-primary pull-right btn-space" (click)="onClickNewProject()" [title]="'SAVE_TO_A_NEW_PROJECT' | translate"><i class="fa fa-plus">  {{'SAVE_TO_A_NEW_PROJECT' | translate}}</i></button> 
+      
+      <button [disabled]="isExistingProjectDisabled" type="button" class="btn btn-block btn-dynamic btn-primary pull-right" (click)="onClickExistingProject()" [title]="'SAVE_TO_AN_EXISTING_PROJECT' | translate"><i class="fa fa-folder-open">  {{'SAVE_TO_AN_EXISTING_PROJECT' | translate}}</i></button> 
+
+    </div>
+
+    <div class="column rightside">
+      <div class="panel panel-primary" id="newProject" *ngIf="showHideNewProject.value">
+
+        <div class="panel-heading" role="tab" id="saveNewProjectHeading">
+          <h4 class="panel-title">
+            {{"SAVE_TO_A_NEW_PROJECT" | translate}}
+          </h4>
+        </div>
+
+        <div id="saveNewProjectContent" role="tabpanel">
+          <div class="panel-body">
+
+            <div class="form-group">
+              <div class="col-xs-3 text-right">
+                <label class="control-label">{{"PROJECT_NAME" | translate}}</label>
+              </div>
+              <div class="col-xs-5">
+                <input autocomplete="off" class="form-control" type="text" formControlName="projectname" maxlength="40"/>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <div class="col-xs-3 text-right">
+                <label class="control-label">{{"CUSTOMER" | translate}}</label>
+              </div>
+              <div class="col-xs-5">
+                <input autocomplete="off" class="form-control" type="text" formControlName="customer" maxlength="50"/>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <div class="col-xs-3 text-right">
+                <label class="control-label">{{"PROJECT_REFERENCE" | translate}}</label>
+              </div>
+              <div class="col-xs-5">
+                <input autocomplete="off" class="form-control" type="text" formControlName="projectreference"  maxlength="40"/>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <div class="col-xs-3 text-right">
+                <label class="control-label">{{"JOB_NAME" | translate}}</label>
+              </div>
+              <div class="col-xs-5">
+                <input autocomplete="off" class="form-control" type="text" formControlName="jobname"  maxlength="40"/>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <div class="col-xs-3 text-right">
+                <label class="control-label">{{"PLANT_OWNER" | translate}}</label>
+              </div>
+              <div class="col-xs-5">
+                <input autocomplete="off" class="form-control" type="text" formControlName="plantowner"/>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+
+      <div class="panel panel-primary" id="existingProject" *ngIf="showHideExistingProject.value">
+
+        <div class="panel-heading" role="tab" id="saveExistingProjectHeading">
+          <h4 class="panel-title">
+            {{"SAVE_TO_AN_EXISTING_PROJECT" | translate}}
+          </h4>
+        </div>
+
+        <div>
+          <div id="saveExistingProjectContent" role="tabpanel">
+            <div class="panel-body">
+
+              <div>
+                <ngx-datatable #existingProjectDataTable
+                               class="bootstrap"
+                               [headerHeight]="40"
+                               [limit]="5"
+                               [columnMode]="'force'"
+                               [footerHeight]="40"
+                               [rowHeight]="'auto'"
+                               [rows]="existingProjectDataRows"
+                               [selected]="selectedExistingProjectData"
+                               [selectionType]="'single'"
+                               (select)="onSelect($event)">
+
+                  <ngx-datatable-column [name]="'PROJECT_NAME' | translate" prop="name">
+                    <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+                      {{value}}
+                    </ng-template>
+                  </ngx-datatable-column>
+
+                  <ngx-datatable-column [name]="'CUSTOMER' | translate" prop="customerName">
+                    <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+                      {{value}}
+                    </ng-template>
+                  </ngx-datatable-column>
+
+                  <ngx-datatable-column [name]="'PROJECT_REFERENCE' | translate" prop="projectReference">
+                    <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+                      {{value}}
+                    </ng-template>
+                  </ngx-datatable-column>
+
+                  <ngx-datatable-column [name]="'LAST_UPDATED' | translate" prop="updated">
+                    <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+                      {{value}}
+                    </ng-template>
+                  </ngx-datatable-column>
+                  
+                </ngx-datatable>
+
+              </div>
+              
+              <div class="form-group">
+                <div class="col-xs-3 text-right">
+                  <label class="control-label">{{"JOB_NAME" | translate}}</label>
+                </div>
+                <div class="col-xs-5">
+                  <input autocomplete="off" class="form-control" type="text" formControlName="jobname"  maxlength="30"/>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <div class="col-xs-3 text-right">
+                  <label class="control-label">{{"PLANT_OWNER" | translate}}</label>
+                </div>
+                <div class="col-xs-5">
+                  <input autocomplete="off" class="form-control" type="text" formControlName="plantowner"/>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+  
+  
+</form>
+

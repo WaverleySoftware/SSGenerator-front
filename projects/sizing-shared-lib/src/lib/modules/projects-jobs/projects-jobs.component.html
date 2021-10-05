@@ -1,0 +1,231 @@
+<form [formGroup]="projectsForm" class="form-horizontal" role="form" novalidate>
+  <div class='panel panel-primary' *ngIf="!!areProjectsAndJobsLoaded">
+    <div class='panel-body'>
+      <div class="row">
+
+        <div class="col-xs-12">
+          <h4>{{"PROJECTS" | translate}}</h4>
+          <hr />
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-3 col-xs-12">
+
+          <div class="form-group">
+            <p class="text-center pv " style="font-weight: bolder; color: red; text-wrap: avoid" *ngIf="!!projectsAndJobsSyncInfo && projectsAndJobsSyncInfo.isSuccessful && (projectsAndJobsSyncInfo.numberOfServerSizingsToDownload > 0 || projectsAndJobsSyncInfo.numberOfClientSizingsToUpload > 0)">{{'AWAITING_SYNC' | translate}} - {{projectsAndJobsSyncInfo.numberOfServerSizingsToDownload}} {{'JOBS_TO_DOWNLOAD_FROM_SERVER' | translate}}, {{projectsAndJobsSyncInfo.numberOfClientSizingsToUpload}} {{'JOBS_TO_UPLOAD_FROM_CLIENT' | translate}}</p>
+            <div class="col-xs-3">
+              <label class="control-label">{{"FILTER" | translate:true}}</label>
+            </div>
+            <div class="col-xs-6">
+              <input autocomplete="off" [disabled]="editingJob" type='text' title="{{'TYPE_TO_FILTER' | translate:true}}" class="form-control" placeholder="{{'TYPE_TO_FILTER' | translate:true}}..." (keyup)='updateFilter($event)'/>
+            </div>
+          </div>
+          
+        </div>
+        
+        <div class="col-md-6 col-xs-12">
+          <button [disabled]="editingProject || editingJob || projectsForm.dirty" class="btn btn-projects btn-primary pull-left" (click)="newProject()" [title]="'ADD_NEW_PROJECT' | translate"><p id="noMargins"><i class="fa fa-plus">  </i> {{'ADD_NEW_PROJECT' | translate}}</p></button>
+          <!-- <button [disabled]="editingJob || !projectsForm.dirty || !projectsForm.valid || projectsForm.status !== 'VALID' || formSubmitted" class="btn btn-projects btn-primary pull-left" (click)="updateInsertProject($event)" [title]="'SAVE_PROJECT' | translate"><i class="fa fa-save">  {{'SAVE_PROJECT' | translate}}</i></button>-->
+          <button [disabled]="editingJob || !projectsForm.dirty || !projectsForm.valid || projectsForm.status !== 'VALID' || formSubmitted" class="btn btn-projects btn-primary pull-left" (click)="checkProjectNameDuplication(projectName.value,selectedProject.id)" [title]="'SAVE_PROJECT' | translate"><p id="noMargins"><i class="fa fa-save"></i> {{'SAVE_PROJECT' | translate}}</p></button>
+          <button [disabled]="(!editingProject && !projectsForm.dirty) || editingJob" class="btn btn-projects btn-primary pull-left" (click)="(projectsForm.dirty && projectsForm.valid)? saveChangesModal.open() : cancelEditsForProject()" [title]="'CANCEL' | translate"><p id="noMargins"><i class="fa fa-times"></i> {{'CANCEL' | translate}}</p></button>
+          <button [disabled]="editingProject || editingJob || projectsForm.dirty || !this.selectedProject.jobs " class="btn btn-projects btn-primary pull-left" (click)="delteConfirmationModal.open()" [title]="'DELETE_PROJECT' | translate"><p id="noMargins"><i class="fa fa-trash"></i> {{'DELETE_PROJECT' | translate}}</p></button>
+          <!-- || this.selectedProject.jobs.length > 0-->
+          <!-- projectsAndJobsSyncInfo -->
+        </div>
+      </div>
+
+      <div class="row">
+        <!-- Left section -->
+        <div class="col-md-3 col-xs-12">
+          <!-- If User starts editing the project form, then mark "projectsForm.dirty" and load disabled Projects List (code below) other wise load active Projects List from code section that starts at line 54+- ) -->
+          <!-- Note that rowIndex is not sort safe, use rows[rows.indexOf(row)] for the real index of the row data. -->
+          <ngx-datatable *ngIf="projectsForm.dirty" class="bootstrap" style="opacity: 0.4; pointer-events:none; font-size: larger; font-weight: lighter" [selected]="selected" [selectionType]="'singleClick'" (activate)="onActivate($event)" (select)="onSelect($event)" [headerHeight]="40" [limit]="6" [columnMode]="'force'" [footerHeight]="60" [rowHeight]="'auto'" [rows]="projects" (page)="onPage($event)" [messages]="{emptyMessage: translatePipe.transform('NO_DATA_TO_DISPLAY', true), totalMessage: translatePipe.transform('TOTAL', true), selectedMessage: false}" #projectsTable>
+            <ngx-datatable-column class="" headerClass="text-bold" style="" name="{{'PROJECT_NAME' | translate}}" prop="name">
+              <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row" maxWidth="100px" let->
+                <div>
+                  <span title="{{'PROJECT_NAME' | translate:true}}">
+                    {{value}}
+                  </span>
+                </div>
+              </ng-template>
+            </ngx-datatable-column>
+          </ngx-datatable>
+
+          <!-- If User IS NOT editing the project form, then mark "!projectsForm.dirty" and load Projects List (code below) other wise load inactive Projects List from code above -->
+          <ngx-datatable *ngIf="!projectsForm.dirty" class="bootstrap" style="font-size: larger; font-weight: lighter" [selected]="selected" [selectionType]="'singleClick'" (activate)="onActivate($event)" (select)="onSelect($event)" [headerHeight]="40" [limit]="6" [columnMode]="'force'" [footerHeight]="60" [rowHeight]="'auto'" [rows]="projects" (page)="onPage($event)" [messages]="{emptyMessage: translatePipe.transform('NO_DATA_TO_DISPLAY', true), totalMessage: translatePipe.transform('TOTAL', true), selectedMessage: false}" #projectsTable>
+            <ngx-datatable-column class="" headerClass="text-bold" style="" name="{{'PROJECT_NAME' | translate}}" prop="name">
+              <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row" maxWidth="100px" let->
+                <div>
+                  <span title="{{'PROJECT_NAME' | translate:true}}">
+                    {{value}}
+                  </span>
+                </div>
+              </ng-template>
+            </ngx-datatable-column>
+          </ngx-datatable>
+        </div> <!-- end of data table -->
+        <!-- fields section -->
+        <div class="col-md-9 col-xs-12">
+
+          <div class="row">
+            <!-- Left hand controls -->
+            <div class="col-xs-12 col-md-6">
+
+              <!-- Project Name -->
+              <div class="form-group">
+                <div class="col-xs-3 text-right">
+                  <label class="control-label">{{"PROJECT_NAME" | translate}}</label>
+                </div>
+                <div class="col-xs-6">
+                  <div class="input-group">
+                    <input autocomplete="off" class="form-control" type="text" formControlName="projectName" #projectName value="selectedProject.name" />
+                    <span class="text-danger" *ngIf="projectsForm.controls['projectName'].hasError('required') && (projectsForm.controls['projectName'].dirty || projectsForm.controls['projectName'].touched)">{{ "REQUIRED_FIELD" | translate }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Project Reference -->
+              <div class="form-group">
+                <div class="col-xs-3 text-right">
+                  <label class="control-label">{{"PROJECT_REFERENCE" | translate}}</label>
+            </div>
+                <div class="col-xs-6">
+                  <div class="input-group">
+                    <input autocomplete="off" class="form-control" type="text" formControlName="projectReference" value="selectedProject.projectReference" maxlength="20" />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Quotation Reference -->
+              <div class="form-group">
+                <div class="col-xs-3 text-right">
+                  <label class="control-label">{{"QUOTATION_REFERENCE" | translate}}</label>
+                </div>
+                <div class="col-xs-6">
+                  <div class="input-group">
+                    <input autocomplete="off" class="form-control" type="text" formControlName="quoteReference" value="selectedProject.quoteReference" maxlength="20" />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Project Created -->
+              <div class="form-group">
+                <div class="col-xs-3 text-right">
+                  <label class="control-label">{{"PROJECT_DATE" | translate}}</label>
+                </div>
+                <div class="col-xs-6">
+                  <div class="input-group">
+                    <label class="control-label">{{selectedProject.created | date:'fullDate'}} {{selectedProject.created | date:'shortTime'}}</label>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+
+            <!-- Right hand controls -->
+            <div class="col-xs-12 col-md-6">
+
+              <!-- Customer -->
+              <div class="form-group">
+                <div class="col-xs-3 text-right">
+                  <label class="control-label">{{"CUSTOMER" | translate}}</label>
+                </div>
+                <div class="col-xs-6">
+                  <input autocomplete="off" class="form-control" type="text" formControlName="customerName" value="selectedProject.customerName" maxlength="50" />
+                </div>
+              </div>
+
+              <!-- Customer Location -->
+              <div class="form-group">
+                <div class="col-xs-3 text-right">
+                  <label class="control-label">{{"CUSTOMER_LOCATION" | translate}}</label>
+                </div>
+                <div class="col-xs-6">
+                  <input autocomplete="off" class="form-control" type="text" formControlName="customerLocation" value="selectedProject.customerLocation" maxlength="30"/>
+                </div>
+              </div>
+
+              <!-- Trade List -->
+              <div class="form-group">
+                <div class="col-xs-3 text-right">
+                  <label class="control-label">{{"TRADE" | translate}}</label>
+                </div>
+                <div class="col-xs-6">
+                  <enumeration formControlName="tradeEnum" (on-change)="onTradeChange($event)" enumeration-name="Trade_Platform"></enumeration>
+                </div>
+              </div>
+
+              <!-- Industry List -->
+              <div class="form-group">
+                <div class="col-xs-3 text-right">
+                  <label class="control-label">{{"INDUSTRY" | translate}}</label>
+                </div>
+                <div class="col-xs-6">
+                  <enumeration formControlName="industryEnum" enumeration-name='{{industryEnumerationName}}'></enumeration>
+                </div>
+              </div>
+
+            </div>
+          </div>
+           
+
+          <div>
+            <!-- Success confirmation message -->
+            <alert-block *ngIf="!!alertVisible && !!isSuccess" type="success" [auto-close]="true" [message]="'PROJECTS_AND_JOBS_SAVED_SUCCESSFULLY_MESSAGE' | translate" (close-callback)="closeAlert()"></alert-block>
+
+            <!-- Failure confirmation message-->
+            <alert-block *ngIf="!!alertVisible && !isSuccess" type="danger" [message]="'PROJECTS_AND_JOBS_FAILED_TO_SAVE_MESSAGE' | translate" (close-callback)="closeAlert()"></alert-block>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</form>
+
+<jobs [selectedProjectId]="selectedProject.id" [editingProject]="editingProject" (editingJobDataOnChange)="editingJobDataOnChange($event)"> </jobs>
+
+<!-- Generic Modal Component -->
+<sizing-suite-modal #delteConfirmationModal
+                    (modal-cancel)="modalCallbackCancel()"
+                    (modal-ok)="deleteProject()"
+                    [modal-title]="'PROJECTS_AND_JOBS' | translate"
+                    [modal-ok-text]="'DELETE_PROJECT' | translate"
+                    [modal-ok-icon]="'fa fa-trash'"
+                    [modal-cancel-text]="'CANCEL' | translate:true"
+                    [modal-cancel-icon]="'fa fa-times'">
+
+  <label class="control-label">{{'DELETE_PROJECT' | translate}}: <strong>{{selectedProject.name}}</strong>?</label>
+  <label class="control-label">{{'ARE_YOU_SURE_YOU_WANT_TO_DELETE_THIS_PROJECT_PLEASE_NOTE_THE_PROJECT_AND_ITS_JOBS_WILL_ALSO_BE_REMOVED_WHEN_SYNCHRONIZING_TO_T_MESSAGE' | translate}}</label>
+</sizing-suite-modal>
+
+<!-- Generic Modal Component -->
+<sizing-suite-modal #saveChangesModal
+                    (modal-cancel)="cancelEditsForProject()"
+                    (modal-ok)="updateInsertProject()"
+                    [modal-title]="'PROJECTS_AND_JOBS' | translate"
+                    [modal-ok-text]="'SAVE_PROJECT' | translate"
+                    [modal-ok-icon]="'fa fa-save'"
+                    [modal-cancel-text]="'DISCARD_CHANGES' | translate"
+                    [modal-cancel-icon]="'fa fa-times'">
+
+  <label class="control-label">{{'SAVE_PROJECT' | translate}}: <strong>{{this.projectsForm.controls["projectName"].value}}</strong>?</label>
+</sizing-suite-modal>
+
+
+<!--ToDo:
+<br />
+- Tidy up and finalise html markup, make reactive for mobile use.
+<br />
+- Bug: unable to stop grid selection changing via mouse click when editingProject the project form (although such selection changes are now ignored), unable to fully disable the ngx-datatable control. Use blocking UI techneques?
+<br />
+- Work required to support Navigating away.
+<br />
+- Implement Sizing Module "Projects" & "Jobs" components (eg. 'Save As' support).
+<br />
+- Trade and Industry are not nullable as in the old system.
+<br />-->
+
+

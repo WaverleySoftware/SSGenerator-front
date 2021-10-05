@@ -1,0 +1,42 @@
+<div class="row">
+  <!-- OpCo Preferences -->
+  <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" *ngIf="currentUser.permissions['canManageOpCoPreferences']">
+    <a title="Preferences" class="btn btn-primary btn-lg btn-block admin-module-button" routerLink="/admin/operatingCompanyPreferences">
+      <em class="fa fa-globe"></em><br />
+      <span>{{'PREFERENCES' | translate}}</span>
+    </a>
+  </div>
+
+  <!-- Currencies -->
+  <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" *ngIf="currentUser.permissions['canViewCurrencyInfo']">
+    <a title="Currency" class="btn btn-primary btn-lg btn-block admin-module-button" routerLink="/admin/currency">
+      <em class="fa fa-money"></em><br />
+      <span>{{'CURRENCY_INFORMATION' | translate}}</span>
+    </a>
+  </div>
+
+  <!-- Module Preferences -->
+  <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" *ngIf="currentUser.permissions['canManageModulePreferences']">
+    <a title="Module Preferences" class="btn btn-primary btn-lg btn-block admin-module-button" routerLink="/admin/modulePreferences">
+      <em class="fa fa-cog"></em><br />
+      <span>{{'MODULE_PREFERENCES' | translate}}</span>
+    </a>
+  </div>
+
+  <!-- Module Access -->
+  <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" *ngIf="currentUser.permissions['canManageModuleAccess']">
+    <a title="Module Access" class="btn btn-primary btn-lg btn-block admin-module-button" routerLink="/admin/moduleAccess">
+      <em class="fa fa-exchange"></em><br />
+      <span>{{'MODULE_ACCESS' | translate}}</span>
+    </a>
+  </div>
+
+  <!-- Product Selection -->
+  <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" *ngIf="currentUser.permissions['canManageProductSelection']">
+    <a title="Product Selection" class="btn btn-primary btn-lg btn-block admin-module-button" routerLink="/admin/productSelection">
+      <em class="fa fa-check-square-o"></em><br />
+      <span>{{'PRODUCT_SELECTION' | translate}}</span>
+    </a>
+  </div>
+
+</div>

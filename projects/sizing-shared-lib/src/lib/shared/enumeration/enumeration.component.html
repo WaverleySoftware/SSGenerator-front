@@ -1,0 +1,7 @@
+<!-- Layout for enumerations -->
+<div> <!--class="col-lg-4 col-xs-12">-->
+  <select [disabled]="isDisabled" class="form-control" (blur)="onTouched()" (ngModelChange)="onChange($event)" [ngModel]="enumerationItem" title="{{enumerationItemTranslationText}}">
+    <option *ngFor="let enumerationDefinition of enumerationCollection; let i = index" [value]="enumerationDefinition.value" [selected]="i==0" title="{{enumerationDefinition.translationText}}{{enumerationDefinition.extraPostText}}">{{enumerationDefinition.translationText}}{{enumerationDefinition.extraPostText}}</option>
+  </select>
+</div>
+

@@ -1,0 +1,21 @@
+div.notification-messages {
+
+  i {
+    font-size: 1.4em;
+    margin-right: 5px;
+    margin-top: 5px;
+    vertical-align: bottom;
+  }
+
+  .fa-info-circle {
+    color: blue;
+  }
+
+  .fa-exclamation-circle {
+    color: orange;
+  }
+
+  .fa-times-circle {
+    color: red;
+  }
+}

@@ -1,0 +1,584 @@
+<!-- TFA meter configuration -->
+<div class="row" *ngIf="isTfaProduct" [formGroup]="tfaForm">
+    <div class="col-xs-6">
+        <div class="form-group">
+            <label for="tfaPowerCommunications">{{ 'POWER_SUPPLY' | translate }}</label>
+            <app-flow-meter-enumeration
+                    id="tfaPowerCommunications"
+                    enumeration-name="TxAPowerCommsList_FlowMeterSizing"
+                    formControlName="powerCommunications"
+                    [filter-by]="['0', '1']"
+            ></app-flow-meter-enumeration>
+        </div>
+        <div class="form-group">
+            <label for="tfaProductCode">{{ 'PRODUCT_CODE' | translate }}</label>
+            <input
+                    type="text" class="form-control" disabled
+                    id="tfaProductCode"
+                    formControlName="productCode"
+            >
+        </div>
+        <div class="form-group">
+            <label for="tfaFlangeRating">{{ 'CONNECTION' | translate }}</label>
+            <app-flow-meter-enumeration
+                    id="tfaFlangeRating"
+                    enumeration-name="TFAFlangeRating_FlowMeterSizing"
+                    formControlName="flangeRating"
+            ></app-flow-meter-enumeration>
+        </div>
+        <div class="form-group">
+            <label for="tfaBuskKitCode">{{ 'BUSH_KIT_CODE' | translate }}</label>
+            <input
+                    type="text" class="form-control" disabled
+                    id="tfaBuskKitCode"
+                    formControlName="bushKitCode"
+            >
+        </div>
+    </div>
+    <div class="col-xs-6">
+        <div class="form-group">
+            <label for="tfaOrientation">{{ 'ORIENTATION' | translate }}</label>
+            <input
+                    type="text" class="form-control" disabled
+                    id="tfaOrientation"
+                    formControlName="orientation"
+            >
+        </div>
+    </div>
+</div>
+
+<!-- TVA meter configuration -->
+<div class="row" *ngIf="isTvaProduct" [formGroup]="tvaForm">
+    <div class="col-xs-6">
+        <div class="form-group">
+            <label for="tvaPowerCommunications">{{ 'POWER_SUPPLY' | translate }}</label>
+            <app-flow-meter-enumeration
+                    id="tvaPowerCommunications"
+                    enumeration-name="TxAPowerCommsList_FlowMeterSizing"
+                    formControlName="powerCommunications"
+                    [filter-by]="['0', '1']"
+            ></app-flow-meter-enumeration>
+        </div>
+        <div class="form-group">
+            <label for="tvaProductCode">{{ 'PRODUCT_CODE' | translate }}</label>
+            <input
+                    type="text" class="form-control" disabled
+                    id="tvaProductCode"
+                    formControlName="productCode"
+            >
+        </div>
+        <div class="form-group">
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" formControlName="pressureSensingKit">
+                    {{ 'PRESSURE_SENSING_KIT' | translate }}
+                </label>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" formControlName="syphonAssembly">
+                    {{ 'USYPHON_ASSEMBLY' | translate }}
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="col-xs-6">
+        <div class="form-group">
+            <label for="tvaOrientation">{{ 'ORIENTATION' | translate }}</label>
+            <input
+                    type="text" class="form-control" disabled
+                    id="tvaOrientation"
+                    formControlName="orientation"
+            >
+        </div>
+    </div>
+</div>
+
+<!-- RIM20 meter configuration -->
+<div class="row" *ngIf="isRim20Product" [formGroup]="rim20Form">
+    <div class="col-xs-6">
+        <div class="form-group">
+            <label for="rim20ProbeLength">{{ 'PROBE_LENGTH' | translate }}</label>
+            <app-flow-meter-enumeration
+                    id="rim20ProbeLength"
+                    enumeration-name="RIM20ProbeLength_FlowMeterSizing"
+                    formControlName="probeLength"
+                    [filter-by]="rim20ProbeLengthFilters"
+                    (on-load)="decideOnUpdate(rim20Form.get('probeLength'), $event.selectedValue, rim20ProbeLengthFilters)"
+            ></app-flow-meter-enumeration>
+        </div>
+        <div class="form-group">
+            <label for="rim20ProcessConnection">{{ 'PROCESS_CONNECTION' | translate }}</label>
+            <app-flow-meter-enumeration
+                    id="rim20ProcessConnection"
+                    enumeration-name="RIM20EndConnectionList_FlowMeterSizing"
+                    formControlName="processConnection"
+                    [filter-by]="rim20ProcessConnectionFilters"
+                    (on-load)="decideOnUpdate(rim20Form.get('processConnection'), $event.selectedValue, rim20ProcessConnectionFilters)"
+            ></app-flow-meter-enumeration>
+        </div>
+        <div class="form-group">
+            <label for="rim20Enclosure">{{ 'ENCLOSURE' | translate }}</label>
+            <app-flow-meter-enumeration
+                    id="rim20Enclosure"
+                    enumeration-name="RIM20EnclosuresList_FlowMeterSizing"
+                    formControlName="enclosure"
+                    [filter-by]="rim20EnclosureFilters"
+                    (on-load)="decideOnUpdate(rim20Form.get('enclosure'), $event.selectedValue, rim20EnclosureFilters)"
+            ></app-flow-meter-enumeration>
+        </div>
+        <div class="form-group">
+            <label for="rim20Approvals">{{ 'APPROVALS' | translate }}</label>
+            <app-flow-meter-enumeration
+                    id="rim20Approvals"
+                    enumeration-name="RIM20ApprovalsList_FlowMeterSizing"
+                    formControlName="approvals"
+            ></app-flow-meter-enumeration>
+        </div>
+        <div class="form-group">
+            <label style="margin-bottom: 0">{{ 'MODEL' | translate }}</label>
+            <div class="radio" style="margin-top: 0">
+                <label>
+                    <input type="radio" value="compression" formControlName="model">
+                    {{ 'COMPRESSION' | translate }}
+                </label>
+            </div>
+            <div class="radio">
+                <label>
+                    <input type="radio" value="packing-gland" formControlName="model">
+                    {{ 'PACKING_GLAND' | translate }}
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="col-xs-6">
+        <div class="form-group">
+            <label for="rim20Electronics">{{ 'ELECTRONICS' | translate }}</label>
+            <app-flow-meter-enumeration
+                    id="rim20Electronics"
+                    enumeration-name="RIM20ElectronicsOptionsList_FlowMeterSizing"
+                    formControlName="electronics"
+            ></app-flow-meter-enumeration>
+        </div>
+        <div class="form-group">
+            <label for="rim20PressureSensor">{{ 'PRESSURE_SENSOR' | translate }}</label>
+            <app-flow-meter-enumeration
+                    id="rim20PressureSensor"
+                    enumeration-name="RIM20PressureSensorList_FlowMeterSizing"
+                    formControlName="pressureSensor"
+                    [filter-by]="rim20PressureSensorFilters"
+                    (on-load)="decideOnUpdate(rim20Form.get('pressureSensor'), $event.selectedValue, rim20PressureSensorFilters)"
+            ></app-flow-meter-enumeration>
+        </div>
+        <div class="form-group">
+            <label for="rim20ProcessTemperature">{{ 'PROCESS_TEMPERATURE' | translate }}</label>
+            <app-flow-meter-enumeration
+                    id="rim20ProcessTemperature"
+                    enumeration-name="RIM20ProcessTemperatureList_FlowMeterSizing"
+                    formControlName="processTemperature"
+            ></app-flow-meter-enumeration>
+        </div>
+        <div class="form-group">
+            <label for="rim20PowerSupply">{{ 'POWER_SUPPLY' | translate }}</label>
+            <app-flow-meter-enumeration
+                    id="rim20PowerSupply"
+                    enumeration-name="RIM20ElectricalPowerList_FlowMeterSizing"
+                    formControlName="powerSupply"
+            ></app-flow-meter-enumeration>
+        </div>
+        <div class="form-group">
+          <label for="rim20OutputSignal">{{ 'OUTPUT_SIGNAL_TEXT_DUPLICATE_ID_4353' | translate }}</label>
+            <app-flow-meter-enumeration
+                    id="rim20OutputSignal"
+                    enumeration-name="RIM20OutputCommsList_FlowMeterSizing"
+                    formControlName="outputSignal"
+                    [filter-by]="rim20OutputSignalFilters"
+                    (on-load)="decideOnUpdate(rim20Form.get('outputSignal'), $event.selectedValue, rim20OutputSignalFilters)"
+            ></app-flow-meter-enumeration>
+        </div>
+        <div class="form-group">
+            <label for="rim20Retractor">{{ 'RETRACTOR' | translate }}</label>
+            <app-flow-meter-enumeration
+                    id="rim20Retractor"
+                    enumeration-name="RIM20Retractor_FlowMeterSizing"
+                    formControlName="retractor"
+            ></app-flow-meter-enumeration>
+        </div>
+    </div>
+    <div class="col-xs-12">
+        <div class="form-group">
+            <label for="rim20ProductCode">{{ 'PRODUCT_CODE' | translate }}</label>
+            <input
+                    type="text" class="form-control" disabled
+                    id="rim20ProductCode"
+                    formControlName="productCode"
+            >
+        </div>
+    </div>
+</div>
+
+<!-- VIM20 meter configuration -->
+<div class="row" *ngIf="isVim20Product" [formGroup]="vim20Form">
+    <div class="col-xs-6">
+        <div class="form-group">
+            <label for="vim20ProbeLength">{{ 'PROBE_LENGTH' | translate }}</label>
+            <app-flow-meter-enumeration
+                    id="vim20ProbeLength"
+                    enumeration-name="VIM20ProbeLength_FlowMeterSizing"
+                    formControlName="probeLength"
+                    [filter-by]="vim20ProbeLengthFilters"
+                    (on-load)="decideOnUpdate(vim20Form.get('probeLength'), $event.selectedValue, vim20ProbeLengthFilters)"
+            ></app-flow-meter-enumeration>
+        </div>
+        <div class="form-group">
+            <label for="vim20ProcessConnection">{{ 'PROCESS_CONNECTION' | translate }}</label>
+            <app-flow-meter-enumeration
+                    id="vim20ProcessConnection"
+                    enumeration-name="VIM20EndConnectionList_FlowMeterSizing"
+                    formControlName="processConnection"
+                    [filter-by]="vim20ProcessConnectionFilters"
+                    (on-load)="decideOnUpdate(vim20Form.get('processConnection'), $event.selectedValue, vim20ProcessConnectionFilters)"
+            ></app-flow-meter-enumeration>
+        </div>
+        <div class="form-group">
+            <label for="vim20Enclosure">{{ 'ENCLOSURE' | translate }}</label>
+            <app-flow-meter-enumeration
+                    id="vim20Enclosure"
+                    enumeration-name="VIM20EnclosuresList_FlowMeterSizing"
+                    formControlName="enclosure"
+                    [filter-by]="vim20EnclosureFilters"
+                    (on-load)="decideOnUpdate(vim20Form.get('enclosure'), $event.selectedValue, vim20EnclosureFilters)"
+            ></app-flow-meter-enumeration>
+        </div>
+        <div class="form-group">
+            <label for="vim20Approvals">{{ 'APPROVALS' | translate }}</label>
+            <app-flow-meter-enumeration
+                    id="vim20Approvals"
+                    enumeration-name="VIM20ApprovalsList_FlowMeterSizing"
+                    formControlName="approvals"
+            ></app-flow-meter-enumeration>
+        </div>
+        <div class="form-group">
+            <label style="margin-bottom: 0">{{ 'MODEL' | translate }}</label>
+            <div class="radio" style="margin-top: 0">
+                <label>
+                    <input type="radio" value="compression" formControlName="model">
+                    {{ 'COMPRESSION' | translate }}
+                </label>
+            </div>
+            <div class="radio">
+                <label>
+                    <input type="radio" value="packing-gland" formControlName="model">
+                    {{ 'PACKING_GLAND' | translate }}
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="col-xs-6">
+        <div class="form-group">
+            <label for="vim20Electronics">{{ 'ELECTRONICS' | translate }}</label>
+            <app-flow-meter-enumeration
+                    id="vim20Electronics"
+                    enumeration-name="VIM20ElectronicsOptionsList_FlowMeterSizing"
+                    formControlName="electronics"
+            ></app-flow-meter-enumeration>
+        </div>
+        <div class="form-group">
+            <label for="vim20PressureSensor">{{ 'PRESSURE_SENSOR' | translate }}</label>
+            <app-flow-meter-enumeration
+                    id="vim20PressureSensor"
+                    enumeration-name="VIM20PressureSensorList_FlowMeterSizing"
+                    formControlName="pressureSensor"
+                    [filter-by]="vim20PressureSensorFilters"
+                    (on-load)="decideOnUpdate(vim20Form.get('pressureSensor'), $event.selectedValue, vim20PressureSensorFilters)"
+            ></app-flow-meter-enumeration>
+        </div>
+        <div class="form-group">
+            <label for="vim20ProcessTemperature">{{ 'PROCESS_TEMPERATURE' | translate }}</label>
+            <app-flow-meter-enumeration
+                    id="vim20ProcessTemperature"
+                    enumeration-name="VIM20ProcessTemperatureList_FlowMeterSizing"
+                    formControlName="processTemperature"
+            ></app-flow-meter-enumeration>
+        </div>
+        <div class="form-group">
+            <label for="vim20PowerSupply">{{ 'POWER_SUPPLY' | translate }}</label>
+            <app-flow-meter-enumeration
+                    id="vim20PowerSupply"
+                    enumeration-name="VIM20ElectricalPowerList_FlowMeterSizing"
+                    formControlName="powerSupply"
+            ></app-flow-meter-enumeration>
+        </div>
+        <div class="form-group">
+            <label for="vim20OutputSignal">{{ 'OUTPUT_SIGNAL' | translate }}</label>
+            <app-flow-meter-enumeration
+                    id="vim20OutputSignal"
+                    enumeration-name="VIM20OutputCommsList_FlowMeterSizing"
+                    formControlName="outputSignal"
+                    [filter-by]="vim20OutputSignalFilters"
+                    (on-load)="decideOnUpdate(vim20Form.get('outputSignal'), $event.selectedValue, vim20OutputSignalFilters)"
+            ></app-flow-meter-enumeration>
+        </div>
+        <div class="form-group">
+            <label for="vim20Retractor">{{ 'RETRACTOR' | translate }}</label>
+            <app-flow-meter-enumeration
+                    id="vim20Retractor"
+                    enumeration-name="VIM20Retractor_FlowMeterSizing"
+                    formControlName="retractor"
+            ></app-flow-meter-enumeration>
+        </div>
+    </div>
+    <div class="col-xs-12">
+        <div class="form-group">
+            <label for="vim20ProductCode">{{ 'PRODUCT_CODE' | translate }}</label>
+            <input
+                    type="text" class="form-control" disabled
+                    id="vim20ProductCode"
+                    formControlName="productCode"
+            >
+        </div>
+    </div>
+</div>
+
+<!-- ELM -->
+<div class="row" *ngIf="isElmProduct" [formGroup]="elmForm">
+    <div class="col-xs-6">
+        <div class="form-group">
+            <label for="elmConnection">{{ 'CONNECTION' | translate }}</label>
+            <app-flow-meter-enumeration
+                    id="elmConnection"
+                    enumeration-name="ELMConnection_FlowMeterSizing"
+                    formControlName="connection"
+                    (on-load)="decideOnUpdate(elmForm.get('connection'), $event.selectedValue, [])"
+            ></app-flow-meter-enumeration>
+        </div>
+        <div class="form-group">
+            <label style="margin-bottom: 0">{{ 'OUTPUT' | translate }}</label>
+            <div class="radio" style="margin-top: 0">
+                <label>
+                    <input type="radio" value="no-hart" formControlName="output">
+                    {{ 'NO_HART' | translate }}
+                </label>
+            </div>
+            <div class="radio">
+                <label>
+                    <input type="radio" value="hart" formControlName="output">
+                    {{ 'HART' | translate }}
+                </label>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" formControlName="approvals">
+                    {{ 'APPROVALS' | translate }}
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="col-xs-12">
+        <div class="form-group">
+            <label for="elmNomenclature">{{ 'PRODUCT_CODE' | translate }}</label>
+            <input
+                    type="text" class="form-control" disabled
+                    id="elmNomenclature"
+                    formControlName="nomenclature"
+            >
+        </div>
+    </div>
+    <div class="col-xs-12">
+        <div class="form-group">
+            <label for="elmProductCode">{{ 'PRODUCT_CODE' | translate }}</label>
+            <input
+                    type="text" class="form-control" disabled
+                    id="elmProductCode"
+                    formControlName="productCode"
+            >
+        </div>
+    </div>
+</div>
+
+<!-- UTM10 -->
+<div class="row" *ngIf="isUtm10Product" [formGroup]="utm10Form">
+    <div class="col-xs-6">
+        <div class="form-group">
+            <label for="utm10Model">{{ 'MODEL' | translate }}</label>
+            <app-flow-meter-enumeration
+                    id="utm10Model"
+                    enumeration-name="MeterModel_FlowMeterSizing"
+                    formControlName="model"
+                    (on-load)="decideOnUpdate(utm10Form.get('model'), $event.selectedValue, [])"
+            ></app-flow-meter-enumeration>
+        </div>
+        <div class="form-group">
+            <label for="utm10ElectricalPower">{{ 'ELECTRICAL_POWER' | translate }}</label>
+            <app-flow-meter-enumeration
+                    id="utm10ElectricalPower"
+                    enumeration-name="ElectricalPower_FlowMeterSizing"
+                    formControlName="electricalPower"
+                    (on-load)="decideOnUpdate(utm10Form.get('electricalPower'), $event.selectedValue, [])"
+            ></app-flow-meter-enumeration>
+        </div>
+        <div class="form-group">
+            <label for="utm10DigitalCommunications">{{ 'DIGITAL_COMMUNICATIONS_1' | translate }}</label>
+            <app-flow-meter-enumeration
+                    id="utm10DigitalCommunications"
+                    enumeration-name="DigitalCommunications1_FlowMeterSizing"
+                    formControlName="digitalCommunications"
+                    [filter-by]="utm10DigitalCommunicationsFilters"
+                    (on-load)="decideOnUpdate(utm10Form.get('digitalCommunications'), $event.selectedValue, utm10DigitalCommunicationsFilters)"
+            ></app-flow-meter-enumeration>
+        </div>
+        <div class="form-group">
+            <label for="utm10TemperatureRange">{{ 'TEMPERATURE_RANGE' | translate }}</label>
+            <app-flow-meter-enumeration
+                    id="utm10TemperatureRange"
+                    enumeration-name="TemperatureRange_FlowMeterSizing"
+                    formControlName="temperatureRange"
+                    [filter-by]="utm10TemperatureRangeFilters"
+                    (on-load)="decideOnUpdate(utm10Form.get('temperatureRange'), $event.selectedValue, utm10TemperatureRangeFilters)"
+            ></app-flow-meter-enumeration>
+        </div>
+        <div class="form-group">
+            <label for="utm10Approvals">{{ 'UTM_APPROVALS' | translate }}</label>
+            <app-flow-meter-enumeration
+                    id="utm10Approvals"
+                    enumeration-name="UTM10Approvals_FlowMeterSizing"
+                    formControlName="utm10Approvals"
+                    [filter-by]="utm10Utm10ApprovalsFilters"
+                    (on-load)="decideOnUpdate(utm10Form.get('utm10Approvals'), $event.selectedValue, utm10Utm10ApprovalsFilters)"
+            ></app-flow-meter-enumeration>
+        </div>
+
+        <div class="form-group">
+            <label for="utm10Nomenclature">{{ 'PRODUCT_CODE' | translate }}</label>
+            <input
+                    type="text" class="form-control" disabled
+                    id="utm10Nomenclature"
+                    formControlName="electronicsCode"
+            >
+        </div>
+        <div class="form-group">
+            <label for="utt10Nomenclature">{{ 'PRODUCT_CODE' | translate }}</label>
+            <input
+                    type="text" class="form-control" disabled
+                    id="utt10Nomenclature"
+                    formControlName="transducerCode"
+            >
+        </div>
+    </div>
+    <div class="col-xs-6">
+        <div class="form-group">
+            <label for="utm10CableLength">{{ 'CABLE_LENGTH' | translate }}</label>
+            <app-flow-meter-enumeration
+                    id="utm10CableLength"
+                    enumeration-name="CableLength_FlowMeterSizing"
+                    formControlName="cableLength"
+                    (on-load)="decideOnUpdate(utm10Form.get('cableLength'), $event.selectedValue, [])"
+            ></app-flow-meter-enumeration>
+        </div>
+        <div class="form-group " [hidden]="utm10Form.get('customCableLength').disabled">
+            <label for="utm10CustomCableLength">{{ 'CABLE_LENGTH' | translate }}</label>
+            <div class="input-group">
+                <input
+                        type="number" class="form-control"
+                        id="utm10CustomCableLength"
+                        formControlName="customCableLength"
+                        [display-preference]="'LengthUnit'"
+                        [display-masterTextKey]="'LENGTH'"
+                        display-preference-unit-type="LengthUnits"
+                        [display-preference-module-group-id]="4"
+                        [popover]="utm10CustomCableLengthError"
+                        #customCableLengthRef="display-preference"
+                >
+                <span class="input-group-addon">{{ customCableLengthRef?.preference?.masterTextKey | translate }}</span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="utm10Submersible">{{ 'SUBMERSIBLE' | translate }}</label>
+            <app-flow-meter-enumeration
+                    id="utm10Submersible"
+                    enumeration-name="Submersible_FlowMeterSizing"
+                    formControlName="submersible"
+                    [filter-by]="utm10SubmersibleFilters"
+                    (on-load)="decideOnUpdate(utm10Form.get('submersible'), $event.selectedValue, utm10SubmersibleFilters)"
+            ></app-flow-meter-enumeration>
+        </div>
+        <div class="form-group">
+            <label for="utm10Conduit">{{ 'CONDUIT' | translate }}</label>
+            <app-flow-meter-enumeration
+                    id="utm10Conduit"
+                    enumeration-name="Conduit_FlowMeterSizing"
+                    formControlName="conduit"
+                    (on-load)="decideOnUpdate(utm10Form.get('conduit'), $event.selectedValue, [])"
+            ></app-flow-meter-enumeration>
+        </div>
+        <div class="form-group">
+            <label for="utm10ConduitLength">{{ 'CONDUIT_LENGTH' | translate }}</label>
+            <app-flow-meter-enumeration
+                    id="utm10ConduitLength"
+                    enumeration-name="ConduitLength_FlowMeterSizing"
+                    formControlName="conduitLength"
+                    [filter-by]="utm10ConduitLengthFilters"
+                    (on-load)="decideOnUpdate(utm10Form.get('conduitLength'), $event.selectedValue, utm10ConduitLengthFilters)"
+            ></app-flow-meter-enumeration>
+        </div>
+        <div class="form-group" [hidden]="utm10Form.get('customConduitLength').disabled">
+            <label for="utm10CustomConduitLength">{{ 'CONDUIT_LENGTH' | translate }}</label>
+            <div class="input-group">
+                <input
+                        type="number" class="form-control"
+                        id="utm10CustomConduitLength"
+                        formControlName="customConduitLength"
+                        [display-preference]="'LengthUnit'"
+                        [display-masterTextKey]="'LENGTH'"
+                        display-preference-unit-type="LengthUnits"
+                        [display-preference-module-group-id]="4"
+                        [popover]="utm10CustomConduitLengthError"
+                        #customConduitLengthRef="display-preference"
+                >
+                <span class="input-group-addon">{{ customConduitLengthRef?.preference?.masterTextKey | translate }}</span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="utt10Approvals">{{ 'APPROVALS' | translate }}</label>
+            <app-flow-meter-enumeration
+                    id="utt10Approvals"
+                    enumeration-name="Approvals_FlowMeterSizing"
+                    formControlName="utt10Approvals"
+                    [filter-by]="utm10Utt10ApprovalsFilters"
+                    (on-load)="decideOnUpdate(utm10Form.get('utt10Approvals'), $event.selectedValue, utm10Utt10ApprovalsFilters)"
+            ></app-flow-meter-enumeration>
+        </div>
+        <div class="form-group">
+            <label for="utm10Rtd">{{ 'RTD' | translate }}</label>
+            <app-flow-meter-enumeration
+                    id="utm10Rtd"
+                    enumeration-name="RTDKit_FlowMeterSizing"
+                    formControlName="rtd"
+                    [filter-by]="utm10RtdFilters"
+                    (on-load)="decideOnUpdate(utm10Form.get('rtd'), $event.selectedValue, utm10RtdFilters)"
+            ></app-flow-meter-enumeration>
+        </div>
+        <div class="form-group">
+            <label for="utm10MountingTracks">{{ 'MOUNTING_TRACKS' | translate }}</label>
+            <app-flow-meter-enumeration
+                    id="utm10MountingTracks"
+                    enumeration-name="MountingTrack_FlowMeterSizing"
+                    formControlName="mountingTracks"
+                    [filter-by]="utm10MountingTracksFilters"
+                    (on-load)="decideOnUpdate(utm10Form.get('mountingTracks'), $event.selectedValue, utm10MountingTracksFilters)"
+            ></app-flow-meter-enumeration>
+        </div>
+    </div>
+</div>
+
+<!-- Uncomment to debug -->
+
+<!--<div class="row">-->
+<!--    <div class="col-xs-12">-->
+<!--        <pre>{{ utm10Form.getRawValue() | json }}</pre>-->
+<!--    </div>-->
+<!--</div>-->

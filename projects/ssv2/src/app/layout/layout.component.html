@@ -1,0 +1,28 @@
+<div class="wrapper">
+    <!-- top navbar-->
+    <app-header class="topnavbar-wrapper"></app-header>
+    <!-- sidebar-->
+    <app-sidebar class="aside"></app-sidebar>
+
+    <!-- Main section-->
+    <section>
+      <!-- Page content-->
+      <div class="content-wrapper" [hidden]="pageLoading">
+        <div class="content-heading">{{title | translate:true}} {{operatingCompany}}
+          <small *ngIf="!!subTitle">{{subTitle | translate:true}}</small>
+        </div>
+
+        <messages></messages>
+
+        <router-outlet></router-outlet>
+      </div>
+
+      <!-- Shown between navigating routes -->
+      <div class="loading-overlay" [hidden]="!pageLoading">
+        <progressbar class="progress-striped active" [value]="pageLoadProgress" type="info"></progressbar>
+      </div>
+
+    </section>
+    <!-- Page footer-->
+    <footer app-footer [hasLayout]="true"></footer>
+</div>

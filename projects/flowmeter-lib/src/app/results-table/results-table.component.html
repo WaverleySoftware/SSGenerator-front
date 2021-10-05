@@ -1,0 +1,197 @@
+<div class="panel-body">
+  <div class="col-xs-12">
+
+    <div class="message" *ngFor="let message of alertMessageList">
+      <alert-block  *ngIf="message.severity == '0' && infoVisible" type="info" [message]="message.code | translate"></alert-block>
+      <alert-block  *ngIf="message.severity == '1' && warningVisible" type="warning" [message]="message.code | translate"></alert-block>
+
+    </div>
+
+    <ngx-datatable #resultsTable
+                   class="bootstrap"
+                   [headerHeight]="50"
+                   
+                   [columnMode]="'force'"
+                   [footerHeight]="0"
+                   [rowHeight]="30"
+                   [selected]="tableRowsSelected"
+                   [rows]="tableRows"
+                   (select)="onSelect($event)"
+                   [selectionType]="'single'"
+                   [messages]="messages"
+                   scrollbarH="true"
+                   scrollbarV="true">
+      <!-- Row Detail Template -->
+      <ngx-datatable-row-detail [rowHeight]="'auto'" (toggle)="onToggleDetails($event)">
+        <ng-template let-row="row" let-expanded="expanded" ngx-datatable-row-detail-template>
+          <div class="messages-container">
+            <p>{{ 'WARNINGS_FOR_THIS_METER' | translate }}</p>
+            <div class="message" *ngFor="let message of row.messages">
+              <div class="message-icon">
+                <i [class]="getMessageIcon(message)"></i>
+              </div>
+              <div>
+                <span>{{message.code | translate}}</span>
+                <span *ngIf="message.value"> ({{message.value}})</span>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </ngx-datatable-row-detail>
+
+      <ngx-datatable-column [width]="55"
+                            [resizeable]="false"
+                            [sortable]="false"
+                            [draggable]="false"
+                            [canAutoResize]="false">
+        <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row" let-expanded="expanded">
+          <div>
+            <i [class]="getRowIcon(row)"></i>
+          </div>
+        </ng-template>
+      </ngx-datatable-column>
+
+      <ngx-datatable-column name="{{'PART_NUMBER' | translate}}" prop="productCode">
+        <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+          <div>
+            {{ value }}
+          </div>
+        </ng-template>
+      </ngx-datatable-column>
+
+      <ngx-datatable-column name="{{'METER_TYPE' | translate}}" prop="type">
+        <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+          <div>
+            {{ value }}
+          </div>
+        </ng-template>
+      </ngx-datatable-column>
+
+      <ngx-datatable-column name="{{'METER_SIZE' | translate}}" prop="size">
+        <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+          <div>
+            {{ value }}
+          </div>
+        </ng-template>
+      </ngx-datatable-column>
+
+      <ngx-datatable-column name="{{'PIPE_SIZE' | translate}}" prop="pipeSize">
+        <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+          <div>
+            {{ value }}
+          </div>
+        </ng-template>
+      </ngx-datatable-column>
+
+      <ngx-datatable-column *ngIf="isMassFlow" name="{{'MINIMUM_CAPACITY' | translate}}" prop="displayMinimumCapacity">
+        <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+          <div>
+            {{ value }}
+            {{ getUnitLabel('MassFlowUnit') | translate }}
+          </div>
+        </ng-template>
+      </ngx-datatable-column>
+
+      <ngx-datatable-column *ngIf="isMassFlow" name="{{'MAXIMUM_CAPACITY' | translate}}" prop="displayMaximumCapacity">
+        <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+          <div>
+            {{ value }}
+            {{ getUnitLabel('MassFlowUnit') | translate }}
+          </div>
+        </ng-template>
+      </ngx-datatable-column>
+
+      <ngx-datatable-column *ngIf="!isMassFlow" name="{{'MINIMUM_CAPACITY_VOL' | translate}}" prop="displayMinimumVolumetricCapacity">
+        <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+          <div>
+            {{ value }}
+            {{ getUnitLabel('VolumetricFlowUnit') | translate }}
+          </div>
+        </ng-template>
+      </ngx-datatable-column>
+
+      <ngx-datatable-column *ngIf="!isMassFlow" name="{{'MAXIMUM_CAPACITY_VOL' | translate}}" prop="displayMaximumVolumetricCapacity">
+        <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+          <div>
+            {{ value }}
+            {{ getUnitLabel('VolumetricFlowUnit') | translate }}
+          </div>
+        </ng-template>
+      </ngx-datatable-column>
+
+      <ngx-datatable-column name="{{'TURNDOWN' | translate}}" prop="turnDown">
+        <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+          <div>
+            {{ value }} :1
+          </div>
+        </ng-template>
+      </ngx-datatable-column>
+
+      <ngx-datatable-column name="{{'PERCENTAGE_CAPACITY' | translate}}" prop="displayPercentageCapacity">
+        <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+          <div>
+            {{ value }} %
+          </div>
+        </ng-template>
+      </ngx-datatable-column>
+
+      <ngx-datatable-column name="{{'METER_VELOCITY' | translate}}" prop="displayMeterVelocity">
+        <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+          <div>
+            {{ value }}
+            {{ getUnitLabel('VelocityUnit') | translate }}
+          </div>
+        </ng-template>
+      </ngx-datatable-column>
+
+      <ngx-datatable-column name="{{'PIPE_VELOCITY' | translate}}" prop="displayPipeVelocity">
+        <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+          <div>
+            {{ value }}
+            {{ getUnitLabel('VelocityUnit') | translate }}
+          </div>
+        </ng-template>
+      </ngx-datatable-column>
+
+      <ngx-datatable-column name="{{'MATERIAL' | translate}}" prop="translatedMaterial">
+        <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+          <div>
+            {{ value | translate }}
+          </div>
+        </ng-template>
+      </ngx-datatable-column>
+
+      <ngx-datatable-column name="{{'CONNECTION' | translate}}" prop="connection">
+        <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+          <div>
+            {{ value }}
+          </div>
+        </ng-template>
+      </ngx-datatable-column>
+
+      <ngx-datatable-column name="{{'ORIENTATION' | translate}}" prop="transOrientation">
+        <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+          <div>
+            {{ value | translate }}
+          </div>
+        </ng-template>
+      </ngx-datatable-column>
+
+      <ngx-datatable-column name="{{'MANIFOLD' | translate}}" prop="manifold">
+        <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+          <div>
+            {{ value || '-' }}
+          </div>
+        </ng-template>
+      </ngx-datatable-column>
+
+      <ngx-datatable-column name="{{'TRANSMITTER_CERTIFICATION' | translate}}" prop="transmitterCertification">
+        <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+          <div>
+            {{ value }}
+          </div>
+        </ng-template>
+      </ngx-datatable-column>
+    </ngx-datatable>
+  </div>
+  </div>

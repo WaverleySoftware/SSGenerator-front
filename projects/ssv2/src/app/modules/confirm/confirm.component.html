@@ -1,0 +1,52 @@
+<div class="wrapper">
+  <div class="block-center mt-xl wd-xxl">
+    <!-- START panel-->
+    <div class="panel panel-dark panel-flat">
+      <div class="panel-heading text-center">
+        <a href="#">
+          <img class="block-center img-rounded" src="assets/img/sizing-logo.png" alt="Image" />
+        </a>
+      </div>
+
+      <!-- Verification pending -->
+      <div class="jumbotron" *ngIf="verificationPending">
+        <h3>
+          <span class="label label-info"><i class="fa fa-question"></i></span>
+          Verification Pending
+        </h3>
+        <p>
+          Please wait while your registration is verified
+          <i class="center-block fa fa-spinner fa-spin fa-2x fa-fw"></i>
+        </p>
+      </div>
+
+      <!-- Verification failed -->
+      <div class="jumbotron" *ngIf="!verificationSucceeded && !verificationPending">
+        <h3>
+          <span class="label label-danger"><i class="fa fa-exclamation"></i></span>
+          Token Expired
+        </h3>
+        <p>The registration token has expired. Please contact PRS support</p>
+      </div>
+
+      <!-- Verification success -->
+      <div class="jumbotron" *ngIf="verificationSucceeded && !verificationPending">
+        <h3>
+          <span class="label label-success"><i class="fa fa-check"></i></span>
+          Registration successful
+        </h3>
+
+        <p>You have successfully confirmed your registration</p>
+
+        <span class="center-block">
+          <a [routerLink]="'/login'">Login</a>
+        </span>
+
+      </div>
+
+    </div>
+    <!-- END panel-->
+    <footer app-footer></footer>
+  </div>
+</div>
+

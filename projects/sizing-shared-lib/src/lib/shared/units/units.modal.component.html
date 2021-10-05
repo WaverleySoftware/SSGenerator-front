@@ -1,0 +1,12 @@
+
+<div *ngFor="let unitPreference of selectableUnitPreferences" class="form-group">
+  <div class="col-xs-offset-2 col-xs-3 text-right">
+    {{unitPreference.masterTextKey | translate}}
+  </div>
+  <div class="col-lg-4 col-xs-12">
+    <select class="form-control" (ngModelChange)="onChange($event, unitPreference)" [ngModel]="unitPreference.preference.value">
+      <option *ngFor="let unit of unitPreference.units" [value]="unit.id">{{unit.masterTextKey | translate}}</option>
+    </select>
+  </div>
+</div>
+

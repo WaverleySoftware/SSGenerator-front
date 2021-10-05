@@ -1,0 +1,47 @@
+<div class="wrapper">
+    <div class="block-center mt-xl wd-xxl">
+        <!-- START panel-->
+        <div class="panel panel-dark panel-flat">
+            <div class="panel-heading text-center">
+                <a href="#">
+                    <img class="block-center img-rounded" src="assets/img/sizing-logo.png" alt="Image" />
+                </a>
+            </div>
+            <div class="panel-body">
+              <p class="text-center pv">SIGN IN TO CONTINUE.</p>
+
+              <form name="form" (ngSubmit)="loginForm.form.valid && login()" #loginForm="ngForm" novalidate="">
+                <div class="form-group has-feedback" [ngClass]="{ 'has-error': loginForm.submitted && !username.valid && !loading }">
+                  <input autocomplete="off" [disabled]="loading" type="text" class="form-control" placeholder="Enter username" name="username" id="username" [(ngModel)]="model.username" #username="ngModel" required />
+                  <span class="fa fa-user form-control-feedback text-muted"></span>
+
+                  <div *ngIf="loginForm.submitted && !username.valid && !loading" class="help-block">Username is required</div>
+                </div>
+                <div class="form-group has-feedback" [ngClass]="{ 'has-error': loginForm.submitted && !password.valid && !loading }">
+                  <input autocomplete="off" [disabled]="loading" type="password" class="form-control" name="password" id="password" placeholder="Password" [(ngModel)]="model.password" #password="ngModel" required />
+                  <span class="fa fa-lock form-control-feedback text-muted"></span>
+
+                  <div *ngIf="loginForm.submitted && !password.valid && !loading" class="help-block">Password is required</div>
+                </div>
+
+                <!-- Error block -->
+                <alert-block *ngIf="!!errorMessage" type="danger" [message]="errorMessage" [auto-close]="true"></alert-block>
+
+                <div class="clearfix">
+                  <div class="pull-right">
+                    <a class="text-muted" [routerLink]="'/recover'">Forgot your password?</a><br />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <button [disabled]="loading || (!loginForm.form.valid && !loginForm.form.pristine)" class="btn btn-block btn-primary mt-lg">Login</button>
+                </div>
+              </form>
+
+              <!-- <div class="alert alert-danger text-center" ></div> -->
+              <p class="pt-lg text-center">Need to Signup?</p><a class="btn btn-block btn-default" [routerLink]="'/register'">Register Now</a>
+            </div>
+        </div>
+        <!-- END panel-->
+        <footer app-footer></footer>
+    </div>
+</div>

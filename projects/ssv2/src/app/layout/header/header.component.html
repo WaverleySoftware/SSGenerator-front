@@ -1,0 +1,165 @@
+<!-- START Top Navbar-->
+<nav class="navbar topnavbar" role="navigation">
+  <!-- START navbar header-->
+  <div class="navbar-header">
+    <a class="navbar-brand" href="#/">
+      <div class="brand-logo">
+        <img class="img-responsive" src="assets/img/sizing-logo.png" alt="App Logo" />
+        
+        <!-- Identiy for testing, remove for release! -->
+
+      </div>
+      <div class="brand-logo-collapsed">
+        <img class="img-responsive" src="assets/img/sizing-logo-single.png" alt="App Logo" />
+      </div>
+    </a>
+  </div>
+  <!-- END navbar header-->
+  <!-- START Nav wrapper-->
+  <div class="nav-wrapper">
+    <!-- START Left navbar-->
+    <ul class="nav navbar-nav">
+
+      <!--temporary application version value. !!!!PLEASE REMOVE!!! ENTIRE <li> LIST ITEM BELOW ONCE RELEASING TO LIVE-->
+      <!--<li>
+        <div style="color: springgreen; font-size:24px; text-align:center; padding-top:7px; margin-left:-31px">v2.1</div>
+      </li>-->
+
+      <li>
+        <!-- Button used to collapse the left sidebar. Only visible on tablet and desktops-->
+        <a class="hidden-xs" trigger-resize="" (click)="toggleCollapsedSideabar()" *ngIf="!isCollapsedText()">
+          <em class="fa fa-navicon"></em>
+        </a>
+        <!-- Button to show/hide the sidebar on mobile. Visible on mobile only.-->
+        <a class="visible-xs sidebar-toggle" (click)="settings.layout.asideToggled =! settings.layout.asideToggled; $event.stopPropagation()">
+          <em class="fa fa-navicon"></em>
+        </a>
+      </li>
+
+      <!-- Translations -->
+      <li *ngIf="currentUser.permissions['canEditTranslations']">
+        <a [title]="'TRANSLATE_THIS_PAGE' | translate:true" (click)="translationModal.open()">
+          <em class="fa fa-comments"></em>
+        </a>
+      </li>
+    </ul>
+    <!-- END Left navbar-->
+    <!-- START Right Navbar-->
+    <ul class="nav navbar-nav navbar-right" style="margin-right:0;">
+
+      <!-- Iterate throught the non-sidebar menu items -->
+      <li *ngFor='let item of menuItems'>
+        <a [title]="item.text | translate:true" [routerLink]="item.link">
+          <!-- translated top header section tool tips, Administration Tasks etc. -->
+          <em [class]="item.icon"></em>
+        </a>
+      </li>
+
+      <!-- Contact Us -->
+      <li>
+        <a [title]="'CONTACT_US' | translate:true" href="http://www.spiraxsarco.com" target="_blank">
+          <em class="fa fa-phone"></em>
+        </a>
+      </li>
+
+      <li style="cursor:default">
+        <span class="hide-white-sxs" style="width:75px; height:55px; padding-left:25px; margin-right:0px">
+          <img src="assets/img/sizing_whiteSXS.png" width="44" height="44" style="margin-top:4px; margin-bottom:7px" />
+        </span>
+      </li>
+
+      <li style="cursor:default">
+        <span class="hide-blue-sxs" style="width:75px; height:60px; padding-left:25px; margin-right:0px">
+          <img src="assets/img/user/blueLogo.jpg" width="40" height="40" style="margin-bottom:2px" />
+        </span>
+      </li>
+
+
+      <!-- START Alert menu-->
+      <li class="dropdown dropdown-list" dropdown *ngIf="currentUser.permissions['canViewNotifications']">
+        <a [title]="'NOTIFICATIONS' | translate:true" dropdownToggle>
+          <em class="icon-bell"></em>
+          <div class="label label-danger">11</div>
+        </a>
+        <!-- START Dropdown menu-->
+        <ul *dropdownMenu class="dropdown-menu animated flipInX">
+          <li>
+            <!-- START list group-->
+            <div class="list-group">
+              <!-- list item-->
+              <a class="list-group-item">
+                <div class="media-box">
+                  <div class="pull-left">
+                    <em class="fa fa-twitter fa-2x text-info"></em>
+                  </div>
+                  <div class="media-box-body clearfix">
+                    <p class="m0">**New followers</p>
+                    <p class="m0 text-muted">
+                      <small>1 **new follower</small>
+                    </p>
+                  </div>
+                </div>
+              </a>
+              <!-- list item-->
+              <a class="list-group-item">
+                <div class="media-box">
+                  <div class="pull-left">
+                    <em class="fa fa-envelope fa-2x text-warning"></em>
+                  </div>
+                  <div class="media-box-body clearfix">
+                    <p class="m0">**New e-mails</p>
+                    <p class="m0 text-muted">
+                      <small>**You have 10 new emails</small>
+                    </p>
+                  </div>
+                </div>
+              </a>
+              <!-- list item-->
+              <a class="list-group-item">
+                <div class="media-box">
+                  <div class="pull-left">
+                    <em class="fa fa-tasks fa-2x text-success"></em>
+                  </div>
+                  <div class="media-box-body clearfix">
+                    <p class="m0">**Pending Tasks</p>
+                    <p class="m0 text-muted">
+                      <small>11 **pending task</small>
+                    </p>
+                  </div>
+                </div>
+              </a>
+              <!-- last list item-->
+              <a class="list-group-item">
+                <small>{{"MORE_NOTIFICATIONS" | translate:true}}</small>
+                <span class="label label-danger pull-right">14</span>
+              </a>
+            </div>
+            <!-- END list group-->
+          </li>
+        </ul>
+        <!-- END Dropdown menu-->
+      </li>
+      <!-- END Alert menu-->
+    </ul>
+    <!-- END Right Navbar-->
+  </div>
+  <!-- END Nav wrapper-->
+
+</nav>
+<!-- END Top Navbar-->
+<!-- Generic Modal Component -->
+<sizing-suite-modal #translationModal
+                    (modal-cancel)="modalCallbackCancel()"
+                    (modal-ok)="modalCallbackOk()"
+                    [modal-title]="'TRANSLATE_THIS_PAGE' | translate:true"
+                    [modal-ok-text]="'SAVE' | translate:true"
+                    [modal-ok-icon]="'fa fa-save'"
+                    [modal-cancel-text]="'CANCEL' | translate:true"
+                    [modal-cancel-icon]="'fa fa-times'"
+                    loaded-child-component-onOpen="TranslationComponent"
+                    loaded-child-component-submit-callback="modalSubmitCallback"
+                    loaded-child-component-submit-is-disabled-function="checkIfSubmitIsDisabled">
+
+  <!-- Nothing to load here -->
+  <b>Loading...</b>
+</sizing-suite-modal>

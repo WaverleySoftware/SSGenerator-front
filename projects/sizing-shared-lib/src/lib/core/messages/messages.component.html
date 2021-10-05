@@ -1,0 +1,47 @@
+<div class="messages-alert-wrapper">
+
+  <div *ngIf="!!messages && messages.length > 0" class="row">
+    <div class="col-lg-6 col-lg-offset-3 col-md-8 col-md-offset-2 col-sm-12">
+
+      
+      <!-- The alert box -->
+      <div class="alert alert-grey">
+
+        <div class="row">
+          <div class="col-xs-11">
+
+            <div class="notification-messages row" *ngFor="let message of messages">
+              <div class="col-xs-1 text-right">
+                <i [class]="getSeverityIcon(message.severity)"></i>
+              </div>
+              <div class="col-xs-10">
+                <span>{{message.messageKey | translate:isInternalError(message.messageKey)}}</span>
+                <span *ngIf="message.value !== 0 && message.unitKey"> ({{message.displayValue}} {{message.unitKey | translate:false}})</span>
+              </div>
+
+              <div class="col-xs-1">
+                <a (click)="dismissMessage(message)">{{'CLOSE' | translate:true}}</a>
+              </div>
+
+            </div>
+
+
+          </div>
+
+          <div class="col-xs-1">
+            <button (click)="dismissAlert()" class="close ng-star-inserted" type="button">
+              <span>&times;</span><span class="sr-only">Close</span>
+            </button>
+          </div>
+
+        </div>
+
+        
+
+
+      </div>
+
+    </div>
+  </div>
+
+</div>

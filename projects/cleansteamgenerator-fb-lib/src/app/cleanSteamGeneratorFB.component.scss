@@ -1,0 +1,71 @@
+
+.validation-error-class {
+  border: 1px solid red;
+}
+
+.cross-validation-error-class {
+  font-size: 30px;
+  color: red;
+  /*vertical-align: auto;*/
+}
+
+
+.info-message-class {
+  color: blue;
+}
+
+.warning-message-class {
+  color: orange;
+}
+
+.error-message-class {
+  color: red;
+}
+
+.overdesign-red-class {
+  height: 20px;
+  width: 100%;
+  background-color: red;
+}
+
+.overdesign-yellow-class {
+  height: 20px;
+  width: 100%;
+  background-color: yellow;
+}
+
+.overdesign-green-class {
+  height: 20px;
+  width: 100%;
+  background-color: lightgreen;
+}
+
+/*padding-0 {
+  padding-right: 0;
+  padding-left: 0;
+}*/
+.panel-body {
+  padding-right: 0;
+  padding-left: 0;
+}
+
+.col-xs-3 {
+  padding-right: 0;
+  padding-left: 0;
+}
+
+.col-xs-5 {
+  padding-right: 0;
+  padding-left: 0;
+}
+
+.form-group {
+  margin-right: 0;
+  margin-left: 0;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}

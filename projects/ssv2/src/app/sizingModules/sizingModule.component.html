@@ -1,0 +1,83 @@
+<div class="row">
+  <div class="col-md-1 col-sm-2 col-xs-3" style="z-index:1;">
+    <div class="btn-group-vertical" role="group" style="position:fixed">
+      <div class="btn-group" role="group">
+        <button class="btn btn-lg btn-primary dropdown-toggle" style="white-space:nowrap" data-toggle="dropdown" tooltip="{{'SIZING_MENU' | translate:true}}"><span class="fa fa-ellipsis-h"></span></button>
+        <ul class="dropdown-menu">
+          <li class="dropdown-header">Sizing</li>
+
+          <li [class.disabled]="!childComponent.sizingModuleForm.valid  || isCalculating"><a (click)="submitSizingModuleCalculations($event)"><span class="fa fa-calculator"></span> {{'CALCULATE' | translate:true}}</a></li>
+          <li [class.disabled]="false"><a (click)="unitsModal.open()"><span class="fa fa-adjust"></span> {{'SELECT_UNITS' | translate:true}}</a></li>
+          <li [class.disabled]="childComponent.sizingModuleForm.pristine"><a (click)="reset()" ><span class="fa fa-undo"></span> {{'RESET' | translate:true}}</a></li>
+          <li [class.disabled]="false"><a (click)="onNewSizingForm()" href="#"><span class="fa fa-file-o"></span> {{'NEW_SIZING' | translate:true}}</a></li>
+
+          <li [class.disabled]="false"><a (click)="saveLoadModal.open()"><span class="fa fa-save"></span> {{'SAVE' | translate:true}}</a></li>
+          <li [class.disabled]="false"><a (click)="saveLoadModal.open()"><span class="fa fa-save"></span> {{'SAVE_AS' | translate:true}}</a></li>
+          <li  *ngIf="childComponent.showJobExportBtn" [class.disabled]="!(childComponent.jobId && childComponent.jobStatusId===3)"><a (click)= "downloadCrmXml()"><span class="fa fa-file-o"></span> {{'EXPORT_JOB' | translate:true}}</a></li>
+          <li class="dropdown-header"> {{'SPECIFICATION_SHEET' | translate:true}}</li>
+          <li [class.disabled]="!childComponent.isSpecSheetEnabled"><a (click)="pdfSubmit()" [routerLink]=""><span class="fa fa-file-pdf-o"></span> {{'EXPORT_SPECIFICATION_SHEET' | translate:true}}</a></li>
+          <!--<li [class.disabled]="!childComponent.isSpecSheetEnabled"><a (click)="excelSubmit()" [routerLink]=""><span class="fa fa-file-excel-o"></span> {{'EXCEL' | translate:true}}</a></li>-->
+          <!--
+          Removed, as each sizing page has UI allocated for dedicated SpecSheet header data entry, saved with the job.
+          <li [class.disabled]="false"><a (click)="onEnterHeaderDetailsForm()" href="#"><span class="fa fa-file-text-o"></span> {{'ENTER_HEADER_DETAILS' | translate:true}}</a></li>
+          -->
+
+          <li class="dropdown-header"> {{'TECHNICAL_INFORMATION' | translate:true}}</li>
+          <li [class.disabled]="!childComponent.isTiEnabled"><a (click)="onGetTiSheet()" [routerLink]=""><span class="fa fa-file-powerpoint-o"></span> {{'PRODUCT_TECHNICAL_INFORMATION_SHEET' | translate:true}}</a></li>
+        </ul>
+      </div>
+      <button class="btn btn-lg btn-primary" title="{{'CALCULATE' | translate:true}}" (click)="submitSizingModuleCalculations($event)" [disabled]="!childComponent.sizingModuleForm.valid"><span class="fa fa-calculator"></span></button>
+      <button class="btn btn-lg btn-primary" title="{{'SELECT_UNITS' | translate:true}}" (click)="unitsModal.open()"><span class="fa fa-adjust"></span></button>
+      <!--<button class="btn btn-lg btn-primary" title="{{'SAVE' | translate:true:true}}" (click)="saveLoadModal.open()" [disabled]="!childComponent.sizingModuleForm.valid"><span class="fa fa-save"></span></button>-->
+      <button class="btn btn-lg btn-primary" title="{{'SAVE' | translate:true}}" (click)="save()" [disabled]="(childComponent.sizingModuleForm.valid && childComponent.sizingModuleForm.touched)? false:true "><span class="fa fa-save"></span></button>
+      <button class="btn btn-lg btn-primary" title="{{'EXPORT_JOB' | translate:true}}" (click) = downloadCrmXml()  *ngIf="childComponent.showJobExportBtn" [disabled]="!(childComponent.jobId && childComponent.jobStatusId===3)"><span class="fa fa-file-o" ></span></button>
+      <button class="btn btn-lg btn-primary" title="{{'RESET' | translate:true}}" (click)="reset()" [disabled]=""><span class="fa fa-undo"></span></button>
+
+    </div>
+
+    <div class="col-md-10 col-sm-9 col-xs-8 slide" style="position: fixed; margin-left:5%; text-align:center" *ngIf="childComponent&&!!childComponent.saveJobSuccess || !!childComponent.saveJobError">
+      <alert-block *ngIf="childComponent&&!!childComponent.saveJobSuccess" [message]="'JOB_SUCCESSFULLY_SAVED' | translate:true" auto-close="true" (close-callback)="resetAlertFlags()"></alert-block>
+      <alert-block *ngIf="childComponent&&!!childComponent.saveJobError" [message]="'FAILED_TO_SAVE_JOB' | translate:true" auto-close="true" (close-callback)="resetAlertFlags()" type="danger"></alert-block>
+    </div>
+
+  </div>
+    <div class="col-md-11 col-sm-10 col-xs-9" style="z-index:0;">
+
+      <!-- The actual sizing module is contained in here -->
+      <router-outlet (activate)="onActivate($event)" (deactivate)="onDeactivate($event)"></router-outlet>
+
+    </div>
+</div>
+
+
+<!-- Generic Modal Component -->
+<sizing-suite-modal #unitsModal
+                    (modal-cancel)="modalCallbackCancel()"
+                    (modal-ok)="modalCallbackOk()"
+                    [modal-ok-text]="'SAVE' | translate:true"
+                    [modal-ok-icon]="'fa fa-check'"
+                    [modal-cancel-text]="'CANCEL' | translate:true"
+                    [modal-cancel-icon]="'fa fa-times'"
+                    [modal-title]="'SELECT_UNITS' | translate:true"
+                    loaded-child-component-onOpen="UnitsModalComponent"
+                    loaded-child-component-submit-callback="modalSubmitCallback"
+                    loaded-child-component-submit-is-disabled-function="checkIfSubmitIsDisabled">
+  <!-- Nothing to load here -->
+  <b>Loading...</b>
+</sizing-suite-modal>
+
+<sizing-suite-modal #saveLoadModal
+                    (modal-cancel)="modalCallbackCancel()"
+                    (modal-ok)="saveLoadModalOk($event)"
+                    [modal-ok-text]="'SAVE' | translate:true"
+                    [modal-ok-icon]="'fa fa-check'"
+                    [modal-cancel-text]="'CANCEL' | translate:true"
+                    [modal-cancel-icon]="'fa fa-times'"
+                    [modal-title]="'SAVE_JOB' | translate:true"
+                    [close-on-submit]="false"
+                    loaded-child-component-onOpen="SaveLoadModalComponent"
+                    loaded-child-component-submit-callback="modalSubmitCallback"
+                    loaded-child-component-submit-is-disabled-function="checkIfSubmitIsDisabled">
+  <!-- Nothing to load here -->
+  <b>Loading...</b>
+</sizing-suite-modal>

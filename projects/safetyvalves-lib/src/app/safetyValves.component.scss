@@ -1,0 +1,114 @@
+@import '../../../sizing-shared-lib/src/lib/shared/styles/app/variables.scss';
+@import "../../../sizing-shared-lib/src/lib/shared/styles/app/variables-override-sizing-suite.scss";
+@import '../../../sizing-shared-lib/src/lib/shared/styles/app/media-queries.scss';
+
+.validation-error-class {
+  border: 1px solid red;
+}
+
+.validation-product-error-class {
+  border: 1px solid white;
+}
+
+.cross-validation-error-class {
+  font-size: 30px;
+  color: red;
+  /*vertical-align: auto;*/
+}
+
+
+.info-message-class {
+  color: blue;
+}
+
+.warning-message-class {
+  color: orange;
+}
+
+.error-message-class {
+  color: red;
+}
+
+.overdesign-red-class {
+  height: 20px;
+  width: 100%;
+  background-color: red;
+}
+
+.overdesign-yellow-class {
+  height: 20px;
+  width: 100%;
+  background-color: yellow;
+}
+
+.overdesign-green-class {
+  height: 20px;
+  width: 100%;
+  background-color: lightgreen;
+}
+
+/*padding-0 {
+  padding-right: 0;
+  padding-left: 0;
+}*/
+.panel-body {
+  padding-right: 0;
+  padding-left: 0;
+}
+
+.col-xs-3 {
+  padding-right: 0;
+  padding-left: 0;
+}
+
+.col-xs-5 {
+  padding-right: 0;
+  padding-left: 0;
+}
+
+.form-group {
+  margin-right: 0;
+  margin-left: 0;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+fieldset, td {
+  padding-top: 0;
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
+
+
+.home-container {
+  margin: 0 auto;
+  max-width: $container-md;
+
+  .home-logo {
+    width: 240px;
+  }
+
+  .home-text {
+    @media only screen and (max-width: $mq-tablet) {
+      text-align: center;
+    }
+  }
+}
+
+.admin-module-button {
+  margin: 5px;
+
+  em {
+    font-size: 1.6em;
+  }
+
+  white-space: normal;
+
+  @media (min-width: $screen-lg-min) {
+    font-size: 1.4em;
+  }
+}

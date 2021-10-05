@@ -1,0 +1,389 @@
+<form [formGroup]="preferencesForm" class="form-horizontal" role="form" (submit)="submitForm($event)" novalidate>
+  <div class='panel panel-primary' *ngIf="!!arePreferencesLoaded">
+    <div class='panel-body'>
+
+      <div class="row">
+        <div class="col-xs-12">
+          <h4>{{"UNITS_OF_MEASURE" | translate}}</h4>
+          <hr />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <button [disabled]="!preferencesForm.dirty || !preferencesForm.valid || preferencesForm.status !== 'VALID' || formSubmitted" type="submit" class="btn btn-dynamic btn-primary pull-right" [title]="'SAVE' | translate:true"><i class="fa fa-save">  {{'SAVE' | translate:true}}</i></button>
+        </div>
+      </div>
+
+      <!-- Success confirmation message -->
+      <alert-block *ngIf="!!alertVisible && !!isSuccess" type="success" [auto-close]="true" [message]="'OPERATING_COMPANY_PREFERENCES_SAVED_SUCCESSFULLY_MESSAGE' | translate" (close-callback)="closeAlert()"></alert-block>
+
+      <!-- Failure confirmation message-->
+      <alert-block *ngIf="!!alertVisible && !isSuccess" type="danger" [message]="'OPERATING_COMPANY_PREFERENCES_FAILED_TO_SAVE_MESSAGE' | translate" (close-callback)="closeAlert()"></alert-block>
+
+      <!-- Control headings  -->
+      <div class="row">
+        <!-- Left section -->
+        <div class="col-md-6 col-xs-12">
+
+          <div class="row">
+            <div class="col-lg-2 col-lg-offset-3 col-xs-4">
+              <h6>{{"DECIMALS" | translate}}</h6>
+            </div>
+            <div class="col-lg-4 col-xs-8">
+              <h6>{{"UNITS" | translate}}</h6>
+            </div>
+          </div>
+
+          <!-- Pressure -->
+          <preference formControlName="pressurePreference" requires-decimals="true" unit-type="PressureUnits" unit-label="PRESSURE" default-value="50"></preference>
+
+          <!-- Temperature -->
+          <preference formControlName="temperaturePreference" requires-decimals="true" unit-type="TemperatureUnits" unit-label="TEMPERATURE" default-value="146"></preference>
+
+          <!-- Mass Flow -->
+          <preference formControlName="massFlowPreference" requires-decimals="true" unit-type="MassFlowUnits" unit-label="MASS_FLOW" default-value="84"></preference>
+
+          <!-- Volumetric Flow -->
+          <preference formControlName="volumetricFlowPreference" requires-decimals="true" unit-type="VolumetricFlowUnits" unit-label="VOLUMETRIC_FLOW" default-value="75"></preference>
+
+          <!-- Capacity -->
+          <preference formControlName="capacityPreference" requires-decimals="true" unit-type="CapacityUnits" unit-label="CAPACITY" default-value="88"></preference>
+
+          <!-- Load -->
+          <preference formControlName="loadPreference" requires-decimals="true" unit-type="LoadUnits" unit-label="LOAD" default-value="97"></preference>
+
+          <!-- Gaseous Fuel -->
+          <preference formControlName="gaseousFuelPreference" requires-decimals="true" unit-type="GaseousFuelUnits" unit-label="GASEOUS_FUEL" default-value="16"></preference>
+
+          <!-- Solid Fuel -->
+          <preference formControlName="solidFuelPreference" requires-decimals="true" unit-type="SolidFuelUnits" unit-label="SOLID_FUEL" default-value="26"></preference>
+
+        </div>
+
+        <!-- Right section -->
+        <div class="col-md-6 col-xs-12">
+
+          <div class="row">
+            <div class="col-lg-2 col-lg-offset-3 col-xs-4">
+              <h6>{{"DECIMALS" | translate}}</h6>
+            </div>
+            <div class="col-lg-4 col-xs-8">
+              <h6>{{"UNITS" | translate}}</h6>
+            </div>
+          </div>
+
+          <!-- Area -->
+          <preference formControlName="areaPreference" requires-decimals="true" unit-type="AreaUnits" unit-label="AREA" default-value="11"></preference>
+
+          <!-- Force -->
+          <preference formControlName="forcePreference" requires-decimals="true" unit-type="ForceUnits" unit-label="FORCE" default-value="93"></preference>
+
+          <!-- Length -->
+          <preference formControlName="lengthPreference" requires-decimals="true" unit-type="LengthUnits" unit-label="LENGTH" default-value="3"></preference>
+
+          <!-- Weight -->
+          <preference formControlName="weightPreference" requires-decimals="true" unit-type="WeightUnits" unit-label="WEIGHT" default-value="26"></preference>
+
+          <!-- Velocity -->
+          <preference formControlName="velocityPreference" requires-decimals="true" unit-type="VelocityUnits" unit-label="VELOCITY" default-value="139"></preference>
+
+          <!-- Energy -->
+          <preference formControlName="energyPreference" requires-decimals="true" unit-type="EnergyUnits" unit-label="ENERGY" default-value="108"></preference>
+
+          <!-- Liquid Fuel -->
+          <preference formControlName="liquidFuelPreference" requires-decimals="true" unit-type="LiquidFuelUnits" unit-label="LIQUID_FUEL" default-value="15"></preference>
+
+        </div>
+      </div>
+
+      <!-- Boiler House units of measure -->
+      <div class="row">
+        <div class="col-xs-12 ">
+          <h4>{{"BOILER_HOUSE_UNITS_OF_MEASURE" | translate}}</h4>
+          <hr />
+        </div>
+      </div>
+
+      <!-- Grid heading -->
+      <div class="row">
+        <div class="col-md-6 col-xs-12">
+
+          <div class="row">
+            <div class="col-lg-offset-4 col-xs-4">
+              <h6>{{"UNITS" | translate}}</h6>
+            </div>
+          </div>
+
+          <!-- Boiler house volume -->
+          <preference formControlName="boilerHouseVolumePreference" unit-type="BoilerHouseVolumeUnits" unit-label="VOLUME" default-value="16"></preference>
+
+          <!-- Boiler house weight -->
+          <preference formControlName="boilerHouseWeightPreference" unit-type="BoilerHouseWeightUnits" unit-label="WEIGHT" default-value="27"></preference>
+
+          <!-- Boiler house mass flow -->
+          <preference formControlName="boilerHouseMassFlowPreference" unit-type="BoilerHouseMassFlowUnits" unit-label="MASS_FLOW" default-value="229"></preference>
+
+          <!-- Boiler house specific energy -->
+          <preference formControlName="boilerHouseSpecificEnergyPreference" unit-type="BoilerHouseSpecificEnergyUnits" unit-label="SPECIFIC_ENERGY" default-value="223"></preference>
+
+          <!-- Currencies are unique here -->
+          <div class="form-group">
+
+            <div class="col-lg-4 col-md-12 col-xs-12 text-right">
+              <label for="name" class="control-label">{{"CURRENCY" | translate}}</label>
+            </div>
+
+            <div class="col-lg-4 col-md-6 col-xs-12">
+              <select class="form-control" formControlName="boilerHouseCurrencyPreference">
+                <option *ngFor="let currency of currencies" [value]="currency.currencyCode">{{currency.translationText}}</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Boiler house liquid fuel -->
+          <preference formControlName="boilerHouseLiquidFuelPreference" unit-type="BoilerHouseLiquidFuelUnits" unit-label="LIQUID_FUEL" default-value="15"></preference>
+
+          <!-- Boiler house electrical fuel -->
+          <preference formControlName="boilerHouseElectricalFuelPreference" unit-type="BoilerHouseElectricalFuelUnits" unit-label="ELECTRICAL_FUEL" default-value="108"></preference>
+
+        </div>
+        <div class="col-md-6 col-xs-12">
+
+          <div class="row">
+            <div class="col-lg-offset-4 col-xs-4">
+              <h6>{{"UNITS" | translate}}</h6>
+            </div>
+          </div>
+
+          <!-- Boiler house volumetric flow -->
+          <preference formControlName="boilerHouseVolumetricFlowPreference" unit-type="BoilerHouseVolumetricFlowUnits" unit-label="VOLUMETRIC_FLOW" default-value="227"></preference>
+
+          <!-- Boiler house TDS -->
+          <preference formControlName="boilerHouseTdsPreference" unit-type="BoilerHouseTDSUnits" unit-label="TDS" default-value="228"></preference>
+
+          <!-- Boiler house energy -->
+          <preference formControlName="boilerHouseEnergyPreference" unit-type="BoilerHouseEnergyUnits" unit-label="ENERGY" default-value="108"></preference>
+
+          <!-- Boiler house Co2 emissions -->
+          <preference formControlName="boilerHouseCo2EmissionsPreference" unit-type="BoilerHouseEmissionUnits" unit-label="CO2_EMISSIONS" default-value="27"></preference>
+
+          <!-- Boiler house gaseous fuel -->
+          <preference formControlName="boilerHouseGaseousFuelPreference" unit-type="BoilerHouseGasFuelUnits" unit-label="GASEOUS_FUEL" default-value="108"></preference>
+
+          <!-- Boiler house solid fuel -->
+          <preference formControlName="boilerHouseSolidFuelPreference" unit-type="BoilerHouseSolidFuelUnits" unit-label="SOLID_FUEL" default-value="27"></preference>
+
+        </div>
+      </div>
+
+
+      <div class="row">
+        <div class="col-xs-12">
+          <h4>{{"BOILER_HOUSE_OPTIONS" | translate}}</h4>
+          <hr />
+        </div>
+      </div>
+
+      <!-- Boiler house reverse osmosis -->
+      <div class="form-group">
+        <div class="col-lg-offset-2 col-md-6 col-xs-12">
+
+          <div class="checkbox c-checkbox">
+            <label>
+              <input autocomplete="off" type="checkbox"
+                     class="control-check"
+                     formControlName="reverseOsmosisPreference"
+                     (change)="setReverseOsmosis(reverseOsmosisRef)"
+                     [checked]="reverseOsmosis.value === '1'"
+                     #reverseOsmosisRef />
+
+              <span class="fa fa-check"></span>{{"REVERSE_OSMOSIS" | translate}}
+            </label>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-xs-12">
+          <h4>{{"FINANCIAL_DETAILS" | translate}}</h4>
+          <hr />
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 col-xs-12">
+
+          <!-- Tax rate -->
+          <div class="form-group">
+
+            <div class="col-lg-4 col-md-12 col-xs-12 text-right">
+              <label for="name" class="control-label">{{"TAX" | translate}}</label>
+            </div>
+
+            <div class="col-lg-4">
+              <div class="input-group">
+                <input autocomplete="off" type="text" class="form-control" formControlName="taxRatePreference" />
+                <span class="input-group-addon">%</span>
+              </div>
+            </div>
+
+            <div class="col-lg-4 col-xs-12">
+              <span class="text-danger" *ngIf="preferencesForm.controls['taxRatePreference'].hasError('required') && (preferencesForm.controls['taxRatePreference'].dirty || preferencesForm.controls['taxRatePreference'].touched)">{{ "TAX_RATE_REQUIRED_MESSAGE" | translate }}</span>
+            </div>
+          </div>
+
+          <!-- Annual allowance -->
+          <div class="form-group">
+
+            <div class="col-lg-4 col-md-12 col-xs-12 text-right">
+              <label for="name" class="control-label">{{"ANNUAL_INFLATION" | translate}}</label>
+            </div>
+
+            <div class="col-lg-4">
+              <div class="input-group">
+                <input autocomplete="off" type="text" class="form-control" formControlName="annualInflationPreference" />
+                <span class="input-group-addon">%</span>
+              </div>
+            </div>
+
+            <div class="col-lg-4 col-xs-12">
+              <span class="text-danger" *ngIf="preferencesForm.controls['annualInflationPreference'].hasError('required') && (preferencesForm.controls['annualInflationPreference'].dirty || preferencesForm.controls['annualInflationPreference'].touched)">{{ "ANNUAL_INFLATION_REQUIRED_MESSAGE" | translate }}</span>
+            </div>
+          </div>
+
+        </div>
+
+
+        <div class="col-md-6 col-xs-12">
+
+          <!-- Capital allowance -->
+          <div class="form-group">
+
+            <div class="col-lg-4 col-md-12 col-xs-12 text-right">
+              <label for="name" class="control-label">{{"CAPITAL_ALLOWANCE_RATE" | translate}}</label>
+            </div>
+
+
+            <div class="col-lg-4">
+              <div class="input-group">
+                <input autocomplete="off" type="text" class="form-control" formControlName="capitalAllowancePreference" />
+                <span class="input-group-addon">%</span>
+              </div>
+            </div>
+
+            <div class="col-lg-4 col-xs-12">
+              <span class="text-danger" *ngIf="preferencesForm.controls['capitalAllowancePreference'].hasError('required') && (preferencesForm.controls['capitalAllowancePreference'].dirty || preferencesForm.controls['capitalAllowancePreference'].touched)">{{ "CAPITAL_ALLOWANCE_REQUIRED_MESSAGE" | translate }}</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+
+
+      <div class="row">
+        <div class="col-xs-12">
+          <h4>{{"DESIGN_STANDARDS" | translate}}</h4>
+          <hr />
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 col-xs-12">
+
+          <!-- Desingn Standard -->
+          <div class="form-group">
+
+            <div class="col-lg-4 col-md-12 col-xs-12 text-right">
+              <label for="name" class="control-label">{{"CONTROL_VALVE_DESIGN_STANDARD" | translate}}</label>
+            </div>
+            <div class="col-lg-4 col-md-12 col-xs-12">
+              <!-- Build Enumeration for cvDesignStandardPreference -->
+              <enumeration formControlName="cvDesignStandardPreference" enumeration-name="DesignStd1_Platform"></enumeration>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-xs-12 ">
+          <h4>{{"DOCUMENTATION" | translate}}</h4>
+          <hr />
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 col-xs-12">
+
+          <!-- Spec sheet language -->
+          <div class="form-group">
+
+            <div class="col-lg-4 col-md-12 col-xs-12 text-right">
+              <label for="name" class="control-label">{{"SPECIFICATION_SHEET" | translate}}</label>
+            </div>
+
+            <div class="col-lg-4 col-md-12 col-xs-12">
+              <select class="form-control" formControlName="specLanguagePreference" id="specLanguageSelection" name="specLanguageSelection">
+                <option *ngFor="let language of languages" [value]="language.isoName">{{language.masterTextKey | translate}}</option>
+              </select>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div class="row">
+        <div class="col-xs-12">
+          <h4>{{"DOWNLOADABLE_VERSION" | translate}}</h4>
+          <hr />
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 col-xs-12">
+
+          <!-- Offline client download -->
+          <div class="form-group">
+
+            <div class="col-lg-4 col-md-12 col-xs-12 text-right">
+              <label for="name" class="control-label">{{"AVAILABLE_TO" | translate}}</label>
+            </div>
+
+            <div class="col-lg-offset-2 col-lg-8 col-xs-12">
+              <div class="radio c-radio c-radio-nofont">
+                <label>
+                  <input autocomplete="off" type="radio" value="0" formControlName="clientDownloadPreference" />
+                  <span></span>{{"NONE" | translate}}
+                </label>
+              </div>
+              <div class="radio c-radio c-radio-nofont">
+                <label>
+                  <input autocomplete="off" type="radio" value="1" formControlName="clientDownloadPreference" />
+                  <span></span>{{"SPIRAX_EMPLOYEES" | translate}}
+                </label>
+              </div>
+              <div class="radio c-radio c-radio-nofont">
+                <label>
+                  <input autocomplete="off" type="radio" value="2" formControlName="clientDownloadPreference" />
+                  <span></span>{{"FREE_TO_ALL" | translate}}
+                </label>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+      <!--<div class="row">
+    <div class="col-xs-12">
+      <button [disabled]="!preferencesForm.dirty || !preferencesForm.valid || preferencesForm.status !== 'VALID' || formSubmitted" type="submit" class="btn btn-block btn-dynamic btn-primary pull-right" [title]="'SAVE' | translate:true"><i class="fa fa-save">  {{'SAVE' | translate:true}}</i></button>
+    </div>
+  </div>-->
+
+    </div>
+  </div>
+</form>

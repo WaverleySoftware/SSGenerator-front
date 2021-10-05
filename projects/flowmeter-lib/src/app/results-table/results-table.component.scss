@@ -1,0 +1,25 @@
+.info-message-class {
+    color: blue;
+  }
+  
+  .warning-message-class {
+    color: orange;
+  }
+  
+  .error-message-class {
+    color: red;
+  }
+
+
+.messages-container {
+    background-color: rgba(100, 156, 180, 0.25);
+    padding: 0.75rem;
+}
+
+.message {
+    display: flex;
+}
+
+.message-icon {
+    width: 35px;
+}

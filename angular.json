@@ -1,0 +1,946 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "newProjectRoot": "projects",
+  "projects": {
+    "cleansteamgenerator-lib": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "styleext": "scss"
+        }
+      },
+      "root": "projects/cleansteamgenerator-lib",
+      "sourceRoot": "projects/cleansteamgenerator-lib/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/cleansteamgenerator-lib",
+            "index": "projects/cleansteamgenerator-lib/src/index.html",
+            "main": "projects/cleansteamgenerator-lib/src/main.ts",
+            "polyfills": "projects/cleansteamgenerator-lib/src/polyfills.ts",
+            "tsConfig": "projects/cleansteamgenerator-lib/tsconfig.app.json",
+            "aot": false,
+            "assets": [
+              "projects/cleansteamgenerator-lib/src/favicon.ico",
+              "projects/cleansteamgenerator-lib/src/assets"
+            ],
+            "styles": [
+
+            ],
+            "scripts": []
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "projects/cleansteamgenerator-lib/src/environments/environment.ts",
+                  "with": "projects/cleansteamgenerator-lib/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "10kb"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "cleansteamgenerator-lib:build"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "cleansteamgenerator-lib:build:production"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "cleansteamgenerator-lib:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/cleansteamgenerator-lib/src/test.ts",
+            "polyfills": "projects/cleansteamgenerator-lib/src/polyfills.ts",
+            "tsConfig": "projects/cleansteamgenerator-lib/tsconfig.spec.json",
+            "karmaConfig": "projects/cleansteamgenerator-lib/karma.conf.js",
+            "assets": [
+              "projects/cleansteamgenerator-lib/src/favicon.ico",
+              "projects/cleansteamgenerator-lib/src/assets"
+            ],
+            "styles": [
+              "projects/cleansteamgenerator-lib/src/styles.css"
+            ],
+            "scripts": []
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/cleansteamgenerator-lib/tsconfig.app.json",
+              "projects/cleansteamgenerator-lib/tsconfig.spec.json",
+              "projects/cleansteamgenerator-lib/e2e/tsconfig.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        },
+        "e2e": {
+          "builder": "@angular-devkit/build-angular:protractor",
+          "options": {
+            "protractorConfig": "projects/cleansteamgenerator-lib/e2e/protractor.conf.js",
+            "devServerTarget": "cleansteamgenerator-lib:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "cleansteamgenerator-lib:serve:production"
+            }
+          }
+        }
+      }
+    },
+    "sizing-shared-lib": {
+      "projectType": "library",
+      "schematics": {
+        "@schematics/angular:component": {
+          "styleext": "scss"
+        }
+      },
+      "root": "projects/sizing-shared-lib",
+      "sourceRoot": "projects/sizing-shared-lib/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-ng-packagr:build",
+          "options": {
+            "tsConfig": "projects/sizing-shared-lib/tsconfig.lib.json",
+            "project": "projects/sizing-shared-lib/ng-package.json"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/sizing-shared-lib/src/test.ts",
+            "tsConfig": "projects/sizing-shared-lib/tsconfig.spec.json",
+            "karmaConfig": "projects/sizing-shared-lib/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/sizing-shared-lib/tsconfig.lib.json",
+              "projects/sizing-shared-lib/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
+    },
+    "ssv2": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "styleext": "scss"
+        }
+      },
+      "root": "projects/ssv2",
+      "sourceRoot": "projects/ssv2/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/ssv2",
+            "index": "projects/ssv2/src/index.html",
+            "main": "projects/ssv2/src/main.ts",
+            "polyfills": "projects/ssv2/src/polyfills.ts",
+            "tsConfig": "projects/ssv2/tsconfig.app.json",
+            "aot": false,
+            "assets": [
+              "projects/ssv2/src/favicon.ico",
+              "projects/ssv2/src/assets",
+              {
+                "glob": "**/*",
+                "input": "projects/safetyvalves-lib/src/assets",
+                "output": "./assets/img/safetyvalves"
+              },
+              {
+                "glob": "**/*",
+                "input": "projects/sizing-shared-lib/src/lib/shared/styles/fontsSSv2_2.2",
+                "output": "./assets/ssv2Font/files"
+              }
+
+            ],
+            "styles": [
+              "projects/ssv2/src/styles/styles.scss"
+            ],
+            "scripts": [
+              "./node_modules/jquery/dist/jquery.js",
+              "./node_modules/popper.js/dist/umd/popper.min.js",
+              "./node_modules/bootstrap/dist/js/bootstrap.js"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "projects/ssv2/src/environments/environment.ts",
+                  "with": "projects/ssv2/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "10kb"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "ssv2:build",
+            "sourceMap": {
+              "scripts": true,
+              "vendor": true,
+              "styles": true
+            }
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "ssv2:build:production"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "ssv2:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/ssv2/src/test.ts",
+            "polyfills": "projects/ssv2/src/polyfills.ts",
+            "tsConfig": "projects/ssv2/tsconfig.spec.json",
+            "karmaConfig": "projects/ssv2/karma.conf.js",
+            "assets": [
+              "projects/ssv2/src/favicon.ico",
+              "projects/ssv2/src/assets"
+            ],
+            "styles": [
+              "projects/ssv2/src/styles.css"
+            ],
+            "scripts": []
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/ssv2/tsconfig.app.json",
+              "projects/ssv2/tsconfig.spec.json",
+              "projects/ssv2/e2e/tsconfig.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        },
+        "e2e": {
+          "builder": "@angular-devkit/build-angular:protractor",
+          "options": {
+            "protractorConfig": "projects/ssv2/e2e/protractor.conf.js",
+            "devServerTarget": "ssv2:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "ssv2:serve:production"
+            }
+          }
+        }
+      }
+    },
+    "cleansteamgenerator-fbmini-lib": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "styleext": "scss"
+        }
+      },
+      "root": "projects/cleansteamgenerator-fbmini-lib",
+      "sourceRoot": "projects/cleansteamgenerator-fbmini-lib/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/cleansteamgenerator-fbmini-lib",
+            "index": "projects/cleansteamgenerator-fbmini-lib/src/index.html",
+            "main": "projects/cleansteamgenerator-fbmini-lib/src/main.ts",
+            "polyfills": "projects/cleansteamgenerator-fbmini-lib/src/polyfills.ts",
+            "tsConfig": "projects/cleansteamgenerator-fbmini-lib/tsconfig.app.json",
+            "aot": false,
+            "assets": [
+              "projects/cleansteamgenerator-fbmini-lib/src/favicon.ico",
+              "projects/cleansteamgenerator-fbmini-lib/src/assets"
+            ],
+            "styles": [
+              "projects/cleansteamgenerator-fbmini-lib/src/styles.css"
+            ],
+            "scripts": []
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "projects/cleansteamgenerator-fbmini-lib/src/environments/environment.ts",
+                  "with": "projects/cleansteamgenerator-fbmini-lib/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "10kb"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "cleansteamgenerator-fbmini-lib:build"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "cleansteamgenerator-fbmini-lib:build:production"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "cleansteamgenerator-fbmini-lib:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/cleansteamgenerator-fbmini-lib/src/test.ts",
+            "polyfills": "projects/cleansteamgenerator-fbmini-lib/src/polyfills.ts",
+            "tsConfig": "projects/cleansteamgenerator-fbmini-lib/tsconfig.spec.json",
+            "karmaConfig": "projects/cleansteamgenerator-fbmini-lib/karma.conf.js",
+            "assets": [
+              "projects/cleansteamgenerator-fbmini-lib/src/favicon.ico",
+              "projects/cleansteamgenerator-fbmini-lib/src/assets"
+            ],
+            "styles": [
+              "projects/cleansteamgenerator-fbmini-lib/src/styles.css"
+            ],
+            "scripts": []
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/cleansteamgenerator-fbmini-lib/tsconfig.app.json",
+              "projects/cleansteamgenerator-fbmini-lib/tsconfig.spec.json",
+              "projects/cleansteamgenerator-fbmini-lib/e2e/tsconfig.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        },
+        "e2e": {
+          "builder": "@angular-devkit/build-angular:protractor",
+          "options": {
+            "protractorConfig": "projects/cleansteamgenerator-fbmini-lib/e2e/protractor.conf.js",
+            "devServerTarget": "cleansteamgenerator-fbmini-lib:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "cleansteamgenerator-fbmini-lib:serve:production"
+            }
+          }
+        }
+      }
+    },
+    "cleansteamgenerator-fb-lib": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "styleext": "scss"
+        }
+      },
+      "root": "projects/cleansteamgenerator-fb-lib",
+      "sourceRoot": "projects/cleansteamgenerator-fb-lib/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/cleansteamgenerator-fb-lib",
+            "index": "projects/cleansteamgenerator-fb-lib/src/index.html",
+            "main": "projects/cleansteamgenerator-fb-lib/src/main.ts",
+            "polyfills": "projects/cleansteamgenerator-fb-lib/src/polyfills.ts",
+            "tsConfig": "projects/cleansteamgenerator-fb-lib/tsconfig.app.json",
+            "aot": false,
+            "assets": [
+              "projects/cleansteamgenerator-fb-lib/src/favicon.ico",
+              "projects/cleansteamgenerator-fb-lib/src/assets"
+            ],
+            "styles": [
+              "projects/cleansteamgenerator-fb-lib/src/styles.css"
+            ],
+            "scripts": []
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "projects/cleansteamgenerator-fb-lib/src/environments/environment.ts",
+                  "with": "projects/cleansteamgenerator-fb-lib/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "10kb"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "cleansteamgenerator-fb-lib:build"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "cleansteamgenerator-fb-lib:build:production"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "cleansteamgenerator-fb-lib:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/cleansteamgenerator-fb-lib/src/test.ts",
+            "polyfills": "projects/cleansteamgenerator-fb-lib/src/polyfills.ts",
+            "tsConfig": "projects/cleansteamgenerator-fb-lib/tsconfig.spec.json",
+            "karmaConfig": "projects/cleansteamgenerator-fb-lib/karma.conf.js",
+            "assets": [
+              "projects/cleansteamgenerator-fb-lib/src/favicon.ico",
+              "projects/cleansteamgenerator-fb-lib/src/assets"
+            ],
+            "styles": [
+              "projects/cleansteamgenerator-fb-lib/src/styles.css"
+            ],
+            "scripts": []
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/cleansteamgenerator-fb-lib/tsconfig.app.json",
+              "projects/cleansteamgenerator-fb-lib/tsconfig.spec.json",
+              "projects/cleansteamgenerator-fb-lib/e2e/tsconfig.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        },
+        "e2e": {
+          "builder": "@angular-devkit/build-angular:protractor",
+          "options": {
+            "protractorConfig": "projects/cleansteamgenerator-fb-lib/e2e/protractor.conf.js",
+            "devServerTarget": "cleansteamgenerator-fb-lib:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "cleansteamgenerator-fb-lib:serve:production"
+            }
+          }
+        }
+      }
+    },
+    "safetyvalves-lib": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "styleext": "scss"
+        }
+      },
+      "root": "projects/safetyvalves-lib",
+      "sourceRoot": "projects/safetyvalves-lib/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/safetyvalves-lib",
+            "index": "projects/safetyvalves-lib/src/index.html",
+            "main": "projects/safetyvalves-lib/src/main.ts",
+            "polyfills": "projects/safetyvalves-lib/src/polyfills.ts",
+            "tsConfig": "projects/safetyvalves-lib/tsconfig.app.json",
+            "aot": false,
+            "assets": [
+              "projects/safetyvalves-lib/src/favicon.ico",
+              "projects/safetyvalves-lib/src/assets",
+              {
+                "glob": "**/*",
+                "input": "projects/safetyvalves-lib/src/assets",
+                "output": "./assets/safetyvalves"
+              }
+            ],
+            "styles": [
+              "projects/safetyvalves-lib/src/styles.css"
+            ],
+            "scripts": []
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "projects/safetyvalves-lib/src/environments/environment.ts",
+                  "with": "projects/safetyvalves-lib/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "10kb"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "safetyvalves-lib:build"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "safetyvalves-lib:build:production"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "safetyvalves-lib:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/safetyvalves-lib/src/test.ts",
+            "polyfills": "projects/safetyvalves-lib/src/polyfills.ts",
+            "tsConfig": "projects/safetyvalves-lib/tsconfig.spec.json",
+            "karmaConfig": "projects/safetyvalves-lib/karma.conf.js",
+            "assets": [
+              "projects/safetyvalves-lib/src/favicon.ico",
+              "projects/safetyvalves-lib/src/assets"
+            ],
+            "styles": [
+              "projects/safetyvalves-lib/src/styles.css"
+            ],
+            "scripts": []
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/safetyvalves-lib/tsconfig.app.json",
+              "projects/safetyvalves-lib/tsconfig.spec.json",
+              "projects/safetyvalves-lib/e2e/tsconfig.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        },
+        "e2e": {
+          "builder": "@angular-devkit/build-angular:protractor",
+          "options": {
+            "protractorConfig": "projects/safetyvalves-lib/e2e/protractor.conf.js",
+            "devServerTarget": "safetyvalves-lib:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "safetyvalves-lib:serve:production"
+            }
+          }
+        }
+      }
+    },
+    "flowmeter-lib": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss",
+          "skipTests": true
+        },
+        "@schematics/angular:class": {
+          "skipTests": true
+        },
+        "@schematics/angular:directive": {
+          "skipTests": true
+        },
+        "@schematics/angular:guard": {
+          "skipTests": true
+        },
+        "@schematics/angular:module": {
+          "skipTests": true
+        },
+        "@schematics/angular:pipe": {
+          "skipTests": true
+        },
+        "@schematics/angular:service": {
+          "skipTests": true
+        }
+      },
+      "root": "projects/flowmeter-lib",
+      "sourceRoot": "projects/flowmeter-lib/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/flowmeter-lib",
+            "index": "projects/flowmeter-lib/src/index.html",
+            "main": "projects/flowmeter-lib/src/main.ts",
+            "polyfills": "projects/flowmeter-lib/src/polyfills.ts",
+            "tsConfig": "projects/flowmeter-lib/tsconfig.app.json",
+            "aot": false,
+            "assets": [
+              "projects/flowmeter-lib/src/favicon.ico",
+              "projects/flowmeter-lib/src/assets"
+            ],
+            "styles": [
+              "projects/flowmeter-lib/src/styles.scss"
+            ],
+            "scripts": []
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "projects/flowmeter-lib/src/environments/environment.ts",
+                  "with": "projects/flowmeter-lib/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "10kb"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "flowmeter-lib:build"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "flowmeter-lib:build:production"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "flowmeter-lib:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/flowmeter-lib/src/test.ts",
+            "polyfills": "projects/flowmeter-lib/src/polyfills.ts",
+            "tsConfig": "projects/flowmeter-lib/tsconfig.spec.json",
+            "karmaConfig": "projects/flowmeter-lib/karma.conf.js",
+            "assets": [
+              "projects/flowmeter-lib/src/favicon.ico",
+              "projects/flowmeter-lib/src/assets"
+            ],
+            "styles": [
+              "projects/flowmeter-lib/src/styles.scss"
+            ],
+            "scripts": []
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/flowmeter-lib/tsconfig.app.json",
+              "projects/flowmeter-lib/tsconfig.spec.json",
+              "projects/flowmeter-lib/e2e/tsconfig.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        },
+        "e2e": {
+          "builder": "@angular-devkit/build-angular:protractor",
+          "options": {
+            "protractorConfig": "projects/flowmeter-lib/e2e/protractor.conf.js",
+            "devServerTarget": "flowmeter-lib:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "flowmeter-lib:serve:production"
+            }
+          }
+        }
+      }
+    }
+  ,
+    "easiheat-app": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
+      "root": "projects/easiheat-app",
+      "sourceRoot": "projects/easiheat-app/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/easiheat-app",
+            "index": "projects/easiheat-app/src/index.html",
+            "main": "projects/easiheat-app/src/main.ts",
+            "polyfills": "projects/easiheat-app/src/polyfills.ts",
+            "tsConfig": "projects/easiheat-app/tsconfig.app.json",
+            "aot": false,
+            "assets": [
+              "projects/easiheat-app/src/favicon.ico",
+              "projects/easiheat-app/src/assets"
+            ],
+            "styles": [
+              "projects/easiheat-app/src/styles.scss"
+            ],
+            "scripts": []
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "projects/easiheat-app/src/environments/environment.ts",
+                  "with": "projects/easiheat-app/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "10kb"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "easiheat-app:build"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "easiheat-app:build:production"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "easiheat-app:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/easiheat-app/src/test.ts",
+            "polyfills": "projects/easiheat-app/src/polyfills.ts",
+            "tsConfig": "projects/easiheat-app/tsconfig.spec.json",
+            "karmaConfig": "projects/easiheat-app/karma.conf.js",
+            "assets": [
+              "projects/easiheat-app/src/favicon.ico",
+              "projects/easiheat-app/src/assets"
+            ],
+            "styles": [
+              "projects/easiheat-app/src/styles.scss"
+            ],
+            "scripts": []
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/easiheat-app/tsconfig.app.json",
+              "projects/easiheat-app/tsconfig.spec.json",
+              "projects/easiheat-app/e2e/tsconfig.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        },
+        "e2e": {
+          "builder": "@angular-devkit/build-angular:protractor",
+          "options": {
+            "protractorConfig": "projects/easiheat-app/e2e/protractor.conf.js",
+            "devServerTarget": "easiheat-app:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "easiheat-app:serve:production"
+            }
+          }
+        }
+      }
+    }},
+  "defaultProject": "ssv2"
+}

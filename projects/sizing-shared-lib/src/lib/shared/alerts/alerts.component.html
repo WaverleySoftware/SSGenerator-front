@@ -1,0 +1,6 @@
+<div *ngIf="!!message" [class]="alertClass">
+    <button (click)="dismissAlert()" class="close ng-star-inserted" type="button">
+        <span>&times;</span><span class="sr-only">Close</span>
+    </button>
+    <span [class]="alertIconClass"></span> {{message}}
+</div>

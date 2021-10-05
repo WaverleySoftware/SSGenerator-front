@@ -1,0 +1,822 @@
+<!--CleanSteamGenerator module preferences component works!-->
+<form [formGroup]="modulePreferencesForm" class="form-horizontal" role="form" (submit)="submitForm($event)" novalidate>
+
+  <div class="row">
+    <div class="col-xs-12">
+      <button [disabled]="!modulePreferencesForm.dirty || !modulePreferencesForm.valid || modulePreferencesForm.status !== 'VALID' || formSubmitted" type="submit" class="btn btn-dynamic btn-primary pull-right" [title]="'SAVE' | translate:true"><i class="fa fa-save">  {{'SAVE' | translate:true}}</i></button>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12">
+      <br>
+    </div>
+  </div>
+
+  <!-- Success confirmation message -->
+  <alert-block *ngIf="!!alertVisible && !!isSuccess" type="success" [auto-close]="true" [message]="'MODULE_PREFERENCES_SAVED_SUCCESSFULLY_MESSAGE' | translate" (close-callback)="closeAlert()"></alert-block>
+
+  <!-- Failure confirmation message-->
+  <alert-block *ngIf="!!alertVisible && !isSuccess" type="danger" [message]="'MODULE_PREFERENCES_FAILED_TO_SAVE_MESSAGE' | translate" (close-callback)="closeAlert()"></alert-block>
+
+  <div class="panel panel-primary">
+    <div class="panel-heading" role="tab" id="currencyOptionsHeading">
+      <h4 class="panel-title">
+        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseCurrencyOptions" aria-expanded="true" aria-controls="collapseCurrencyOptions">
+          {{"CURRENCY_OPTIONS" | translate}}
+        </a>
+      </h4>
+    </div>
+    <div id="collapseCurrencyOptions" class="panel-collapse collapse show" role="tabpanel" aria-labelledby="currencyOptionsHeading">
+      <div class="panel-body" style="margin-bottom:-10px">
+        <div class="form-group">
+
+          <div class="row" style="padding-bottom:15px">
+
+            <!--Manufacturer-->
+            <div class="col-lg-3 col-md-6 col-xs-12 text-right">
+              <label class="control-label">{{"MANUFACTURER" | translate}}</label>
+            </div>
+            <div class="col-lg-2 col-md-6 col-xs-12">
+              <select class="form-control" formControlName="csgManufacturerModulePreference">
+                <option *ngFor="let manufacturer of manufacturerList" [value]="manufacturer.id">{{manufacturer.name}}</option>
+              </select>
+            </div>
+
+            <!--Selling currency-->
+            <div class="col-lg-3 col-md-6 col-xs-12 text-right">
+              <label class="control-label">{{"SELLING_CURRENCY" | translate}}</label>
+            </div>
+            <div class="col-lg-2 col-md-6 col-xs-12">
+              <select class="form-control" formControlName="csgSellingCurrencyModulePreference" (ngModelChange)="onSellingCurrencyChange($event)">
+                <option *ngFor="let currency of currencyList" [value]="currency.id">{{currency.currencyCode}} - {{currency.symbol}}</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row">
+
+            <!--Manufacturer currency-->
+            <div class="col-lg-3 col-md-6 col-xs-12 text-right">
+              <label class="control-label">{{"MANUFACTURER_CURRENCY" | translate}}</label>
+            </div>
+            <div class="col-lg-2 col-md-6 col-xs-12">
+              <select class="form-control" formControlName="csgManufacturerCurrencyModulePreference">
+                <option *ngFor="let currency of currencyList" [value]="currency.id">{{currency.currencyCode}} - {{currency.symbol}}</option>
+              </select>
+            </div>
+
+            <!--Currency conversion-->
+            <div class="col-lg-3 col-md-6 col-xs-12 text-right">
+              <label class="control-label">{{"CURRENCY_CONVERSION" | translate}}</label>
+            </div>
+            <div class="col-lg-2 col-md-6 col-xs-12">
+              <label class="control-label">{{csgCurrencyConversion}}</label>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--Pricing Options-->
+  <div class="panel panel-primary">
+    <div class="panel-heading" role="tab" id="pricingOptionsHeading">
+      <h4 class="panel-title">
+        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapsePricingOptions" aria-expanded="true" aria-controls="collapsePricingOptions">
+          {{"PRICING_OPTIONS" | translate}}
+        </a>
+      </h4>
+    </div>
+    <div id="collapsePricingOptions" class="panel-collapse collapse show" role="tabpanel" aria-labelledby="pricingOptionsHeading">
+      <div class="panel-body" style="margin-bottom:-30px">
+        <div class="form-group">
+          <!--Column 1-->
+          <div class="col-lg-6">
+            <div class="row" style="padding-bottom:15px">
+              <!--Landed Cost Increase-->
+              <div class="col-xs-6 text-right">
+                <label class="control-label">{{"LANDED_COST_INCREASE" | translate}}</label>
+              </div>
+              <div class="col-xs-4">
+                <div class="input-group">
+                  <input autocomplete="off" class="form-control" type="number" style="min-width:55px;" formControlName="csgLandedCostIncreaseModulePreference" value="csgLandedCostIncrease" twoDigitDecimalNumber />
+                  <span class="input-group-addon">{{"PERCENT" | translate}}</span>
+                </div>
+              </div>
+              <div class="col-xs-2">
+                <span class="text-danger" *ngIf="modulePreferencesForm.controls['csgLandedCostIncreaseModulePreference'].hasError('required') && (modulePreferencesForm.controls['csgLandedCostIncreaseModulePreference'].dirty || modulePreferencesForm.controls['csgLandedCostIncreaseModulePreference'].touched)">{{ "REQUIRED_FIELD" | translate }}</span>
+                <span class="text-danger" *ngIf="modulePreferencesForm.controls['csgLandedCostIncreaseModulePreference'].hasError('range') && (modulePreferencesForm.controls['csgLandedCostIncreaseModulePreference'].dirty || modulePreferencesForm.controls['csgLandedCostIncreaseModulePreference'].touched)">{{"LANDED_COST_INCREASE_MUST_BE_BETWEEN_0_AND_100_PERCENT_MESSAGE" | translate}}</span>
+              </div>
+            </div>
+            <div class="row" style="padding-bottom:15px">
+              <!--Delivery Cost-->
+              <div class="col-xs-6 text-right">
+                <label class="control-label">{{"DELIVERY_COST" | translate}}</label>
+              </div>
+              <div class="col-xs-4">
+                <div class="input-group">
+                  <span class="input-group-addon">{{csgSellingCurrencySymbol}}</span>
+                  <input autocomplete="off" class="form-control" type="text" style="min-width:55px;" formControlName="csgDeliveryCostModulePreference" value="csgDeliveryCost" twoDigitDecimalNumber />
+                </div>
+              </div>
+              <div class="col-xs-2 cross-validation-error-class" *ngIf="deliveryCostMessage">
+                <i class="fa fa-info-circle cross-validation-error-class" [tooltip]="deliveryCostMessage"></i>
+              </div>
+              <div class="col-xs-2">
+                <span class="text-danger" *ngIf="modulePreferencesForm.controls['csgDeliveryCostModulePreference'].hasError('required') && (modulePreferencesForm.controls['csgDeliveryCostModulePreference'].dirty || modulePreferencesForm.controls['csgDeliveryCostModulePreference'].touched)">{{ "REQUIRED_FIELD" | translate }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!--Column 2-->
+          <div class="col-lg-6">
+            <div class="panel panel-primary" style="padding-bottom: 20px;">
+              <div class="row" style="padding-bottom:15px">
+                <div class="col-xs-4 text-right">
+                  <h4>{{"SERVICE_OFFERING" | translate}}</h4>
+                </div>
+                <div class="col-xs-3 cross-validation-error-class" *ngIf="serviceOffereingMessage">
+                  <i class="fa fa-info-circle cross-validation-error-class" [tooltip]="serviceOffereingMessage"></i>
+                </div>
+              </div>
+              <div class="row" style="padding-bottom:15px">
+                <!--Commission Only Price-->
+                <div class="col-xs-4 text-right">
+                  <label class="control-label">{{"COMMISSION_ONLY_PRICE" | translate}}</label>
+                </div>
+                <div class="col-xs-4">
+                  <div class="input-group">
+                    <span class="input-group-addon">{{csgSellingCurrencySymbol}}</span>
+                    <input autocomplete="off" class="form-control" type="number" style="min-width:55px;" formControlName="csgCommissionOnlyPriceModulePreference" value="csgCommissionOnlyPrice" twoDigitDecimalNumber />
+                  </div>
+                </div>
+                <div class="col-xs-2">
+                  <span class="text-danger" *ngIf="modulePreferencesForm.controls['csgCommissionOnlyPriceModulePreference'].hasError('required') && (modulePreferencesForm.controls['csgCommissionOnlyPriceModulePreference'].dirty || modulePreferencesForm.controls['csgCommissionOnlyPriceModulePreference'].touched)">{{ "REQUIRED_FIELD" | translate }}</span>
+                </div>
+              </div>
+              <!--</fieldset>-->
+              <div class="row" style="padding-bottom:15px">
+                <!--One Year-->
+                <div class="col-xs-4 text-right">
+                  <label class="control-label">{{"ONE_YEAR" | translate}}</label>
+                </div>
+                <div class="col-xs-4">
+                  <div class="input-group">
+                    <span class="input-group-addon">{{csgSellingCurrencySymbol}}</span>
+                    <input autocomplete="off" class="form-control" type="number" style="min-width:55px;" formControlName="csgWarrantyOneYearModulePreference" value="csgWarrantyOneYear" twoDigitDecimalNumber />
+                  </div>
+                </div>
+                <div class="col-xs-2">
+                  <span class="text-danger" *ngIf="modulePreferencesForm.controls['csgWarrantyOneYearModulePreference'].hasError('required') && (modulePreferencesForm.controls['csgWarrantyOneYearModulePreference'].dirty || modulePreferencesForm.controls['csgWarrantyOneYearModulePreference'].touched)">{{ "REQUIRED_FIELD" | translate }}</span>
+                </div>
+              </div>
+              <div class="row" style="padding-bottom:15px">
+                <!--Two Years-->
+                <div class="col-xs-4 text-right">
+                  <label class="control-label">{{"TWO_YEARS" | translate}}</label>
+                </div>
+                <div class="col-xs-4">
+                  <div class="input-group">
+                    <span class="input-group-addon">{{csgSellingCurrencySymbol}}</span>
+                    <input autocomplete="off" class="form-control" type="number" style="min-width:55px;" formControlName="csgWarrantyTwoYearsModulePreference" value="csgWarrantyTwoYears" twoDigitDecimalNumber />
+                  </div>
+                </div>
+                <div class="col-xs-2">
+                  <span class="text-danger" *ngIf="modulePreferencesForm.controls['csgWarrantyTwoYearsModulePreference'].hasError('required') && (modulePreferencesForm.controls['csgWarrantyTwoYearsModulePreference'].dirty || modulePreferencesForm.controls['csgWarrantyTwoYearsModulePreference'].touched)">{{ "REQUIRED_FIELD" | translate }}</span>
+                </div>
+              </div>
+              <div class="row" style="padding-bottom:15px">
+                <!--Three Years-->
+                <div class="col-xs-4 text-right">
+                  <label class="control-label">{{"THREE_YEARS" | translate}}</label>
+                </div>
+                <div class="col-xs-4">
+                  <div class="input-group">
+                    <span class="input-group-addon">{{csgSellingCurrencySymbol}}</span>
+                    <input autocomplete="off" class="form-control" type="number" style="min-width:55px;" formControlName="csgWarrantyThreeYearsModulePreference" value="csgWarrantyThreeYears" twoDigitDecimalNumber />
+                  </div>
+                </div>
+                <div class="col-xs-2">
+                  <span class="text-danger" *ngIf="modulePreferencesForm.controls['csgWarrantyThreeYearsModulePreference'].hasError('required') && (modulePreferencesForm.controls['csgWarrantyThreeYearsModulePreference'].dirty || modulePreferencesForm.controls['csgWarrantyThreeYearsModulePreference'].touched)">{{ "REQUIRED_FIELD" | translate }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--Configurartion Options-->
+  <div class="panel panel-primary">
+    <div class="panel-heading" role="tab" id="optionConfigurartionHeading">
+      <h4 class="panel-title">
+        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOptionConfigurartion" aria-expanded="true" aria-controls="collapseOptionConfigurartion">
+          {{"OPTION_CONFIGURATION" | translate}}
+        </a>
+      </h4>
+    </div>
+    <div id="collapseOptionConfigurartion" class="panel-collapse collapse show" role="tabpanel" aria-labelledby="optionConfigurartionHeading">
+      <div class="panel-body" style="margin-bottom:-20px">
+        <div class="form-group">
+
+          <div class="row">
+            <div class="col-xs-2 text-right">
+              <label class="control-label">{{"PLEASE_SELECT" | translate}}</label>
+            </div>
+            <div class="col-lg-3 col-md-6 col-xs-12">
+              <enumeration formControlName="csgOptionsSelection" enumeration-name="CSG_Options" (on-change)="onCSGOptionsChange($event)"></enumeration>
+            </div>
+            <div class="col-lg-3 col-md-6 col-xs-12">
+              <button [disabled]="augmentPriceDataProcessing" class="btn btn-dynamic btn-primary pull-right" type='button' (click)="togglePrices();" [title]="'TOGGLE_PRICES' | translate"><i class="fa fa-exchange">  {{'TOGGLE_PRICES' | translate}}</i></button>
+            </div>
+          </div>
+          <hr>
+          <!--Design Code-->
+          <div class="panel-body" [hidden]="csgOptionsSelectedItem !== 'Design Code'">
+            <div class="row">
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 020 {{CSG_HS_020_Price}}">CSG-HS 020</h4><label>{{CSG_HS_020_Price}}</label>
+                <enumeration-picker formControlName="csg020DesignCodePreference" enumeration-picker-name="CSG_HS_020_Design_Code" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 055 {{CSG_HS_055_Price}}">CSG-HS 055</h4><label>{{CSG_HS_055_Price}}</label>
+                <enumeration-picker formControlName="csg055DesignCodePreference" enumeration-picker-name="CSG_HS_055_Design_Code" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 125 {{CSG_HS_125_Price}}">CSG-HS 125</h4><label>{{CSG_HS_125_Price}}</label>
+                <enumeration-picker formControlName="csg125DesignCodePreference" enumeration-picker-name="CSG_HS_125_Design_Code" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 180 {{CSG_HS_180_Price}}">CSG-HS 180</h4><label>{{CSG_HS_180_Price}}</label>
+                <enumeration-picker formControlName="csg180DesignCodePreference" enumeration-picker-name="CSG_HS_180_Design_Code" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+            </div>
+          </div>
+          <!--Shell Type-->
+          <div class="panel-body" [hidden]="csgOptionsSelectedItem !== 'Shell Type'">
+            <div class="row">
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 020 {{CSG_HS_020_Price}}">CSG-HS 020</h4><label>{{CSG_HS_020_Price}}</label>
+                <enumeration-picker formControlName="csg020ShellTypePreference" enumeration-picker-name="CSG_HS_020_Shell_Type" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 055 {{CSG_HS_055_Price}}">CSG-HS 055</h4><label>{{CSG_HS_055_Price}}</label>
+                <enumeration-picker formControlName="csg055ShellTypePreference" enumeration-picker-name="CSG_HS_055_Shell_Type" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 125 {{CSG_HS_125_Price}}">CSG-HS 125</h4><label>{{CSG_HS_125_Price}}</label>
+                <enumeration-picker formControlName="csg125ShellTypePreference" enumeration-picker-name="CSG_HS_125_Shell_Type" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 180 {{CSG_HS_180_Price}}">CSG-HS 180</h4><label>{{CSG_HS_180_Price}}</label>
+                <enumeration-picker formControlName="csg180ShellTypePreference" enumeration-picker-name="CSG_HS_180_Shell_Type" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+            </div>
+          </div>
+          <!--Valve Actuation-->
+          <div class="panel-body" [hidden]="csgOptionsSelectedItem !== 'Valve Actuation'">
+            <div class="row">
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 020 {{CSG_HS_020_Price}}">CSG-HS 020</h4><label>{{CSG_HS_020_Price}}</label>
+                <enumeration-picker formControlName="csg020ValveActuationPreference" enumeration-picker-name="CSG_HS_020_Valve_Actuation" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 055 {{CSG_HS_055_Price}}">CSG-HS 055</h4><label>{{CSG_HS_055_Price}}</label>
+                <enumeration-picker formControlName="csg055ValveActuationPreference" enumeration-picker-name="CSG_HS_055_Valve_Actuation" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 125 {{CSG_HS_125_Price}}">CSG-HS 125</h4><label>{{CSG_HS_125_Price}}</label>
+                <enumeration-picker formControlName="csg125ValveActuationPreference" enumeration-picker-name="CSG_HS_125_Valve_Actuation" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 180 {{CSG_HS_180_Price}}">CSG-HS 180</h4><label>{{CSG_HS_180_Price}}</label>
+                <enumeration-picker formControlName="csg180ValveActuationPreference" enumeration-picker-name="CSG_HS_180_Valve_Actuation" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+            </div>
+          </div>
+          <!--Feedwater Pressurisation-->
+          <div class="panel-body" [hidden]="csgOptionsSelectedItem !== 'Feedwater pressurisation'">
+            <div class="row">
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 020 {{CSG_HS_020_Price}}">CSG-HS 020</h4><label>{{CSG_HS_020_Price}}</label>
+                <enumeration-picker formControlName="csg020FeedwaterPressurisationPreference" enumeration-picker-name="CSG_HS_020_Feedwater_Pressurisation" readOnly="true" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 055 {{CSG_HS_055_Price}}">CSG-HS 055</h4><label>{{CSG_HS_055_Price}}</label>
+                <enumeration-picker formControlName="csg055FeedwaterPressurisationPreference" enumeration-picker-name="CSG_HS_055_Feedwater_Pressurisation" readOnly="true" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 125 {{CSG_HS_125_Price}}">CSG-HS 125</h4><label>{{CSG_HS_125_Price}}</label>
+                <enumeration-picker formControlName="csg125FeedwaterPressurisationPreference" enumeration-picker-name="CSG_HS_125_Feedwater_Pressurisation" readOnly="true" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 180 {{CSG_HS_180_Price}}">CSG-HS 180</h4><label>{{CSG_HS_180_Price}}</label>
+                <enumeration-picker formControlName="csg180FeedwaterPressurisationPreference" enumeration-picker-name="CSG_HS_180_Feedwater_Pressurisation" readOnly="true" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+            </div>
+          </div>
+          <!--Control-->
+          <div class="panel-body" [hidden]="csgOptionsSelectedItem !== 'Control'">
+            <div class="row">
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 020 {{CSG_HS_020_Price}}">CSG-HS 020</h4><label>{{CSG_HS_020_Price}}</label>
+                <enumeration-picker formControlName="csg020ControlPreference" enumeration-picker-name="CSG_HS_020_Control" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 055 {{CSG_HS_055_Price}}">CSG-HS 055</h4><label>{{CSG_HS_055_Price}}</label>
+                <enumeration-picker formControlName="csg055ControlPreference" enumeration-picker-name="CSG_HS_055_Control" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 125 {{CSG_HS_125_Price}}">CSG-HS 125</h4><label>{{CSG_HS_125_Price}}</label>
+                <enumeration-picker formControlName="csg125ControlPreference" enumeration-picker-name="CSG_HS_125_Control" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 180 {{CSG_HS_180_Price}}">CSG-HS 180</h4><label>{{CSG_HS_180_Price}}</label>
+                <enumeration-picker formControlName="csg180ControlPreference" enumeration-picker-name="CSG_HS_180_Control" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+            </div>
+          </div>
+          <!--Communication interface-->
+          <div class="panel-body" [hidden]="csgOptionsSelectedItem !== 'Communication interface'">
+            <div class="row">
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 020 {{CSG_HS_020_Price}}">CSG-HS 020</h4><label>{{CSG_HS_020_Price}}</label>
+                <enumeration-picker formControlName="csg020CommunicationInterfacePreference" enumeration-picker-name="CSG_HS_020_Communication_Interface" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 055 {{CSG_HS_055_Price}}">CSG-HS 055</h4><label>{{CSG_HS_055_Price}}</label>
+                <enumeration-picker formControlName="csg055CommunicationInterfacePreference" enumeration-picker-name="CSG_HS_055_Communication_Interface" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 125 {{CSG_HS_125_Price}}">CSG-HS 125</h4><label>{{CSG_HS_125_Price}}</label>
+                <enumeration-picker formControlName="csg125CommunicationInterfacePreference" enumeration-picker-name="CSG_HS_125_Communication_Interface" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 180 {{CSG_HS_180_Price}}">CSG-HS 180</h4><label>{{CSG_HS_180_Price}}</label>
+                <enumeration-picker formControlName="csg180CommunicationInterfacePreference" enumeration-picker-name="CSG_HS_180_Communication_Interface" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+            </div>
+          </div>
+          <!--Frame and cabinet-->
+          <div class="panel-body" [hidden]="csgOptionsSelectedItem !== 'Frame and Cabinet'">
+            <div class="row">
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 020 {{CSG_HS_020_Price}}">CSG-HS 020</h4><label>{{CSG_HS_020_Price}}</label>
+                <enumeration-picker formControlName="csg020FrameAndCabinetPreference" enumeration-picker-name="CSG_HS_020_Frame_And_Cabinet" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 055 {{CSG_HS_055_Price}}">CSG-HS 055</h4><label>{{CSG_HS_055_Price}}</label>
+                <enumeration-picker formControlName="csg055FrameAndCabinetPreference" enumeration-picker-name="CSG_HS_055_Frame_And_Cabinet" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 125 {{CSG_HS_125_Price}}">CSG-HS 125</h4><label>{{CSG_HS_125_Price}}</label>
+                <enumeration-picker formControlName="csg125FrameAndCabinetPreference" enumeration-picker-name="CSG_HS_125_Frame_And_Cabinet" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 180 {{CSG_HS_180_Price}}">CSG-HS 180</h4><label>{{CSG_HS_180_Price}}</label>
+                <enumeration-picker formControlName="csg180FrameAndCabinetPreference" enumeration-picker-name="CSG_HS_180_Frame_And_Cabinet" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+            </div>
+          </div>
+          <!--Control Panel Location-->
+          <div class="panel-body" [hidden]="csgOptionsSelectedItem !== 'Control panel location'">
+            <div class="row">
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 020 {{CSG_HS_020_Price}}">CSG-HS 020</h4><label>{{CSG_HS_020_Price}}</label>
+                <enumeration-picker formControlName="csg020ControlPanelLocationPreference" enumeration-picker-name="CSG_HS_020_Control_Panel_Location" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 055 {{CSG_HS_055_Price}}">CSG-HS 055</h4><label>{{CSG_HS_055_Price}}</label>
+                <enumeration-picker formControlName="csg055ControlPanelLocationPreference" enumeration-picker-name="CSG_HS_055_Control_Panel_Location" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 125 {{CSG_HS_125_Price}}">CSG-HS 125</h4><label>{{CSG_HS_125_Price}}</label>
+                <enumeration-picker formControlName="csg125ControlPanelLocationPreference" enumeration-picker-name="CSG_HS_125_Control_Panel_Location" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 180 {{CSG_HS_180_Price}}">CSG-HS 180</h4><label>{{CSG_HS_180_Price}}</label>
+                <enumeration-picker formControlName="csg180ControlPanelLocationPreference" enumeration-picker-name="CSG_HS_180_Control_Panel_Location" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+            </div>
+          </div>
+          <!--Insulation-->
+          <div class="panel-body" [hidden]="csgOptionsSelectedItem !== 'Insulation'">
+            <div class="row">
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 020 {{CSG_HS_020_Price}}">CSG-HS 020</h4><label>{{CSG_HS_020_Price}}</label>
+                <enumeration-picker formControlName="csg020InsulationPreference" enumeration-picker-name="CSG_HS_020_Insulation" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 055 {{CSG_HS_055_Price}}">CSG-HS 055</h4><label>{{CSG_HS_055_Price}}</label>
+                <enumeration-picker formControlName="csg055InsulationPreference" enumeration-picker-name="CSG_HS_055_Insulation" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 125 {{CSG_HS_125_Price}}">CSG-HS 125</h4><label>{{CSG_HS_125_Price}}</label>
+                <enumeration-picker formControlName="csg125InsulationPreference" enumeration-picker-name="CSG_HS_125_Insulation" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 180 {{CSG_HS_180_Price}}">CSG-HS 180</h4><label>{{CSG_HS_180_Price}}</label>
+                <enumeration-picker formControlName="csg180InsulationPreference" enumeration-picker-name="CSG_HS_180_Insulation" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+            </div>
+          </div>
+          <!--Handling wheels and feet-->
+          <div class="panel-body" [hidden]="csgOptionsSelectedItem !== 'Handling wheels and feet'">
+            <div class="row">
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 020 {{CSG_HS_020_Price}}">CSG-HS 020</h4><label>{{CSG_HS_020_Price}}</label>
+                <enumeration-picker formControlName="csg020WheelsAndFeetPreference" enumeration-picker-name="CSG_HS_020_Wheels_And_Feet" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 055 {{CSG_HS_055_Price}}">CSG-HS 055</h4><label>{{CSG_HS_055_Price}}</label>
+                <enumeration-picker formControlName="csg055WheelsAndFeetPreference" enumeration-picker-name="CSG_HS_055_Wheels_And_Feet" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 125 {{CSG_HS_125_Price}}">CSG-HS 125</h4><label>{{CSG_HS_125_Price}}</label>
+                <enumeration-picker formControlName="csg125WheelsAndFeetPreference" enumeration-picker-name="CSG_HS_125_Wheels_And_Feet" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 180 {{CSG_HS_180_Price}}">CSG-HS 180</h4><label>{{CSG_HS_180_Price}}</label>
+                <enumeration-picker formControlName="csg180WheelsAndFeetPreference" enumeration-picker-name="CSG_HS_180_Wheels_And_Feet" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+            </div>
+          </div>
+          <!--Plant Steam Inlet Shut Off Valve-->
+          <div class="panel-body" [hidden]="csgOptionsSelectedItem !== 'Plant steam inlet shut-off valve'">
+            <div class="row">
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 020 {{CSG_HS_020_Price}}">CSG-HS 020</h4><label>{{CSG_HS_020_Price}}</label>
+                <enumeration-picker formControlName="csg020PlantSteamInletShutOffValvePreference" enumeration-picker-name="CSG_HS_020_Plant_Steam_Inlet_Shut_Off_Valve" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 055 {{CSG_HS_055_Price}}">CSG-HS 055</h4><label>{{CSG_HS_055_Price}}</label>
+                <enumeration-picker formControlName="csg055PlantSteamInletShutOffValvePreference" enumeration-picker-name="CSG_HS_055_Plant_Steam_Inlet_Shut_Off_Valve" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 125 {{CSG_HS_125_Price}}">CSG-HS 125</h4><label>{{CSG_HS_125_Price}}</label>
+                <enumeration-picker formControlName="csg125PlantSteamInletShutOffValvePreference" enumeration-picker-name="CSG_HS_125_Plant_Steam_Inlet_Shut_Off_Valve" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 180 {{CSG_HS_180_Price}}">CSG-HS 180</h4><label>{{CSG_HS_180_Price}}</label>
+                <enumeration-picker formControlName="csg180PlantSteamInletShutOffValvePreference" enumeration-picker-name="CSG_HS_180_Plant_Steam_Inlet_Shut_Off_Valve" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+            </div>
+          </div>
+          <!--Plant steam line trapping-->
+          <div class="panel-body" [hidden]="csgOptionsSelectedItem !== 'Plant steam line trapping'">
+            <div class="row">
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 020 {{CSG_HS_020_Price}}">CSG-HS 020</h4><label>{{CSG_HS_020_Price}}</label>
+                <enumeration-picker formControlName="csg020PlantSteamLineTrappingPreference" enumeration-picker-name="CSG_HS_020_Plant_Steam_Line_Trapping" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 055 {{CSG_HS_055_Price}}">CSG-HS 055</h4><label>{{CSG_HS_055_Price}}</label>
+                <enumeration-picker formControlName="csg055PlantSteamLineTrappingPreference" enumeration-picker-name="CSG_HS_055_Plant_Steam_Line_Trapping" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 125 {{CSG_HS_125_Price}}">CSG-HS 125</h4><label>{{CSG_HS_125_Price}}</label>
+                <enumeration-picker formControlName="csg125PlantSteamLineTrappingPreference" enumeration-picker-name="CSG_HS_125_Plant_Steam_Line_Trapping" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 180 {{CSG_HS_180_Price}}">CSG-HS 180</h4><label>{{CSG_HS_180_Price}}</label>
+                <enumeration-picker formControlName="csg180PlantSteamLineTrappingPreference" enumeration-picker-name="CSG_HS_180_Plant_Steam_Line_Trapping" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+            </div>
+          </div>
+          <!--TDS control system-->
+          <div class="panel-body" [hidden]="csgOptionsSelectedItem !== 'TDS control system'">
+            <div class="row">
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 020 {{CSG_HS_020_Price}}">CSG-HS 020</h4><label>{{CSG_HS_020_Price}}</label>
+                <enumeration-picker formControlName="csg020TDSControlSystemPreference" enumeration-picker-name="CSG_HS_020_TDS_Control_System" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 055 {{CSG_HS_055_Price}}">CSG-HS 055</h4><label>{{CSG_HS_055_Price}}</label>
+                <enumeration-picker formControlName="csg055TDSControlSystemPreference" enumeration-picker-name="CSG_HS_055_TDS_Control_System" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 125 {{CSG_HS_125_Price}}">CSG-HS 125</h4><label>{{CSG_HS_125_Price}}</label>
+                <enumeration-picker formControlName="csg125TDSControlSystemPreference" enumeration-picker-name="CSG_HS_125_TDS_Control_System" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 180 {{CSG_HS_180_Price}}">CSG-HS 180</h4><label>{{CSG_HS_180_Price}}</label>
+                <enumeration-picker formControlName="csg180TDSControlSystemPreference" enumeration-picker-name="CSG_HS_180_TDS_Control_System" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+            </div>
+          </div>
+          <!--Sample Coolers-->
+          <div class="panel-body" [hidden]="csgOptionsSelectedItem !== 'Sample Coolers'">
+            <div class="row">
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 020 {{CSG_HS_020_Price}}">CSG-HS 020</h4><label>{{CSG_HS_020_Price}}</label>
+                <enumeration-picker formControlName="csg020SampleCoolerPreference" enumeration-picker-name="CSG_HS_020_Sample_Cooler" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 055 {{CSG_HS_055_Price}}">CSG-HS 055</h4><label>{{CSG_HS_055_Price}}</label>
+                <enumeration-picker formControlName="csg055SampleCoolerPreference" enumeration-picker-name="CSG_HS_055_Sample_Cooler" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 125 {{CSG_HS_125_Price}}">CSG-HS 125</h4><label>{{CSG_HS_125_Price}}</label>
+                <enumeration-picker formControlName="csg125SampleCoolerPreference" enumeration-picker-name="CSG_HS_125_Sample_Cooler" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 180 {{CSG_HS_180_Price}}">CSG-HS 180</h4><label>{{CSG_HS_180_Price}}</label>
+                <enumeration-picker formControlName="csg180SampleCoolerPreference" enumeration-picker-name="CSG_HS_180_Sample_Cooler" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+            </div>
+          </div>
+          <!--Independent low level alarm-->
+          <div class="panel-body" [hidden]="csgOptionsSelectedItem !== 'Independent low level alarm'">
+            <div class="row">
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 020 {{CSG_HS_020_Price}}">CSG-HS 020</h4><label>{{CSG_HS_020_Price}}</label>
+                <enumeration-picker formControlName="csg020IndependentLowLevelAlarmPreference" enumeration-picker-name="CSG_HS_020_Independent_Low_Level_Alarm" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 055 {{CSG_HS_055_Price}}">CSG-HS 055</h4><label>{{CSG_HS_055_Price}}</label>
+                <enumeration-picker formControlName="csg055IndependentLowLevelAlarmPreference" enumeration-picker-name="CSG_HS_055_Independent_Low_Level_Alarm" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 125 {{CSG_HS_125_Price}}">CSG-HS 125</h4><label>{{CSG_HS_125_Price}}</label>
+                <enumeration-picker formControlName="csg125IndependentLowLevelAlarmPreference" enumeration-picker-name="CSG_HS_125_Independent_Low_Level_Alarm" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 180 {{CSG_HS_180_Price}}">CSG-HS 180</h4><label>{{CSG_HS_180_Price}}</label>
+                <enumeration-picker formControlName="csg180IndependentLowLevelAlarmPreference" enumeration-picker-name="CSG_HS_180_Independent_Low_Level_Alarm" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+            </div>
+          </div>
+          <!--Feedwater pre-heating / Degassing-->
+          <div class="panel-body" [hidden]="csgOptionsSelectedItem !== 'Feedwater pre-heating'">
+            <div class="row">
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 020 {{CSG_HS_020_Price}}">CSG-HS 020</h4><label>{{CSG_HS_020_Price}}</label>
+                <enumeration-picker formControlName="csg020FeedwaterPreHeatingDegassingPreference" enumeration-picker-name="CSG_HS_020_Feedwater_Pre_Heating_Degassing" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 055 {{CSG_HS_055_Price}}">CSG-HS 055</h4><label>{{CSG_HS_055_Price}}</label>
+                <enumeration-picker formControlName="csg055FeedwaterPreHeatingDegassingPreference" enumeration-picker-name="CSG_HS_055_Feedwater_Pre_Heating_Degassing" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 125 {{CSG_HS_125_Price}}">CSG-HS 125</h4><label>{{CSG_HS_125_Price}}</label>
+                <enumeration-picker formControlName="csg125FeedwaterPreHeatingDegassingPreference" enumeration-picker-name="CSG_HS_125_Feedwater_Pre_Heating_Degassing" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 180 {{CSG_HS_180_Price}}">CSG-HS 180</h4><label>{{CSG_HS_180_Price}}</label>
+                <enumeration-picker formControlName="csg180FeedwaterPreHeatingDegassingPreference" enumeration-picker-name="CSG_HS_180_Feedwater_Pre_Heating_Degassing" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+            </div>
+          </div>
+          <!--Intelligent diagnostics-->
+          <div class="panel-body" [hidden]="csgOptionsSelectedItem !== 'Intelligent diagnostics'">
+            <div class="row">
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 020 {{CSG_HS_020_Price}}">CSG-HS 020</h4><label>{{CSG_HS_020_Price}}</label>
+                <enumeration-picker formControlName="csg020IntelligentDiagnosticsPreference" enumeration-picker-name="CSG_HS_020_Intelligent_Diagnostics" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 055 {{CSG_HS_055_Price}}">CSG-HS 055</h4><label>{{CSG_HS_055_Price}}</label>
+                <enumeration-picker formControlName="csg055IntelligentDiagnosticsPreference" enumeration-picker-name="CSG_HS_055_Intelligent_Diagnostics" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 125 {{CSG_HS_125_Price}}">CSG-HS 125</h4><label>{{CSG_HS_125_Price}}</label>
+                <enumeration-picker formControlName="csg125IntelligentDiagnosticsPreference" enumeration-picker-name="CSG_HS_125_Intelligent_Diagnostics" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 180 {{CSG_HS_180_Price}}">CSG-HS 180</h4><label>{{CSG_HS_180_Price}}</label>
+                <enumeration-picker formControlName="csg180IntelligentDiagnosticsPreference" enumeration-picker-name="CSG_HS_180_Intelligent_Diagnostics" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+            </div>
+          </div>
+          <!--Clean steam outlet shut-off valve-->
+          <div class="panel-body" [hidden]="csgOptionsSelectedItem !== 'Clean steam outlet shut-off valve'">
+            <div class="row">
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 020 {{CSG_HS_020_Price}}">CSG-HS 020</h4><label>{{CSG_HS_020_Price}}</label>
+                <enumeration-picker formControlName="csg020CleanSteamOutletShutOffValvePreference" enumeration-picker-name="CSG_HS_020_Clean_Steam_Outlet_Shut_Off_Valve" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 055 {{CSG_HS_055_Price}}">CSG-HS 055</h4><label>{{CSG_HS_055_Price}}</label>
+                <enumeration-picker formControlName="csg055CleanSteamOutletShutOffValvePreference" enumeration-picker-name="CSG_HS_055_Clean_Steam_Outlet_Shut_Off_Valve" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 125 {{CSG_HS_125_Price}}">CSG-HS 125</h4><label>{{CSG_HS_125_Price}}</label>
+                <enumeration-picker formControlName="csg125CleanSteamOutletShutOffValvePreference" enumeration-picker-name="CSG_HS_125_Clean_Steam_Outlet_Shut_Off_Valve" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 180 {{CSG_HS_180_Price}}">CSG-HS 180</h4><label>{{CSG_HS_180_Price}}</label>
+                <enumeration-picker formControlName="csg180CleanSteamOutletShutOffValvePreference" enumeration-picker-name="CSG_HS_180_Clean_Steam_Outlet_Shut_Off_Valve" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+            </div>
+          </div>
+          <!--Test and certifications-->
+          <div class="panel-body" [hidden]="csgOptionsSelectedItem !== 'Test and certifications'">
+            <div class="row">
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 020 {{CSG_HS_020_Price}}">CSG-HS 020</h4><label>{{CSG_HS_020_Price}}</label>
+                <enumeration-picker formControlName="csg020TestAndCertificationPreference" enumeration-picker-name="CSG_HS_020_Test_And_Certification" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 055 {{CSG_HS_055_Price}}">CSG-HS 055</h4><label>{{CSG_HS_055_Price}}</label>
+                <enumeration-picker formControlName="csg055TestAndCertificationPreference" enumeration-picker-name="CSG_HS_055_Test_And_Certification" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 125 {{CSG_HS_125_Price}}">CSG-HS 125</h4><label>{{CSG_HS_125_Price}}</label>
+                <enumeration-picker formControlName="csg125TestAndCertificationPreference" enumeration-picker-name="CSG_HS_125_Test_And_Certification" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 180 {{CSG_HS_180_Price}}">CSG-HS 180</h4><label>{{CSG_HS_180_Price}}</label>
+                <enumeration-picker formControlName="csg180TestAndCertificationPreference" enumeration-picker-name="CSG_HS_180_Test_And_Certification" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+            </div>
+          </div>
+          <!--Level_Indicator-->
+          <div class="panel-body" [hidden]="csgOptionsSelectedItem !== 'Level Indicator'">
+            <div class="row">
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 020 {{CSG_HS_020_Price}}">CSG-HS 020</h4><label>{{CSG_HS_020_Price}}</label>
+                <enumeration-picker formControlName="csg020Level_IndicatorPreference" enumeration-picker-name="CSG_HS_020_Level_Indicator" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 055 {{CSG_HS_055_Price}}">CSG-HS 055</h4><label>{{CSG_HS_055_Price}}</label>
+                <enumeration-picker formControlName="csg055Level_IndicatorPreference" enumeration-picker-name="CSG_HS_055_Level_Indicator" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 125 {{CSG_HS_125_Price}}">CSG-HS 125</h4><label>{{CSG_HS_125_Price}}</label>
+                <enumeration-picker formControlName="csg125Level_IndicatorPreference" enumeration-picker-name="CSG_HS_125_Level_Indicator" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <h4 title="CSG-HS 180 {{CSG_HS_180_Price}}">CSG-HS 180</h4><label>{{CSG_HS_180_Price}}</label>
+                <enumeration-picker formControlName="csg180Level_IndicatorPreference" enumeration-picker-name="CSG_HS_180_Level_Indicator" (on-change)="onChangeAnyOption();"></enumeration-picker>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <a #collapsePriceDataTop href="#collapsePriceDataTop"> </a>
+  </div>
+   
+  <!--Price Data Grid -->
+  <div *ngIf="!!csgBOMOutputData.bomItems && csgBOMOutputData.bomItems.length > 0 && showPrices" class="panel panel-primary">
+    <div class="panel-heading" role="tab" id="priceDataHeading">
+      <h4 class="panel-title">
+        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapsePriceData" aria-expanded="true" aria-controls="collapsePriceData">
+          {{"Price Data"}} - {{'CLEAN_STEAM_GENERATOR' | translate:true}}{{operatingCompany}}
+        </a>
+      </h4>
+    </div>
+      <!-- Price Data Grid  -->
+      <div class="panel-body">
+        <div class="col-xs-12">
+
+          <ngx-datatable #csgBOMOutputDataTable
+                         class="bootstrap"
+                         [headerHeight]="40"
+                         [limit]="50"
+                         [columnMode]="'force'"
+                         [footerHeight]="40"
+                         [rowHeight]="'auto'"
+                         [rows]="csgBOMOutputData.bomItems">
+
+            <!--[rowClass]="getRowClass">-->
+            <!--  [selected]="selectedOutputData"
+       [selectionType]="'single'"
+       (select)="onSelect($event)"
+  -->
+            <!-- Row Detail Template -->
+            <!--<ngx-datatable-row-detail [rowHeight]="getHeight" #myDetailRow>
+    <ng-template let-row="row" let-expanded="expanded" ngx-datatable-row-detail-template>
+      <div *ngFor="let m of row.modelSizingMessages">
+        <div class="row col-xs-12">
+          <div class="col-xs-1 text-center">
+            <i [class]="getSeverityIcon(m.severity)"></i>
+          </div>
+          <div class="col-xs-10">
+            <span>{{m.messageKey | translate}}</span>
+            <span *ngIf="m.value !== 0 && m.unitKey"> ({{m.value}} {{m.unitKey | translate:false}})</span>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+  </ngx-datatable-row-detail>-->
+            <!-- Column Template -->
+            <!--<ngx-datatable-column>
+    <ng-template let-row="row" let-expanded="expanded" ngx-datatable-cell-template>
+      <i [class]="getRowSeverityIcon(row)"></i>
+    </ng-template>
+  </ngx-datatable-column>-->
+            <!--Columns-->
+            <ngx-datatable-column [name]="'Number'" prop="rowOrder" [width]="20">
+              <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+                {{value}}
+              </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column [name]="'Type'" prop="itemType" [width]="20">
+              <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+                {{value}}
+              </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column [name]="'ModelId'" prop="modelId" [width]="20">
+              <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+                {{value}}
+              </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column [name]="'Option Group'" prop="parentMasterTextKey" [width]="200">
+              <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+                <span *ngIf="!!value && value.indexOf('CSG_')!==0">{{value | translate}}</span>
+                <span *ngIf="!!value && value.indexOf('CSG_')==0">{{value.replace("_"," ").replace("_"," ")}}</span>
+              </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column [name]="'Option'" prop="itemMasterTextKey" [width]="200">
+              <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+                <span [style.background]="!row.isEnabled ? 'Plum' : ' '" *ngIf="!!value && value.indexOf('CSG_')!==0">{{value | translate}}</span>
+                <span [style.background]="!row.isEnabled ? 'Plum' : ' '" *ngIf="!!value && value.indexOf('CSG_')==0">{{value.replace("_"," ").replace("_"," ")}}</span>
+              </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column [name]="'SSP'" prop="ssp" [width]="100">
+              <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+                <span *ngIf="csgManufacturerCurrencySymbol==csgSellingCurrencySymbol">{{csgManufacturerCurrencySymbol}} {{localizeValue(value,0)}}</span>
+                <span *ngIf="csgManufacturerCurrencySymbol!==csgSellingCurrencySymbol || row.modelId==0">{{csgManufacturerCurrencySymbol}} {{localizeValue(value,0)}} ({{csgSellingCurrencySymbol}} {{localizeValue(row.sSSP,0)}})</span>
+              </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column [name]="'x'" prop="ssPtoRSPfactor" [width]="40">
+              <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+                <span *ngIf="value!==0">x {{value}} =</span>
+              </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column [name]="'RSP'" prop="recommendedSalesPrice" [width]="100">
+              <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+                <span *ngIf="csgManufacturerCurrencySymbol==csgSellingCurrencySymbol">{{csgManufacturerCurrencySymbol}} {{localizeValue(value,0)}}</span>
+                <span *ngIf="csgManufacturerCurrencySymbol!==csgSellingCurrencySymbol || row.modelId==0">{{csgManufacturerCurrencySymbol}} {{localizeValue(value,0)}} ({{csgSellingCurrencySymbol}} {{localizeValue(row.sRecommendedSalesPrice,0)}})</span>
+              </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column [name]="'RSP override'" prop="recommendedSalesPriceOverride" [width]="100">
+              <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+                <span *ngIf="csgManufacturerCurrencySymbol==csgSellingCurrencySymbol">{{csgManufacturerCurrencySymbol}} {{localizeValue(value,0)}}</span>
+                <span *ngIf="csgManufacturerCurrencySymbol!==csgSellingCurrencySymbol || row.modelId==0">{{csgManufacturerCurrencySymbol}} {{localizeValue(value,0)}} ({{csgSellingCurrencySymbol}} {{localizeValue(row.sRecommendedSalesPriceOverride,0)}})</span>
+              </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column [name]="'Display Price'" prop="displayedRSP" [width]="100">
+              <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+                <span *ngIf="csgManufacturerCurrencySymbol==csgSellingCurrencySymbol">{{csgManufacturerCurrencySymbol}} {{localizeValue(value,0)}}</span>
+                <span *ngIf="csgManufacturerCurrencySymbol!==csgSellingCurrencySymbol || row.modelId==0">{{csgManufacturerCurrencySymbol}} {{localizeValue(value,0)}} ({{csgSellingCurrencySymbol}} {{localizeValue(row.sDisplayedRSP,0)}})</span>
+              </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column [name]="'Model'" prop="modelId" [width]="30">
+              <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+                <span *ngIf="!!row.parentMasterTextKey && row.parentMasterTextKey.indexOf('CSG_')!==0">{{value}}</span>
+                <span *ngIf="!!row.parentMasterTextKey && row.parentMasterTextKey.indexOf('CSG_')==0">{{value}} {{row.parentMasterTextKey.split('_')[1]}} {{row.parentMasterTextKey.split('_')[2]}}</span>
+              </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column [name]="'Nomenclature'" prop="item" [width]="50">
+              <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+                <span *ngIf="!!value.split('_')[1]">{{value.split('_')[1]}}</span>
+                <!--<span *ngIf="!value.split('_')[1]">{{value}}</span>-->
+                <span *ngIf="!!row.parentMasterTextKey && row.parentMasterTextKey.indexOf('CSG_')==0">{{row.parentMasterTextKey.replace("_"," ").replace("_"," ")}}</span>
+              </ng-template>
+            </ngx-datatable-column>
+
+            <!--[style.background]="row.isEnabled ? 'White' : 'SlateGray'"-->
+            <ngx-datatable-column [name]="'Enabled'" prop="isEnabled" [width]="20">
+              <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+                <span *ngIf="value">+</span>
+                <span *ngIf="!value">-</span>
+              </ng-template>
+            </ngx-datatable-column>
+
+          </ngx-datatable>
+
+        </div>
+      </div>
+
+  </div>
+
+    <!--<div class="row">
+      <div class="col-xs-12">
+        { {modulePreferencesForm.value | json}}
+      </div>
+    </div>-->
+    <!--<div class="row">
+      <div class="col-xs-12">
+        <button [disabled]="!modulePreferencesForm.dirty || !modulePreferencesForm.valid || modulePreferencesForm.status !== 'VALID' || formSubmitted" type="submit" class="btn btn-block btn-dynamic btn-primary pull-right" [title]="'SAVE' | translate:true"><i class="fa fa-save">  {{'SAVE' | translate:true}}</i></button>
+      </div>
+    </div>-->
+
+</form>

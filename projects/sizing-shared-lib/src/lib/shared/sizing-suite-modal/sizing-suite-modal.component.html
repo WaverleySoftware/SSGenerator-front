@@ -1,0 +1,35 @@
+<div (click)="onContainerClicked($event)" class="modal fade" tabindex="-1" [style.display]="visible ? 'block' : 'none'" [style.opacity]="visibleAnimate ? 1 : 0" [ngClass]="{'show': visibleAnimate}" >
+    
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"  (click)="close()"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">{{modalTitle}}</h4>
+            </div>
+            <div class="modal-body">
+                <div *ngIf="errorList.length > 0" class="row">
+                    <div class="col-xs-12">
+                        <div class="alert alert-danger">
+                            <ul>
+                                <li *ngFor="let error of errorList">{{error}}</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="component-wrapper">
+                  <div class="row">
+                    <div class="col-xs-12">
+                      <ng-content *ngIf="!componentRef"></ng-content>
+                      <div #componentLoaderPlaceholder></div>
+                    </div>
+                  </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" (click)="close()"><i class="{{modalCancelIcon}}">  {{modalCancelText}}</i></button>
+              <button [disabled]="isSubmitDisabledByChildComponent()" type="button" class="btn btn-primary" (click)="ok()"><i class="{{modalOkIcon}}">  {{modalOkText}}</i></button> 
+
+            </div>
+        </div>
+    </div>
+</div>

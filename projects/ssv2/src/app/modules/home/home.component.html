@@ -1,0 +1,17 @@
+<div class="row" *ngIf="!!userModuleGroups && userModuleGroups.length > 0; else noModuleDisplay">
+  <div class="col-xs-12">
+    <module-ribbon [module-groups]="userModuleGroups" [module-identifier]="'isSizingModule'"></module-ribbon>
+  </div>
+</div>
+
+<ng-template #noModuleDisplay>
+  <div class="row">
+    <div class="col-xs-12">
+      <alert type="info">{{'NO_ACCESS_TO_MODULES_MESSAGE' | translate:true}}</alert>
+    </div>
+  </div>
+</ng-template>
+
+<sizing-suite-modal>
+  <!-- Will be used by sizing modules that require further routing -->
+</sizing-suite-modal>

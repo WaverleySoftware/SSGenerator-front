@@ -1,0 +1,237 @@
+<div class="wrapper">
+  <div class="block-center mt-xl">
+    <!-- START panel-->
+    <div class="panel panel-dark panel-flat">
+      <div class="panel-heading text-center">
+        <a href="#">
+          <img class="block-center img-rounded" src="assets/img/sizing-logo.png" alt="Image" />
+        </a>
+      </div>
+      <div class="panel-body">
+        <h1>User Registration</h1>  <!-- There is no translation support outside the app routing! -->
+        <h4>Please fill in your details below.</h4>
+
+        <div role="alert" class="alert alert-success" *ngIf="isSuccess">
+          A Email has been sent to your Email adress.
+        </div>
+
+        <div role="alert" class="alert alert-danger" *ngIf="(registerForm.dirty && registerForm.valid) && !isSuccess && attemptedToRegister">
+          User registration failed. Please try again
+        </div>
+
+        <form [formGroup]="registerForm" class="form-horizontal" role="form" (submit)="submitForm($event)" novalidate>
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-md-6">
+
+                <div class="form-group">
+                  <label for="username" class="col-md-2 control-label">Username</label>
+                  <div class="col-md-7">
+                    <input autocomplete="off" type="text" class="form-control" formControlName="username" required />
+                  </div>
+                  <div class="col-md-3">
+                    <span class="text-danger" *ngIf="registerForm.controls['username'].hasError('required') && (registerForm.controls['username'].dirty || registerForm.controls['username'].touched)">Username is required</span>
+                    <span class="text-danger" *ngIf="registerForm.controls['username'].hasError('minlength')">Minimum six characters</span>
+                    <span class="text-danger" *ngIf="registerForm.controls['username'].hasError('existingUserByUsername')">Username already exists</span>
+                  </div>
+                  <div class="col-md-3">
+                    <span class="text-danger" *ngIf="registerForm.errors?.unsupportedcharacters && (registerForm.controls['username'].dirty || registerForm.controls['username'].touched)">The characters &, %, +, ", \ are not allowed in usernames or passwords</span>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="firstname" class="col-md-2 control-label">First Name</label>
+                  <div class="col-md-7">
+                    <input autocomplete="off" type="text" class="form-control" formControlName="firstname" required />
+                  </div>
+                  <div class="col-md-3">
+                    <span class="text-danger" *ngIf="registerForm.controls['firstname'].hasError('required') && (registerForm.controls['firstname'].dirty || registerForm.controls['firstname'].touched)">First Name is required</span>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="lastname" class="col-md-2 control-label">Last Name</label>
+                  <div class="col-md-7">
+                    <input autocomplete="off" type="text" class="form-control" formControlName="lastname" required />
+                  </div>
+                  <div class="col-md-3">
+                    <span class="text-danger" *ngIf="registerForm.controls['lastname'].hasError('required') && (registerForm.controls['lastname'].dirty || registerForm.controls['lastname'].touched)">Last Name is required</span>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="emailaddress" class="col-md-2 control-label">Email Address</label>
+                  <div class="col-md-7">
+                    <input autocomplete="off" type="email"  class="form-control" formControlName="email" autocomplete="off" required />
+                  </div>
+                  <div class="col-md-3">
+                    <span class="text-danger" *ngIf="registerForm.controls['email'].hasError('required') && (registerForm.controls['email'].dirty || registerForm.controls['email'].touched)">Email Address is required</span>
+                    <span class="text-danger" *ngIf="registerForm.controls['email'].hasError('email') && (registerForm.controls['email'].dirty || registerForm.controls['email'].touched)">Email Address is not valid</span>
+                    <span class="text-danger" *ngIf="registerForm.controls['email'].hasError('existingUserByEmail')">Email already exists</span>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="password" class="col-md-2 control-label">Password</label>
+                  <div class="col-md-7">
+                    <input autocomplete="off" type="password" class="form-control" formControlName="password" autocomplete="new-password" required />
+                  </div>
+                  <div class="col-md-3">
+                    <span class="text-danger" *ngIf="registerForm.controls['password'].hasError('required') && (registerForm.controls['password'].dirty || registerForm.controls['password'].touched)">Password is required</span>
+                  </div>
+                  <div class="col-md-3">
+                    <span class="text-danger" *ngIf="registerForm.errors?.unsupportedcharacters && (registerForm.controls['password'].dirty || registerForm.controls['password'].touched)">The characters &, %, +, ", \ are not allowed in usernames or passwords</span>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="confirmpassword" class="col-md-2 control-label">Confirm Password</label>
+                  <div class="col-md-7">
+                    <input autocomplete="off" type="password" class="form-control" formControlName="confirmPassword" required />
+                  </div>
+                  <div class="col-md-3">
+                    <span class="text-danger" *ngIf="registerForm.controls['confirmPassword'].hasError('equalTo') && (registerForm.controls['confirmPassword'].dirty || registerForm.controls['confirmPassword'].touched)">Password and Confirm Password should match</span>
+                  </div>
+                  <div class="col-md-3">
+                    <span class="text-danger" *ngIf="registerForm.errors?.unsupportedcharacters && (registerForm.controls['confirmPassword'].dirty || registerForm.controls['confirmPassword'].touched)">The characters &, %, +, ", \ are not allowed in usernames or passwords</span>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="memorableword" class="col-md-2 control-label">Memorable Word</label>
+                  <div class="col-md-7">
+                    <input autocomplete="off" type="text" class="form-control" formControlName="memorableWord" required />
+                  </div>
+                  <div class="col-md-3">
+                    <span class="text-danger" *ngIf="registerForm.controls['memorableWord'].hasError('required') && (registerForm.controls['memorableWord'].dirty || registerForm.controls['memorableWord'].touched)">Memorable Word is required</span>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="telephoneno" class="col-md-2 control-label">Telephone</label>
+                  <div class="col-md-7">
+                    <input autocomplete="off" type="text" class="form-control" numberOnly formControlName="telephone" />
+                  </div>
+                </div>
+
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="language" class="col-md-2 control-label">Language</label>
+                  <div class="col-md-7">
+                    <select class="form-control" formControlName="languageIsoName">
+                      <option [value]="lang.isoName" *ngFor="let lang of languages">
+                        {{lang.name}}
+                      </option>
+                    </select>
+                  </div>
+                  <div class="col-md-3">
+                    <span class="text-danger" *ngIf="registerForm.controls['languageIsoName'].hasError('required') && (registerForm.controls['languageIsoName'].dirty || registerForm.controls['languageIsoName'].touched)">Language is required</span>
+                  </div>
+                </div>
+
+                <!-- TODO: div class="form-group">
+        <label for="trade" class="col-md-2 control-label">Trade</label>
+        <div class="col-md-7">
+          <select class="form-control" formControlName="tradeEnum">
+            <option value="0">English</option>
+            <option value="0">Telugu</option>
+            <option value="0">Hindi</option>
+            <option value="0">Bengali</option>
+            <option value="0">Urdu</option>
+          </select>
+        </div>
+      </div>
+
+      TODO:
+      <div class="form-group">
+        <label for="industry" class="col-md-2 control-label">Industry</label>
+        <div class="col-md-7">
+          <select class="form-control" formControlName="industryEnum">
+            <option value="0">English</option>
+            <option value="0">Telugu</option>
+            <option value="0">Hindi</option>
+            <option value="0">Bengali</option>
+            <option value="0">Urdu</option>
+          </select>
+        </div>
+      </div>-->
+
+                <div class="form-group">
+                  <label for="address" class="col-md-2 control-label">Address</label>
+                  <div class="col-md-7">
+                    <textarea class="form-control" formControlName="address" rows="5" cols="50"></textarea>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="country" class="col-md-2 control-label">Country</label>
+                  <div class="col-md-7">
+                    <select class="form-control" required formControlName="countryCode">
+                      <option [value]="country.countryCode" *ngFor="let country of countries">
+                        {{country.name}}
+                      </option>
+                    </select>
+                  </div>
+                  <div class="col-md-3">
+                    <span class="text-danger" *ngIf="registerForm.controls['countryCode'].hasError('required') && (registerForm.controls['countryCode'].dirty || registerForm.controls['countryCode'].touched)">Country is required</span>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="company" class="col-md-2 control-label">Company</label>
+                  <div class="col-md-7">
+                    <input autocomplete="off" type="text" formControlName="company" class="form-control" />
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="companyposition" class="col-md-2 control-label">Company Position</label>
+                  <div class="col-md-7">
+                    <input autocomplete="off" type="text" formControlName="companyPosition" class="form-control" />
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="form-check">
+                  <input autocomplete="off" type="checkbox" formControlName="hasAgreedDpa" class="form-check-input" id="hasAgreedDpa">
+                  <label class="form-check-label" for="hasAgreedDpa">Allow Spirax Sarco use of my data to improve this web application and for Marketing Purposes.</label>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <button class="btn btn-primary btn-lg" [disabled]="!registerForm.valid || isSuccess" type="submit">Create account</button>
+              </div>
+              <div class="col-md-6 offset-md-6">
+                <span class="ng-invalid">Required Field</span>
+              </div>
+            </div>
+
+            <br>
+            <br>
+            <br>
+            <div class="row">
+              <div class="col-md-6">
+                <span class="pt-lg text-center">Already have an existing Sizing Suite account?</span>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <button class="btn btn-primary btn-lg" [routerLink]="'/login'">Log in</button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- END panel-->
+    <footer app-footer></footer>
+  </div>
+</div>

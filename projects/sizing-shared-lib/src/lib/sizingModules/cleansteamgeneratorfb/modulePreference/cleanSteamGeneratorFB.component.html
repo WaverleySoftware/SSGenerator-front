@@ -1,0 +1,195 @@
+<!--CleanSteamGenerator F&B module preferences component works!-->
+<form [formGroup]="modulePreferencesForm" class="form-horizontal" role="form" (submit)="submitForm($event)" novalidate>
+
+  <div class="row">
+    <div class="col-xs-12">
+      <button [disabled]="!modulePreferencesForm.dirty || !modulePreferencesForm.valid || modulePreferencesForm.status !== 'VALID' || formSubmitted" type="submit" class="btn btn-dynamic btn-primary pull-right" [title]="'SAVE' | translate:true"><i class="fa fa-save">  {{'SAVE' | translate:true}}</i></button>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12">
+      <br>
+    </div>
+  </div>
+
+  <!-- Success confirmation message -->
+  <alert-block *ngIf="!!alertVisible && !!isSuccess" type="success" [auto-close]="true" [message]="'MODULE_PREFERENCES_SAVED_SUCCESSFULLY_MESSAGE' | translate" (close-callback)="closeAlert()"></alert-block>
+
+  <!-- Failure confirmation message-->
+  <alert-block *ngIf="!!alertVisible && !isSuccess" type="danger" [message]="'MODULE_PREFERENCES_FAILED_TO_SAVE_MESSAGE' | translate" (close-callback)="closeAlert()"></alert-block>
+
+  <div class="panel panel-primary">
+    <div class="panel-heading" role="tab" id="currencyOptionsHeading">
+      <h4 class="panel-title">
+        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseCurrencyOptions" aria-expanded="true" aria-controls="collapseCurrencyOptions">
+          {{"CURRENCY_OPTIONS" | translate}}
+        </a>
+      </h4>
+    </div>
+    <div id="collapseCurrencyOptions" class="panel-collapse collapse show" role="tabpanel" aria-labelledby="currencyOptionsHeading">
+      <div class="panel-body">
+        <div class="form-group">
+
+          <div class="row">
+            <!--Manufacturer-->
+            <div class="col-lg-3 col-md-6 col-xs-12 text-right">
+              <label class="control-label">{{"MANUFACTURER" | translate}}</label>
+            </div>
+            <div class="col-lg-2 col-md-6 col-xs-12">
+              <select class="form-control" formControlName="csgFBManufacturerModulePreference">
+                <option *ngFor="let manufacturer of manufacturerList" [value]="manufacturer.id">{{manufacturer.name}}</option>
+              </select>
+            </div>
+
+            <!--Selling currency-->
+            <div class="col-lg-3 col-md-6 col-xs-12 text-right">
+              <label class="control-label">{{"SELLING_CURRENCY" | translate}}</label>
+            </div>
+            <div class="col-lg-2 col-md-6 col-xs-12">
+              <select class="form-control" formControlName="csgFBSellingCurrencyModulePreference" (ngModelChange)="onSellingCurrencyChange($event)">
+                <option *ngFor="let currency of currencyList" [value]="currency.id">{{currency.currencyCode}} - {{currency.symbol}}</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row">
+            <!--Manufacturer currency-->
+            <div class="col-lg-3 col-md-6 col-xs-12 text-right">
+              <label class="control-label">{{"MANUFACTURER_CURRENCY" | translate}}</label>
+            </div>
+            <div class="col-lg-2 col-md-6 col-xs-12">
+              <select class="form-control" formControlName="csgFBManufacturerCurrencyModulePreference">
+                <option *ngFor="let currency of currencyList" [value]="currency.id">{{currency.currencyCode}} - {{currency.symbol}}</option>
+              </select>
+            </div>
+
+            <!--Currency conversion-->
+            <div class="col-lg-3 col-md-6 col-xs-12 text-right">
+              <label class="control-label">{{"CURRENCY_CONVERSION" | translate}}</label>
+            </div>
+            <div class="col-lg-2 col-md-6 col-xs-12">
+              <label class="control-label">{{csgFBCurrencyConversion}}</label>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--Pricing Options-->
+  <div class="panel panel-primary">
+    <div class="panel-heading" role="tab" id="pricingOptionsHeading">
+      <h4 class="panel-title">
+        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapsePricingOptions" aria-expanded="true" aria-controls="collapsePricingOptions">
+          {{"PRICING_OPTIONS" | translate}}
+        </a>
+      </h4>
+    </div>
+    <div id="collapsePricingOptions" class="panel-collapse collapse show" role="tabpanel" aria-labelledby="pricingOptionsHeading">
+      <div class="panel-body">
+        <div class="form-group">
+          <!--Column 1-->
+          <div class="col-lg-6">
+            <div class="row">
+              <!--Landed Cost Increase-->
+              <div class="col-xs-6 text-right">
+                <label class="control-label">{{"LANDED_COST_INCREASE" | translate}}</label>
+              </div>
+              <div class="col-xs-4">
+                <div class="input-group">
+                  <input autocomplete="off" class="form-control" type="number" style="min-width:55px;" formControlName="csgFBLandedCostIncreaseModulePreference" value="csgFBLandedCostIncrease" twoDigitDecimalNumber />
+                  <span class="input-group-addon">{{"PERCENT" | translate}}</span>
+                </div>
+              </div>
+              <div class="col-xs-2">
+                <span class="text-danger" *ngIf="modulePreferencesForm.controls['csgFBLandedCostIncreaseModulePreference'].hasError('required') && (modulePreferencesForm.controls['csgFBLandedCostIncreaseModulePreference'].dirty || modulePreferencesForm.controls['csgFBLandedCostIncreaseModulePreference'].touched)">{{ "REQUIRED_FIELD" | translate }}</span>
+                <span class="text-danger" *ngIf="modulePreferencesForm.controls['csgFBLandedCostIncreaseModulePreference'].hasError('range') && (modulePreferencesForm.controls['csgFBLandedCostIncreaseModulePreference'].dirty || modulePreferencesForm.controls['csgFBLandedCostIncreaseModulePreference'].touched)">{{"LANDED_COST_INCREASE_MUST_BE_BETWEEN_0_AND_100_PERCENT_MESSAGE" | translate}}</span>
+              </div>
+            </div>
+            <div class="row">
+              <!--Delivery Cost-->
+              <div class="col-xs-6 text-right">
+                <label class="control-label">{{"DELIVERY_COST" | translate}}</label>
+              </div>
+              <div class="col-xs-4">
+                <div class="input-group">
+                  <span class="input-group-addon">{{csgFBSellingCurrencySymbol}}</span>
+                  <input autocomplete="off" class="form-control" type="number" style="min-width:55px;" formControlName="csgFBDeliveryCostModulePreference" value="csgFBDeliveryCost" twoDigitDecimalNumber />
+                </div>
+              </div>
+              <div class="col-xs-2">
+                <span class="text-danger" *ngIf="modulePreferencesForm.controls['csgFBDeliveryCostModulePreference'].hasError('required') && (modulePreferencesForm.controls['csgFBDeliveryCostModulePreference'].dirty || modulePreferencesForm.controls['csgFBDeliveryCostModulePreference'].touched)">{{ "REQUIRED_FIELD" | translate }}</span>
+              </div>
+            </div>
+            <div class="row">
+              <!--Commission Only Price-->
+              <div class="col-xs-6 text-right">
+                <label class="control-label">{{"COMMISSION_ONLY_PRICE" | translate}}</label>
+              </div>
+              <div class="col-xs-4">
+                <div class="input-group">
+                  <span class="input-group-addon">{{csgFBSellingCurrencySymbol}}</span>
+                  <input autocomplete="off" class="form-control" type="number" style="min-width:55px;" formControlName="csgFBCommissionOnlyPriceModulePreference" value="csgFBCommissionOnlyPrice" twoDigitDecimalNumber />
+                </div>
+              </div>
+              <div class="col-xs-2">
+                <span class="text-danger" *ngIf="modulePreferencesForm.controls['csgFBCommissionOnlyPriceModulePreference'].hasError('required') && (modulePreferencesForm.controls['csgFBCommissionOnlyPriceModulePreference'].dirty || modulePreferencesForm.controls['csgFBCommissionOnlyPriceModulePreference'].touched)">{{ "REQUIRED_FIELD" | translate }}</span>
+              </div>
+            </div>
+          </div>
+          <!--Column 2-->
+          <div class="col-lg-6">
+            <div class="row">
+              <!--One Year-->
+              <div class="col-xs-4 text-right">
+                <label class="control-label">{{"ONE_YEAR" | translate}}</label>
+              </div>
+              <div class="col-xs-4">
+                <div class="input-group">
+                  <span class="input-group-addon">{{csgFBSellingCurrencySymbol}}</span>
+                  <input autocomplete="off" class="form-control" type="number" style="min-width:55px;" formControlName="csgFBWarrantyOneYearModulePreference" value="csgFBWarrantyOneYear" twoDigitDecimalNumber />
+                </div>
+              </div>
+              <div class="col-xs-2">
+                <span class="text-danger" *ngIf="modulePreferencesForm.controls['csgFBWarrantyOneYearModulePreference'].hasError('required') && (modulePreferencesForm.controls['csgFBWarrantyOneYearModulePreference'].dirty || modulePreferencesForm.controls['csgFBWarrantyOneYearModulePreference'].touched)">{{ "REQUIRED_FIELD" | translate }}</span>
+              </div>
+            </div>
+            <div class="row">
+              <!--Two Years-->
+              <div class="col-xs-4 text-right">
+                <label class="control-label">{{"TWO_YEARS" | translate}}</label>
+              </div>
+              <div class="col-xs-4">
+                <div class="input-group">
+                  <span class="input-group-addon">{{csgFBSellingCurrencySymbol}}</span>
+                  <input autocomplete="off" class="form-control" type="number" style="min-width:55px;" formControlName="csgFBWarrantyTwoYearsModulePreference" value="csgFBWarrantyTwoYears" twoDigitDecimalNumber />
+                </div>
+              </div>
+              <div class="col-xs-2">
+                <span class="text-danger" *ngIf="modulePreferencesForm.controls['csgFBWarrantyTwoYearsModulePreference'].hasError('required') && (modulePreferencesForm.controls['csgFBWarrantyTwoYearsModulePreference'].dirty || modulePreferencesForm.controls['csgFBWarrantyTwoYearsModulePreference'].touched)">{{ "REQUIRED_FIELD" | translate }}</span>
+              </div>
+            </div>
+            <div class="row">
+              <!--Three Years-->
+              <div class="col-xs-4 text-right">
+                <label class="control-label">{{"THREE_YEARS" | translate}}</label>
+              </div>
+              <div class="col-xs-4">
+                <div class="input-group">
+                  <span class="input-group-addon">{{csgFBSellingCurrencySymbol}}</span>
+                  <input autocomplete="off" class="form-control" type="number" style="min-width:55px;" formControlName="csgFBWarrantyThreeYearsModulePreference" value="csgFBWarrantyThreeYears" twoDigitDecimalNumber />
+                </div>
+              </div>
+              <div class="col-xs-2">
+                <span class="text-danger" *ngIf="modulePreferencesForm.controls['csgFBWarrantyThreeYearsModulePreference'].hasError('required') && (modulePreferencesForm.controls['csgFBWarrantyThreeYearsModulePreference'].dirty || modulePreferencesForm.controls['csgFBWarrantyThreeYearsModulePreference'].touched)">{{ "REQUIRED_FIELD" | translate }}</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</form>

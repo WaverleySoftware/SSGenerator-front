@@ -1,0 +1,67 @@
+@import "../../../shared/styles/app/variables";
+
+.vetted-user-button-container {
+  /* Large */
+  @media (min-width: $screen-lg-min) {
+    margin-top: 230px;
+  }
+
+  button i:first-of-type {
+    /*Extra small */
+    transform: rotate(-0deg);
+    /* Small */
+    @media (min-width: $screen-sm-min) {
+      transform: rotate(-0deg);
+    }
+    /* Medium */
+    @media (min-width: $screen-md-min) {
+      transform: rotate(-0deg);
+    }
+    /* Large */
+    @media (min-width: $screen-lg-min) {
+      transform: initial;
+    }
+  }
+}
+
+.vetted-user-button-container {
+  button i:last-of-type {
+    /*Extra small */
+    transform: rotate(-0deg);
+    /* Small */
+    @media (min-width: $screen-sm-min) {
+      transform: rotate(-0deg);
+    }
+    /* Medium */
+    @media (min-width: $screen-md-min) {
+      transform: rotate(-0deg);
+    }
+    /* Large */
+    @media (min-width: $screen-lg-min) {
+      transform: initial;
+    }
+  }
+}
+
+/* Prevent text selection over the tables to help facilitate shift/ctrl selections */
+.module-access-container {
+  -webkit-touch-callout: none;  /* iOS Safari */
+  -webkit-user-select: none;    /* Safari */
+  -khtml-user-select: none;     /* Konqueror HTML */
+  -moz-user-select: none;       /* Firefox */
+  -ms-user-select: none;        /* Internet Explorer/Edge */
+  user-select: none;            /* Non-prefixed version, currently supported by Chrome and Opera */
+}
+
+.module-access-level {
+  font-size: 2em;
+  line-height: 16px;
+}
+
+.module-access-controls div.radio.c-radio.c-radio-nofont {
+  display: inline-block;
+}
+
+.module-access-controls .control-label {
+  margin-right: 15px;
+}

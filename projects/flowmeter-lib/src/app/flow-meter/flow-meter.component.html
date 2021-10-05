@@ -1,0 +1,104 @@
+<a #inputsContentTop href="#inputsContentTop"> </a>
+
+<form [formGroup]="sizingModuleForm" class="form-horizontal" role="form" novalidate>
+    <div class="panel-body">
+        <div class="row col-xs-6">
+            <h4 class="panel-title">
+                <label *ngIf="!projectName">{{"UNTITLED_PROJECT" | translate}}</label><label
+                    *ngIf="projectName">{{projectName}}</label> - <label
+                    *ngIf="!jobName">{{"UNTITLED_JOB" | translate}}</label>
+                <label *ngIf="jobName">{{jobName}}</label>
+            </h4>
+        </div>
+    </div>
+    <app-process-conditions [form]="sizingModuleForm" [moduleGroupId]="moduleGroupId"></app-process-conditions>
+
+    <!--  used for displaying 'length' units control in 'Select Units' modal -->
+    <div class="d-none"
+         [display-preference]="'LengthUnit'"
+         display-preference-unit-type="LengthUnits"
+         [display-masterTextKey]="'LENGTH'"
+         [display-preference-module-group-id]="moduleGroupId"
+    ></div>
+    <!--  used for displaying 'velocity' units control in 'Select Units' modal -->
+    <div class="d-none"
+         [display-preference]="'VelocityUnit'"
+         display-preference-unit-type="VelocityUnits"
+         [display-masterTextKey]="'VELOCITY'"
+         [display-preference-module-group-id]="moduleGroupId"
+    ></div>
+
+    <app-meter-details [moduleGroupId]="moduleGroupId" [moduleName]="moduleName"
+                       [form]="sizingModuleForm"></app-meter-details>
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="checkbox c-checkbox">
+                <label>
+                    <input type="checkbox" formControlName="specifyPipeSize"/>
+                    <span class="fa fa-check"></span>{{"SPECIFY_PIPE_SIZE" | translate}}
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <app-pipe-selection *ngIf="sizingModuleForm.get('specifyPipeSize').value === true"
+                        [moduleGroupId]="moduleGroupId"
+                        [form]="sizingModuleForm"
+                        [velocity]="velocityCheckResult"
+                        [designationOptions]="designations"
+                        [nominalSizeOptions]="nominalSizes"
+                        (pipeStandardDropdownInitialized)="onPipeStandardDropdownInitialized($event)"
+    ></app-pipe-selection>
+</form>
+
+<div class="panel panel-primary" *ngIf="isSizingDone">
+    <div class="panel-heading" role="tab" id="resultsHeading">
+        <h4 class="panel-title">
+            <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseResults" aria-expanded="true" aria-controls="collapseResults">
+                {{"RESULTS" | translate}}
+            </a>
+        </h4>
+    </div>
+
+    <div id="collapseResults" class="panel-collapse collapse show" role="tabpanel" aria-labelledby="resultsHeading">
+
+    </div>
+
+    <div class="panel-body">
+        <app-results-filters
+                [filtersForm]="filtersForm"
+                [productOptions]="productOptions"
+                [flangeSpecificationOptions]="flangeSpecificationOptions"
+                [materialOptions]="materialOptions"
+                [orientationOptions]="orientationOptions"
+                [meterSizeOptions]="meterSizeOptions"
+        ></app-results-filters>
+        <div class="col-xs-12">
+            <app-results-table
+                    [tableRows]="filteredTableResults"
+                    [tableRowsSelected]="tableRowsSelected"
+                    [flowType]="resultsFlowType"
+                    (rowSelected)="onTableRowSelected($event)"
+            ></app-results-table>
+            <div class="row">
+                <div class="col-xs-8">
+                    <app-results-item-details
+                            [selectedProduct]="selectedProduct"
+                            [processConditions]="sizingModuleForm.get('processConditions')"
+                    ></app-results-item-details>
+                </div>
+                <div class="col-xs-4">
+                    <app-results-ancillaries
+                            [ancillariesForm]="ancillariesForm"
+                    ></app-results-ancillaries>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- TODO: Remove this test block later. Now I want to see the original form object -->
+<!--<div>-->
+<!--    <pre>{{ filteredTableResults | json }}</pre>-->
+<!--</div>-->

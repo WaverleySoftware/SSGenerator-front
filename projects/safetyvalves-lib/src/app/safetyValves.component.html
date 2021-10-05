@@ -1,0 +1,899 @@
+<a #inputsContentTop href="#inputsContentTop"> </a>
+
+<!--<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">-->
+<form [formGroup]="sizingModuleForm" class="form-horizontal" role="form" novalidate>
+
+  <!--This is required for the 'Select Units' popup to work appropriately-->
+  <div [display-preference]="'LoadUnit'" [display-masterTextKey]="'LOAD'" display-preference-unit-type="LoadUnits" [display-preference-module-group-id]="moduleGroupId" #loadRef="display-preference"></div>
+  <div [display-preference]="'ForceUnit'" [display-masterTextKey]="'FORCE'" display-preference-unit-type="ForceUnits" [display-preference-module-group-id]="moduleGroupId" #forceRef="display-preference"></div>
+  <div [display-preference]="'AreaUnit'" [display-masterTextKey]="'AREA'" display-preference-unit-type="AreaUnits" [display-preference-module-group-id]="moduleGroupId" #areaRef="display-preference"></div>
+
+  <div class="panel-body">
+    <div class="row col-xs-6">
+      <h4 class="panel-title">
+        <label *ngIf="!projectName">{{"UNTITLED_PROJECT" | translate}}</label><label *ngIf="projectName">{{projectName}}</label> - <label *ngIf="!jobName">{{"UNTITLED_JOB" | translate}}</label><label *ngIf="jobName">{{jobName}}</label>
+      </h4>
+    </div>
+  </div>
+
+  <!--<block-ui>-->
+  <div class="panel panel-primary" *blockUI="'conditions-section'">
+    <a [href]="downloadFilePath" *ngIf="!!downloadFilePath" target="_blank">download complete</a>
+    <div class="panel-heading" role="tab" id="processConditionsHeading">
+      <h4 class="panel-title">
+        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseProcessConditions" aria-expanded="true" aria-controls="collapseProcessConditions">
+          {{"PROCESS_CONDITIONS" | translate}}
+        </a>
+      </h4>
+    </div>
+    
+    <div id="collapseProcessConditions" class="panel-collapse collapse show" role="tabpanel" aria-labelledby="processConditionsHeading">
+      <div class="panel-body">
+
+        <div class="row">
+          <!-- Left column -->
+          <div class="col-md-6 col-sm-12">
+
+            <!-- Media -->
+            <div class="form-group">
+              <div class="col-md-3 col-sm-4 col-xs-12 text-right">
+                <label class="control-label">{{"MEDIA" | translate}}</label>
+              </div>
+              <div class="col-md-6 col-sm-8 col-xs-12">
+                <!-- Enumeration for Media_PRVSizing -->
+                <enumeration id="media" formControlName="media_Enumeration" (on-change)="onChangeMediaSelectedItem($event)" enumeration-name="Media_PRVSizing"></enumeration> <!--"-->
+              </div>
+            </div>
+
+            <!-- Pressure Unit -->
+            <div class="form-group">
+              <div class="col-md-3 col-sm-4 col-xs-6 text-right">
+                <label class="control-label">{{"SET_PRESSURE" | translate}}</label>
+              </div>
+              <div class="col-md-6 col-sm-8 col-xs-12">
+                <div class="input-group">
+                  <input autocomplete="off"
+                         id="pressure"
+                         (keydown.enter)="onKeyDown($event)"
+                         class="form-control"
+                         type="number"
+                         style="min-width:55px;"
+                         (change)="rationaliseSafetyValvesFormInput(); onChangeValidatePressureForSelectedProducts();"
+                         formControlName="pressure"
+                         [ngClass]="{'validation-error-class': pressureValidationErrorMessage.value}"
+                         [popover]="pressureValidationErrorMessage.value"
+                         triggers="mouseenter:mouseleave keyup:keydown mouseenter:focusout"
+                         placement="top"
+                         [value]="pressure.value | preferenceDecimal:'PressureUnit'"
+                         [display-preference]="'PressureUnit'"
+                         [display-masterTextKey]="'PRESSURE'"
+                         display-preference-unit-type="PressureUnits"
+                         [display-preference-module-group-id]="moduleGroupId"
+                         #pressureRef="display-preference" />
+                  <span class="input-group-addon">{{pressureRef.preference.masterTextKey | translate}}</span>
+                </div>
+              </div>
+
+              <!--<div class="col-xs-3" *ngIf="pressureDifferentialErrorMessage">
+        <i class="fa fa-info-circle cross-validation-error-class" [tooltip]="pressureDifferentialErrorMessage"></i>
+
+      </div>-->
+            </div>
+
+            <!-- Temperature Unit-->
+            <div class="form-group">
+              <div class="col-md-3 col-sm-4 col-xs-6 text-right">
+                <label class="control-label">{{"TEMPERATURE" | translate}}</label>
+              </div>
+              <div class="col-md-6 col-sm-8 col-xs-12">
+                <div class="input-group">
+                  <!-- [attr.disabled]="temperatureDisabled?'':null" -->
+                  <input autocomplete="off" id="temperature" class="form-control" type="number" (change)="rationaliseSafetyValvesFormInput()" [attr.disabled]="temperatureDisabled?'':null" style="min-width:55px;" formControlName="temperature" [ngClass]="{'validation-error-class': temperatureValidationErrorMessage.value}" [popover]="temperatureValidationErrorMessage.value" triggers="mouseenter:mouseleave keyup:keydown mouseenter:focusout" placement="top" [value]="temperature.value | preferenceDecimal:'TemperatureUnit'" [display-preference]="'TemperatureUnit'" [display-masterTextKey]="'TEMPERATURE'" display-preference-unit-type="TemperatureUnits" [display-preference-module-group-id]="moduleGroupId" #temperatureRef="display-preference" />
+                  <span class="input-group-addon">{{temperatureRef.preference.masterTextKey | translate}}</span>
+                </div>
+              </div>
+            </div>
+
+
+            <!-- Over Pressure % -->
+            <div class="form-group" style="display:none;">
+              <div class="col-md-3 col-sm-4 col-xs-6 text-right">
+                <label class="control-label">{{"OVERPRESSURE" | translate}}</label>
+              </div>
+              <div class="col-md-6 col-sm-8 col-xs-12">
+                <div class="input-group">
+                  <input autocomplete="off" id="overpressure" class="form-control" type="number" [attr.disabled]="true?'':null" style="min-width: 55px;" (change)="rationaliseSafetyValvesFormInput();" [ngClass]="{'validation-error-class': overpressureValidationErrorMessage.value}" [popover]="overpressureValidationErrorMessage.value" triggers="mouseenter:mouseleave keyup:keydown mouseenter:focusout" placement="top" formControlName="overpressure" [value]="overpressure.value" />
+                  <span class="input-group-addon">%</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Noise distance -->
+            <div class="form-group">
+              <div class="col-md-3 col-sm-4 col-xs-6 text-right">
+                <label class="control-label">{{"NOISE_DISTANCE" | translate}}</label>
+              </div>
+              <div class="col-md-6 col-sm-8 col-xs-12">
+                <div class="input-group">
+                  <input autocomplete="off" id="noisedistance" (keydown.enter)="onKeyDown($event)" class="form-control" type="number" style="min-width:55px;" (change)="rationaliseSafetyValvesFormInput()" formControlName="noisedistance" [ngClass]="{'validation-error-class': noisedistanceValidationErrorMessage.value}" [popover]="noisedistanceValidationErrorMessage.value" triggers="mouseenter:mouseleave keyup:keydown mouseenter:focusout" placement="top" [value]="noisedistance.value | preferenceDecimal:'LengthUnit'" [display-preference]="'LengthUnit'" [display-masterTextKey]="'NOISE_DISTANCE'" display-preference-unit-type="LengthUnits" [display-preference-module-group-id]="moduleGroupId" #noiseDistanceRef="display-preference" />
+                  <span class="input-group-addon">{{noiseDistanceRef.preference.masterTextKey | translate}}</span>
+                </div>
+              </div>
+            </div>
+
+
+          </div>
+
+          <!-- Right column -->
+          <div class="col-md-6 col-sm-12">
+
+            <!-- State -->
+            <div class="form-group">
+              <div class="col-md-3 col-sm-4 col-xs-6 text-right">
+                <label class="control-label">{{"STATE" | translate}}</label>
+              </div>
+              <div class="col-md-6 col-sm-8 col-xs-12">
+                <input autocomplete="off" id="mediastate" class="form-control" readonly="readonly" formControlName="mediaState" />
+              </div>
+            </div>
+
+
+            <!-- RelievingPressure Unit -->
+            <!--<div class="form-group">
+  <div class="col-md-3 col-sm-4 col-xs-6 text-right">
+    <label class="control-label">{{"RELIEVING_PRESSURE" | translate}}</label>
+  </div>
+  <div class="col-md-6 col-sm-8 col-xs-12">
+    <div class="input-group">
+      <input autocomplete="off" id="relievingpressure" (keydown.enter)="onKeyDown($event)" class="form-control" type="number" style="min-width:55px;" (change)="relievingPressureIsMaster(); rationaliseSafetyValvesFormInput(); onChangeValidatePressureForSelectedProducts();" formControlName="relievingpressure" [ngClass]="{'validation-error-class': pressureValidationErrorMessage.value}" [popover]="pressureValidationErrorMessage.value" triggers="mouseenter:mouseleave keyup:keydown mouseenter:focusout" placement="top" [value]="relievingpressure.value | preferenceDecimal:'PressureUnit'" [display-preference]="'PressureUnit'" [display-masterTextKey]="'PRESSURE'" display-preference-unit-type="PressureUnits" [display-preference-module-group-id]="moduleGroupId" #pressureRef="display-preference" />
+      <span class="input-group-addon">{{pressureRef.preference.masterTextKey | translate}}</span>
+    </div>
+  </div>-->
+            <!--<div class="col-xs-3" *ngIf="pressureDifferentialErrorMessage">
+    <i class="fa fa-info-circle cross-validation-error-class" [tooltip]="pressureDifferentialErrorMessage"></i>
+
+  </div>-->
+            <!--</div>-->
+            <!-- RelievingTemperature Unit-->
+            <!--<div class="form-group">
+  <div class="col-md-3 col-sm-4 col-xs-6 text-right">
+    <label class="control-label">{{"RELIEVING_TEMPERATURE" | translate}}</label>
+  </div>
+  <div class="col-md-6 col-sm-8 col-xs-12">
+    <div class="input-group">-->
+            <!--  even if you UNcommented the whole RelievingTemperature section this line should be still commented OUT [attr.disabled]="temperatureDisabled?'':null" -->
+            <!--<input autocomplete="off" id="relievingtemperature" class="form-control" type="number" [attr.disabled]="true?'':null" style="min-width:55px;" formControlName="relievingtemperature" [ngClass]="{'validation-error-class': temperatureValidationErrorMessage.value}" [popover]="temperatureValidationErrorMessage.value" triggers="mouseenter:mouseleave keyup:keydown mouseenter:focusout" placement="top" [value]="relievingtemperature.value | preferenceDecimal:'TemperatureUnit'" [display-preference]="'TemperatureUnit'" [display-masterTextKey]="'TEMPERATURE'" display-preference-unit-type="TemperatureUnits" [display-preference-module-group-id]="moduleGroupId" #temperatureRef="display-preference" />
+        <span class="input-group-addon">{{temperatureRef.preference.masterTextKey | translate}}</span>
+      </div>
+    </div>
+  </div>-->
+            <!-- Standards -->
+            <div class="form-group">
+              <div class="col-md-3 col-sm-4 col-xs-6 text-right">
+                <label class="control-label">{{"STANDARD_TEXT_DUPLICATE_ID_39" | translate}}</label>
+              </div>
+              <div class="col-md-6 col-sm-8 col-xs-12">
+                <!-- Enumeration -->
+                <enumeration id="standard" formControlName="safetyValveStandard_Enumeration" [filter-by]="safetyValveStandardList" (on-change)="onChangeStandardSelectedItem($event)" enumeration-name="SafetyValveStandard_SafetyValveSizing"></enumeration>
+              </div>
+            </div>
+
+            <!--Heat Output-->
+            <div class="form-group" [hidden]="isMassFlow">
+              <div class="col-md-3 col-sm-4 col-xs-6 text-right">
+                <label class="control-label">{{"HEAT_OUTPUT" | translate}}</label>
+              </div>
+              <div class="col-md-6 col-sm-8 col-xs-12">
+                <div class="input-group">
+                  <input autocomplete="off" id="heatoutput" (keydown.enter)="onKeyDown($event)" class="form-control" type="number" style="min-width: 55px;" (change)="rationaliseSafetyValvesFormInput()" formControlName="load" [value]="load.value | preferenceDecimal:'LoadUnit'" [display-preference]="'LoadUnit'" [display-masterTextKey]="'LOAD'" display-preference-unit-type="LoadUnits" [display-preference-module-group-id]="moduleGroupId" #loadRef="display-preference" />
+                  <span class="input-group-addon">{{loadRef.preference.masterTextKey | translate}}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Mass flow -->
+            <div class="form-group" [hidden]="!isMassFlow">
+              <div class="col-md-3 col-sm-4 col-xs-6 text-right">
+                <label class="control-label">{{"MASS_FLOW" | translate}}</label>
+              </div>
+              <div class="col-md-6 col-sm-8 col-xs-12">
+                <div class="input-group">
+                  <input autocomplete="off" id="massflow" (keydown.enter)="onKeyDown($event)" class="form-control" type="number" style="min-width:55px;" formControlName="massflow" (change)="setMassflowIsMaster(true); rationaliseSafetyValvesFormInput()" [ngClass]="{'validation-error-class': massflowValidationErrorMessage.value}" [popover]="massflowValidationErrorMessage.value" triggers="mouseenter:mouseleave keyup:keydown mouseenter:focusout" placement="top" [value]="massflow.value | preferenceDecimal:'MassFlowUnit'" [display-preference]="'MassFlowUnit'" [display-masterTextKey]="'MASS_FLOW'" display-preference-unit-type="MassFlowUnits" [display-preference-module-group-id]="moduleGroupId" #massFlowRef="display-preference" />
+                  <span class="input-group-addon">{{massFlowRef.preference.masterTextKey | translate}}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Volumetric flow -->
+            <div class="form-group" [hidden]="!isMassFlow">
+              <div class="col-md-3 col-sm-4 col-xs-6 text-right">
+                <label class="control-label">{{"VOLUMETRIC_FLOW" | translate}}</label>
+              </div>
+              <div class="col-md-6 col-sm-8 col-xs-12">
+                <div class="input-group">
+                  <input autocomplete="off" id="volumetricflow" (keydown.enter)="onKeyDown($event)" class="form-control" type="number" style="min-width:55px;" (change)="setMassflowIsMaster(false); rationaliseSafetyValvesFormInput()" formControlName="volumetricflow" [ngClass]="{'validation-error-class': volumetricflowValidationErrorMessage.value}" [popover]="volumetricflowValidationErrorMessage.value" triggers="mouseenter:mouseleave keyup:keydown mouseenter:focusout" placement="top" [value]="volumetricflow.value | preferenceDecimal:'VolumetricFlowUnit'" [display-preference]="'VolumetricFlowUnit'" [display-masterTextKey]="'VOLUMETRIC_FLOW'" display-preference-unit-type="VolumetricFlowUnits" [display-preference-module-group-id]="moduleGroupId" #volumetricFlowRef="display-preference" />
+                  <span class="input-group-addon">{{volumetricFlowRef.preference.masterTextKey | translate}}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- NormalTemperature Unit-->
+            <div class="form-group" [hidden]="!isNormalTemperatureInputVisible()">
+              <div class="col-md-3 col-sm-4 col-xs-6 text-right">
+                <label class="control-label">{{"NORMAL_TEMPERATURE" | translate}}</label>
+              </div>
+              <div class="col-md-6 col-sm-8 col-xs-12">
+                <div class="input-group">
+                  <input autocomplete="off" id="normaltemperature" class="form-control" type="number" (change)="rationaliseSafetyValvesFormInput()" [attr.disabled]="isNormalTemperatureInputEnabled()?null:'' " style="min-width:55px;" formControlName="normaltemperature" [ngClass]="{'validation-error-class': normaltemperatureValidationErrorMessage.value}" [popover]="normaltemperatureValidationErrorMessage.value" triggers="mouseenter:mouseleave keyup:keydown mouseenter:focusout" placement="top" [value]="normaltemperature.value | preferenceDecimal:'TemperatureUnit'" [display-preference]="'TemperatureUnit'" [display-masterTextKey]="'TEMPERATURE'" display-preference-unit-type="TemperatureUnits" [display-preference-module-group-id]="moduleGroupId" />
+                  <span class="input-group-addon">{{temperatureRef.preference.masterTextKey | translate}}</span>
+                </div>
+              </div>
+            </div>
+
+
+          </div>
+          
+          </div>
+
+      </div>
+    </div>
+  </div>
+  <!--</block-ui>-->
+
+
+  <!--mass density = {{massDensity}} Used to monitor value change during development of Rated Capacity in Volumetric Units :: Rafal-->
+
+
+  <div class="panel panel-primary">
+    <div class="panel-heading" role="tab" id="safetyValveDetailsHeading">
+      <h4 class="panel-title">
+        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseSafetyValveDetails" aria-expanded="true" aria-controls="collapseSafetyValveDetails">
+          {{"SAFETY_VALVE_DETAILS" | translate}}
+        </a>
+      </h4>
+    </div>
+    <div id="collapseSafetyValveDetails" class="panel-collapse collapse show" role="tabpanel" aria-labelledby="safetyValveDetailsHeading">
+      <div class="panel-body" style="padding-left: 25px;padding-right: 25px;">        
+        <product-selector formControlName="selectedProducts" (productSelectorOnChange)="productSelectorOnChange($event)" [module-group-id]="moduleGroupId" [module-name]="moduleName" [ngClass]="{'validation-product-error-class': selectedProductsValidationErrorMessage.value}" [popover]="selectedProductsValidationErrorMessage.value" placement="left" popover-is-open="true" [value]="selectedProducts.value"></product-selector>
+      </div>
+    </div>
+  </div>
+
+  <div style="padding-bottom: 25px; display:none;"  >
+    <div class="checkbox c-checkbox" >
+      <label>
+        <input autocomplete="off" type="checkbox"
+               class="control-check"
+               formControlName="showHideBackpressure"
+               [value]="true" />
+
+        <span class="fa fa-check"></span>{{"BACKPRESSURE" | translate}}
+      </label>
+    </div>
+  </div>
+
+  <div *ngIf="showHideBackpressure.value">
+
+    <div class="panel panel-primary">
+      <div class="panel-heading" role="tab" id="backpressureHeading">
+        <h4 class="panel-title">
+          <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseBackpressure" aria-expanded="true" aria-controls="collapseBackpressure">
+            {{"BACKPRESSURE" | translate}}
+          </a>
+        </h4>
+      </div>
+      <div id="collapseBackpressure" class="panel-collapse collapse show" role="tabpanel" aria-labelledby="backpressureHeading">
+
+        <div class="panel-body">
+
+          <div class="row">
+            <!-- Left column -->
+            <div class="col-md-6 col-sm-12">
+
+              <div class="form-group">
+                <div class="col-md-3 col-sm-4 col-xs-6 text-right">
+                  <label class="control-label">{{"PIPE_STANDARD" | translate}}</label>
+                </div>
+                <div class="col-md-6 col-sm-8 col-xs-12">
+                  <fieldset [attr.disabled]="override?'':null">
+                    <!-- Enumeration for PipeStandard_SafetyValveSizing -->
+                    <enumeration formControlName="pipeStandard_Enumeration" enumeration-name="PipeStandard_SafetyValveSizing"></enumeration>
+                  </fieldset>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <div class="col-md-3 col-sm-4 col-xs-6 text-right">
+                  <label class="control-label">{{"NOMINAL_BORE" | translate}}</label>
+                </div>
+                <div class="col-md-6 col-sm-8 col-xs-12">
+                  <fieldset [attr.disabled]="override?'':null">
+                    <!-- Enumeration -->
+                    <enumeration formControlName="nominalBore_Enumeration" enumeration-name="NominalBore_SafetyValveSizing" default-value="EN ISO 4126"></enumeration>
+                  </fieldset>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <div class="col-md-3 col-sm-4 col-xs-6 text-right">
+                  <label class="control-label">{{"PIPE_LENGTH" | translate}}</label>
+                </div>
+                <div class="col-md-6 col-sm-8 col-xs-12">
+                  <div class="input-group">
+                    <input autocomplete="off" class="form-control" type="number" style="min-width:55px;" [attr.disabled]="override?'':null" formControlName="pipeLength" [value]="pipeLength.value | number:'1.2-2'" />
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <div class="col-md-3 col-sm-4 col-xs-6 text-right">
+                  &nbsp;
+                </div>
+                <div class="col-md-6 col-sm-8 col-xs-12">
+                  &nbsp;
+                </div>
+              </div>
+
+            </div>
+
+            <div class="col-md-6 col-sm-12">
+
+              <div class="form-group">
+                <div class="col-md-3 col-sm-4 col-xs-6 text-right">
+                  <label class="control-label">{{"NO_OF_90DEGREES_ELBOWS" | translate}}</label>
+                </div>
+                <div class="col-md-6 col-sm-8 col-xs-12">
+                  <fieldset [attr.disabled]="override?'':null">
+                    <!-- Enumeration for Backpressure90Elbows_SafetyValveSizing -->
+                    <enumeration formControlName="backpressure90Elbows_Enumeration" enumeration-name="Backpressure90Elbows_SafetyValveSizing"></enumeration>
+                  </fieldset>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <div class="col-md-3 col-sm-4 col-xs-6 text-right">
+                  <label class="control-label">{{"NO_OF_45DEGREES_ELBOWS" | translate}}</label>
+                </div>
+                <div class="col-md-6 col-sm-8 col-xs-12">
+                  <fieldset [attr.disabled]="override?'':null">
+                    <!-- Enumeration -->
+                    <enumeration formControlName="backpressure45Elbows_Enumeration" enumeration-name="Backpressure45Elbows_SafetyValveSizing"></enumeration>
+                  </fieldset>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <div class="col-md-3 col-sm-4 col-xs-6 text-right">
+                  <label class="control-label">{{"NO_OF_SWEPT_BENDS" | translate}}</label>
+                </div>
+                <div class="col-md-6 col-sm-8 col-xs-12">
+                  <fieldset [attr.disabled]="override?'':null">
+                    <!-- Enumeration -->
+                    <enumeration formControlName="backpressureSweptBends_Enumeration" enumeration-name="BackpressureSweptBends_SafetyValveSizing" default-value="EN ISO 4126"></enumeration>
+                  </fieldset>
+                </div>
+              </div>
+
+                <div class="form-group" [hidden]="!override">
+                  <div class="col-md-3 col-sm-4 col-xs-6 text-right">
+                    <label class="control-label">{{"SUPERIMPOSSED_BACKPRESSURE" | translate}}</label>
+                  </div>
+                  <div class="col-md-6 col-sm-8 col-xs-12">
+                    <div class="input-group">
+                      <input autocomplete="off" class="form-control" type="number" style="min-width:55px;" formControlName="superImposed" [value]="superImposed.value | number:'1.2-2'" />
+                      <span class="input-group-addon">{{pressureRef.preference.masterTextKey | translate}}</span>
+                    </div>
+                  </div>
+                </div>
+
+            </div>
+
+          </div>
+
+          <div class="row">
+            <div class="form-group">
+              <div style="padding-bottom: 5px; padding-left: 25px;">
+                <div class="checkbox c-checkbox">
+                  <label>
+                    <input autocomplete="off" type="checkbox"
+                           class="control-check"
+                           formControlName="backpressureOverride"
+                           (ngModelChange)="onBackpressureOverrideChange($event)"
+                           [value]="true" />
+
+                      <span class="fa fa-check"></span>{{"BACKPRESSURE_OVERRIDE" | translate}}
+                    </label>
+                  </div>
+                </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <a #collapseResultsTop href="#collapseResultsTop"> </a>
+
+  <div class="panel panel-primary" *ngIf="!!isSVSizingDone">
+
+    <div class="panel-heading" role="tab" id="resultsHeading">
+      <h4 class="panel-title">
+        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseResults" aria-expanded="true" aria-controls="collapseResults">
+          {{"RESULTS" | translate}}
+        </a>
+      </h4>
+    </div>
+    <div id="collapseResults" class="panel-collapse collapse show" role="tabpanel" aria-labelledby="resultsHeading">
+      <div style="padding-top: 10px;">
+        <div>
+          <div class="col-md-1 col-xs-12">
+            <label class="control-label">{{'PRODUCT_RANGE' | translate}}</label>
+          </div>
+          <div class="col-md-3 col-xs-12">
+            <input autocomplete="off" type='text' title="{{'TYPE_TO_FILTER' | translate}}" class="form-control" placeholder="{{'TYPE_TO_FILTER' | translate:true}}..." (keyup)='onGridFilterValveRange($event)' />
+          </div>
+        </div>
+        <div>
+          <div class="col-md-1 col-xs-12">
+            <label class="control-label">{{'INLET_SIZE' | translate}}</label>
+          </div>
+          <div class="col-md-3 col-xs-12">
+            <input autocomplete="off" type='text' title="{{'TYPE_TO_FILTER' | translate}}" class="form-control" placeholder="{{'TYPE_TO_FILTER' | translate:true}}..." (keyup)='onGridFilterInletSize($event)' />
+          </div>
+        </div>
+        <div>
+          <div class="col-md-1 col-xs-12">
+            <label class="control-label">{{'BODY_MATERIAL_TEXT_DUPLICATE_ID_296' | translate}}</label>
+          </div>
+          <div class="col-md-3 col-xs-12">
+            <input autocomplete="off" type='text' title="{{'TYPE_TO_FILTER' | translate}}" class="form-control" placeholder="{{'TYPE_TO_FILTER' | translate:true}}..." (keyup)='onGridFilterBodyMaterial($event)' />
+          </div>
+        </div>
+      </div>
+      <div class="panel-body">
+        <div class="col-xs-12">
+          <!-- Note that rowIndex is not sort safe, use rows[rows.indexOf(row)] for the real index of the row data. -->
+          <ngx-datatable #resultstable
+                         class="bootstrap"
+                         [headerHeight]="10"
+                         [limit]="15"
+                         [columnMode]="'force'"
+                         [footerHeight]="40"
+                         [rowHeight]="'auto'"
+                         [rows]="rows"
+                         [selected]="selected"
+                         (select)="onSelect($event)"
+                         [selectionType]="'single'"
+                         (activate)="onActivate($event)"
+                         (page)="onPage($event)"
+                         [messages]="{emptyMessage: translatePipe.transform('NO_DATA_TO_DISPLAY', true), totalMessage: translatePipe.transform('TOTAL', true), selectedMessage: false}"
+                         scrollbarH ="true">
+
+              <ngx-datatable-column name="{{'PRODUCT_RANGE' | translate}}" prop="productRange"[width]="110">
+                <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row" >
+                  <div>
+                    {{value}}
+                  </div>
+                </ng-template>
+              </ngx-datatable-column>
+
+              <ngx-datatable-column name="{{'INLET_SIZE' | translate}}" prop="inletDisplay" [width]="80">
+                <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+                  <div>
+                    {{value}}
+                  </div>
+                </ng-template>
+              </ngx-datatable-column>
+
+              <ngx-datatable-column name="{{'BODY_MATERIAL_TEXT_DUPLICATE_ID_296' | translate}}" prop="bodyMaterial" [width]="110">
+                <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+                  <div>
+                    {{value}}
+                  </div>
+                </ng-template>
+              </ngx-datatable-column>
+
+              <ngx-datatable-column name="{{'OVERPRESSURE' | translate}}" prop="overPressure" [width]="100">
+                <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+                  <div>
+                    {{value}} %
+                  </div>
+                </ng-template>
+              </ngx-datatable-column>
+
+              <ngx-datatable-column name="{{'RELIEVING_PRESSURE' | translate}}" prop="displayRelievingPressure" [width]="140">
+                <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+                  <div>
+                    {{value}}
+                    {{pressureRef.preference.masterTextKey | translate}}
+                  </div>
+                </ng-template>
+              </ngx-datatable-column>
+
+              <ngx-datatable-column name="{{'RELIEVING_TEMPERATURE' | translate}}" prop="displayRelievingTemperature" [width]="160">
+                <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+                  <div>
+                    {{value | preferenceDecimal:'TemperatureUnit'}}
+                    {{temperatureRef.preference.masterTextKey | translate}}
+                  </div>
+                </ng-template>
+              </ngx-datatable-column>
+
+              <ngx-datatable-column name="{{'CALCULATED_AREA' | translate}}" prop="displayCalculatedArea" [width]="110">
+                <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+                  <div>
+                    {{value}}
+                    {{areaRef.preference.masterTextKey | translate}}
+                  </div>
+                </ng-template>
+              </ngx-datatable-column>
+
+              <ngx-datatable-column name="{{'ACTUAL_AREA' | translate}}" prop="displayFlowArea" [width]="90">
+                <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+                  <div>
+                    {{value}}
+                    {{areaRef.preference.masterTextKey | translate}}
+                  </div>
+                </ng-template>
+              </ngx-datatable-column>
+
+
+              <ngx-datatable-column name="{{'RATED_CAPACITY' | translate}}" prop="displayRatedCapacity" [width]="110">
+                <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+                  <div *ngIf="isMassFlow">
+                    {{value}}
+                    {{massFlowRef.preference.masterTextKey | translate}}
+                  </div>
+                  <div *ngIf="!isMassFlow">
+                    {{value}}
+                    {{loadRef.preference.masterTextKey | translate}}
+                  </div>
+                </ng-template>
+              </ngx-datatable-column>
+
+              <ngx-datatable-column name="{{'RATED_CAPACITY' | translate}} ({{volumetricFlowRef.preference.masterTextKey | translate}})" prop="displayRatedCapacityInVolumetricUnit" *ngIf="massDensity !== -1">
+                <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+                  <div>
+                    {{value}}
+                    {{volumetricFlowRef.preference.masterTextKey | translate}}
+                  </div>
+                </ng-template>
+              </ngx-datatable-column>
+
+              <ngx-datatable-column name="{{'PERCENTAGE_CAPACITY' | translate}}" prop="displayPercentCapacity" [width]="140">
+                <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+                  <div>
+                    {{value}} %
+                  </div>
+                </ng-template>
+              </ngx-datatable-column>
+
+              <ngx-datatable-column name="{{'ORIFICE' | translate}}" prop="orifice" [width]="70">
+                <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row" >
+                  <div>
+                    {{value}}
+                  </div>
+                </ng-template>
+              </ngx-datatable-column>
+
+              <!--<ngx-datatable-column name="{'NOZZLE_TYPE' | translate}}" prop="nozzle">
+    <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+      <div>
+        value}}
+      </div>
+    </ng-template>
+  </ngx-datatable-column>-->
+
+              <ngx-datatable-column name="{{'NOISE' | translate}}" prop="displayNoiseAtDistance" [width]="90">
+                <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+                  <div>
+                    {{value}} dB(A)
+                  </div>
+                </ng-template>
+              </ngx-datatable-column>
+
+              <ngx-datatable-column name="{{'REACTION_FORCE' | translate}}" prop="displayReactionForce" [width]="110">
+                <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+                  <div>
+                    {{value}}
+                    {{forceRef.preference.masterTextKey | translate}}
+                  </div>
+                </ng-template>
+              </ngx-datatable-column>
+
+              <div *ngIf="isBackpressure">
+                <ngx-datatable-column name="{{'BACKPRESSURE' | translate}}" prop="backPressure" [width]="110">
+                  <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+                    <div>
+                      {{value}}
+                      {{pressureRef.preference.masterTextKey | translate}}
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+              </div>    
+</ngx-datatable>
+
+          <div *ngIf="isSVSelected">
+
+            <div class="panel panel-primary">
+              <div class="panel-heading" role="tab" id="optionsHeading">
+                <h4 class="panel-title">
+                  <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseBackpressure" aria-expanded="true" aria-controls="collapseBackpressure">
+                    {{"OPTIONS" | translate}}
+                  </a>
+                </h4>
+              </div>
+
+              <div style="width: 94%; margin: auto; margin-top: 12px; padding: 5px; border: solid 2px #428bca; text-align: center">
+                 <p>{{"BACKPRESSURE_MESSAGE" | translate}}</p>
+              </div>
+
+              <div id="collapseOptions" class="panel-collapse collapse show" role="tabpanel" aria-labelledby="optionsHeading">
+                <div class="panel-body">
+
+
+                  <div class="row">
+
+                    <div class="form-group" style="margin-bottom: 0px; margin-top: 0px">
+                      <div class="col-md-2 text-right">
+                        <label class="control-label">{{"INLET_SIZE" | translate}}</label>
+                      </div>
+                      <div class="col-xs-3">
+                        <input autocomplete="off" id="inletSize" class="form-control" formControlName="inletSize" [attr.disabled]="true?'':null" style="text-align: left" />
+                      </div>
+                      <div class="form-group">
+                        <div class="col-md-3 text-right">
+                          <label class="control-label">{{"OUTLET_SIZE" | translate}}</label>
+                        </div>
+                        <div class="col-xs-3">
+                          <enumeration id="outletSize_Enumeration" formControlName="outletSize_Enumeration" [filter-by]="outletSizeListDisplay" (on-change)="onChangeOutletSizeSelectedItem($event)" enumeration-name="SafetyValveOutletSize"></enumeration>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 0px; margin-top: 0px">
+                      <div class="col-md-2 text-right">
+                        <label class="control-label">{{"INLET_CONNECTION" | translate}}</label>
+                      </div>
+                      <div class="col-xs-3">
+                        <enumeration id="inletConnection_Enumeration" formControlName="inletConnection_Enumeration" [filter-by]="inletConnectionList" (on-change)="onChangeInletConnectionSelectedItem($event)" enumeration-name="SafetyValveInletConnection_PRVStation"></enumeration>
+
+                      </div>
+                      <div class="form-group">
+                        <div class="col-md-3 text-right">
+                          <label class="control-label">{{"OUTLET_CONNECTION" | translate}}</label>
+                        </div>
+                        <div class="col-xs-3">
+                          <enumeration id="outletConnection_Enumeration" formControlName="outletConnection_Enumeration" [filter-by]="outletConnectionList" (on-change)="onChangeOutletConnectionSelectedItem($event)" enumeration-name="SafetyValveOutletConnection_PRVStation"></enumeration>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 0px; margin-top: 0px">
+                      <div class="col-md-2 text-right">
+                        <label class="control-label">{{"BONNET" | translate}}</label>
+                      </div>
+                      <div class="col-xs-3">
+                        <div class="input-group">
+                          <enumeration id="bonnet_Enumeration" formControlName="bonnet_Enumeration" [filter-by]="bonnetList" (on-change)="onChangeBonnetSelectedItem($event)" enumeration-name="SafetyValveBonnet_PRVStation"></enumeration>
+                        </div>
+                      </div>
+
+
+                      <div class="form-group">
+                        <div class="col-md-3 text-right">
+                          <label class="control-label">{{"LEVER" | translate}}</label>/<label class="control-label">{{"CAP" | translate}}</label>
+                        </div>
+                        <div class="col-xs-3">
+                          <enumeration id="lever_Enumeration" formControlName="lever_Enumeration" [filter-by]="leverList" (on-change)="onChangeLeverSelectedItem($event)" enumeration-name="SafetyValveLever_PRVStation"></enumeration>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 0px; margin-top: 0px">
+                      <div class="col-md-2 text-right">
+                        <label class="control-label">{{"SEAT" | translate}}</label>
+                      </div>
+                      <div class="col-xs-3">
+                        <div class="input-group">
+                          <enumeration id="seat_Enumeration" formControlName="seat_Enumeration" [filter-by]="seatList" (on-change)="onChangeSeatSelectedItem($event)" enumeration-name="SafetyValveSeat_PRVStation"></enumeration>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <div class="col-md-3 text-right">
+                          <label class="control-label">{{"SPRING" | translate}}</label>
+                        </div>
+                        <div class="col-xs-3">
+                          <enumeration id="spring_Enumeration" formControlName="spring_Enumeration" [filter-by]="springList" (on-change)="onChangeSpringSelectedItem($event)" enumeration-name="SafetyValveSpring_PRVStation"></enumeration>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div *ngIf="showHideFinish.value">
+                      <div class="form-group">
+                        <div class="col-md-2 text-right">
+                          <label class="control-label">{{"FINISH" | translate}}</label>
+                        </div>
+                        <div class="col-xs-3">
+                          <div class="input-group">
+                            <enumeration id="finish_Enumeration" formControlName="finish_Enumeration" [filter-by]="finishList" (on-change)="onChangeFinishSelectedItem($event)" enumeration-name="SafetyValveFinish_PRVStation"></enumeration>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div *ngIf="showNozzle.value">
+                      <div class="form-group">
+                        <div class="col-md-3 text-right">
+                          <label class="control-label">{{"NOZZLE_TYPE" | translate}}</label>
+                        </div>
+                        <div class="col-xs-3">
+                          <div class="input-group">
+                            <enumeration id="nozzle_Enumeration" formControlName="nozzle_Enumeration" [filter-by]="nozzleList" (on-change)="onChangeNozzleSelectedItem($event)" enumeration-name="SafetyValveNozzle_PRVStation"></enumeration>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 0px; margin-top: 0px">
+                      <div class="form-group" style="position:relative">
+                        <div class="col-md-2 text-right">
+                          <label class="control-label" (dblclick)="toggleDebug();">{{"PRODUCT_CODE" | translate}}</label>
+                        </div>
+                        <div class="col-xs-3" style="width:75%">
+                          <input autocomplete="off" id="productCode" class="form-control" formControlName="productCode" [attr.disabled]="true" style="text-align: left; font-size:13px;" />
+                        </div>
+                      </div>
+                      <div class="form-group" style="position:relative;">
+                        <div class="col-md-2 text-right">
+                          <label class="control-label">{{"PRODUCT_NUMBER" | translate}}</label>
+                        </div>
+                        <div class="col-xs-3">
+                          <input autocomplete="off" id="productNumber" class="form-control" formControlName="productNumber" style="text-justify:auto; text-align: left" />
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div style="white-space:pre-wrap;" *ngIf="!!user && !!user.username && (user.username.indexOf('Test User') >= 0) && debugDataEnabled">
+      <code style="white-space:pre-wrap;"> {{debugData}} </code>
+    </div>
+
+  </div>
+
+ <!-- Spec Sheet Header -->
+                    <div class="panel panel-primary" *ngIf="isSVSelected">
+
+                      <div class="panel-heading" role="tab" id="specSheetHeading">
+                        <h4 class="panel-title">
+                          <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOptions" aria-expanded="true" aria-controls="collapseOptions" >
+                            {{"SPEC_SHEET_HEADER_DETAILS" | translate}}
+                          </a>
+                        </h4>
+                      </div>
+
+                      <div id="collapseSpecSheetHeader" class="panel-collapse collapse show" role="tabpanel" aria-labelledby="specSheetHeader">
+                        <div class="panel-body">
+
+                          <!--Col 1-->
+                          <div class="col-lg-6">
+                            <div class="form-group">
+                              <div class="col-xs-4 text-right">
+                                <label class="control-label">{{"SHEET" | translate}}</label>
+                              </div>
+                              <div class="col-xs-5">
+                                <div class="input-group">
+                                  <input autocomplete="off" id="sheet" (keydown.enter)="onKeyDown($event)" class="form-control" type="text" formControlName="sheet" maxlength="20" />
+                                </div>
+                              </div>
+                            </div>
+
+                            <div class="form-group">
+                              <div class="col-xs-4 text-right">
+                                <label class="control-label">{{"REVISION_NO" | translate}}</label>
+                              </div>
+                              <div class="col-xs-5">
+                                <div class="input-group">
+                                  <input autocomplete="off" id="revisionNumber" (keydown.enter)="onKeyDown($event)" class="form-control" type="text" formControlName="revisionNumber" maxlength="17" />
+                                </div>
+                              </div>
+                            </div>
+
+                            <div class="form-group">
+                              <div class="col-xs-4 text-right">
+                                <label class="control-label">{{"PROJECT_TYPE" | translate}}</label>
+                              </div>
+                              <div class="col-xs-5">
+                                <div class="input-group">
+                                  <input autocomplete="off" id="projectType" (keydown.enter)="onKeyDown($event)" class="form-control" type="text" formControlName="projectType" maxlength="50" />
+                                </div>
+                              </div>
+                            </div>
+
+                            <div class="form-group">
+                              <div class="col-xs-4 text-right">
+                                <label class="control-label">{{"TAG_NO" | translate}}</label>
+                              </div>
+                              <div class="col-xs-5">
+                                <div class="input-group">
+                                  <input autocomplete="off" id="tagNumber" (keydown.enter)="onKeyDown($event)" class="form-control" type="text" formControlName="tagNumber" maxlength="20" />
+                                </div>
+                              </div>
+                            </div>
+
+                          </div>
+
+                          <!--Col 2-->
+                          <div class="col-lg-6">
+
+
+                            <div class="form-group">
+                              <div class="col-xs-4 text-right">
+                                <label class="control-label">{{"QUANTITY" | translate}}</label>
+                              </div>
+                              <div class="col-xs-5">
+                                <div class="input-group">
+                                  <input autocomplete="off" id="quantity" (keydown.enter)="onKeyDown($event)" class="form-control" type="text" formControlName="quantity" maxlength="20" />
+                                </div>
+                              </div>
+                            </div>
+
+                            <div class="form-group">
+                              <div class="col-xs-4 text-right">
+                                <label class="control-label">{{"AO_NUMBER" | translate}}</label>
+                              </div>
+                              <div class="col-xs-5">
+                                <div class="input-group">
+                                  <input autocomplete="off" id="aoNumber" (keydown.enter)="onKeyDown($event)" class="form-control" type="text" formControlName="aoNumber" maxlength="17" />
+                                </div>
+                              </div>
+                            </div>
+
+                            <div class="form-group">
+                              <div class="col-xs-4 text-right">
+                                <label class="control-label">{{"ORDER_NUMBER" | translate}}</label>
+                              </div>
+                              <div class="col-xs-5">
+                                <div class="input-group">
+                                  <input autocomplete="off" id="orderNumber" (keydown.enter)="onKeyDown($event)" class="form-control" type="text" formControlName="orderNumber" maxlength="30" />
+                                </div>
+                              </div>
+                            </div>
+
+                            <div class="form-group">
+                              <div>&nbsp;</div>
+
+                            </div>
+                            <div>&nbsp;</div>
+
+                          </div>
+
+                          <div class="form-group" style="position:relative">
+                            <div class="col-xs-2 text-right">
+                              <label class="control-label">{{"NOTES_TEXT_DUPLICATE_ID_959" | translate}}</label>
+                            </div>
+                            <div class="col-xs-5" style="width: 69%; max-width:1050px">
+                              <textarea id="notes" class="form-control" (keydown.enter)="onKeyDown($event)" formControlName="notes" maxlength="300" style="resize: none; margin-left: 2px" rows="4" placeholder="Max 300 characters"></textarea>
+                            </div>
+
+                          </div>
+
+                        </div>
+                        
+
+                      </div>
+                    </div>
+</form>
+  <!--</div>-->
