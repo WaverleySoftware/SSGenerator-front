@@ -7,7 +7,10 @@
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "start:local": "ng serve --proxy-config proxy.conf.js --base-href=/",
+    "build:shared": "ng build sizing-shared-lib",
+    "start:init": "npm run build:shared && npm run start:local"
   },
   "browser": {
     "fs": false,
