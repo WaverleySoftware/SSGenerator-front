@@ -258,7 +258,7 @@ export class EasiHeatComponent extends BaseSizingModule implements OnInit, IGene
   @ViewChild('priceResultsTop', { static: false }) priceResultsContent: ElementRef; // for scroll to view
 
   /*
-   *easiheat Enum
+   *easiHeat Enum
    */
   @ViewChild("condensate_Removal_Enum", { static: false }) condensate_Removal_Enum: EnumerationComponent;
   @ViewChild("actuator_Enum", { static: false }) actuator_Enum: EnumerationComponent;
@@ -520,7 +520,7 @@ export class EasiHeatComponent extends BaseSizingModule implements OnInit, IGene
 
     // Call the abstract class' constructor.
     super();
-    console.log('easiheat component logged');
+    console.log('easiHeat component logged');
 
     // Initialize.
 
@@ -1688,7 +1688,7 @@ export class EasiHeatComponent extends BaseSizingModule implements OnInit, IGene
   }
 
   /*
-  * Method to calculate easiheat sizing.
+  * Method to calculate easiHeat sizing.
   */
   //onCalculateSizing(formGroup: FormGroup) {
   onCalculateSizing() {
@@ -1787,7 +1787,7 @@ export class EasiHeatComponent extends BaseSizingModule implements OnInit, IGene
 
       this.EasiheatService.sizeEasiheat(this.ehSizingDataInput).subscribe((easiHeatOutputData: EasiheatOutput) => {
         this.isCalculating = true;
-        //check for easiheat ranges
+        //check for easiHeat ranges
         if (easiHeatOutputData == null) {
           return;
         }

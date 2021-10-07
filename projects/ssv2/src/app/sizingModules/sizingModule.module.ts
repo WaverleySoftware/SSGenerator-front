@@ -6,7 +6,7 @@ import { SizingModuleChangesGuard } from  "sizing-shared-lib"; //"./sizingModule
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { BlockUIModule } from 'ng-block-ui';
 
-//import { EasiHeatModule } from "./easiheat/easiheat.module";
+//import { EasiHeatModule } from "./easiHeat/easiHeat.module";
 //import { SteamGenerationAssessmentModule } from "./steamGenerationAssessment/steamGenerationAssessment.module";
 import { SaveLoadModalComponent } from "sizing-shared-lib"; // "../shared/sizing-module-saveload/saveload.modal.component";
 

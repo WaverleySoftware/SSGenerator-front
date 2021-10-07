@@ -73,7 +73,7 @@ export * from './lib/shared/sizing-suite-modal/sizing-suite-modal.component';
 export * from './lib/shared/sizingModuleAccess/sizingModuleAccess.service';
 export * from './lib/shared/preference/preference.module';
 export * from './lib/shared/translation/translation.resolver';
-export * from './lib/sizingModules/safetyvalves/modulePreference/productSelectionAdmin/productSelectionAdmin.component';
+export * from './lib/sizingModules/safetyValves/modulePreference/productSelectionAdmin/productSelectionAdmin.component';
 export * from './lib/shared/module-preference/module-preference-details.model';
 export * from './lib/shared/shared.service';
 export * from './lib/shared/validators/user.validator';
@@ -87,7 +87,7 @@ export * from './lib/modules/admin/module-access/module-access.component';
 export * from './lib/modules/admin/module-preferences/module-preferences.component';
 export * from './lib/modules/admin/product-selection/product-selection.component';
 export * from './lib/sizingModules/cleansteamgenerator/modulePreference/cleanSteamGenerator.component'
-export * from './lib/sizingModules/easiheat/modulePreference/easiHeat.component'
+export * from './lib/sizingModules/easiHeat/modulePreference/easiHeat.component'
 export * from './lib/sizingModules/cleansteamgeneratorfbmini/modulePreference/cleanSteamGeneratorFBMini.component';
 export * from './lib/modules/admin/user-preferences/user-preferences.component';
 export * from  './lib/modules/admin/operatingCompany-preferences/operatingCompany-preferences.component';

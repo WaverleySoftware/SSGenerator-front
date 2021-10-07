@@ -5,7 +5,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { AdminService } from "./admin.service";
-import {ProductSelectionAdminService} from '../../sizingModules/safetyvalves/modulePreference/productSelectionAdmin/productSelectionAdmin.service'
+import {ProductSelectionAdminService} from '../../sizingModules/safetyValves/modulePreference/productSelectionAdmin/productSelectionAdmin.service'
 import { CurrencyComponent } from "./currency/currency.component";
 import { OperatingCompanyPreferencesComponent } from './operatingCompany-preferences/operatingCompany-preferences.component';
 import { UserPreferencesComponent } from "./user-preferences/user-preferences.component";
@@ -27,12 +27,12 @@ import { TranslationResolver } from '../../shared/translation/translation.resolv
 import { ProductSelectionAdminComponent } from '../../sizingModules/safetyValves/modulePreference/productSelectionAdmin/productSelectionAdmin.component';
 import { EasiHeatPreferencesComponent } from '../../sizingModules/easiHeat/modulePreference/easiHeat.component';
 
-//import { EasiheatModulePreferencesComponent } from 'src/app/sizingModules/easiheat/modulePreference/easiheat.component';
+//import { EasiheatModulePreferencesComponent } from 'src/app/sizingModules/easiHeat/modulePreference/easiHeat.component';
 //import { SteamGenerationAssessmentModulePreferencesComponent } from 'src/app/sizingModules/steamGenerationAssessment/modulePreference/steamGenerationAssessment.component';
 
 
 // Route definitions for module preferences.
-const modulePreferencesRoutes = [  
+const modulePreferencesRoutes = [
   { path: '', canActivateChild: [SizingModuleAccessGuard], canDeactivate: [GenericChangesGuard], redirectTo: '/admin/modulePreferences', pathMatch: 'full' },
    // The resolver in csg has been removed as the translations are in the admin module pref display group
   { path: 'cleanSteamGenerator', canDeactivate: [GenericChangesGuard], component: CleanSteamGeneratorModulePreferencesComponent, data: { moduleName: "Clean Steam Generator",  displayGroup: "CLEAN_STEAM_GENERATOR_MODULE_PREFERENCES" } },
