@@ -49,41 +49,9 @@ import { TranslationModule } from 'sizing-shared-lib';
 import { ProjectsJobsComponent } from 'sizing-shared-lib';
 import { SyncClientModule } from 'sizing-shared-lib';
 import { HomeComponent } from './modules/home/home.component';
-//import { AdminComponent } from  'sizing-shared-lib'; //'./modules/admin/admin.component';
-// import {EasiHeatSharedModule} from 'projects/easiheat-app/src/app/app.module';
-// import { AdminModule } from 'sizing-shared-lib';
-// import {CleanSteamGeneratorFBSharedModule} from 'projects/cleansteamgenerator-fb-lib/src/app/app.module';
-// import {CleanSteamGeneratorFBComponent} from 'projects/cleansteamgenerator-fb-lib/src/app/cleanSteamGeneratorFB.component';
-// import {AdminModuleWrapperModule} from './modules/adminModuleWrapperModule';
-// import {CurrencyComponent} from 'sizing-shared-lib';
-// import {CleanSteamGeneratorModulePreferencesComponent} from 'sizing-shared-lib';
-// import {CleanSteamGeneratorFBMiniModulePreferencesComponent} from 'sizing-shared-lib';
-// import {OperatingCompanyPreferencesComponent} from 'sizing-shared-lib';
-// import {UserPreferencesComponent} from 'sizing-shared-lib';
-// import {ModulePreferencesComponent} from 'sizing-shared-lib';
-// import {ModuleAccessComponent} from 'sizing-shared-lib';
-// import {ProductSelectionComponent} from 'sizing-shared-lib';
-// import {ProductSelectionAdminComponent} from 'sizing-shared-lib';
-// import { from } from 'rxjs';
+import { SteamGenerationAssessmentSharedModule } from "../../../steam-generation-assessment-lib/src/app/app.module";
 
 const alwaysRun: RunGuardsAndResolvers = 'always';
-
-// const modulePreferencesRoutes = [
-//   { path: '', canActivateChild: [SizingModuleAccessGuard], canDeactivate: [GenericChangesGuard], redirectTo: '/admin/modulePreferences', pathMatch: 'full' },
-//   { path: 'cleanSteamGenerator', canDeactivate: [GenericChangesGuard], component: CleanSteamGeneratorModulePreferencesComponent, data: { moduleName: "Clean Steam Generator",  displayGroup: "CLEAN_STEAM_GENERATOR_MODULE_PREFERENCES" } },
-//   { path: 'cleanSteamGeneratorFB', canDeactivate: [GenericChangesGuard], component: CleanSteamGeneratorFBMiniModulePreferencesComponent, resolve: { resolver: TranslationResolver },  data: { moduleName: "Clean Steam Generator FB",  displayGroup: "CLEAN_STEAM_GENERATOR_FB_MODULE_PREFERENCES" } }
-// ];
-// // Route definitions for the Angular Admin Module
-// const adminroutes = [
-//   { path: 'currency', component: CurrencyComponent, data: { displayGroup: "ADMIN_CURRENCY" } },
-//   { path: 'operatingCompanyPreferences', component: OperatingCompanyPreferencesComponent, canDeactivate: [GenericChangesGuard], data: { displayGroup: "ADMIN_OPERATING_COMPANY_PREFERENCES" } },
-//   { path: 'preferences', component: UserPreferencesComponent, canDeactivate: [GenericChangesGuard], data: { displayGroup: "ADMIN_USER_PREFERENCES" } },
-//   { path: 'modulePreferences', canActivateChild: [SizingModuleAccessGuard], component: ModulePreferencesComponent, canDeactivate: [GenericChangesGuard], data: { displayGroup: "ADMIN_MODULE_PREFERENCES" }, children: modulePreferencesRoutes },
-//   { path: 'moduleAccess', canDeactivate: [GenericChangesGuard], redirectTo: '/admin/moduleAccess/cleanSteamGenerator', pathMatch: 'full' },
-//   { path: 'moduleAccess/:sizingModule', component: ModuleAccessComponent, canDeactivate: [GenericChangesGuard], data: { displayGroup: "ADMIN_MODULE_ACCESS" } },
-//   { path: 'productSelection', component: ProductSelectionComponent, data: { displayGroup: "ADMIN_PRODUCT_SELECTION" } },
-//   { path: 'productSelectionAdmin', component: ProductSelectionAdminComponent, data: { displayGroup: "ADMIN_PRODUCT_SELECTION" } }
-// ];
 
 export const routes = [
   {
@@ -91,7 +59,7 @@ export const routes = [
     canActivateChild: [AuthenticationGuard],
     component: LayoutComponent,
     runGuardsAndResolvers: alwaysRun,
-    resolve: { resolver: TranslationResolver},
+    resolve: { resolver: TranslationResolver },
     children: [
       { path: '', redirectTo: '/home', pathMatch: 'full' },
       { path: 'home', component: HomeComponent, data: { displayGroup: "LAYOUT" } },
@@ -169,13 +137,12 @@ export const routes = [
             canDeactivate: [GenericChangesGuard],
             data: {
               moduleName: 'Steam Generation Assessment',
-              displayGroup: 'STEAM_GENERATION_ASSESSMENT',
+              displayGroup: 'STEAM_GENERATION_ASSESSMENT_SIZING',
               moduleId: '2'
-            }
-          }
+            },
+          },
         ]
       },
-      // { path: 'adminTasks', component: AdminComponent, data: { displayGroup: "ADMIN_LANDING" } },
       {
         path: 'admin',
         loadChildren : './modules/adminModuleWrapperModule#AdminModuleWrapperModule'
@@ -232,8 +199,8 @@ export const routes = [
     CleanSteamGeneratorFBMiniSharedModule,
     SafetyValvesSharedModule,
     FlowMeterSharedModule,
+    SteamGenerationAssessmentSharedModule,
     AuthenticationModule,
-   // AdminModule,
     UserProfileModule,
     SizingModuleAccessModule,
     ProjectsJobsModule,

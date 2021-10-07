@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild,  } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild, } from "@angular/core";
 import { HttpClient,HttpHeaders, HttpParams } from '@angular/common/http';
 
 import { SizingSuiteModalComponent } from "sizing-shared-lib"; //
@@ -18,7 +18,7 @@ import { BaseSizingModule } from "sizing-shared-lib"; // "./sizingModule.abstrac
   templateUrl: './sizingModule.component.html',
   styleUrls: ['./sizingModule.component.scss']
 })
-export class SizingModuleComponent implements OnInit {
+export class SizingModuleComponent implements OnInit, AfterViewInit {
 
   @ViewChild("unitsModal", { static: false }) private unitsModal: SizingSuiteModalComponent;
   @ViewChild("saveLoadModal", { static: false }) private saveLoadModal: SizingSuiteModalComponent;
@@ -27,7 +27,15 @@ export class SizingModuleComponent implements OnInit {
   public isCalculating: boolean;
   public cloneDeep = cloneDeep_;
   newSizing: boolean = false;
-  constructor(private http: HttpClient, private preferenceService: PreferenceService, private messagesService: MessagesService, private projectsJobsService: ProjectsJobsService, private translatePipe: TranslatePipe, private location: Location) {
+  constructor(
+    private http: HttpClient,
+    private preferenceService: PreferenceService,
+    private messagesService: MessagesService,
+    private projectsJobsService: ProjectsJobsService,
+    private translatePipe: TranslatePipe,
+    private location: Location,
+    private cdr: ChangeDetectorRef
+  ) {
 
   }
 
@@ -36,6 +44,10 @@ export class SizingModuleComponent implements OnInit {
 
 
 
+  }
+
+  ngAfterViewInit() {
+    this.cdr.detectChanges();
   }
 
   public modalCallbackCancel() {
