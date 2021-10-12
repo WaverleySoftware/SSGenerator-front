@@ -15,6 +15,10 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
 
   sizingModuleForm: FormGroup;
 
+  public testClickEvent($event): void {
+    console.log('--CLICK--', $event)
+  }
+
   onCalculateSizing(formGroup: FormGroup): any {
     return true;
   }

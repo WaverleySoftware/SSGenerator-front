@@ -1,1 +1,22 @@
-<p>steam-generation-assessment works!</p>
+<div class="sga-wrapper">
+  <div class="panel panel-primary">
+    <div class="panel-heading">
+      <h4 class="panel-title">Improving Steam Generation Efficiency</h4>
+    </div>
+    <div class="panel-body">
+      <app-sga-steps></app-sga-steps>
+    </div>
+  </div>
+
+  <div>
+    <p>
+      <ss-button (click)="testClickEvent($event)">Some button</ss-button>
+    </p>
+    <p>
+      <ss-input [statusLine]="true"></ss-input>
+    </p>
+    <p>
+      <ss-input></ss-input>
+    </p>
+  </div>
+</div>

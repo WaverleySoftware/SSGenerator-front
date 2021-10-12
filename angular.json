@@ -818,8 +818,7 @@
           }
         }
       }
-    }
-  ,
+    },
     "easiheat-app": {
       "projectType": "application",
       "schematics": {

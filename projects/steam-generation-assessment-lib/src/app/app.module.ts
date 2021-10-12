@@ -4,10 +4,13 @@ import { CommonModule } from "@angular/common";
 import { BlockUIModule } from "ng-block-ui";
 import { ProjectsJobsModule, SizingSharedLibModule } from "sizing-shared-lib";
 import { SteamGenerationAssessmentComponent } from './steam-generation-assessment/steam-generation-assessment.component';
+import { SgaStepsComponent } from './sga-steps/sga-steps.component';
+import { SharedModule } from "./modules/shared/shared.module";
 
 @NgModule({
   declarations: [
-    SteamGenerationAssessmentComponent
+    SteamGenerationAssessmentComponent,
+    SgaStepsComponent
   ],
   imports: [
     CommonModule,
@@ -16,6 +19,7 @@ import { SteamGenerationAssessmentComponent } from './steam-generation-assessmen
     FormsModule,
     ReactiveFormsModule,
     BlockUIModule,
+    SharedModule,
   ],
   providers: [],
   entryComponents: [SteamGenerationAssessmentComponent],
