@@ -1,0 +1,89 @@
+$ssInputBorderSize: 2px;
+
+.ssInput {
+  display: inline-flex;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  background-color: var(--color-white);
+  width: 100%;
+  &.statusLine {
+    padding-left: 5px;
+    &:before {
+      content: '';
+      width: 5px;
+      height: 100%;
+      position: absolute;
+      left: 0;
+      top: 0;
+      background-color: var(--color-orange);
+    }
+
+    input {
+      &:focus, &:active {
+        border-width: $ssInputBorderSize $ssInputBorderSize $ssInputBorderSize 0;
+      }
+
+      &.ng-invalid.ng-touched {
+        border-width: $ssInputBorderSize $ssInputBorderSize $ssInputBorderSize 0;
+      }
+    }
+  }
+
+  &_unit {
+    padding: 0 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-open-sans);
+    font-style: normal;
+    font-weight: normal;
+    font-size: 16px;
+    line-height: 150%;
+    text-align: center;
+    letter-spacing: 0.02em;
+    color: var(--color-black);
+    border: $ssInputBorderSize solid transparent;
+  }
+
+  input {
+    padding: 15px 22px;
+    border: $ssInputBorderSize solid transparent;
+    box-sizing: border-box;
+    font-family: Open Sans, sans-serif;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 16px;
+    line-height: 150%;
+    color: var(--color-blue);
+    transition: .2s ease-in-out outline-color;
+    width: 100%;
+    &:focus, &:active {
+      border-width: $ssInputBorderSize;
+      border-color: var(--color-steel-80);
+      &+.ssInput_unit {
+        outline: none;
+        border-width: $ssInputBorderSize $ssInputBorderSize $ssInputBorderSize 0;
+        border-color: var(--color-steel-80);
+      }
+    }
+
+    &.ng-invalid.ng-touched {
+      border-width: $ssInputBorderSize;
+      border-color: var(--color-alarm-red);
+      &+.ssInput_unit {
+        outline: none;
+        border-width: $ssInputBorderSize $ssInputBorderSize $ssInputBorderSize 0;
+        border-color: var(--color-alarm-red);
+      }
+    }
+
+    &:not(.ng-invalid.ng-touched) {
+      outline: 1px solid var(--color-steel-80);
+    }
+
+    &+.ssInput_unit {
+      outline: 1px solid var(--color-steel-80);
+    }
+  }
+}

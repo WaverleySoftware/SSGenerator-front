@@ -1,0 +1,16 @@
+<div class="ssInput" [ngClass]="{ statusLine: statusLine }">
+  <input
+    [type]="type"
+    [ngClass]="className"
+    [(ngModel)]="inputValue"
+    (change)="onChangeEvent($event)"
+    (keydown)="onKeydownEvent($event)"
+    (keypress)="onKeypressEvent($event)"
+    (keyup)="onKeyupEvent($event)"
+    (focus)="onFocusEvent($event)"
+    (focusout)="onFocusOutEvent($event)"
+    [required]="required"
+  >
+
+  <div class="ssInput_unit" *ngIf="!!unit">{{unit}}</div>
+</div>

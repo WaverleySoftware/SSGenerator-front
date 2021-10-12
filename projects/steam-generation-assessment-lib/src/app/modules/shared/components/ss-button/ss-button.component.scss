@@ -1,0 +1,25 @@
+
+.ssButton {
+  border-radius: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 30px;
+  outline: none;
+  text-decoration: none;
+  border: none;
+  background-color: var(--color-blue);
+  color: var(--color-white);
+  font-family: Proxima Nova, sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  line-height: 125%;
+  transition: .25s ease-in-out background-color, .25s ease-in-out color, .25s ease-in-out outline-width;
+  &:hover {
+    background-color: var(--color-white);
+    color: var(--color-blue);
+    outline: 1px solid var(--color-blue);
+  }
+}
