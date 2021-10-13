@@ -1,0 +1,19 @@
+<div class="panel ssPanel">
+  <div class="panel-heading">
+    <h4 class="panel-title">{{title}}</h4>
+    <button class="ssPanel_toggle"
+            type="button"
+            [attr.aria-controls]="id"
+            [attr.aria-expanded]="!isCollapsed"
+            (click)="isCollapsed = !isCollapsed">
+      {{isCollapsed ? '+' : '−'}}
+    </button>
+  </div>
+
+  <div class="collapse" [id]="id" [collapse]="isCollapsed">
+    <div class="panel-body">
+      <hr>
+      <ng-content select="[body]"></ng-content>
+    </div>
+  </div>
+</div>

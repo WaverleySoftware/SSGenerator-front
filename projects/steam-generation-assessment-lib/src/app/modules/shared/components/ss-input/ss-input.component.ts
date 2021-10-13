@@ -9,6 +9,7 @@ export class SsInputComponent implements OnInit {
   @Input() className: string;
   @Input() type: string = 'text';
   @Input() unit: string;
+  @Input() label: string;
   @Input() required: boolean;
   @Input() statusLine: boolean;
   @Input() onChange: EventEmitter<Event> = new EventEmitter<Event>();

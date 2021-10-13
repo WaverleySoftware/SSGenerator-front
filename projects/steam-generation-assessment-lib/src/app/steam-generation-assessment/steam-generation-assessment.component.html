@@ -4,22 +4,22 @@
       <h4 class="panel-title">Improving Steam Generation Efficiency</h4>
     </div>
     <div class="panel-body">
-      <app-sga-steps></app-sga-steps>
+      <sga-steps></sga-steps>
     </div>
   </div>
 
   <div>
-    <p>
-      <ss-button (click)="testClickEvent($event)">Some button</ss-button>
-    </p>
-    <p>
-      <ss-input [statusLine]="true"></ss-input>
-    </p>
-    <p>
-      <ss-input unit="£/kWh" [statusLine]="true" required></ss-input>
-    </p>
-    <p>
-      <ss-input type="number" unit="number"></ss-input>
-    </p>
+    <sga-panel title="Utility parameters">
+      <div body>
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-md-6">
+              <ss-input [statusLine]="true" label="Hours of Operation"></ss-input>
+            </div>
+          </div>
+        </div>
+        <ss-button (click)="testClickEvent($event)">Some button</ss-button>
+      </div>
+    </sga-panel>
   </div>
 </div>

@@ -46,6 +46,18 @@ $ssInputBorderSize: 2px;
     border: $ssInputBorderSize solid transparent;
   }
 
+  &_label {
+    font-family: var(--font-proxima-nova);
+    font-style: normal;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 105%;
+    text-transform: uppercase;
+    color: var(--color-blue);
+    margin-bottom: 8px;
+    padding: 0;
+  }
+
   input {
     padding: 15px 22px;
     border: $ssInputBorderSize solid transparent;
