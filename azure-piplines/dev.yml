@@ -1,0 +1,8 @@
+trigger:
+  - dev
+
+jobs:
+  - template: templates/build-template.yml
+    parameters:
+      ArtifactName: 'sxs-ui-dev'
+      JobName: 'Build_for_dev'
