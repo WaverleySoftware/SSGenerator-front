@@ -27,6 +27,23 @@
     justify-content: center;
     align-items: center;
   }
+
+  &_tooltip {
+    margin-left: 5px;
+  }
+
+  &_subtitle {
+    margin-top: 16px;
+    margin-bottom: 0;
+    font-family: var(--font-proxima-nova);
+    font-style: normal;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 105%;
+    display: flex;
+    align-items: center;
+    color: var(--color-blue-40);
+  }
 }
 
 .panel {
@@ -49,9 +66,13 @@
 
   &-body {
     padding: 0 24px 24px;
+    &>*:first-child {
+      padding-top: 24px;
+    }
+
     &>hr {
       border-top: 1px solid var(--color-steel-40);
-      margin: 0 0 24px;
+      margin: 0;
     }
   }
 }

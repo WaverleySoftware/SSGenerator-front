@@ -8,7 +8,13 @@ import { AfterViewInit, Component, Input, OnInit } from "@angular/core";
 export class SgaPanelComponent implements OnInit, AfterViewInit {
   @Input() id: string = 'SgaPanelComponent-ID';
   @Input() title: string;
+  @Input() subtitle: string;
+  @Input() titleSize: string = '16px';
+  @Input() titleTooltip: string;
+  @Input() background: string;
   @Input() isCollapsed: boolean = false;
+  @Input() showSeparator: boolean = true;
+  @Input() disableToggle: boolean;
 
   constructor() { }
 

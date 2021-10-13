@@ -1,8 +1,15 @@
-<div class="panel ssPanel">
+<div class="panel ssPanel" [ngStyle]="{ background: background }">
   <div class="panel-heading">
-    <h4 class="panel-title">{{title}}</h4>
+    <div>
+      <h4 class="panel-title" [ngStyle]="{fontSize: titleSize }">
+        <span>{{title}}</span>
+        <i class="fa fa-info-circle ssPanel_tooltip" [tooltip]="titleTooltip" placement="right" *ngIf="!!titleTooltip"></i>
+      </h4>
+      <p class="ssPanel_subtitle" *ngIf="!!subtitle">{{subtitle}}</p>
+    </div>
     <button class="ssPanel_toggle"
             type="button"
+            *ngIf="!disableToggle"
             [attr.aria-controls]="id"
             [attr.aria-expanded]="!isCollapsed"
             (click)="isCollapsed = !isCollapsed">
@@ -12,7 +19,7 @@
 
   <div class="collapse" [id]="id" [collapse]="isCollapsed">
     <div class="panel-body">
-      <hr>
+      <hr *ngIf="showSeparator">
       <ng-content select="[body]"></ng-content>
     </div>
   </div>

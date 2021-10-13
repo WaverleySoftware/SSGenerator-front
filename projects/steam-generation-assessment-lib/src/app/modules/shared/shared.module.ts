@@ -5,6 +5,7 @@ import { CollapseModule } from "ngx-bootstrap/collapse";
 import { SsButtonComponent } from './components/ss-button/ss-button.component';
 import { SsInputComponent } from './components/ss-input/ss-input.component';
 import { SgaPanelComponent } from './components/sga-panel/sga-panel.component';
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
 
 @NgModule({
@@ -13,11 +14,12 @@ import { SgaPanelComponent } from './components/sga-panel/sga-panel.component';
     SsInputComponent,
     SgaPanelComponent
   ],
-  imports: [
-    CommonModule,
-    FormsModule,
-    CollapseModule.forRoot(),
-  ],
+	imports: [
+		CommonModule,
+		FormsModule,
+		CollapseModule.forRoot(),
+    TooltipModule.forRoot(),
+	],
   exports: [
     SsButtonComponent,
     SsInputComponent,

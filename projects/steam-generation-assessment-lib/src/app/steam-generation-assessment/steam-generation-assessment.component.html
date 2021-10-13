@@ -1,25 +1,41 @@
 <div class="sga-wrapper">
-  <div class="panel panel-primary">
-    <div class="panel-heading">
-      <h4 class="panel-title">Improving Steam Generation Efficiency</h4>
-    </div>
-    <div class="panel-body">
+  <sga-panel id="ImprovingSteamGenerationEfficiency"
+             title="Improving Steam Generation Efficiency"
+             subtitle="Untitled Project - Untitled Job"
+             titleSize="24px"
+             [showSeparator]="false"
+             [disableToggle]="true">
+    <div body>
       <sga-steps></sga-steps>
     </div>
-  </div>
+  </sga-panel>
 
-  <div>
-    <sga-panel title="Utility parameters">
-      <div body>
-        <div class="container-fluid">
-          <div class="row">
-            <div class="col-md-6">
-              <ss-input [statusLine]="true" label="Hours of Operation"></ss-input>
-            </div>
+  <sga-panel id="UtilityParameters" title="Utility parameters" titleSize="24px">
+    <div body>
+      <div class="container-fluid">
+        <div class="row mb-5">
+          <div class="col-md-6">
+            <ss-input [statusLine]="true" label="Hours of Operation"></ss-input>
           </div>
         </div>
-        <ss-button (click)="testClickEvent($event)">Some button</ss-button>
+
+        <div class="row">
+          <div class="col-sm-12 col-md-6">
+            <sga-panel id="FuelPanel" title="Fuel" titleTooltip="Fuel info tooltip" background="#EDF2F4">
+              <div body>
+                <ss-input label="Fuel type"></ss-input>
+              </div>
+            </sga-panel>
+          </div>
+          <div class="col-sm-12 col-md-6">
+            <sga-panel id="WaterPanel" title="Water" titleTooltip="Fuel info tooltip" background="#EDF2F4">
+              <div body>
+                <ss-input [statusLine]="true" label="Cost of Water / Unt" unit="£/m3"></ss-input>
+              </div>
+            </sga-panel>
+          </div>
+        </div>
       </div>
-    </sga-panel>
-  </div>
+    </div>
+  </sga-panel>
 </div>
