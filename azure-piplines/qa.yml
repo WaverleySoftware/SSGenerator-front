@@ -1,8 +1,0 @@
-trigger:
-  - qa
-
-jobs:
-  - template: templates/build-template.yml
-    parameters:
-      ArtifactName: 'sxs-ui-qa'
-      JobName: 'Build_for_qa'
