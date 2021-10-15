@@ -15,6 +15,18 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
 
   sizingModuleForm: FormGroup;
 
+  public TEST_DATA = {
+    CostOfFuelByYear: [
+      {value: '', name: 'CostOfFuelByYear1', unit: '£/y', type: 'text'},
+      {value: '', name: 'CostOfFuelByYear2', unit: 'kWh/y'}
+    ],
+    isWaterEntering: [
+      {value: '', name: 'isWaterEntering1', unit: '£/y', type: 'text', label: 'Cost of Water / year'},
+      {value: '', name: 'isWaterEntering2', unit: 'm3/h', label: 'Water Consumption / hour'},
+      {value: '', name: 'isWaterEntering3', unit: 'm3/y', label: 'Water Consumption / year'},
+    ],
+  }
+
   public testClickEvent($event): void {
     console.log('--CLICK--', $event)
   }

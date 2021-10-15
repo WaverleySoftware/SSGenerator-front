@@ -1,0 +1,159 @@
+.customField {
+  display: inline-flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  &_label {
+    font-family: var(--font-proxima-nova);
+    font-style: normal;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 105%;
+    text-transform: uppercase;
+    color: var(--color-blue);
+    margin-bottom: 8px;
+    padding: 0;
+    &.marginLeft {
+      margin-left: 40px;
+      display: block;
+    }
+  }
+
+  &_input {
+    display: flex;
+    align-items: stretch;
+    background-color: var(--color-white);
+    &.noBg {
+      background-color: transparent;
+    }
+
+    input, select {
+      background-color: var(--color-white);
+      border-radius: 0;
+      height: 56px;
+      padding: 15px 22px;
+      box-sizing: border-box;
+      font-family: var(--font-open-sans);
+      font-style: normal;
+      font-weight: normal;
+      font-size: 16px;
+      line-height: 150%;
+      color: var(--color-blue);
+      border: 1px solid var(--color-steel-80);
+      transition: .1s ease-in-out border, .1s ease-in-out box-shadow;
+      width: 100%;
+      &.statusLine {
+        border-left-width: 5px;
+        border-left-color: var(--color-orange);
+      }
+
+      &:focus {
+        box-shadow: 0 0 0 4px var(--color-steel-80) inset !important;
+      }
+
+      &.ng-invalid.ng-touched {
+        box-shadow: 0 0 0 4px var(--color-alarm-red) inset !important;
+      }
+
+      &:disabled, &:disabled+.canDisabled {
+        opacity: .3;
+        pointer-events: none;
+      }
+    }
+
+    select {
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url('http://cdn1.iconfinder.com/data/icons/cc_mono_icon_set/blacks/16x16/br_down.png');
+      background-repeat: no-repeat;
+      background-color: var(--color-white);
+      background-position: calc(100% - 10px) center;
+      background-size: 11px;
+      padding-right: 30px;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      &:active {
+        background-image: url('https://cdn1.iconfinder.com/data/icons/cc_mono_icon_set/blacks/16x16/br_up.png');
+      }
+    }
+
+    &__unit {
+      background-color: var(--color-white);
+      padding: 0 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      align-self: stretch;
+      font-family: var(--font-open-sans);
+      border-top: 1px solid var(--color-steel-80);
+      border-right: 1px solid var(--color-steel-80);
+      border-bottom: 1px solid var(--color-steel-80);
+      font-style: normal;
+      font-weight: normal;
+      font-size: 16px;
+      line-height: 150%;
+      text-align: center;
+      letter-spacing: 0.02em;
+      color: var(--color-black);
+    }
+  }
+
+  &_checkboxes {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    &__wrap {
+      font-family: var(--font-proxima-nova);
+      font-style: normal;
+      font-weight: 600;
+      font-size: 16px;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      text-transform: uppercase;
+      color: var(--color-blue);
+      margin: 0 40px 0 0;
+      input[type="checkbox"],
+      input[type="radio"] {
+        margin: 0 20px 0 0;
+        width: 20px;
+        height: 20px;
+        min-width: 20px;
+        min-height: 20px;
+        outline: none;
+        position: relative;
+        &:focus, &:active {
+          box-shadow: none!important;
+          outline: none;
+        }
+
+        &:after {
+          content: '';
+          display: inline-block;
+          visibility: visible;
+          border: 1px solid var(--color-steel-80);
+          background-color: var(--color-white);
+          box-sizing: border-box;
+          border-radius: 50%;
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+        }
+
+        &:checked:after {
+          border-color: var(--color-blue);
+          background-color: var(--color-white);
+          border-width: 6px;
+        }
+
+        &:hover {
+          cursor: pointer;
+        }
+      }
+    }
+  }
+}

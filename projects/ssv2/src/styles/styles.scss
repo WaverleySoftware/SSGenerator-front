@@ -6,6 +6,17 @@
 // @import '~@swimlane/ngx-datatable/assets/icons.css';
 
 @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,300;0,400;0,600;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap');
+
+@font-face {
+  font-family: Proxima Nova;
+  src: url("https://use.typekit.net/af/a727c9/00000000000000007735af8e/30/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3") format("woff2"),
+       url("https://use.typekit.net/af/a727c9/00000000000000007735af8e/30/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3") format("woff"),
+       url("https://use.typekit.net/af/a727c9/00000000000000007735af8e/30/a?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3") format("opentype");
+  font-display:auto;
+  font-style:normal;
+  font-weight:400;
+}
 
 :root {
   --color-blue: #002D72;

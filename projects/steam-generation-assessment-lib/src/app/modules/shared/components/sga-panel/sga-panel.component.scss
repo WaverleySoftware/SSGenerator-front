@@ -7,7 +7,7 @@
     max-height: 0;
     &.in {
       transition: all .7s ease;
-      max-height: 100vh;
+      max-height: 2000px;
     }
   }
 
@@ -20,6 +20,8 @@
     padding: 0;
     width: 32px;
     height: 32px;
+    min-width: 32px;
+    min-height: 32px;
     border-radius: 50%;
     line-height: 1;
     font-size: 28px;

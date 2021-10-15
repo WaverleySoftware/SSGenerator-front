@@ -6,21 +6,23 @@ import { ProjectsJobsModule, SizingSharedLibModule } from "sizing-shared-lib";
 import { SteamGenerationAssessmentComponent } from './steam-generation-assessment/steam-generation-assessment.component';
 import { SgaStepsComponent } from './sga-steps/sga-steps.component';
 import { SharedModule } from "./modules/shared/shared.module";
+import { TabsModule } from 'ngx-bootstrap/tabs';
 
 @NgModule({
   declarations: [
     SteamGenerationAssessmentComponent,
     SgaStepsComponent
   ],
-  imports: [
-    CommonModule,
-    SizingSharedLibModule.forRoot(),
-    ProjectsJobsModule,
-    FormsModule,
-    ReactiveFormsModule,
-    BlockUIModule,
-    SharedModule,
-  ],
+	imports: [
+		CommonModule,
+		SizingSharedLibModule.forRoot(),
+		ProjectsJobsModule,
+		FormsModule,
+		ReactiveFormsModule,
+		BlockUIModule,
+		SharedModule,
+    TabsModule.forRoot(),
+	],
   providers: [],
   entryComponents: [SteamGenerationAssessmentComponent],
   exports: [SteamGenerationAssessmentComponent]
