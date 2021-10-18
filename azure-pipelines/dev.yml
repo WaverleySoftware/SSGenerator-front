@@ -5,4 +5,4 @@ jobs:
   - template: templates/build-template.yml
     parameters:
       ArtifactName: 'sg-ui-dev'
-      JobName: 'Build_for_dev'
+      JobName: 'Build_dev'
