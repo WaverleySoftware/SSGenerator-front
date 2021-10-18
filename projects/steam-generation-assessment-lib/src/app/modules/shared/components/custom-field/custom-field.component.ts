@@ -24,7 +24,7 @@ interface RadioInputDataInterface {
 })
 export class CustomFieldComponent implements OnInit {
   @Input() className: string;
-  @Input() type: 'text' | 'email' | 'password' | 'number' | 'yesNo' | 'radioInput' | 'select' = 'text';
+  @Input() type: 'text' | 'email' | 'password' | 'number' | 'yesNo' | 'radioInput' | 'test' | 'select' = 'text';
   @Input() radioInputType: string = 'text';
   @Input() unit: string;
   @Input() label: string;
@@ -32,45 +32,25 @@ export class CustomFieldComponent implements OnInit {
   @Input() placeholder: string;
   @Input() required: boolean;
   @Input() disabled: boolean;
+  @Input() checkMark: boolean = true;
   @Input() statusLine: boolean;
+  @Input() options: SSelectOptionInterface[];
+  @Input() radioInputData: RadioInputDataInterface[];
+
+  @Input() model: any;
+  @Output() modelChange: EventEmitter<any> = new EventEmitter<any>();
+
   @Input() onChange: EventEmitter<Event> = new EventEmitter<Event>();
   @Input() onKeydown: EventEmitter<Event> = new EventEmitter<Event>();
   @Input() onKeypress: EventEmitter<Event> = new EventEmitter<Event>();
   @Input() onKeyup: EventEmitter<Event> = new EventEmitter<Event>();
   @Input() onFocus: EventEmitter<Event> = new EventEmitter<Event>();
   @Input() onFocusOut: EventEmitter<Event> = new EventEmitter<Event>();
-  @Input() options: SSelectOptionInterface[];
-  @Input() radioInputData: RadioInputDataInterface[];
-  @Input() model: any;
-  @Output() modelChange: EventEmitter<any> = new EventEmitter<any>();
 
   public radioInputModel: any;
   constructor() { }
 
   ngOnInit() {
-  }
-
-  public onChangeEvent(event: Event): void {
-    this.onChange.emit(event);
-  }
-
-  public onKeydownEvent($event: Event): void {
-    this.onKeydown.emit($event);
-  }
-
-  public onKeypressEvent($event: Event): void {
-    this.onKeypress.emit($event);
-  }
-
-  public onKeyupEvent($event: Event): void {
-    this.onKeyup.emit($event);
-  }
-
-  public onFocusEvent($event: Event): void {
-    this.onFocus.emit($event);
-  }
-  public onFocusOutEvent($event: Event): void {
-    this.onFocusOut.emit($event);
   }
 
   public sortArrayByIndex(options: SSelectOptionInterface[]): SSelectOptionInterface[] {

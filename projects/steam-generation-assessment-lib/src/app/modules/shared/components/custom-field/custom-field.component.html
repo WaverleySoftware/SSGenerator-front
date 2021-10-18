@@ -42,6 +42,15 @@
         </label>
       </div>
 
+      <div *ngSwitchCase="'test'" class="customField_checkboxes">
+        <div class="col-12 form-group" #ref>
+          <ng-content></ng-content>
+          <ng-container *ngFor="let content of ref.children">
+            {{content.tagName}}
+          </ng-container>
+        </div>
+      </div>
+
       <div *ngSwitchCase="'radioInput'" class="customField_checkboxes" [ngClass]="{ className: className }">
         <div class="col-12 form-group" *ngFor="let item of radioInputData">
           <label class="customField_label marginLeft" *ngIf="!!item.label || !!label">
@@ -56,7 +65,7 @@
             <input [type]="item.type || radioInputType"
                    [(ngModel)]="model"
                    (ngModelChange)="modelChange.emit(model)"
-                   [ngClass]="{statusLine: item.statusLine !== undefined ? item.statusLine : statusLine}"
+                   [ngClass]="{statusLine: item.statusLine !== undefined ? item.statusLine : statusLine, checkMark: checkMark}"
                    [disabled]="item.disabled !== undefined ? item.disabled : disabled !== undefined ? disabled : !radioInputModel || radioInputModel !== item.name" />
             <div class="customField_input__unit canDisabled" *ngIf="!!item.unit || !!unit">
               {{item.unit || unit}}
@@ -68,7 +77,7 @@
 
       <input
         [type]="type"
-        [ngClass]="{className: className, statusLine: statusLine}"
+        [ngClass]="{className: className, statusLine: statusLine, checkMark: checkMark}"
         [(ngModel)]="model"
         (ngModelChange)="modelChange.emit(model)"
         [required]="required"
