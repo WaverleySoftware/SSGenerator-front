@@ -1,0 +1,8 @@
+trigger:
+  - qa
+
+jobs:
+  - template: templates/build-template.yml
+    parameters:
+      ArtifactName: 'steam-generator-qa-ui'
+      JobName: 'steam_generator_qa_job'
