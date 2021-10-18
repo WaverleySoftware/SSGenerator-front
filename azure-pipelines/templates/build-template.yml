@@ -15,11 +15,11 @@ jobs:
         displayName: 'Install Node.js'
 
       - script: |
-          sudo npm ci
+          npm ci
         displayName: 'NPM install (CI mode, preserve strict package versions)'
 
       - script: |
-          sudo npm run build:shared
+          npm run build:shared
         displayName: 'NPM build shared library'
 
       - script: |
