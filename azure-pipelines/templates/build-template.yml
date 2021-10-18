@@ -15,7 +15,7 @@ jobs:
         displayName: 'Install Node.js'
 
       - script: |
-          npm ci
+          sudo npm ci
         displayName: 'NPM install (CI mode, preserve strict package versions)'
 
       - script: |
