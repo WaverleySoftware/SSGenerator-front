@@ -19,7 +19,7 @@ jobs:
         displayName: 'NPM install (CI mode, preserve strict package versions)'
 
       - script: |
-          npm run build:shared
+          sudo npm run build:shared
         displayName: 'NPM build shared library'
 
       - script: |
