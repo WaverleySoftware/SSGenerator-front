@@ -5,4 +5,4 @@ jobs:
   - template: templates/build-template.yml
     parameters:
       ArtifactName: 'steam-generator-dev-ui'
-      JobName: 'steam-generator-dev-job'
+      JobName: 'steam_generator_dev_job'
