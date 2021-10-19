@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { BaseSizingModule, JobSizing, Project } from "sizing-shared-lib";
-import { FormGroup } from "@angular/forms";
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 
 @Component({
   selector: 'app-steam-generation-assessment',
@@ -15,20 +15,41 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
 
   sizingModuleForm: FormGroup;
 
-  public TEST_DATA = {
-    CostOfFuelByYear: [
-      {value: '', name: 'CostOfFuelByYear1', unit: '£/y', type: 'text'},
-      {value: '', name: 'CostOfFuelByYear2', unit: 'kWh/y'}
-    ],
-    isWaterEntering: [
-      {value: '', name: 'isWaterEntering1', unit: '£/y', type: 'text', label: 'Cost of Water / year'},
-      {value: '', name: 'isWaterEntering2', unit: 'm3/h', label: 'Water Consumption / hour'},
-      {value: '', name: 'isWaterEntering3', unit: 'm3/y', label: 'Water Consumption / year'},
-    ],
+  constructor(private fb: FormBuilder) {
+    super();
+  }
+
+  ngOnInit() {
+    this.initForm();
   }
 
   public testClickEvent($event): void {
-    console.log('--CLICK--', $event)
+    console.log({
+      $event,
+      values: this.sizingModuleForm.getRawValue(),
+    })
+  }
+
+  private initForm():void {
+    this.sizingModuleForm = this.fb.group({
+      test: ["", Validators.required],
+      hoursOfOperation: ["", Validators.required],
+      fuelType: ["Natural Gas", Validators.required],
+      fuelCalorificValue: ["", Validators.required],
+      cO2EmissionsUnitFuel: ["0.1850", Validators.required],
+      costOfFuelUnit: ["0.025"],
+      isFuelComsumptionMeasured: [false],
+      costOfFuelYear: [""],
+      fuelConsumptionYear: [""],
+      areCO2OrCarbonEmissionsTaxed: [false],
+      carbonLeviTaxUnit: [""],
+      costOfCo2UnitMax: [""],
+      costOfWaterUnt: [""],
+      isWaterEnteringBoilerHouseMeasured: [false],
+      costOfWaterYear: [""],
+      waterConsumptionHour: [""],
+      waterConsumptionYear: [""],
+    })
   }
 
   onCalculateSizing(formGroup: FormGroup): any {
@@ -73,14 +94,6 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
 
   repackageSizing(): any {
     return true;
-  }
-
-  constructor() {
-    super();
-  }
-
-  ngOnInit() {
-    console.log('%c ----- ON INIT "SteamGenerationAssessment" MODULE ------', 'background: #222; color: #bada55; font-size: 16px;');
   }
 
 }
