@@ -1,7 +1,7 @@
 <div class="form-group formField {{type}} {{classList}}">
   <label class="formField_label" *ngIf="!!label">{{label}}{{required && ' *'}}</label>
   <div class="formField_wrap"
-       [ngClass]="{focus: isFocused, error: !!error, disabled: disabled || (type === 'radioInput' && !checkboxModel), checkField: type === 'yesNo' || type === 'radioInput'}">
+       [ngClass]="{focus: isFocused, error: !!error, disabled: disabled || (type === 'radioInput' && !checked), checkField: type === 'yesNo' || type === 'radioInput'}">
     <ng-container [ngSwitch]="type">
       <select *ngSwitchCase="'select'"
               class="form-control"
@@ -46,9 +46,10 @@
         </label>
       </ng-container>
       <ng-container *ngSwitchCase="'radioInput'">
-        <input type="checkbox"
-               class="radioInput_check"
-               [(ngModel)]="checkboxModel"
+        <input class="radioInput_check"
+               #radioCheckRef
+               [type]="multiple ? 'checkbox' : 'radio'"
+               (change)="changeRadioInputHandle($event.target)"
                [name]="group"
                [disabled]="disabled"
                [required]="required">
@@ -60,7 +61,7 @@
                (blur)="onTouched()"
                (focusin)="isFocused = true"
                (focusout)="isFocused = false"
-               [disabled]="!checkboxModel"
+               [disabled]="!radioCheckRef.checked"
                [required]="required"
                [placeholder]="placeholder || ''"
                type="number"
@@ -87,3 +88,8 @@
   </div>
   <span [ngClass]="{formField_error: !!error}" *ngIf="!!error || !!message">{{error || message}}</span>
 </div>
+
+<ng-container *ngIf="type === 'yesNo'">
+  <ng-content *ngIf="value" select="[yes]"></ng-content>
+  <ng-content *ngIf="!value" select="[no]"></ng-content>
+</ng-container>

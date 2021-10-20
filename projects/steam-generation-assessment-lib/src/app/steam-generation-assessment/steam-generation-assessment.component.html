@@ -45,47 +45,47 @@
               </ng-container>
               <app-form-field formControlName="isFuelComsumptionMeasured"
                               type="yesNo"
-                              label="Is Fuel Comsumption Measured?"></app-form-field>
-              <ng-container *ngIf="sizingModuleForm.controls['isFuelComsumptionMeasured'].value">
-                <app-form-field formControlName="costOfFuelYear"
-                                type="radioInput"
-                                group="costOfFuelYear"
-                                unit="£/y"
-                                [disabled]="false"
-                                [required]="true"
-                                label="Cost of fuel / year"></app-form-field>
-                <app-form-field formControlName="fuelConsumptionYear"
-                                type="radioInput"
-                                group="costOfFuelYear"
-                                unit="m3/y"
-                                [disabled]="false"
-                                [required]="true"
-                                label="Fuel Consumption / year"></app-form-field>
-              </ng-container>
+                              name="isFuelComsumptionMeasured"
+                              label="Is Fuel Comsumption Measured?">
+                <ng-container yes>
+                  <app-form-field formControlName="costOfFuelYear"
+                                  type="radioInput"
+                                  group="costOfFuelYear"
+                                  unit="£/y"
+                                  [required]="true"
+                                  label="Cost of fuel / year"></app-form-field>
+                  <app-form-field formControlName="fuelConsumptionYear"
+                                  type="radioInput"
+                                  group="costOfFuelYear"
+                                  unit="m3/y"
+                                  [required]="true"
+                                  label="Fuel Consumption / year"></app-form-field>
+                </ng-container>
+              </app-form-field>
             </div>
           </sga-panel>
 
           <sga-panel id="CO2EmissionPanel" title="CO2 Emission" titleTooltip="Tooltip" background="#EDF2F4">
             <div body>
-              <app-form-field #areCO2OrCarbonEmissionsTaxed
-                              formControlName="areCO2OrCarbonEmissionsTaxed"
+              <app-form-field formControlName="areCO2OrCarbonEmissionsTaxed"
                               name="areCO2OrCarbonEmissionsTaxed"
                               type="yesNo"
-                              label="Are CO2 or carbon emissions taxed?"></app-form-field>
-              <ng-container  *ngIf="areCO2OrCarbonEmissionsTaxed.model">
-                <app-form-field formControlName="carbonLeviTaxUnit"
-                                type="radioInput"
-                                unit="???"
-                                group="group2"
-                                [required]="true"
-                                label="Carbon levi tax / unit"></app-form-field>
-                <app-form-field formControlName="costOfCo2UnitMax"
-                                type="radioInput"
-                                unit="???"
-                                group="group2"
-                                [required]="true"
-                                label="cost of co2 / unit max"></app-form-field>
-              </ng-container>
+                              label="Are CO2 or carbon emissions taxed?">
+                <ng-container yes>
+                  <app-form-field formControlName="carbonLeviTaxUnit"
+                                  type="radioInput"
+                                  unit="???"
+                                  group="areCO2OrCarbonEmissionsTaxed"
+                                  [required]="true"
+                                  label="Carbon levi tax / unit"></app-form-field>
+                  <app-form-field formControlName="costOfCo2UnitMax"
+                                  type="radioInput"
+                                  unit="???"
+                                  group="areCO2OrCarbonEmissionsTaxed"
+                                  [required]="true"
+                                  label="cost of co2 / unit max"></app-form-field>
+                </ng-container>
+              </app-form-field>
             </div>
           </sga-panel>
         </div>
@@ -98,33 +98,53 @@
                               unit="£/m3"
                               [required]="true"></app-form-field>
               <app-form-field formControlName="isWaterEnteringBoilerHouseMeasured"
-                              #isWaterEnteringBoilerHouseMeasured
                               name="isWaterEnteringBoilerHouseMeasured"
                               label="Is water entering the boiler house measured?"
-                              type="yesNo"></app-form-field>
-              <ng-container *ngIf="isWaterEnteringBoilerHouseMeasured.model">
-                <app-form-field formControlName="costOfWaterYear"
-                                label="Cost of Water / year"
-                                unit="£/y"
-                                type="radioInput"
-                                [required]="true"></app-form-field>
-                <app-form-field formControlName="waterConsumptionHour"
-                                label="Water Consumption / hour"
-                                unit="m3/h"
-                                type="radioInput"
-                                [required]="true"></app-form-field>
-                <app-form-field formControlName="waterConsumptionYear"
-                                label="Water Consumption / year"
-                                unit="m3/y"
-                                type="radioInput"
-                                [required]="true"></app-form-field>
-              </ng-container>
+                              type="yesNo">
+                <ng-container yes>
+                  <app-form-field formControlName="costOfWaterYear"
+                                  label="Cost of Water / year"
+                                  unit="£/y"
+                                  type="radioInput"
+                                  group="isWaterEnteringBoilerHouseMeasured"
+                                  [required]="true"></app-form-field>
+                  <app-form-field formControlName="waterConsumptionHour"
+                                  label="Water Consumption / hour"
+                                  unit="m3/h"
+                                  type="radioInput"
+                                  group="isWaterEnteringBoilerHouseMeasured"
+                                  [required]="true"></app-form-field>
+                  <app-form-field formControlName="waterConsumptionYear"
+                                  label="Water Consumption / year"
+                                  unit="m3/y"
+                                  type="radioInput"
+                                  group="isWaterEnteringBoilerHouseMeasured"
+                                  [required]="true"></app-form-field>
+                </ng-container>
+              </app-form-field>
+            </div>
+          </sga-panel>
+
+          <sga-panel id="waterTreatmentChemicalsPanel" title="Water treatment chemicals" titleTooltip="Tooltip" background="#EDF2F4">
+            <div body>
+              <app-form-field type="yesNo" name="areChemicalCostKnown" label="Are chemical cost known?">
+                <ng-container yes>
+                  <app-form-field [required]="true" type="number" label="Total chemical costs / year" unit="£/y"></app-form-field>
+                  <app-form-field type="number" label="O2 scavenging chemical costs / year" unit="£/y"></app-form-field>
+                </ng-container>
+              </app-form-field>
+            </div>
+          </sga-panel>
+
+          <sga-panel id="waterEffluentPanel" title="Water effluent" titleTooltip="Tooltip" background="#EDF2F4">
+            <div body>
+              <app-form-field [required]="true" type="number" label="Cost of effluent / unit" unit="£/m3"></app-form-field>
             </div>
           </sga-panel>
         </div>
       </div>
 
-      <button class="btn" type="submit">Submit</button>
+      <button class="btn" type="submit">submit</button>
     </form>
   </sga-panel>
 
