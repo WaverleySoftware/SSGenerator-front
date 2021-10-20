@@ -143,20 +143,284 @@
           </sga-panel>
         </div>
       </div>
-
-      <button class="btn" type="submit">submit</button>
     </form>
   </sga-panel>
 
-  <sga-panel id="BoilerHouseParameters" title="Boiler house parameters"  titleSize="24px" [isCollapsed]="true">
+  <sga-panel [isCollapsed]="true" [showSeparator]="false" id="BoilerHouseParameters" title="Boiler house parameters" titleSize="24px">
     <div body class="container-fluid">
       <div class="row">
         <div class="col-md-12">
-          <tabset type="pills">
-            <tab heading="Boiler" customClass="customClass"><h1>Boiler Coming soon</h1></tab>
-            <tab heading="TDS BLOWDOwn"><h1>TDS BLOWDOwn Coming soon</h1></tab>
-            <tab heading="Water Treatment"><h1> Water TreatmentComing soon</h1></tab>
-            <tab heading="Feedwater & Condensate"><h1>Feedwater & Condensate Coming soon</h1></tab>
+          <tabset type="pills" class="sgaTabs">
+            <tab heading="Boiler" customClass="sgaTab">
+              <sga-panel id="boilerParametersPanel" title="Boiler parameters" background="#EDF2F4">
+                <form body [formGroup]="boilerParametersForm" (ngSubmit)="testClickEvent($event)" class="row">
+                  <div class="col-md-6 border-r-md">
+                    <app-form-field type="yesNo" name="isSteamSuperheated" label="Is Steam Superheated?"></app-form-field>
+                    <app-form-field type="yesNo" name="isSteamFlowMeasured" label="Is steam flow measured?">
+                      <ng-container yes>
+                        <app-form-field type="radioInput"
+                                        [required]="true"
+                                        group="isSteamFlowMeasured"
+                                        name="steamGenerationHour"
+                                        unit="kg/h"
+                                        label="Steam generation / hour"></app-form-field>
+                        <app-form-field type="radioInput"
+                                        [required]="true"
+                                        group="isSteamFlowMeasured"
+                                        name="steamGenerationYear"
+                                        unit="tonnes/y"
+                                        label="Steam generation / year"></app-form-field>
+                      </ng-container>
+                    </app-form-field>
+                  </div>
+                  <div class="col-md-6">
+                    <app-form-field name="steamTemperature" unit="°C" label="Steam Temperature"></app-form-field>
+                    <app-form-field [required]="true"
+                                    name="steamPressure"
+                                    unit="bar gauge"
+                                    label="Steam Pressure"></app-form-field>
+                    <app-form-field type="yesNo" name="isEconomiserPresent" label="Is Economiser Present?"></app-form-field>
+                    <app-form-field [filled]="true"
+                                    type="number"
+                                    formControlName="boilerEfficiency"
+                                    name="boilerEfficiency"
+                                    label="Boiler Efficiency"
+                                    [required]="boilerParametersForm.get('boilerEfficiency')?.errors?.required"
+                                    [error]="parseError('boilerEfficiency')"
+                                    unit="%"></app-form-field>
+                  </div>
+                </form>
+              </sga-panel>
+              <div class="schemeImage">
+                <img src="/assets/img/steam_generation/boiler_scheme.png" alt="boiler-scheme">
+              </div>
+            </tab>
+            <tab heading="TDS BLOWDOwn" customClass="sgaTab">
+              <sga-panel id="blowdownEquipmentPanel" title="Blowdown equipment" background="#EDF2F4">
+                <div class="row" body>
+                  <div class="col-md-4 border-r-md">
+                    <app-form-field type="yesNo"
+                                    name="isBlowdownVesselPresent"
+                                    label="is blowdown vessel present?"></app-form-field>
+                    <app-form-field type="yesNo"
+                                    name="isCoolingWaterUsed"
+                                    label="is cooling water used?"></app-form-field>
+                  </div>
+                  <div class="col-md-4 border-r-md">
+                    <app-form-field type="yesNo"
+                                    name="isAutoTdsPresent"
+                                    label="Is auto tds present?"></app-form-field>
+                    <app-form-field type="yesNo"
+                                    name="isFlashVesselPresent"
+                                    label="Is flash vessel present?"></app-form-field>
+                  </div>
+                  <div class="col-md-4">
+                    <app-form-field type="yesNo"
+                                    name="isHeatExchangerPresent"
+                                    label="Is heat exchanger present?"></app-form-field>
+                    <app-form-field [filled]="true"
+                                    name="waterTemperatureLeavingHeatExchange"
+                                    unit="°C"
+                                    label="water temperature leaving heat exchange"></app-form-field>
+                  </div>
+                </div>
+              </sga-panel>
+              <sga-panel id="tdsBlowdownParametersPanel" title="tds Blowdown parameters" background="#EDF2F4">
+                <div class="row" body>
+                  <div class="col-md-4 border-r-md">
+                    <app-form-field [required]="true"
+                                    name="tDSOfFeedwater"
+                                    unit="ppm"
+                                    label="TDS of feedwater"></app-form-field>
+                  </div>
+                  <div class="col-md-4 border-r-md">
+                    <app-form-field [required]="true"
+                                    name="averageBoilerTds"
+                                    unit="ppm"
+                                    label="Average boiler tds"></app-form-field>
+                  </div>
+                  <div class="col-md-4">
+                    <app-form-field [required]="true"
+                                    name="maximumAllowableBoilerTDS"
+                                    unit="ppm"
+                                    label="maximum allowable boiler TDS"></app-form-field>
+                  </div>
+                </div>
+              </sga-panel>
+              <div class="schemeImage">
+                <img src="/assets/img/steam_generation/boiler_scheme_2.png" alt="boiler-scheme">
+              </div>
+            </tab>
+            <tab heading="Water Treatment" customClass="sgaTab">
+              <sga-panel id="makeUpWaterPanel" title="Make-up water" background="#EDF2F4">
+                <div class="row" body>
+                  <div class="col-md-6 border-r-md">
+                    <app-form-field type="yesNo"
+                                    name="isMakeUpWaterMonitored"
+                                    label="Is make-up water monitored?">
+                      <ng-container yes>
+                        <app-form-field [required]="true"
+                                        name="temperatureOfMakeUpWater"
+                                        unit="°C"
+                                        label="Temperature of make-up water"></app-form-field>
+                      </ng-container>
+                    </app-form-field>
+                  </div>
+                  <div class="col-md-6">
+                    <app-form-field [required]="true"
+                                    type="radioInput"
+                                    group="makeUpWater"
+                                    name="makeUpWaterHour"
+                                    unit="m3/h"
+                                    label="make-up water/hour"></app-form-field>
+                    <app-form-field [required]="true"
+                                    type="radioInput"
+                                    group="makeUpWater"
+                                    name="makeUpWaterYear"
+                                    unit="m3/h"
+                                    label="make-up water/year"></app-form-field>
+                  </div>
+                </div>
+              </sga-panel>
+              <sga-panel id="waterTreatmentParametersPanel" title="water treatment parameters" background="#EDF2F4">
+                <div class="row" body>
+                  <div class="col-md-4">
+                    <app-form-field name="waterTreatmentMethod"
+                                    type="select"
+                                    [options]="['Base Exchange', '2', '3']"
+                                    label="water treatment method"></app-form-field>
+                  </div>
+                  <div class="col-md-4">
+                    <app-form-field [required]="true"
+                                    unit="%"
+                                    label="Percentage water rejection"
+                                    name="percentageWaterRejection"></app-form-field>
+                  </div>
+                  <div class="col-md-4">
+                    <app-form-field [required]="true"
+                                    unit="ppm"
+                                    label="tds of makeup water"
+                                    name="tdsOfMakeupWater"></app-form-field>
+                  </div>
+                </div>
+              </sga-panel>
+              <div class="schemeImage">
+                <img src="/assets/img/steam_generation/boiler_scheme_3.png" alt="boiler-scheme">
+              </div>
+            </tab>
+            <tab heading="Feedwater & Condensate" customClass="sgaTab">
+              <sga-panel id="deaeratorTypePanel" title="Deaerator type" background="#EDF2F4">
+                <div class="row" body>
+                  <div class="col-md-4">
+                    <app-form-field type="radio"
+                                    value="autmosphericDeaerator"
+                                    id="autmosphericDeaeratorId"
+                                    name="deaeratorType"
+                                    label="Autmospheric Deaerator">
+                      <img before
+                           class="img-responsive cursor-pointer"
+                           src="/assets/img/steam_generation/deaerator_type_1.png"
+                           alt="deaerator_type_1">
+                    </app-form-field>
+                  </div>
+                  <div class="col-md-4">
+                    <app-form-field type="radio"
+                                    value="pressurlsedDeaerator"
+                                    id="pressurlsedDeaeratorId"
+                                    name="deaeratorType"
+                                    label="Pressurlsed Deaerator">
+                      <img before
+                           class="img-responsive cursor-pointer"
+                           src="/assets/img/steam_generation/deaerator_type_1.png"
+                           alt="deaerator_type_1">
+                    </app-form-field>
+                  </div>
+                </div>
+              </sga-panel>
+
+              <sga-panel id="boilerFeedwaterPanel" title="Boiler feedwater" background="#EDF2F4">
+                <div class="row" body>
+                  <div class="col-md-4 border-r-md">
+                    <app-form-field type="yesNo" name="isFeedwaterFlowrateMeasured" label="Is feedwater flowrate measured?">
+                      <ng-container yes>
+                        <app-form-field [required]="true"
+                                        type="radioInput"
+                                        group="isFeedwaterFlowrateMeasured"
+                                        name="consumptionHr"
+                                        label="Consumption/hr"
+                                        unit="m3/h"></app-form-field>
+                        <app-form-field [required]="true"
+                                        type="radioInput"
+                                        group="isFeedwaterFlowrateMeasured"
+                                        name="consumptionHr"
+                                        label="Consumption/year"
+                                        unit="m3/y"></app-form-field>
+                      </ng-container>
+                    </app-form-field>
+                  </div>
+                  <div class="col-md-4 border-r-md">
+                    <app-form-field [required]="true"
+                                    name="temperatureOfFeedtank"
+                                    unit="°C"
+                                    label="temperature of feedtank"></app-form-field>
+                    <app-form-field [required]="true"
+                                    name="TDSOfFeedwaterInFeedtank"
+                                    unit="ppm"
+                                    label="TDS of feedwater in feedtank"></app-form-field>
+                    <app-form-field type="yesNo"
+                                    name="areChemicalsAddedDirectlyToTheFeedtank"
+                                    label="Are chemicals added directly to the feedtank?"></app-form-field>
+                  </div>
+                  <div class="col-md-4">
+                    <app-form-field type="yesNo" name="isDsiPresent" label="Is dsi present">
+                      <ng-container yes>
+                        <app-form-field [required]="true"
+                                        name="pressureOfSteamSupplyingDSI"
+                                        unit="barg"
+                                        label="Pressure of steam supplying DSI"></app-form-field>
+                      </ng-container>
+                    </app-form-field>
+                  </div>
+                </div>
+              </sga-panel>
+
+              <sga-panel id="condensateReturnPanel" title="CONDENSATE RETURN" background="#EDF2F4">
+                <div class="row" body>
+                  <div class="col-md-6 border-r-md">
+                    <app-form-field type="yesNo" name="isCondensateReturnKnown" label="is condensate return known?">
+                      <ng-container yes>
+                        <app-form-field type="radioInput"
+                                        [required]="true"
+                                        group="isCondensateReturnKnown"
+                                        name="percentageOfCondensateReturned"
+                                        unit="%"
+                                        label="Percentage of condensate returned"></app-form-field>
+                        <app-form-field type="radioInput"
+                                        [required]="true"
+                                        group="isCondensateReturnKnown"
+                                        name="volumeOfCondensateReturned"
+                                        unit="m3/y"
+                                        label="Volume of condensate returned"></app-form-field>
+                      </ng-container>
+                    </app-form-field>
+                  </div>
+                  <div class="col-md-6">
+                    <app-form-field [required]="true"
+                                    name="temperatureOfCondensateReturned"
+                                    unit="°C"
+                                    label="temperature of CONDENSATE RETURNED"></app-form-field>
+                    <app-form-field [required]="true"
+                                    name="tdsOfCondensateReturned"
+                                    unit="ppm"
+                                    label="TDS of CONDENSATE RETURNED"></app-form-field>
+                  </div>
+                </div>
+              </sga-panel>
+
+              <div class="schemeImage">
+                <img src="/assets/img/steam_generation/feedwater_condensate.png" alt="Feedwater & Condensate">
+              </div>
+            </tab>
           </tabset>
         </div>
       </div>

@@ -14,6 +14,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   productName = 'Steam Generation Assessment';
 
   sizingModuleForm: FormGroup;
+  boilerParametersForm: FormGroup;
 
   constructor(private fb: FormBuilder) {
     super();
@@ -49,6 +50,10 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       costOfWaterYear: [""],
       waterConsumptionHour: [""],
       waterConsumptionYear: [""],
+    })
+
+    this.boilerParametersForm = this.fb.group({
+      boilerEfficiency: [100, [Validators.required, Validators.max(100), Validators.min(10)]],
     })
   }
 
@@ -94,6 +99,33 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
 
   repackageSizing(): any {
     return true;
+  }
+
+  parseError(fieldName: string): string | null {
+    const control = this.boilerParametersForm.get(fieldName);
+
+    if (control && control.errors) {
+      let errorsStr = '';
+      Object.keys(control.errors).forEach((key) => {
+        const error = control.errors[key];
+        if (key === 'max') {
+          errorsStr = `Max length is ${error.max} <br>`;
+        }
+        if (key === 'min') {
+          errorsStr = `Min length is ${error.min} <br>`;
+        }
+        if (key === 'required') {
+          errorsStr = 'Field is required <br>';
+        }
+        if (key === 'email') {
+          errorsStr = 'Should be email';
+        }
+      })
+
+      return errorsStr;
+    }
+
+    return null;
   }
 
 }

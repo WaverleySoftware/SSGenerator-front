@@ -31,11 +31,13 @@ interface FormFieldSelectOption {
 export class FormFieldComponent implements ControlValueAccessor, AfterContentChecked {
   @Input() type = 'text';
   @Input() label: string;
+  @Input() name!: string;
+  @Input() id?: string;
   @Input() unit?: string;
-  @Input() name?: string;
   @Input() message?: string;
   @Input() placeholder?: string;
   @Input() group?: string;
+  @Input() maxValue?: number;
   @Input() disabled: boolean;
   @Input() required?: boolean;
   @Input() multiple?: boolean;
@@ -56,7 +58,6 @@ export class FormFieldComponent implements ControlValueAccessor, AfterContentChe
 
   public baseInputRef: any;
   public isFocused: boolean;
-  public classList: any;
   public checked: boolean;
 
   constructor(private cdref: ChangeDetectorRef) {

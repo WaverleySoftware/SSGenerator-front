@@ -4,10 +4,98 @@
 
 .formField {
   box-sizing: border-box;
+  input[type="checkbox"],
+  input[type="radio"] {
+    margin: 0 40px 20px 0;
+    width: 0;
+    height: 0;
+    outline: none;
+    position: relative;
+    align-self: center;
+    &:focus, &:active {
+      outline: none;
+    }
+
+    &:after {
+      content: '';
+      display: inline-block;
+      visibility: visible;
+      border: 1px solid var(--color-steel-80);
+      background-color: var(--color-white);
+      box-sizing: border-box;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      min-width: 20px;
+      min-height: 20px;
+    }
+
+    &:checked:after {
+      border-color: var(--color-blue);
+      background-color: var(--color-white);
+      border-width: 6px;
+    }
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
+  input:not([type="radio"], [type="checkbox"]),
+  select {
+    border: none;
+    outline: none;
+    box-shadow: none;
+    border-radius: 0;
+    height: 56px;
+    padding: 15px 22px;
+    box-sizing: border-box;
+    font-family: var(--font-open-sans);
+    font-style: normal;
+    font-weight: normal;
+    font-size: 16px;
+    line-height: 150%;
+    color: var(--color-blue);
+    background: var(--color-white);
+    width: 100%;
+    &.required {
+      border-left: 5px solid var(--color-orange);
+    }
+    &.filled {
+      border-left: 5px solid var(--color-blue);
+    }
+    &.error {
+      border-left: 5px solid var(--color-alarm-red);
+    }
+  }
+
+  select {
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url('http://cdn1.iconfinder.com/data/icons/cc_mono_icon_set/blacks/16x16/br_down.png');
+    background-repeat: no-repeat;
+    background-color: var(--color-white);
+    background-position: calc(100% - 10px) center;
+    background-size: 11px;
+    padding-right: 30px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    &:active {
+      background-image: url('https://cdn1.iconfinder.com/data/icons/cc_mono_icon_set/blacks/16x16/br_up.png');
+    }
+  }
+
+  &_row {
+    display: flex;
+    align-items: stretch;
+  }
+
   &_wrap {
     border: 1px solid var(--color-steel-80);
     display: flex;
     align-self: stretch;
+    width: 100%;
+    min-height: 56px;
     &.focus {
       outline: 4px solid var(--color-steel-80);;
     }
@@ -24,112 +112,29 @@
     &.disabled {
       opacity: .5;
     }
-
-    input:not([type="radio"], [type="checkbox"]),
-    select {
-      border: none;
-      outline: none;
-      box-shadow: none;
-      border-radius: 0;
-      height: 56px;
-      padding: 15px 22px;
-      box-sizing: border-box;
-      font-family: var(--font-open-sans);
-      font-style: normal;
-      font-weight: normal;
-      font-size: 16px;
-      line-height: 150%;
-      color: var(--color-blue);
-      background: var(--color-white);
-      width: 100%;
-      &.required {
-        border-left: 5px solid var(--color-orange);
-      }
-      &.filled {
-        border-left: 5px solid var(--color-blue);
-      }
-    }
-
-    select {
-      appearance: none;
-      -webkit-appearance: none;
-      background-image: url('http://cdn1.iconfinder.com/data/icons/cc_mono_icon_set/blacks/16x16/br_down.png');
-      background-repeat: no-repeat;
-      background-color: var(--color-white);
-      background-position: calc(100% - 10px) center;
-      background-size: 11px;
-      padding-right: 30px;
-      text-overflow: ellipsis;
-      overflow: hidden;
-      &:active {
-        background-image: url('https://cdn1.iconfinder.com/data/icons/cc_mono_icon_set/blacks/16x16/br_up.png');
-      }
-    }
-
-    input[type="checkbox"],
-    input[type="radio"] {
-      margin: 0 40px 20px 0;
-      width: 0;
-      height: 0;
-      outline: none;
-      position: relative;
-      align-self: center;
-      &:focus, &:active {
-        outline: none;
-      }
-
-      &:after {
-        content: '';
-        display: inline-block;
-        visibility: visible;
-        border: 1px solid var(--color-steel-80);
-        background-color: var(--color-white);
-        box-sizing: border-box;
-        border-radius: 50%;
-        width: 20px;
-        height: 20px;
-        min-width: 20px;
-        min-height: 20px;
-      }
-
-      &:checked:after {
-        border-color: var(--color-blue);
-        background-color: var(--color-white);
-        border-width: 6px;
-      }
-
-      &:hover {
-        cursor: pointer;
-      }
-    }
-
-    label {
-      font-family: var(--font-proxima-nova);
-      font-style: normal;
-      font-weight: 600;
-      font-size: 16px;
-      line-height: 1;
-      display: flex;
-      align-items: center;
-      text-transform: uppercase;
-      color: var(--color-blue);
-      margin: 0 20px 0 0;
-    }
   }
 
-  &_label {
+  label {
     font-family: var(--font-proxima-nova);
     font-style: normal;
     font-weight: 600;
     font-size: 16px;
-    line-height: 105%;
+    line-height: 130%;
+    display: flex;
+    align-items: center;
     text-transform: uppercase;
     color: var(--color-blue);
+    margin-right: 20px;
+    padding-left: 0;
+  }
+
+  &_label {
     margin-bottom: 8px;
   }
 
   &_error {
     color: var(--color-alarm-red);
+    display: inline-flex;
   }
 
   .unit {
@@ -145,24 +150,22 @@
     line-height: 150%;
     letter-spacing: 0.02em;
     color: var(--color-black);
+    white-space: nowrap;
   }
 
-  .checkField {
-    background-color: transparent;
-    border: none;
-    outline: none;
-    margin-top: 10px;
-    display: flex;
-    align-items: stretch;
+  &.radio, &.yesNo {
+    .formField_wrap {
+      border: none;
+    }
   }
 
   &.radioInput {
-    .formField_label {
+    .formField_label, .formField_error {
       margin-left: 40px;
     }
-
-    &_check {
-
-    }
   }
+
+  &.radio {}
+
+  &.yesNo {}
 }
