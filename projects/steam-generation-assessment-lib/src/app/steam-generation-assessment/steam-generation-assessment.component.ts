@@ -14,12 +14,17 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   productName = 'Steam Generation Assessment';
 
   sizingModuleForm: FormGroup;
+  activeTab = 1;
 
   constructor() {
     super();
   }
 
   ngOnInit() {}
+
+  public changeTab(e): void {
+    console.log(e)
+  }
 
   onCalculateSizing(formGroup: FormGroup): any {
     return true;
