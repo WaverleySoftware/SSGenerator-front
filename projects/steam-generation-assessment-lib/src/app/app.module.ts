@@ -7,11 +7,13 @@ import { SteamGenerationAssessmentComponent } from './steam-generation-assessmen
 import { SgaStepsComponent } from './sga-steps/sga-steps.component';
 import { SharedModule } from "./modules/shared/shared.module";
 import { TabsModule } from 'ngx-bootstrap/tabs';
+import { SgaInputParametersComponent } from './sga-input-parameters/sga-input-parameters.component';
 
 @NgModule({
   declarations: [
     SteamGenerationAssessmentComponent,
-    SgaStepsComponent
+    SgaStepsComponent,
+    SgaInputParametersComponent
   ],
 	imports: [
 		CommonModule,

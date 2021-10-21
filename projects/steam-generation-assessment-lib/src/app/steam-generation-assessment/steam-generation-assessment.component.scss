@@ -5,9 +5,8 @@ $sizes: (
   4: 25px,
   5: 33px
 );
-
-$sm: 768px;
-$md: 992px;
+$border-color: #8B93B7;
+$active-border-color: #002D72;
 
 .m {
   &b {
@@ -19,60 +18,138 @@ $md: 992px;
   }
 }
 
-.border {
-  &-r {
-    border-right: 1px solid var(--color-steel-40);
-    @media screen and (min-width: $md) {
-      &-md {
-        border-right: 1px solid var(--color-steel-40);
-      }
+.sgaBaseTabs {
+  &_heading {
+    padding: 24px 24px 0;
+    background-color: #fff;
+    &__title {
+      font-size: 24px;
+      font-family: var(--font-proxima-nova);
+      font-style: normal;
+      font-weight: 600;
+      line-height: 105%;
+      text-transform: uppercase;
+      color: var(--color-blue);
+    }
+
+    &__subtitle {
+      margin-top: 16px;
+      margin-bottom: 0;
+      font-family: var(--font-proxima-nova);
+      font-style: normal;
+      font-weight: 600;
+      font-size: 16px;
+      line-height: 105%;
+      display: flex;
+      align-items: center;
+      color: var(--color-blue-40);
     }
   }
-}
 
-.sgaTabs {
   &::ng-deep {
-    .nav {
-      background-color: var(--color-steel-20);
-      border-radius: 50px;
-      display: inline-block;
-      margin-bottom: 24px;
-      &-item {
-        a {
-          font-family: var(--font-proxima-nova);
-          font-style: normal;
-          font-weight: 600;
-          font-size: 12px;
-          line-height: 125%;
-          text-transform: uppercase;
-          padding: 14px 20px;
+    &>.tab-content {
+      padding: 0;
+      border: none;
+    }
+
+    &>.nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-direction: row;
+      padding: 24px;
+      margin: 0 0 21px;
+      width: 100%;
+      counter-reset: step;
+      position: relative;
+      background-color: #fff;
+      border: 1px solid transparent;
+      border-radius: 0 0 4px 4px;
+      box-shadow: 0 1px 1px rgb(0 0 0 / 5%);
+      &:before {
+        content: '';
+        position: absolute;
+        left: 24px;
+        top: calc(50% - 1px);
+        height: 2px;
+        width: calc(100% - 48px);
+        background-color: $border-color;
+        z-index: 0;
+      }
+      &:after {
+        display: none;
+      }
+      &:hover {
+        cursor: initial;
+      }
+
+      &>.nav-item {
+        margin: 0;
+        float: initial;
+        list-style-type: none;
+        width: 200px;
+        max-width: 200px;
+        white-space: nowrap;
+        display: flex;
+        overflow: hidden;
+        &.active {
+          &~* {
+            &>.nav-link {
+              border: 1px solid $border-color;
+              color: #515253;
+              &:before {
+                background-color: transparent;
+                color: #515253;
+              }
+            }
+          }
         }
 
-        &.active {
-          a {
-            background-color: var(--color-blue);
-            border-radius: 50px;
+        &>.nav-link {
+          display: inline-block;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          background-color: #fff;
+          z-index: 1;
+          border: 1px solid $active-border-color;
+          color: $active-border-color;
+          border-radius: 30px;
+          padding: 10px;
+          margin: 0;
+          width: 100%;
+          white-space: nowrap;
+          font-size: 16px;
+          font-style: normal;
+          font-weight: 600;
+          line-height: 17px;
+          letter-spacing: 0;
+          text-align: left;
+          &:hover {
+            cursor: pointer;
+          }
+
+          &:before {
+            content: counter(step);
+            counter-increment: step;
+            font-size: 16px;
+            font-style: normal;
+            font-weight: 500;
+            line-height: 18px;
+            letter-spacing: 0;
+            text-align: center;
+            border: 1px solid $border-color;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            margin-right: 12px;
+            color: var(--color-white);
+            background-color: $active-border-color;
           }
         }
       }
-
-      &-link {
-
-      }
     }
-  }
-}
-
-.sga-wrapper {
-  .schemeImage {
-    margin: 20px 5vw 0;
-    &>img {
-      width: 100%;
-      height: auto;
-    }
-  }
-
-  .cursor-pointer {
-    cursor: pointer;
   }
 }
