@@ -197,7 +197,88 @@
             </svg>
           </ng-template>
 
-          2
+          <div class="row">
+            <div class="col-md-4">
+              <p>Cost of steam £’000s / year</p>
+              <div [innerHTML]="generateChartLegend(barChartData)"></div>
+              <div [ngStyle]="{display: 'block', height: '400px'}">
+                <canvas baseChart
+                        [colors]="barChartColors"
+                        [datasets]="barChartData"
+                        [options]="barChartOptions"
+                        chartType="bar">
+                </canvas>
+              </div>
+            </div>
+            <div class="col-md-8">
+              <p>Major Steam generation Outputs and Condensare return Savings</p>
+              <table class="table sgaBenchmark_table">
+                <thead>
+                <tr>
+                  <th>Cost of Steam Generated</th>
+                  <th colspan="2">
+                    <table>
+                      <tr>
+                        <th>Benchmark Current Situation</th>
+                      </tr>
+                      <tr>
+                        <th>quantity</th>
+                        <th>value</th>
+                      </tr>
+                    </table>
+                  </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                  <td>Fuel quantity</td>
+                  <td>53,500,000 kWh</td>
+                  <td>1,335,500 £/yr</td>
+                </tr>
+                <tr>
+                  <td>Fuel energy</td>
+                  <td>53,500,000 kWh</td>
+                  <td>1,335,500 £/yr</td>
+                </tr>
+                <tr>
+                  <td>Boiler House water and Chemicals</td>
+                  <td>53,500,000 kWh</td>
+                  <td>1,335,500 £/yr</td>
+                </tr>
+                <tr>
+                  <td>CO2 Emission</td>
+                  <td>53,500,000 kWh</td>
+                  <td>1,335,500 £/yr</td>
+                </tr>
+                <tr>
+                  <td>Steam generation effluent</td>
+                  <td>53,500,000 kWh</td>
+                  <td>1,335,500 £/yr</td>
+                </tr>
+                <tr>
+                  <td>Total Steam Generated</td>
+                  <td>53,500,000 kWh</td>
+                  <td>1,335,500 £/yr</td>
+                </tr>
+                <tr>
+                  <td>Total Cost of Steam / Unit Mass</td>
+                  <td>53,500,000 kWh</td>
+                  <td>1,335,500 £/yr</td>
+                </tr>
+                <tr>
+                  <td>Total Cost of Steam / Unit Energy</td>
+                  <td>53,500,000 kWh</td>
+                  <td>1,335,500 £/yr</td>
+                </tr>
+                <tr>
+                  <td>Overall Steam Generation Efficiency</td>
+                  <td>53,500,000 kWh</td>
+                  <td>1,335,500 £/yr</td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
         </tab>
         <tab>
           <h5 class="sgaBenchmark_title">Breakdown of boiler house estimated cost and savings</h5>

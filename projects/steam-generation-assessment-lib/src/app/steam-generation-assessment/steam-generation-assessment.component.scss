@@ -491,4 +491,54 @@ $active-border-color: #002D72;
       }
     }
   }
+
+  &_table {
+    thead {
+      background-color: #477D94;
+      td, th {
+        text-transform: uppercase;
+        color: var(--color-white);
+      }
+    }
+  }
 }
+
+::ng-deep {
+  .sgaChartLegend {
+    list-style: none;
+    margin: 0 0 20px;
+    padding: 16px;
+    border: 1px solid var(--color-steel-20);
+    display: flex;
+    flex-wrap: wrap;
+    &_item {
+      display: flex;
+      align-items: center;
+      width: 50%;
+      margin: 0;
+      padding: 0;
+      &:not(&:last-child, &:nth-last-child(2)) {
+        margin-bottom: 15px;
+      }
+      &__color {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        min-width: 12px;
+        min-height: 12px;
+        margin-right: 8px;
+      }
+
+      &__text {
+        font-family: var(--font-proxima-nova);
+        font-style: normal;
+        font-weight: 600;
+        font-size: 12px;
+        line-height: 125%;
+        text-transform: uppercase;
+        color: var(--color-blue);
+      }
+    }
+  }
+}
+
