@@ -14,7 +14,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   productName = 'Steam Generation Assessment';
 
   sizingModuleForm: FormGroup;
-  activeTab = 1;
+  activeTab = 2;
 
   constructor() {
     super();
