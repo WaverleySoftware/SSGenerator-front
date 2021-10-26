@@ -7,12 +7,15 @@ import { SteamGenerationAssessmentComponent } from './steam-generation-assessmen
 import { SharedModule } from "./modules/shared/shared.module";
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { SgaInputParametersComponent } from './sga-input-parameters/sga-input-parameters.component';
-import { ChartsModule } from 'ng2-charts';
+import { SgaBenchmarkComponent } from './sga-benchmark/sga-benchmark.component';
+import { SgaProposedSetupComponent } from './sga-proposed-setup/sga-proposed-setup.component';
 
 @NgModule({
   declarations: [
     SteamGenerationAssessmentComponent,
-    SgaInputParametersComponent
+    SgaInputParametersComponent,
+    SgaBenchmarkComponent,
+    SgaProposedSetupComponent
   ],
 	imports: [
 		CommonModule,
@@ -23,7 +26,6 @@ import { ChartsModule } from 'ng2-charts';
 		BlockUIModule,
 		SharedModule,
     TabsModule.forRoot(),
-    ChartsModule,
 	],
   providers: [],
   entryComponents: [SteamGenerationAssessmentComponent],
