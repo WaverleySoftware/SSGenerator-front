@@ -1,0 +1,77 @@
+.sgaFinalProposal {
+  &::ng-deep {
+    &>.nav {
+      margin: 20px 20px 0 0;
+      float: right;
+      list-style: none;
+      background-color: var(--color-background-panel);
+      border-radius: 100px;
+      padding: 8px;
+      display: inline-flex;
+      align-items: stretch;
+      border: none;
+      &:after {
+        display: none;
+      }
+
+      li {
+        display: grid;
+        align-content: center;
+        &:not(&:first-child, &:last-child) {
+          margin: 0 4px;
+        }
+      }
+
+      a {
+        width: 32px;
+        height: 32px;
+        max-width: 32px;
+        max-height: 32px;
+        min-width: 32px;
+        min-height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        align-self: center;
+        margin: 0;
+        padding: 0;
+        background-color: transparent;
+        border: none;
+        text-decoration: none;
+        svg {
+          fill: var(--color-blue);
+        }
+
+        &.active {
+          background-color: var(--color-blue);
+          color: var(--color-white);
+          &>svg {
+            fill: var(--color-white);
+          }
+        }
+      }
+    }
+
+    &>.tab-content {
+      background-color: #fff;
+      border: 1px solid transparent;
+      border-radius: 0 0 4px 4px;
+      box-shadow: 0 1px 1px rgb(0 0 0 / 5%);
+      padding-top: 26px;
+    }
+  }
+
+  &_title {
+    font-family: var(--font-proxima-nova);
+    font-style: normal;
+    font-weight: 600;
+    font-size: 24px;
+    line-height: 115%;
+    text-transform: uppercase;
+    color: var(--color-blue);
+    margin: 0 0 26px;
+    padding-bottom: 26px;
+    border-bottom: 1px solid var(--color-steel-40);
+  }
+}

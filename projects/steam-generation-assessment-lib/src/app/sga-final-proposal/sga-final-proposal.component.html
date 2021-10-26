@@ -1,0 +1,181 @@
+<tabset class="sgaFinalProposal">
+  <tab>
+    <h5 class="sgaBaseTabs_title_md">Proposed setup</h5>
+    <ng-template tabHeading>
+      <svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+        <path d="M1.6665 10.8333H6.6665V17.5H1.6665V10.8333ZM7.49984 2.5H12.4998V17.5H7.49984V2.5ZM13.3332 6.66667H18.3332V17.5H13.3332V6.66667Z" />
+      </svg>
+    </ng-template>
+
+    <p class="sgaBaseTabs_title_sm">Potential Boiler House Savings by Project</p>
+    <p class="sgaBaseTabs_title_xs">Saving £’000s / yr</p>
+    <app-chart-bar [style]="{'min-height': '400px'}" [data]="chartData" [labels]="chartLabels"></app-chart-bar>
+    <hr>
+    <p class="sgaBaseTabs_title_sm">Cost of Steam Generation<i class="fa fa-info-circle"></i></p>
+    <app-chart-bar type="horizontalBar"
+                   [legend]="false"
+                   [data]="costSteamGenerationChart"
+                   [labels]="costSteamGenerationChartLabels"></app-chart-bar>
+  </tab>
+  <tab>
+    <h5 class="sgaBaseTabs_title_md">Proposed setup</h5>
+    <ng-template tabHeading>
+      <svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12.7 18H7.3V8.22222H12.7V18ZM14.5 18V8.22222H19V17.1111C19 17.3469 18.9052 17.573 18.7364 17.7397C18.5676 17.9064 18.3387 18 18.1 18H14.5ZM5.5 18H1.9C1.66131 18 1.43239 17.9064 1.2636 17.7397C1.09482 17.573 1 17.3469 1 17.1111V8.22222H5.5V18ZM19 6.44444H1V2.88889C1 2.65314 1.09482 2.42705 1.2636 2.26035C1.43239 2.09365 1.66131 2 1.9 2H18.1C18.3387 2 18.5676 2.09365 18.7364 2.26035C18.9052 2.42705 19 2.65314 19 2.88889V6.44444Z"/>
+      </svg>
+    </ng-template>
+
+    <div class="row">
+      <div class="col-md-12">
+        <p class="sgaBaseTabs_title_sm">
+          Major Steam generation Outputs and Potential Savings
+          <i class="fa fa-info-circle"></i>
+        </p>
+      </div>
+      <div class="col-md-12">
+        <table class="customTable">
+          <thead>
+          <tr>
+            <th rowspan="2">Cost of Steam Generated</th>
+            <th colspan="2">Benchmark Current Situation</th>
+            <th colspan="2">Potential</th>
+            <th colspan="2">Savings</th>
+          </tr>
+          <tr>
+            <th class="text-center">quantity</th>
+            <th class="text-center">value</th>
+
+            <th class="text-center">quantity</th>
+            <th class="text-center">value</th>
+
+            <th class="text-center">Saving</th>
+            <th class="text-center">%</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td>Fuel quantity</td>
+            <td>53,500,000 kWh</td>
+            <td>1,335,500 £/yr</td>
+            <td>49,859,620 kWh</td>
+            <td>1,335,500 £/yr</td>
+            <td>1,335,500 £/yr</td>
+            <td>6,8%</td>
+          </tr>
+          <tr>
+            <td>Fuel energy</td>
+            <td>50,000,000 kWh</td>
+            <td>–</td>
+            <td>49,859,620 kWh</td>
+            <td>1,335,500 £/yr</td>
+            <td>–</td>
+            <td>–</td>
+          </tr>
+          <tr>
+            <td>Boiler House water and Chemicals</td>
+            <td>36,595,63 m3</td>
+            <td>197,921 £/yr</td>
+            <td>49,859,620 kWh</td>
+            <td>–</td>
+            <td>197,921 £/yr</td>
+            <td>60,7%</td>
+          </tr>
+          <tr>
+            <td>CO2 Emission</td>
+            <td>9,896 tonne/yr</td>
+            <td>16,873 £/yr</td>
+            <td>14,856,90 m3</td>
+            <td>197,921 £/yr</td>
+            <td>16,873 £/yr</td>
+            <td>6,8%</td>
+          </tr>
+          <tr>
+            <td>Steam generation effluent</td>
+            <td>12,979 m3</td>
+            <td>54,732 £/yr</td>
+            <td>9,222 tonne/yr</td>
+            <td>16,873 £/yr</td>
+            <td>54,732 £/yr</td>
+            <td>60,7%</td>
+          </tr>
+          <tr class="filled">
+            <td>Total Steam Generated</td>
+            <td>63,800 tonne/yr</td>
+            <td>1,607,026 £/yr</td>
+            <td>5,102 m3</td>
+            <td>54,732 £/yr</td>
+            <td>1,607,026 £/yr</td>
+            <td>9%</td>
+          </tr>
+          <tr>
+            <td>Total Cost of Steam / Unit Mass</td>
+            <td>–</td>
+            <td>25,19 £/tonne</td>
+            <td>63,800 tonne/yr</td>
+            <td>1,607,026 £/yr</td>
+            <td>–</td>
+            <td>–</td>
+          </tr>
+          <tr>
+            <td>Total Cost of Steam / Unit Energy</td>
+            <td>–</td>
+            <td>0,0300 £/kWh</td>
+            <td>–</td>
+            <td>25,19 £/tonne</td>
+            <td>–</td>
+            <td>–</td>
+          </tr>
+          <tr class="filled">
+            <td>Overall Steam Generation Efficiency</td>
+            <td>839 kWh/tonne</td>
+            <td>–</td>
+            <td>–</td>
+            <td>0,0300 £/kWh</td>
+            <td>–</td>
+            <td>6,8%</td>
+          </tr>
+          </tbody>
+          <tfoot>
+          <tr>
+            <td colspan="4"></td>
+            <td>Total savings</td>
+            <td>1,607,026 £/yr</td>
+            <td>6,8%</td>
+          </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </tab>
+  <tab>
+    <h5 class="sgaBaseTabs_title_md">Proposed setup</h5>
+    <ng-template tabHeading>
+      <svg width="20" height="20" viewBox="6 5 20 20" xmlns="http://www.w3.org/2000/svg">
+        <path d="M25 19.5556V23.1111C25 23.3469 24.9052 23.573 24.7364 23.7397C24.5676 23.9064 24.3387 24 24.1 24H7.9C7.66131 24 7.43239 23.9064 7.2636 23.7397C7.09482 23.573 7 23.3469 7 23.1111V19.5556H25ZM24.1 8C24.3387 8 24.5676 8.09365 24.7364 8.26035C24.9052 8.42705 25 8.65314 25 8.88889V17.7778H7V8.88889C7 8.65314 7.09482 8.42705 7.2636 8.26035C7.43239 8.09365 7.66131 8 7.9 8H24.1Z"/>
+      </svg>
+    </ng-template>
+
+    <p class="sgaBaseTabs_title_sm">
+      Breakdown of Boiler House Esimated Costs and Savings
+      <i class="fa fa-info-circle"></i>
+    </p>
+    <div class="row">
+      <div class="col-md-12">
+        <h1>Coming Soon 3</h1>
+      </div>
+    </div>
+  </tab>
+  <tab>
+    <h5 class="sgaBaseTabs_title_md">Proposed setup</h5>
+    <ng-template tabHeading>
+      <svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+        <path d="M13.3332 17.5L9.36484 10.225L12.4998 5L19.1665 17.5H13.3332ZM6.6665 8.33333L11.6665 17.5H1.6665L6.6665 8.33333ZM4.58317 6.66667C4.03064 6.66667 3.50073 6.44717 3.11003 6.05647C2.71933 5.66577 2.49984 5.13587 2.49984 4.58333C2.49984 4.0308 2.71933 3.5009 3.11003 3.11019C3.50073 2.71949 4.03064 2.5 4.58317 2.5C5.1357 2.5 5.66561 2.71949 6.05631 3.11019C6.44701 3.5009 6.6665 4.0308 6.6665 4.58333C6.6665 5.13587 6.44701 5.66577 6.05631 6.05647C5.66561 6.44717 5.1357 6.66667 4.58317 6.66667Z"/>
+      </svg>
+    </ng-template>
+    <div class="row">
+      <div class="col-md-12">
+        <h1>Coming Soon 4</h1>
+      </div>
+    </div>
+  </tab>
+</tabset>
