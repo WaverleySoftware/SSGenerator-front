@@ -6,25 +6,30 @@ import { SsButtonComponent } from './components/ss-button/ss-button.component';
 import { SgaPanelComponent } from './components/sga-panel/sga-panel.component';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { FormFieldComponent } from './components/form-field/form-field.component';
+import { ChartBarComponent } from './components/chart-bar/chart-bar.component';
+import { ChartsModule } from "ng2-charts";
 
 
 @NgModule({
   declarations: [
     SsButtonComponent,
     SgaPanelComponent,
-    FormFieldComponent
+    FormFieldComponent,
+    ChartBarComponent
   ],
-	imports: [
-		CommonModule,
-		FormsModule,
-		CollapseModule.forRoot(),
-		TooltipModule.forRoot(),
-		ReactiveFormsModule
-	],
+  imports: [
+    CommonModule,
+    FormsModule,
+    CollapseModule.forRoot(),
+    TooltipModule.forRoot(),
+    ReactiveFormsModule,
+    ChartsModule
+  ],
   exports: [
     SsButtonComponent,
     SgaPanelComponent,
-    FormFieldComponent
+    FormFieldComponent,
+    ChartBarComponent
   ]
 })
 export class SharedModule { }

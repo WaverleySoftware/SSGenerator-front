@@ -85,6 +85,15 @@
     }
   }
 
+  input:not([type="radio"], [type="checkbox"]) {
+    &.ng-touched.ng-valid {
+      background-image: url('https://cdn2.iconfinder.com/data/icons/flat-ui-icons-24-px/24/checkmark-24-512.png');
+      background-repeat: no-repeat;
+      background-size: 11px;
+      background-position: calc(100% - 10px) center;
+    }
+  }
+
   &_row {
     display: flex;
     align-items: stretch;

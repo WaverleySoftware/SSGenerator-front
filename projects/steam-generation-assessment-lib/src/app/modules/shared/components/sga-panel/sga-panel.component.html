@@ -1,7 +1,8 @@
 <div class="panel ssPanel" [ngStyle]="{ background: background }">
   <div class="panel-heading">
-    <div>
-      <h4 class="panel-title" [ngStyle]="{fontSize: titleSize }">
+    <ng-template *ngIf="!!headingRef" [ngTemplateOutlet]="headingRef"></ng-template>
+    <div *ngIf="!headingRef">
+      <h4 class="panel-title" *ngIf="!!title" [ngStyle]="{fontSize: titleSize }">
         <span>{{title}}</span>
         <i class="fa fa-info-circle ssPanel_tooltip" [tooltip]="titleTooltip" placement="right" *ngIf="!!titleTooltip"></i>
       </h4>
