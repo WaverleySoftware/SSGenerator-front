@@ -74,4 +74,141 @@
     padding-bottom: 26px;
     border-bottom: 1px solid var(--color-steel-40);
   }
+
+  &_info {
+    width: 100%;
+    padding: 24px;
+    border-collapse: initial;
+    background-color: var(--color-background-panel);
+    border-spacing: 0 8px;
+    font-family: var(--font-open-sans);
+    color: var(--color-black);
+    font-style: normal;
+    font-weight: normal;
+    font-size: 16px;
+    line-height: 150%;
+    letter-spacing: 0.02em;
+    position: relative;
+    &.pink {
+      background-color: var(--color-pink-20);
+      caption:before {
+        background-color: var(--color-pink-40);
+      }
+    }
+    &.green {
+      background-color: var(--color-green-20);
+      caption:before {
+        background-color: var(--color-green-40);
+      }
+    }
+    &.orange {
+      background-color: var(--color-orange-20);
+      caption:before {
+        background-color: #F4CEA1;
+      }
+    }
+
+    caption {
+      background-color: inherit;
+      padding: 24px;
+      font-family: var(--font-proxima-nova);
+      font-style: normal;
+      font-weight: 600;
+      font-size: 18px;
+      line-height: 105%;
+      text-transform: uppercase;
+      color: var(--color-blue);
+      position: relative;
+      &:before {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 24px;
+        right: 24px;
+        height: 1px;
+        background-color: var(--color-steel-40);
+      }
+
+      i {
+        float: right;
+      }
+    }
+
+    thead, tfoot {
+      td, th {
+        font-weight: bold;
+      }
+    }
+
+    thead {
+      tr {
+        &:first-child {
+          td,th {
+            &:first-child {
+              font-family: var(--font-proxima-nova);
+              font-style: normal;
+              font-weight: 600;
+              font-size: 16px;
+              line-height: 105%;
+              color: var(--color-blue);
+              text-transform: uppercase;
+            }
+          }
+        }
+      }
+
+      &~thead{
+        th {
+          padding-top: 24px;
+          border-top: 1px solid var(--color-steel-40);
+        }
+      }
+    }
+
+    tbody {
+      &:not(&:last-child) {
+        tr:last-child {
+          td {
+            padding-bottom: 24px;
+          }
+        }
+      }
+    }
+
+    tr {
+      td, th {
+        &:not(&:first-child) {
+          text-align: right;
+        }
+      }
+    }
+
+    &+.sgaFinalProposal_info {
+      &:before {
+        content: '';
+        position: absolute;
+        left: 24px;
+        right: 24px;
+        top: 0;
+        height: 1px;
+        background-color: var(--color-steel-40);
+      }
+    }
+  }
+
+  .mb {
+    margin-bottom: 24px!important;
+  }
+
+  .flex {
+    display: flex;
+  }
+
+  .justify-content-between {
+    justify-content: space-between;
+  }
+
+  .align-items {
+    align-items: center;
+  }
 }
