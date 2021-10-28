@@ -11,6 +11,8 @@ export class SgaInputParametersComponent implements OnInit {
   utilityParamsForm: FormGroup;
   boilerParamsForm: FormGroup;
 
+  public deaeratorType: string = 'autmosphericDeaerator';
+
   constructor(private fb: FormBuilder) { }
 
   ngOnInit() {

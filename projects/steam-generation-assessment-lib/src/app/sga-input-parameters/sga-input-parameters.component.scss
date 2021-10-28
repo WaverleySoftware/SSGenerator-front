@@ -45,14 +45,15 @@ $md: 992px;
   }
 }
 
-.schemeImage {
-  margin: 20px 5vw 0;
-  &>img {
-    width: 100%;
-    height: auto;
-  }
-}
-
-.cursor-pointer {
+.checkImage {
   cursor: pointer;
+  padding: 10px;
+  max-height: 230px;
+  min-height: 230px;
+  max-width: 230px;
+  min-width: 230px;
+  height: 230px;
+  width: 230px;
+  background-color: var(--color-white);
+  object-fit: contain;
 }
