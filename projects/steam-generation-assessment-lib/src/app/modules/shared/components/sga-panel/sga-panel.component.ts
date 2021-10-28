@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input, OnInit } from "@angular/core";
+import { AfterViewInit, Component, Input, OnInit, TemplateRef } from "@angular/core";
 
 @Component({
   selector: 'sga-panel',
@@ -15,6 +15,7 @@ export class SgaPanelComponent implements OnInit, AfterViewInit {
   @Input() isCollapsed: boolean = false;
   @Input() showSeparator: boolean = true;
   @Input() disableToggle: boolean;
+  @Input() headingRef: TemplateRef<any>;
 
   constructor() { }
 

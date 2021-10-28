@@ -1,0 +1,75 @@
+<sga-panel title="Proposed setup" [disableToggle]="true">
+  <ng-container body>
+    <div class="sgaProposedSetup">
+      <p class="sgaProposedSetup_title">Potential Boiler House Savings by Project</p>
+      <p class="sgaProposedSetup_subtitle mb-24">Saving £’000s / yr</p>
+      <app-chart-bar className="sgaProposedSetup_chart" [data]="chartData" [labels]="chartLabels"></app-chart-bar>
+      <hr>
+      <div class="row">
+        <div class="col-md-6">
+          <h5 class="sgaProposedSetup_title">
+            <span>Cost of Steam Generation</span>
+            <i class="fa fa-info-circle"></i>
+          </h5>
+          <app-chart-bar type="horizontalBar"
+                         [options]="costSteamGenerationChartOptions"
+                         [legend]="false"
+                         [data]="costSteamGenerationChart"
+                         [labels]="costSteamGenerationChartLabels"></app-chart-bar>
+          <p>Steam Generation Savings: <span class="text-bold">£7,691</span></p>
+          <p>Savings Including Condensate Effluent: <span class="text-bold">£7,691</span> </p>
+        </div>
+        <div class="col-md-6">
+          <h5 class="sgaProposedSetup_title mb-24">
+            <span>Add Features</span>
+            <i class="fa fa-info-circle"></i>
+          </h5>
+          <ul class="sgaProposedSetup_list">
+            <li>
+              <label>
+                <input type="checkbox">
+                Boiler efficiency improvements
+              </label>
+            </li>
+            <li>
+              <label>
+                <input type="checkbox">
+                Increase condensate return
+              </label>
+            </li>
+            <li>
+              <label>
+                <input type="checkbox">
+                Add water treatment plant (RO)
+              </label>
+            </li>
+            <li>
+              <label>
+                <input type="checkbox">
+                Add Auto TDS controls
+              </label>
+            </li>
+            <li>
+              <label>
+                <input type="checkbox">
+                Add Auto TDS and flash recovery
+              </label>
+            </li>
+            <li>
+              <label>
+                <input type="checkbox">
+                Add Auto TDS, flash recovery + heat Excanger
+              </label>
+            </li>
+            <li>
+              <label>
+                <input type="checkbox">
+                Add direct steam injection to feedtank
+              </label>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</sga-panel>

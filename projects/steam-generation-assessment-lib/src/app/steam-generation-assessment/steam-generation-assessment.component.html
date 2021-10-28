@@ -1,150 +1,26 @@
 <div class="sga-wrapper">
-  <sga-panel id="ImprovingSteamGenerationEfficiency"
-             title="Improving Steam Generation Efficiency"
-             subtitle="Untitled Project - Untitled Job"
-             titleSize="24px"
-             [showSeparator]="false"
-             [disableToggle]="true">
-    <div body>
-      <sga-steps></sga-steps>
-    </div>
-  </sga-panel>
+  <div class="sgaBaseTabs_heading">
+    <h4 class="sgaBaseTabs_heading__title">
+      <span>{{'IMPROVING_STEAM_GENERATION_EFFICIENCY' | translate}}</span>
+    </h4>
+    <p class="sgaBaseTabs_heading__subtitle">
+      {{('UNTITLED_PROJECT' | translate)+' - '+('UNTITLED_JOB' | translate)}}
+    </p>
+  </div>
 
-  <sga-panel id="UtilityParameters" title="Utility parameters" titleSize="24px">
-    <div body class="container-fluid">
-      <div class="row mb-5">
-        <div class="col-md-5">
-          <custom-field [statusLine]="true"
-                        name="hoursOfOperation"
-                        label="Hours of Operation"
-          ></custom-field>
-        </div>
-        <div class="col-md-5">
-          <custom-field [statusLine]="true" type="test"></custom-field>
-        </div>
-      </div>
+  <tabset class="sgaBaseTabs">
+    <tab heading="Input parameters">
+      <app-sga-input-parameters></app-sga-input-parameters>
+    </tab>
+    <tab heading="Benchmark">
+      <app-sga-benchmark></app-sga-benchmark>
+    </tab>
+    <tab heading="Proposed Setup">
+      <app-sga-proposed-setup></app-sga-proposed-setup>
+    </tab>
+    <tab heading="Final Proposal">
+      <app-sga-final-proposal></app-sga-final-proposal>
+    </tab>
+  </tabset>
 
-      <div class="row">
-        <div class="col-md-6">
-          <sga-panel id="FuelPanel"
-                     title="Fuel"
-                     titleTooltip="Fuel info tooltip"
-                     background="#EDF2F4">
-            <div body>
-              <div class="form-group">
-                <custom-field type="select"
-                              name="fuelType"
-                              [options]="[{value: 1, text: 'Some val'},{value: 2, index: 1, title: 'SOme title'}]"
-                              placeholder="Some placeholder"
-                              label="Fuel type"></custom-field>
-              </div>
-              <div class="form-group">
-                <custom-field label="Cost of Fuel / unit"
-                              name="costOfFuel"
-                              unit="£/kWh"></custom-field>
-              </div>
-              <div class="form-group">
-                <custom-field type="yesNo"
-                              #isFuelComsumptionMeasured
-                              name="FuelComsumptionMeasured"
-                              label="Is Fuel Comsumption Measured?"></custom-field>
-              </div>
-              <div class="form-group" *ngIf="isFuelComsumptionMeasured.model">
-                <custom-field type="radioInput"
-                              name="CostOfFuelByYear"
-                              label="Cost of fuel / year"
-                              unit="£/y"
-                              radioInputType="number"
-                              [statusLine]="true"
-                              [radioInputData]="TEST_DATA.CostOfFuelByYear"></custom-field>
-              </div>
-            </div>
-          </sga-panel>
-          <sga-panel id="CO2EmissionPanel"
-                     title="CO2 Emission"
-                     titleTooltip="Some tooltip"
-                     background="#EDF2F4">
-            <div body>
-              <custom-field type="yesNo"
-                            name="CO2OrCarbon"
-                            label="Are CO2 or carbon emissions taxed?"></custom-field>
-            </div>
-          </sga-panel>
-        </div>
-
-        <div class="col-md-6">
-          <sga-panel id="WaterPanel"
-                     title="Water"
-                     titleTooltip="Fuel info tooltip"
-                     background="#EDF2F4">
-            <div body>
-              <div class="form-group">
-                <custom-field [statusLine]="true"
-                              name="costOfWater"
-                              label="Cost of Water / Unt"
-                              unit="£/m3"
-                              required></custom-field>
-              </div>
-              <div class="form-group">
-                <custom-field type="yesNo"
-                              name="isWaterEntering"
-                              #isWaterEnteringField
-                              label="Is water entering the boiler house measured?"></custom-field>
-              </div>
-              <div class="form-group" *ngIf="isWaterEnteringField.model">
-                <custom-field type="radioInput"
-                              [statusLine]="true"
-                              [radioInputData]="TEST_DATA.isWaterEntering"></custom-field>
-              </div>
-            </div>
-          </sga-panel>
-          <sga-panel id="WaterTreatmentChemicalsPanel"
-                     title="Water treatment chemicals"
-                     titleTooltip="Some tooltip"
-                     background="#EDF2F4">
-            <div body>
-              <div class="form-group mb-4">
-                <custom-field type="yesNo"
-                              name="areChemicalCost"
-                              #areChemicalCostField
-                              label="Are chemical cost known?"></custom-field>
-              </div>
-              <div class="form-group" *ngIf="areChemicalCostField.model">
-                <custom-field unit="£/y" label="Total chemical costs / year"></custom-field>
-              </div>
-              <div class="form-group" *ngIf="areChemicalCostField.model">
-                <custom-field unit="£/y" label="O2 scavenging chemical costs / year"></custom-field>
-              </div>
-            </div>
-          </sga-panel>
-          <sga-panel id="WaterEffluentPanel"
-                     title="Water effluent"
-                     titleTooltip="Some tooltip"
-                     background="#EDF2F4">
-            <div body class="form-group">
-              <custom-field [statusLine]="true"
-                            name="costOfEffluent"
-                            label="Cost of effluent / unit"
-                            unit="£/m3"></custom-field>
-            </div>
-          </sga-panel>
-        </div>
-      </div>
-    </div>
-  </sga-panel>
-
-  <sga-panel id="BoilerHouseParameters" title="Boiler house parameters"  titleSize="24px" [isCollapsed]="true">
-    <div body class="container-fluid">
-      <div class="row">
-        <div class="col-md-12">
-          <tabset type="pills">
-            <tab heading="Boiler" customClass="customClass"><h1>Boiler Coming soon</h1></tab>
-            <tab heading="TDS BLOWDOwn"><h1>TDS BLOWDOwn Coming soon</h1></tab>
-            <tab heading="Water Treatment"><h1> Water TreatmentComing soon</h1></tab>
-            <tab heading="Feedwater & Condensate"><h1>Feedwater & Condensate Coming soon</h1></tab>
-          </tabset>
-        </div>
-      </div>
-    </div>
-  </sga-panel>
 </div>

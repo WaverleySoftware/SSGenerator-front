@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from "@angular/core";
 import { BaseSizingModule, JobSizing, Project } from "sizing-shared-lib";
 import { FormGroup } from "@angular/forms";
 
@@ -12,24 +12,12 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   readonly moduleName: string = 'steamGenerationAssessment';
   moduleId = 2;
   productName = 'Steam Generation Assessment';
-
   sizingModuleForm: FormGroup;
-
-  public TEST_DATA = {
-    CostOfFuelByYear: [
-      {value: '', name: 'CostOfFuelByYear1', unit: '£/y', type: 'text'},
-      {value: '', name: 'CostOfFuelByYear2', unit: 'kWh/y'}
-    ],
-    isWaterEntering: [
-      {value: '', name: 'isWaterEntering1', unit: '£/y', type: 'text', label: 'Cost of Water / year'},
-      {value: '', name: 'isWaterEntering2', unit: 'm3/h', label: 'Water Consumption / hour'},
-      {value: '', name: 'isWaterEntering3', unit: 'm3/y', label: 'Water Consumption / year'},
-    ],
+  constructor() {
+    super();
   }
 
-  public testClickEvent($event): void {
-    console.log('--CLICK--', $event)
-  }
+  ngOnInit() {}
 
   onCalculateSizing(formGroup: FormGroup): any {
     return true;
@@ -73,14 +61,6 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
 
   repackageSizing(): any {
     return true;
-  }
-
-  constructor() {
-    super();
-  }
-
-  ngOnInit() {
-    console.log('%c ----- ON INIT "SteamGenerationAssessment" MODULE ------', 'background: #222; color: #bada55; font-size: 16px;');
   }
 
 }

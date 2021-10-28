@@ -1,0 +1,122 @@
+<!--<label *ngIf="!!id && type === 'radio'" >-->
+<!--  <ng-content select="[before]"></ng-content>-->
+<!--</label>-->
+
+<div class="form-group formField {{type}}">
+  <label class="formField_label" *ngIf="!!label" [for]="id ? id + 'RadioID' : null">
+    <ng-container *ngIf="type !== 'radio'; else radioLabelBeforeRef">
+      {{label}}{{required && ' *'}}
+    </ng-container>
+    <ng-template #radioLabelBeforeRef><ng-content select="[before]"></ng-content></ng-template>
+  </label>
+
+  <div class="formField_row">
+    <input class="radioInput_check"
+           #radioCheckRef
+           *ngIf="type === 'radioInput'"
+           [type]="multiple ? 'checkbox' : 'radio'"
+           (change)="changeRadioInputHandle($event.target)"
+           [name]="group"
+           [disabled]="disabled"
+           [required]="required">
+    <div class="formField_wrap"
+         [ngClass]="{focus: isFocused, error: !!error, disabled: disabled || (type === 'radioInput' && !checked)}">
+
+      <ng-container [ngSwitch]="type">
+        <select *ngSwitchCase="'select'"
+                class="form-control"
+                [ngClass]="{required: required, filled: filled, error: !!error}"
+                [ngModel]="value"
+                (ngModelChange)="updateValue($event)"
+                (blur)="onTouched()"
+                (focusin)="isFocused = true"
+                (focusout)="isFocused = false"
+                [disabled]="disabled"
+                [required]="required"
+                [name]="name">
+          <option selected disabled *ngIf="!!placeholder">{{placeholder}}</option>
+          <option *ngFor="let option of options"
+                  [value]="option.value || option"
+                  [title]="option.title">
+            {{option.text || option}}
+          </option>
+        </select>
+        <ng-container *ngSwitchCase="'yesNo'">
+          <label>
+            <input type="radio"
+                   [value]="true"
+                   [name]="name"
+                   [ngModel]="value"
+                   (ngModelChange)="updateValue($event)"
+                   (blur)="onTouched()"
+                   [disabled]="disabled"
+                   [required]="required">
+            <span>YES</span>
+          </label>
+          <label>
+            <input type="radio"
+                   [value]="false"
+                   [name]="name"
+                   [ngModel]="value"
+                   (ngModelChange)="updateValue($event)"
+                   (blur)="onTouched()"
+                   [disabled]="disabled"
+                   [required]="required">
+            <span>No</span>
+          </label>
+        </ng-container>
+        <input *ngSwitchCase="'radioInput'"
+               class="form-control"
+               autocomplete="off"
+               [ngClass]="{required: required, filled: filled, error: !!error}"
+               [ngModel]="value"
+               (ngModelChange)="updateValue($event)"
+               (blur)="onTouched()"
+               (focusin)="isFocused = true"
+               (focusout)="isFocused = false"
+               [disabled]="!checked"
+               [required]="required"
+               [placeholder]="placeholder || ''"
+               type="number"
+               [name]="name">
+        <input class="form-control"
+               autocomplete="off"
+               type="radio"
+               *ngSwitchCase="'radio'"
+               [id]="id + 'RadioID'"
+               [value]="value"
+               (change)="updateValue($event.target.value)"
+               (blur)="onTouched()"
+               [disabled]="disabled"
+               [required]="required"
+               [defaultChecked]="checked || model === value"
+               [name]="name">
+        <input *ngSwitchDefault
+               class="form-control"
+               autocomplete="off"
+               [max]="maxValue"
+               [ngClass]="{required: required, filled: filled, error: !!error}"
+               [ngModel]="value"
+               (ngModelChange)="updateValue($event)"
+               (blur)="onTouched()"
+               (focusin)="isFocused = true"
+               (focusout)="isFocused = false"
+               [disabled]="disabled"
+               [required]="required"
+               [placeholder]="placeholder || ''"
+               [type]="type"
+               [name]="name">
+      </ng-container>
+
+      <label class="radioLabel" *ngIf="!!label && type === 'radio'">{{label}}</label>
+
+      <span class="unit" *ngIf="!!unit">{{unit}}</span>
+    </div>
+  </div>
+  <span [ngClass]="{formField_error: !!error}" *ngIf="!!error || !!message" [innerHTML]="error || message"></span>
+</div>
+
+<ng-container *ngIf="type === 'yesNo'">
+  <ng-content *ngIf="value" select="[yes]"></ng-content>
+  <ng-content *ngIf="!value" select="[no]"></ng-content>
+</ng-container>
