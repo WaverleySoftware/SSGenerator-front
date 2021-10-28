@@ -1,11 +1,12 @@
 <sga-panel id="UtilityParameters" title="Utility parameters" titleSize="24px">
-  <form body class="container-fluid" [formGroup]="utilityParamsForm">
+  <form body class="container-fluid" [formGroup]="utilityParamsForm" (ngSubmit)="submitForm()">
     <div class="row mb-5">
       <div class="col-md-5">
         <app-form-field formControlName="HOURS_OF_OPERATION"
                         name="HOURS_OF_OPERATION"
                         [label]="'HOURS_OF_OPERATION' | translate"
-                        [required]="true"></app-form-field>
+                        [error]="fieldValidation('HOURS_OF_OPERATION')"
+                        [required]="isRequired('HOURS_OF_OPERATION')"></app-form-field>
       </div>
     </div>
 
@@ -21,12 +22,14 @@
                             formControlName="FUEL_TYPE"
                             name="FUEL_TYPE"
                             type="select"
+                            [error]="fieldValidation('FUEL_TYPE')"
                             [label]="'FUEL_TYPE' | translate"></app-form-field>
             <app-form-field formControlName="FUEL_CALORIFIC_VALUE"
                             name="FUEL_CALORIFIC_VALUE"
                             type="number"
                             unit="kWh/kWh"
-                            [required]="true"
+                            [error]="fieldValidation('FUEL_CALORIFIC_VALUE')"
+                            [required]="isRequired('FUEL_CALORIFIC_VALUE')"
                             [label]="'FUEL_CALORIFIC_VALUE' | translate"></app-form-field>
             <ng-container *ngIf="fuelType.model === 'Natural Gas'">
               <app-form-field formControlName="cO2EmissionsUnitFuel"
@@ -40,22 +43,20 @@
                               unit="£/kWh"
                               label="Cost of Fuel / unit"></app-form-field>
             </ng-container>
-            <app-form-field formControlName="isFuelComsumptionMeasured"
+            <app-form-field formControlName="IS_FUEL_COMSUMPTION_MEASURED"
                             type="yesNo"
-                            name="isFuelComsumptionMeasured"
+                            name="IS_FUEL_COMSUMPTION_MEASURED"
                             label="Is Fuel Comsumption Measured?">
               <ng-container yes>
-                <app-form-field formControlName="costOfFuelYear"
+                <app-form-field formControlName="COST_OF_FUEL_YEAR"
                                 type="radioInput"
                                 group="costOfFuelYear"
                                 unit="£/y"
-                                [required]="true"
                                 label="Cost of fuel / year"></app-form-field>
-                <app-form-field formControlName="fuelConsumptionYear"
+                <app-form-field formControlName="FUEL_CONSUMPTION_YEAR"
                                 type="radioInput"
                                 group="costOfFuelYear"
                                 unit="m3/y"
-                                [required]="true"
                                 label="Fuel Consumption / year"></app-form-field>
               </ng-container>
             </app-form-field>
