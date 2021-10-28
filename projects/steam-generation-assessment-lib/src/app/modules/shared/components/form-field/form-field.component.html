@@ -89,6 +89,7 @@
                (blur)="onTouched()"
                [disabled]="disabled"
                [required]="required"
+               [defaultChecked]="checked || model === value"
                [name]="name">
         <input *ngSwitchDefault
                class="form-control"

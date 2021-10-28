@@ -8,6 +8,7 @@ import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { FormFieldComponent } from './components/form-field/form-field.component';
 import { ChartBarComponent } from './components/chart-bar/chart-bar.component';
 import { ChartsModule } from "ng2-charts";
+import { BoilerSchemeComponent } from './components/boiler-scheme/boiler-scheme.component';
 
 
 @NgModule({
@@ -15,7 +16,8 @@ import { ChartsModule } from "ng2-charts";
     SsButtonComponent,
     SgaPanelComponent,
     FormFieldComponent,
-    ChartBarComponent
+    ChartBarComponent,
+    BoilerSchemeComponent
   ],
   imports: [
     CommonModule,
@@ -25,11 +27,12 @@ import { ChartsModule } from "ng2-charts";
     ReactiveFormsModule,
     ChartsModule
   ],
-  exports: [
-    SsButtonComponent,
-    SgaPanelComponent,
-    FormFieldComponent,
-    ChartBarComponent
-  ]
+	exports: [
+		SsButtonComponent,
+		SgaPanelComponent,
+		FormFieldComponent,
+		ChartBarComponent,
+		BoilerSchemeComponent
+	]
 })
 export class SharedModule { }

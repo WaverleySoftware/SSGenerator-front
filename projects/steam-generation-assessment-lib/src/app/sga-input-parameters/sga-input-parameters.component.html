@@ -187,9 +187,6 @@
                 </div>
               </form>
             </sga-panel>
-            <div class="schemeImage">
-              <img src="/assets/img/steam_generation/boiler_scheme.png" alt="boiler-scheme">
-            </div>
           </tab>
           <tab heading="TDS BLOWDOwn" customClass="sgaTab">
             <sga-panel id="blowdownEquipmentPanel" title="Blowdown equipment" background="#EDF2F4">
@@ -243,9 +240,6 @@
                 </div>
               </div>
             </sga-panel>
-            <div class="schemeImage">
-              <img src="/assets/img/steam_generation/boiler_scheme_2.png" alt="boiler-scheme">
-            </div>
           </tab>
           <tab heading="Water Treatment" customClass="sgaTab">
             <sga-panel id="makeUpWaterPanel" title="Make-up water" background="#EDF2F4">
@@ -300,40 +294,38 @@
                 </div>
               </div>
             </sga-panel>
-            <div class="schemeImage">
-              <img src="/assets/img/steam_generation/boiler_scheme_3.png" alt="boiler-scheme">
-            </div>
           </tab>
           <tab heading="Feedwater & Condensate" customClass="sgaTab">
             <sga-panel id="deaeratorTypePanel" title="Deaerator type" background="#EDF2F4">
               <div class="row" body>
                 <div class="col-md-4">
                   <app-form-field type="radio"
+                                  [(model)]="deaeratorType"
                                   value="autmosphericDeaerator"
                                   id="autmosphericDeaeratorId"
                                   name="deaeratorType"
                                   label="Autmospheric Deaerator">
                     <img before
-                         class="img-responsive cursor-pointer"
+                         class="checkImage"
                          src="/assets/img/steam_generation/deaerator_type_1.png"
                          alt="deaerator_type_1">
                   </app-form-field>
                 </div>
                 <div class="col-md-4">
                   <app-form-field type="radio"
+                                  [(model)]="deaeratorType"
                                   value="pressurlsedDeaerator"
                                   id="pressurlsedDeaeratorId"
                                   name="deaeratorType"
                                   label="Pressurlsed Deaerator">
                     <img before
-                         class="img-responsive cursor-pointer"
-                         src="/assets/img/steam_generation/deaerator_type_1.png"
+                         class="checkImage"
+                         src="/assets/img/steam_generation/boiler-scheme/images/PressurisedDAImgCrop.png"
                          alt="deaerator_type_1">
                   </app-form-field>
                 </div>
               </div>
             </sga-panel>
-
             <sga-panel id="boilerFeedwaterPanel" title="Boiler feedwater" background="#EDF2F4">
               <div class="row" body>
                 <div class="col-md-4 border-r-md">
@@ -379,7 +371,6 @@
                 </div>
               </div>
             </sga-panel>
-
             <sga-panel id="condensateReturnPanel" title="CONDENSATE RETURN" background="#EDF2F4">
               <div class="row" body>
                 <div class="col-md-6 border-r-md">
@@ -412,12 +403,13 @@
                 </div>
               </div>
             </sga-panel>
-
-            <div class="schemeImage">
-              <img src="/assets/img/steam_generation/feedwater_condensate.png" alt="Feedwater & Condensate">
-            </div>
           </tab>
         </tabset>
+      </div>
+
+      <div class="col-md-2"></div>
+      <div class="col-md-8">
+        <app-boiler-scheme [feedWater]="deaeratorType === 'autmosphericDeaerator' ? 'main' : 'main_PRESSURE'"></app-boiler-scheme>
       </div>
     </div>
   </div>

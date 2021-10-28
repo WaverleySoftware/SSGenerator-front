@@ -1,0 +1,168 @@
+
+<div class="row">
+  <ng-container *ngIf="showControls">
+    <div class="col-md-3">
+      <p>BOILER</p>
+      <label class="form-control">
+        <input [(ngModel)]="boiler" type="radio" value="main" name="boiler" [checked]="true">
+        <span>main</span>
+      </label>
+      <label class="form-control">
+        <input [(ngModel)]="boiler" type="radio" value="highlight" name="boiler">
+        <span>highlight</span>
+      </label>
+      <label class="form-control">
+        <input [(ngModel)]="boiler" type="radio" value="selected" name="boiler">
+        <span>select</span>
+      </label>
+
+      <p>FEED-WATER</p>
+      <label class="form-control">
+        <input [(ngModel)]="feedWater" type="radio" value="main" name="feedWater">
+        <span>main</span>
+      </label>
+      <label class="form-control">
+        <input [(ngModel)]="feedWater" type="radio" value="highlight" name="feedWater">
+        <span>highlight</span>
+      </label>
+      <label class="form-control">
+        <input [(ngModel)]="feedWater" type="radio" value="selected" name="feedWater">
+        <span>select</span>
+      </label>
+
+      <p>FEED-WATER-PRESSURE</p>
+      <label class="form-control">
+        <input [(ngModel)]="feedWater" type="radio" value="main_PRESSURE" name="feedWater">
+        <span>main</span>
+      </label>
+      <label class="form-control">
+        <input [(ngModel)]="feedWater" type="radio" value="highlight_PRESSURE" name="feedWater">
+        <span>highlight</span>
+      </label>
+      <label class="form-control">
+        <input [(ngModel)]="feedWater" type="radio" value="selected_PRESSURE" name="feedWater">
+        <span>select</span>
+      </label>
+
+      <p>TDS-CONTROL</p>
+      <label class="form-control">
+        <input [(ngModel)]="tdsControl" type="radio" value="main" name="tdsControl">
+        <span>main</span>
+      </label>
+      <label class="form-control">
+        <input [(ngModel)]="tdsControl" type="radio" value="highlight" name="tdsControl">
+        <span>highlight</span>
+      </label>
+      <label class="form-control">
+        <input [(ngModel)]="tdsControl" type="radio" value="selected" name="tdsControl">
+        <span>select</span>
+      </label>
+    </div>
+    <div class="col-md-3">
+      <p>TREATMENT</p>
+      <label class="form-control">
+        <input [(ngModel)]="treatment" type="radio" value="main" name="treatment">
+        <span>main</span>
+      </label>
+      <label class="form-control">
+        <input [(ngModel)]="treatment" type="radio" value="highlight" name="treatment">
+        <span>highlight</span>
+      </label>
+      <label class="form-control">
+        <input [(ngModel)]="treatment" type="radio" value="selected" name="treatment">
+        <span>select</span>
+      </label>
+
+      <p>FLASH-VESSEL</p>
+      <label class="form-control">
+        <input [(ngModel)]="flashWessel" type="radio" value="main" name="flashWessel">
+        <span>main</span>
+      </label>
+      <label class="form-control">
+        <input [(ngModel)]="flashWessel" type="radio" value="highlight" name="flashWessel">
+        <span>highlight</span>
+      </label>
+      <label class="form-control">
+        <input [(ngModel)]="flashWessel" type="radio" value="selected" name="flashWessel">
+        <span>select</span>
+      </label>
+
+      <p>Elements</p>
+      <label class="form-control">
+        <input [(ngModel)]="heatExchanger" type="checkbox">
+        <span>HEAT-EXCHANGER</span>
+      </label>
+      <label class="form-control">
+        <input [(ngModel)]="tdsPipe" type="checkbox">
+        <span>TDS-PIPE</span>
+      </label>
+      <label class="form-control">
+        <input [(ngModel)]="dsi" type="checkbox">
+        <span>DSI</span>
+      </label>
+      <label class="form-control">
+        <input [(ngModel)]="bdv" type="checkbox">
+        <span>BDV</span>
+      </label>
+      <label class="form-control">
+        <input [(ngModel)]="economiser" type="checkbox">
+        <span>ECONOMISER</span>
+      </label>
+      <label class="form-control">
+        <input [(ngModel)]="bdvCooling" type="checkbox">
+        <span>BDV-COOLING</span>
+      </label>
+    </div>
+  </ng-container>
+  <div class="col-md-{{showControls ? 6 : 12}}">
+    <div class="boiler">
+      <!--  BOILER  -->
+      <img [ngClass]="{active: boiler === 'main'}" class="main" src="/assets/img/steam_generation/boiler-scheme/selectable/BolierImg.png" alt="">
+      <img [ngClass]="{active: boiler === 'selected'}" class="selected" src="/assets/img/steam_generation/boiler-scheme/selectable/BoilerImgSelected.png" alt="">
+      <img [ngClass]="{active: boiler === 'highlight'}" class="highlight" src="/assets/img/steam_generation/boiler-scheme/selectable/BoilerImgHighlight.png" alt="">
+
+      <!--  FEED-WATER  -->
+      <img [ngClass]="{active: feedWater === 'main'}" class="main" src="/assets/img/steam_generation/boiler-scheme/selectable/DAImg.png" alt="">
+      <img [ngClass]="{active: feedWater === 'selected'}" class="selected" src="/assets/img/steam_generation/boiler-scheme/selectable/FeedwaterSelected.png" alt="">
+      <img [ngClass]="{active: feedWater === 'highlight'}" class="highlight" src="/assets/img/steam_generation/boiler-scheme/selectable/FeedwaterHighlighted.png" alt="">
+
+      <!--  FEED-WATER-PRESSURE  -->
+      <img [ngClass]="{active: feedWater === 'main_PRESSURE'}" class="main" src="/assets/img/steam_generation/boiler-scheme/selectable/PressurisedDAImg.png" alt="">
+      <img [ngClass]="{active: feedWater === 'selected_PRESSURE'}" class="selected" src="/assets/img/steam_generation/boiler-scheme/selectable/FeedwaterPressureSelected.png" alt="">
+      <img [ngClass]="{active: feedWater === 'highlight_PRESSURE'}" class="highlight" src="/assets/img/steam_generation/boiler-scheme/selectable/FeedwaterPressureHighlighted.png" alt="">
+
+      <!--  TDS-CONTROL  -->
+      <img [ngClass]="{active: tdsControl === 'main'}" class="main" src="/assets/img/steam_generation/boiler-scheme/selectable/TDSControlImg.png" alt="">
+      <img [ngClass]="{active: tdsControl === 'selected'}" class="selected" src="/assets/img/steam_generation/boiler-scheme/selectable/TDSSelected.png" alt="">
+      <img [ngClass]="{active: tdsControl === 'highlight'}" class="highlight" src="/assets/img/steam_generation/boiler-scheme/selectable/TDSHighlighted.png" alt="">
+
+      <!--  TREATMENT  -->
+      <img [ngClass]="{active: treatment === 'main'}" class="main" src="/assets/img/steam_generation/boiler-scheme/selectable/TreatmentHighlighted.png" alt="">
+      <img [ngClass]="{active: treatment === 'selected'}" class="selected" src="/assets/img/steam_generation/boiler-scheme/selectable/TreatmentSelected.png" alt="">
+      <img [ngClass]="{active: treatment === 'highlight'}" class="highlight" src="/assets/img/steam_generation/boiler-scheme/selectable/TreatmentHighlighted.png" alt="">
+
+      <!--  FLASH-VESSEL  -->
+      <img [ngClass]="{active: flashWessel === 'main'}" class="main" src="/assets/img/steam_generation/boiler-scheme/selectable/FlashVesselImg.png" alt="">
+      <img [ngClass]="{active: flashWessel === 'selected'}" class="selected" src="/assets/img/steam_generation/boiler-scheme/selectable/FlashVesselPressurisedImg.png" alt="">
+      <img [ngClass]="{active: flashWessel === 'highlight'}" class="highlight" src="/assets/img/steam_generation/boiler-scheme/selectable/FlashVesselPressurisedImg.png" alt="">
+
+      <!--  HEAT-EXCHANGER  -->
+      <img [ngClass]="{active: heatExchanger}" class="main" src="/assets/img/steam_generation/boiler-scheme/elements/HeatExchangerImg.png" alt="">
+
+      <!--  TDS-PIPE  -->
+      <img [ngClass]="{active: tdsPipe}" class="main" src="/assets/img/steam_generation/boiler-scheme/elements/TDSPipeImg.png" alt="">
+
+      <!--  DSI  -->
+      <img [ngClass]="{active: dsi}" class="main" src="/assets/img/steam_generation/boiler-scheme/elements/DSIImg.png" alt="">
+
+      <!--  BDV  -->
+      <img [ngClass]="{active: bdv}" class="main" src="/assets/img/steam_generation/boiler-scheme/elements/BDVImg.png" alt="">
+
+      <!--  ECONOMISER  -->
+      <img [ngClass]="{active: economiser}" class="main" src="/assets/img/steam_generation/boiler-scheme/elements/EconomiserImg.png" alt="">
+
+      <!--  BDV-COOLING  -->
+      <img [ngClass]="{active: bdvCooling}" class="main" src="/assets/img/steam_generation/boiler-scheme/elements/BDVCoolingImg.png" alt="">
+    </div>
+  </div>
+</div>
