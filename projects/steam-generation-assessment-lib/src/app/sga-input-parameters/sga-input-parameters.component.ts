@@ -1,88 +1,48 @@
-import { Component, OnInit } from '@angular/core';
-import {
-  AbstractControl,
-  FormBuilder,
-  FormGroup,
-  ValidationErrors,
-  Validators
-} from "@angular/forms";
+import { Component, Input } from "@angular/core";
+import { FormGroup } from "@angular/forms";
+import { TranslatePipe } from "sizing-shared-lib";
+import { SteamGenerationFormInterface } from "../steam-generation-form.interface";
+import { PreferenceService } from "sizing-shared-lib";
+import { SizingUnitPreference } from "../../../../sizing-shared-lib/src/lib/shared/preference/sizing-unit-preference.model";
 
 @Component({
   selector: 'app-sga-input-parameters',
   templateUrl: './sga-input-parameters.component.html',
   styleUrls: ['./sga-input-parameters.component.scss']
 })
-export class SgaInputParametersComponent implements OnInit {
-  utilityParamsForm: FormGroup;
-  boilerParamsForm: FormGroup;
+export class SgaInputParametersComponent {
+  @Input() formGroup: FormGroup;
 
   public deaeratorType: string = 'autmosphericDeaerator';
 
-  constructor(private fb: FormBuilder) {
-    this.initForm();
+  get fuelEnergyUnit(): SizingUnitPreference {
+    return this.preferenceService.sizingUnitPreferences.find((item) => item.unitType === "BoilerHouseGasFuelUnits");
   }
 
-  ngOnInit() {
-  }
+  constructor(private translatePipe: TranslatePipe, private preferenceService: PreferenceService) {}
 
   submitForm(): void {
-    console.log(this.utilityParamsForm.getRawValue());
+    console.log(this.formGroup.valid, '----valid')
+    console.log(this.formGroup.getRawValue());
   }
 
-  private initForm():void {
-    this.utilityParamsForm = this.fb.group({
-      HOURS_OF_OPERATION: ["", Validators.required],
-      FUEL_TYPE: ["Natural Gas", Validators.required],
-      FUEL_CALORIFIC_VALUE: ["", [Validators.required, Validators.min(1), Validators.max(100)]],
-      cO2EmissionsUnitFuel: ["0.1850", Validators.required],
-      costOfFuelUnit: ["0.025"],
-      IS_FUEL_COMSUMPTION_MEASURED: [false],
-      COST_OF_FUEL_YEAR: [""],
-      FUEL_CONSUMPTION_YEAR: [""],
-      areCO2OrCarbonEmissionsTaxed: [false],
-      carbonLeviTaxUnit: [""],
-      costOfCo2UnitMax: [""],
-      costOfWaterUnt: [""],
-      isWaterEnteringBoilerHouseMeasured: [false],
-      costOfWaterYear: [""],
-      waterConsumptionHour: [""],
-      waterConsumptionYear: [""],
-    });
+  public translateErrors(field: keyof SteamGenerationFormInterface): string | null {
+    const {errors} = this.formGroup.get(field);
 
-    this.boilerParamsForm = this.fb.group({
-      boilerEfficiency: [100, [Validators.required, Validators.max(100), Validators.min(10)]],
-    })
-  }
-
-  public fieldValidation(fieldName: string): string {
-    let errors: string;
-    const control: AbstractControl = this.utilityParamsForm.get(fieldName);
-    const controlErrors: ValidationErrors = control.errors;
-
-    if (control.invalid && control.touched && controlErrors !== null) {
-      Object.keys(controlErrors).forEach(keyError => {
-        switch (keyError) {
-          case 'required': {
-            errors = keyError;
-            break;
-          }
-          case 'min': {
-            errors = `Min: ${controlErrors[keyError].min}`;
-            break;
-          }
-          case 'max': {
-            errors = `Max: ${controlErrors[keyError].max}`;
-            break;
-          }
-        }
-      });
+    if (!errors) {
+      return null;
     }
 
-    return errors;
-  }
+    if (typeof errors === "string") {
+      return errors;
+    }
 
-  public isRequired(fieldName: string): boolean {
-    return this.utilityParamsForm.get(fieldName).errors
-      && this.utilityParamsForm.get(fieldName).errors.required;
+    if (errors && errors.validation) {
+      return errors.validation.errorMessage
+        ? this.translatePipe.transform(errors.validation.errorMessage)
+        : errors.validation;
+    }
+
+    return null;
   }
 }

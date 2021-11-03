@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { ChartBarDataInterface, ChartBarOptionsInterface } from "../modules/shared/interfaces/chart-bar.interface";
+import { FormGroup } from "@angular/forms";
 
 @Component({
   selector: 'app-sga-final-proposal',
@@ -7,6 +8,7 @@ import { ChartBarDataInterface, ChartBarOptionsInterface } from "../modules/shar
   styleUrls: ['./sga-final-proposal.component.scss']
 })
 export class SgaFinalProposalComponent implements OnInit {
+  @Input() formGroup: FormGroup;
   @Input() chartData: ChartBarDataInterface[] = [
     { data: [272, 152, 80, 81, 56, 55, 0], label: 'Fuel' },
     { data: [0, 84, 40, 19, 86, 27, 0], label: 'Water and Chemicals' },

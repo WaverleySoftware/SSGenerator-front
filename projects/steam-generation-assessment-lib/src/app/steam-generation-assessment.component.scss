@@ -47,6 +47,10 @@ $active-border-color: #002D72;
   }
 
   &::ng-deep {
+    .ng-invalid {
+      border-left: none;
+    }
+
     &>.tab-content {
       padding: 0;
       border: none;

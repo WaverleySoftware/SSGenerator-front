@@ -31,7 +31,7 @@ import {CleanSteamGeneratorFBMiniSharedModule} from 'projects/cleansteamgenerato
 import {CleanSteamGeneratorFBMiniComponent} from 'projects/cleansteamgenerator-fbmini-lib/src/app/cleanSteamGeneratorFBMini.component';
 import { FlowMeterSharedModule } from 'projects/flowmeter-lib/src/app/app.module';
 import { FlowMeterComponent } from 'projects/flowmeter-lib/src/app/flow-meter/flow-meter.component';
-import { SteamGenerationAssessmentComponent } from 'projects/steam-generation-assessment-lib/src/app/steam-generation-assessment/steam-generation-assessment.component';
+import { SteamGenerationAssessmentComponent } from 'projects/steam-generation-assessment-lib/src/app/steam-generation-assessment.component';
 import { RoutesService } from "sizing-shared-lib";
 import { MenuService } from 'sizing-shared-lib';
 import { SharedModule } from 'sizing-shared-lib';

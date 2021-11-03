@@ -10,7 +10,7 @@ export class SgaPanelComponent implements OnInit, AfterViewInit {
   @Input() title: string;
   @Input() subtitle: string;
   @Input() titleSize: string = '16px';
-  @Input() titleTooltip: string;
+  @Input() titleTooltip: string | TemplateRef<any>;
   @Input() background: string;
   @Input() isCollapsed: boolean = false;
   @Input() showSeparator: boolean = true;

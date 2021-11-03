@@ -1,0 +1,26 @@
+<div class="formField" [ngClass]="{error: !!error, filled: filled !== undefined, touched: touched, disabled: disabled}">
+  <label *ngIf="!!label" [for]="inputRef" class="formField-label">{{label | translate}}</label>
+  <div class="formField-row">
+    <input #temperatureRef="display-preference"
+           [type]="type"
+           [display-preference]="preferenceName"
+           [display-masterTextKey]="masterTextKey"
+           [display-preference-unit-type]="preferenceUnitType"
+           [display-preference-module-group-id]="moduleGroupId"
+           [required]="required"
+           [disabled]="disabled"
+           [ngClass]="{filled: filled !== undefined}"
+           (focusin)="focus = true"
+           (focusout)="touched = true; focus = false"
+           (blur)="onTouched()"
+           [ngModel]="value"
+           (ngModelChange)="updateValue($event)"
+           class="formField-input">
+
+    <span class="formField-addon" *ngIf="temperatureRef?.preference?.masterTextKey || unit || unitBefore">
+<!--      {{unitBefore}}{{temperatureRef?.preference?.masterTextKey && (temperatureRef?.preference?.masterTextKey | translate)}}{{unit}}-->
+      {{unitBefore}}{{temperatureRef?.preference?.unitName}}{{unit}}
+    </span>
+  </div>
+  <span class="formField-message" [ngClass]="{error: error}">{{error || message}}</span>
+</div>

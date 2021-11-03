@@ -9,6 +9,9 @@ import { FormFieldComponent } from './components/form-field/form-field.component
 import { ChartBarComponent } from './components/chart-bar/chart-bar.component';
 import { ChartsModule } from "ng2-charts";
 import { BoilerSchemeComponent } from './components/boiler-scheme/boiler-scheme.component';
+import { FormInputComponent } from './components/form-input/form-input.component';
+import { SizingSharedLibModule } from "sizing-shared-lib";
+import { FormListComponent } from './components/form-list/form-list.component';
 
 
 @NgModule({
@@ -17,13 +20,16 @@ import { BoilerSchemeComponent } from './components/boiler-scheme/boiler-scheme.
     SgaPanelComponent,
     FormFieldComponent,
     ChartBarComponent,
-    BoilerSchemeComponent
+    BoilerSchemeComponent,
+    FormInputComponent,
+    FormListComponent
   ],
   imports: [
     CommonModule,
     FormsModule,
     CollapseModule.forRoot(),
     TooltipModule.forRoot(),
+    SizingSharedLibModule.forRoot(),
     ReactiveFormsModule,
     ChartsModule
   ],
@@ -32,7 +38,8 @@ import { BoilerSchemeComponent } from './components/boiler-scheme/boiler-scheme.
 		SgaPanelComponent,
 		FormFieldComponent,
 		ChartBarComponent,
-		BoilerSchemeComponent
+		BoilerSchemeComponent,
+    FormInputComponent
 	]
 })
 export class SharedModule { }
