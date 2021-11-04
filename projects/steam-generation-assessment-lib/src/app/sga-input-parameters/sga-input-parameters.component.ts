@@ -1,7 +1,6 @@
 import { Component, Input } from "@angular/core";
 import { FormGroup } from "@angular/forms";
 import { TranslatePipe } from "sizing-shared-lib";
-import { SteamGenerationFormInterface } from "../steam-generation-form.interface";
 import { PreferenceService } from "sizing-shared-lib";
 import { SizingUnitPreference } from "../../../../sizing-shared-lib/src/lib/shared/preference/sizing-unit-preference.model";
 
@@ -26,23 +25,11 @@ export class SgaInputParametersComponent {
     console.log(this.formGroup.getRawValue());
   }
 
-  public translateErrors(field: keyof SteamGenerationFormInterface): string | null {
-    const {errors} = this.formGroup.get(field);
-
-    if (!errors) {
-      return null;
+  public clearValues({ group }: { ref: any; group: string }, clearFields: string[]) {
+    for (let fieldName of clearFields) {
+      if (this.formGroup.get(fieldName).value) {
+        this.formGroup.get(fieldName).setValue(0);
+      }
     }
-
-    if (typeof errors === "string") {
-      return errors;
-    }
-
-    if (errors && errors.validation) {
-      return errors.validation.errorMessage
-        ? this.translatePipe.transform(errors.validation.errorMessage)
-        : errors.validation;
-    }
-
-    return null;
   }
 }

@@ -3304,6 +3304,26 @@
     {
       "masterTextKey": "COST_OF_WATER_PER_YEAR",
       "translationText": "Cost of Water / year"
+    },
+    {
+      "masterTextKey": "WATER_CONSUMPTION_HOUR",
+      "translationText": "Water Consumption / hour"
+    },
+    {
+      "masterTextKey": "WATER_CONSUMPTION_YEAR",
+      "translationText": "Water Consumption / year"
+    },
+    {
+      "masterTextKey": "ARE_CHEMICAL_COST_KNOWN",
+      "translationText": "Are chemical cost known?"
+    },
+    {
+      "masterTextKey": "TOTAL_CHEMICAL_COSTS_PER_YEAR",
+      "translationText": "Total chemical costs / year"
+    },
+    {
+      "masterTextKey": "O2_SCAVENGING_CHEMICAL_COSTS_PER_YEAR",
+      "translationText": "O2 scavenging chemical costs / year"
     }
   ]
 }

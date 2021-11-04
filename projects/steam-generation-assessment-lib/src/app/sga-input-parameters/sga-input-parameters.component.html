@@ -13,78 +13,75 @@
                    [titleTooltip]="('ALLOWS_YOU_TO_INPUT_FUEL_TYPE_AND_COSTS_HELP' | translate) + ('IF_A_STANDARD_FUEL_IS_USED_THE_CALORIFIC_VALUE_AND_CO2_EMISSIONS_FSLASH_UNIT_OF_FUEL_WILL_BE_AUTOMATICALLY_POPULATED_FROM_LOO_HELP' | translate)"
                    background="#EDF2F4">
           <div body>
-            <app-form-field formControlName="inputFuelId"
-                            name="inputFuelId"
-                            type="select"
-                            [error]="translateErrors('inputFuelId')"
-                            [options]="[{value: 1, text: 'Natural Gas'}, {value: 2, text: 'some 2'}, {value: 3, text: 'some 3'}]"
-                            [label]="'FUEL_TYPE' | translate"></app-form-field>
+            <form-list formControlName="inputFuelId"
+                       enumeration-name="FuelTypeList_BoilerHouseInput"
+                       label="FUEL_TYPE"></form-list>
+            <ng-container *ngIf="formGroup.get('inputFuelId').value === 'G-Natural Gas'">
+              <form-input formControlName="fuelEnergyPerUnit"
+                          preference-name="EnergyUnits"
+                          preference-unitType="BoilerHouseElectricalFuelUnits"
+                          masterTextKey="ENERGY"
+                          label="FUEL_CALORIFIC_VALUE"
+                          [unit]="'/' + fuelEnergyUnit?.preference?.unitName"
+                          required></form-input>
 
-            <form-input formControlName="fuelEnergyPerUnit"
-                        preference-name="EnergyUnits"
-                        preference-unitType="BoilerHouseElectricalFuelUnits"
-                        masterTextKey="ENERGY"
-                        label="FUEL_CALORIFIC_VALUE"
-                        [unit]="'/' + fuelEnergyUnit?.preference?.unitName"
-                        required></form-input>
-            <h1>{{fuelEnergyUnit?.preference | json}}</h1>
+              <form-input formControlName="fuelCarbonContent"
+                          label="CO2_EMISSIONS_PER_UNIT_FUEL"
+                          unit="kg/kWh"
+                          required filled></form-input>
+            </ng-container>
 
-
-            <form-input formControlName="fuelCarbonContent"
-                        label="CO2_EMISSIONS_PER_UNIT_FUEL"
-                        unit="kg/kWh"
-                        required filled></form-input>
             <form-input formControlName="costOfFuelPerUnit"
                         preference-name="GaseousFuelUnits"
                         preference-unitType="BoilerHouseGasFuelUnits"
                         masterTextKey="GASEOUS_FUEL"
                         label="COST_OF_FUEL_PER_UNIT"
                         unitBefore="£/"
-                        required filled></form-input>
+                        [filled]="formGroup.get('inputFuelId').value === 'G-Natural Gas'"
+                        required></form-input>
 
-            <app-form-field formControlName="isSteamFlowMeasured" type="yesNo" [label]="'IS_FUEL_CONSUMPTION_MEASURED' | translate">
+            <app-form-field formControlName="fuelQtyPerYearIsKnown"
+                            name="fuelQtyPerYearIsKnown"
+                            type="yesNo"
+                            [label]="'IS_FUEL_CONSUMPTION_MEASURED' | translate">
               <ng-container yes>
-                <app-form-field formControlName="costOfFuelPerYear"
-                                name="fuelConsumptionPerYear"
-                                type="radioInput"
-                                group="costOfFuelYear"
-                                unit="£/y"
-                                [label]="'COST_OF_FUEL_PER_YEAR' | translate"
-                                [error]="translateErrors('costOfFuelPerYear')"
-                                required></app-form-field>
-                <app-form-field formControlName="fuelConsumptionPerYear"
-                                name="fuelConsumptionPerYear"
-                                type="radioInput"
-                                group="costOfFuelYear"
-                                unit="m3/y"
-                                [label]="'FUEL_CONSUMPTION_PER_YEAR' | translate"
-                                [error]="translateErrors('fuelConsumptionPerYear')"
-                                required></app-form-field>
+                <form-input formControlName="fuelConsumptionPerYear"
+                            label="FUEL_CONSUMPTION_PER_YEAR"
+                            unit="m3/y"
+                            group="group2"
+                            (changeRadio)="clearValues($event, ['costOfFuelPerYear'])"
+                            required></form-input>
+
+                <form-input formControlName="costOfFuelPerYear"
+                            label="COST_OF_FUEL_PER_YEAR"
+                            unit="£/y"
+                            group="group2"
+                            (changeRadio)="clearValues($event, ['fuelConsumptionPerYear'])"
+                            required></form-input>
               </ng-container>
             </app-form-field>
           </div>
         </sga-panel>
 
-        <sga-panel id="CO2EmissionPanel" title="CO2 Emission" titleTooltip="Tooltip" background="#EDF2F4">
+        <sga-panel id="CO2EmissionPanel"
+                   title="CO2 Emission"
+                   titleTooltip="Tooltip"
+                   background="#EDF2F4">
           <div body>
-            <app-form-field name="ARE_CO2_OR_CARBON_EMISSIONS_TAXED"
-                            type="yesNo"
-                            [label]="'ARE_CO2_OR_CARBON_EMISSIONS_TAXED' | translate">
+            <app-form-field name="CO2Emission" type="yesNo" [label]="'ARE_CO2_OR_CARBON_EMISSIONS_TAXED' | translate">
               <ng-container yes>
-                <app-form-field formControlName="carbonTaxLevyCostPerUnit"
-                                type="radioInput"
-                                unit="???"
-                                group="areCO2OrCarbonEmissionsTaxed"
-                                [label]="'CARBON_TAX_LEVY_COST_PER_UNIT' | translate"
-                                [error]="translateErrors('carbonTaxLevyCostPerUnit')"
-                                required></app-form-field>
-                <app-form-field formControlName="carbonTaxLevyCostUnit"
-                                type="radioInput"
-                                unit="???"
-                                group="areCO2OrCarbonEmissionsTaxed"
-                                [label]="'COST_OF_CO2_PER_UNIT_MAX' | translate"
-                                [error]="translateErrors('carbonTaxLevyCostUnit')"
-                                required></app-form-field>
+                <form-input formControlName="carbonTaxLevyCostUnit"
+                            label="CARBON_TAX_LEVY_COST_PER_UNIT"
+                            group="emissions-taxed"
+                            unit="???"
+                            (changeRadio)="clearValues($event, ['costOfCo2PerUnitMass'])"
+                            required></form-input>
+                <form-input formControlName="costOfCo2PerUnitMass"
+                            label="COST_OF_CO2_PER_UNIT_MAX"
+                            group="emissions-taxed"
+                            unit="???"
+                            (changeRadio)="clearValues($event, ['carbonTaxLevyCostUnit'])"
+                            required></form-input>
               </ng-container>
             </app-form-field>
           </div>
@@ -94,38 +91,36 @@
       <div class="col-md-6">
         <sga-panel id="WaterPanel" title="Water" titleTooltip="Tooltip" background="#EDF2F4">
           <div body>
-            <app-form-field formControlName="costOfWaterPerUnit"
-                            name="costOfWaterPerUnit"
-                            unit="£/m3"
-                            [label]="'COST_OF_WATER_FSLASH_UNIT' | translate"
-                            [error]="translateErrors('costOfWaterPerUnit')"
-                            required></app-form-field>
+            <form-input formControlName="costOfWaterPerUnit"
+                        label="COST_OF_WATER_FSLASH_UNIT"
+                        unit="£/m3"
+                        required></form-input>
+
             <app-form-field formControlName="isFeedWaterMeasured"
                             name="isFeedWaterMeasured"
                             [label]="'IS_WATER_ENTERING_THE_BOILER_HOUSE_MEASURED' | translate"
                             type="yesNo">
               <ng-container yes>
-                <app-form-field formControlName="costOfWaterUnit"
-                                name="costOfWaterUnit"
-                                [label]="'COST_OF_WATER_PER_YEAR' | translate"
-                                unit="£/y"
-                                type="radioInput"
-                                group="isWaterEnteringBoilerHouseMeasured"
-                                [required]="true"></app-form-field>
-                <app-form-field formControlName="waterConsumptionPerYearUnit"
-                                name="waterConsumptionPerYearUnit"
-                                label="Water Consumption / hour"
-                                unit="m3/h"
-                                type="radioInput"
-                                group="isWaterEnteringBoilerHouseMeasured"
-                                [required]="true"></app-form-field>
-                <app-form-field formControlName="waterConsumptionPerYear"
-                                name="waterConsumptionPerYear"
-                                label="Water Consumption / year"
-                                unit="m3/y"
-                                type="radioInput"
-                                group="isWaterEnteringBoilerHouseMeasured"
-                                required></app-form-field>
+                <form-input formControlName="costOfWaterUnit"
+                            label="COST_OF_WATER_PER_YEAR"
+                            unit="£/y"
+                            group="isWaterEnteringBoilerHouseMeasured"
+                            (changeRadio)="clearValues($event, ['waterConsumptionPerYearUnit', 'waterConsumptionPerYear'])"
+                            required></form-input>
+
+                <form-input formControlName="waterConsumptionPerYearUnit"
+                            label="WATER_CONSUMPTION_HOUR"
+                            unit="m3/h"
+                            group="isWaterEnteringBoilerHouseMeasured"
+                            (changeRadio)="clearValues($event, ['waterConsumptionPerYear', 'costOfWaterUnit'])"
+                            required></form-input>
+
+                <form-input formControlName="waterConsumptionPerYear"
+                            label="WATER_CONSUMPTION_YEAR"
+                            unit="m3/y"
+                            group="isWaterEnteringBoilerHouseMeasured"
+                            (changeRadio)="clearValues($event, ['costOfWaterUnit', 'waterConsumptionPerYearUnit'])"
+                            required></form-input>
               </ng-container>
             </app-form-field>
           </div>
@@ -135,16 +130,15 @@
           <div body>
             <app-form-field type="yesNo"
                             name="areChemicalCostKnown"
-                            label="Are chemical cost known?">
+                            [label]="'ARE_CHEMICAL_COST_KNOWN' | translate">
               <ng-container yes>
-                <app-form-field type="number"
-                                label="Total chemical costs / year"
-                                [required]="true"
-                                unit="£/y"></app-form-field>
-                <app-form-field type="number"
-                                label="O2 scavenging chemical costs / year"
-                                [required]="true"
-                                unit="£/y"></app-form-field>
+                <form-input formControlName="totalChemicalCostPerYear"
+                            label="TOTAL_CHEMICAL_COSTS_PER_YEAR"
+                            unit="£/y"
+                            required></form-input>
+                <form-input formControlName="o2ScavengingChemicalsCostSavings"
+                            label="O2_SCAVENGING_CHEMICALS_COST_SAVINGS"
+                            unit="£/y"></form-input>
               </ng-container>
             </app-form-field>
           </div>
@@ -152,10 +146,10 @@
 
         <sga-panel id="waterEffluentPanel" title="Water effluent" titleTooltip="Tooltip" background="#EDF2F4">
           <div body>
-            <app-form-field type="number"
-                            label="Cost of effluent / unit"
-                            [required]="true"
-                            unit="£/m3"></app-form-field>
+            <form-input formControlName="costOfEffluentUnit"
+                        label="COST_OF_EFFLUENT_FSLASH_UNIT"
+                        unit="£/m3"
+                        required></form-input>
           </div>
         </sga-panel>
       </div>

@@ -98,13 +98,13 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
 
   private getSettings(): void {
     this.preferenceService.getAllPreferences().subscribe(data => {
-      console.log(data, '-----getAllPreferences')
+      // console.log(data, '-----getAllPreferences')
     });
     this.preferenceService.getUserPreferences().subscribe(data => {
-      console.log(data, '----getUserPreferences');
+      // console.log(data, '----getUserPreferences');
     });
     this.unitsService.getAllUnitsByAllTypes().subscribe(data => {
-      console.log(data, '----getAllUnitsByAllTypes')
+      // console.log(data, '----getAllUnitsByAllTypes')
     });
   }
 

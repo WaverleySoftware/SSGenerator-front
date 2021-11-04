@@ -13,48 +13,46 @@ export class SteamGenerationAssessmentService {
     private fb: FormBuilder,
   ) {
 
-    // CO2_EMISSIONS_PER_UNIT_FUEL
-    // ARE_CO2_OR_CARBON_EMISSIONS_TAXED
     this.steamGenerationForm = this.fb.group({
-      hoursOfOperation: [{value: 0, disabled: false}, Validators.required], // HOURS_OF_OPERATION
-      isSteamFlowMeasured: [true], // IS_FUEL_CONSUMPTION_MEASURED
+      hoursOfOperation: [{value: 0, disabled: false}, Validators.required],
+      isSteamFlowMeasured: [true],
       isAutoTdsControlPResent: [true],
       boilerSteamGeneratedPerYear: [0],
       boilerSteamGeneratedPerYearUnit: [0],
-      inputFuelId: [1], // FUEL_TYPE
-      inputFuelUnit: [{value: 1, disabled: false}, Validators.required], // CO2_EMISSIONS_PER_UNIT_FUEL
-      costOfFuelPerUnit: [{value: 1, disabled: false}, Validators.required], // COST_OF_FUEL_PER_UNIT
+      inputFuelId: [null],
+      inputFuelUnit: [{value: 1, disabled: false}, Validators.required],
+      costOfFuelPerUnit: [{value: 1, disabled: false}, Validators.required],
       costOfFuelUnit: [0],
-      costOfFuelPerYear: [0], // COST_OF_FUEL_PER_YEAR
-      fuelQtyPerYearIsKnown: [true],
-      fuelConsumptionPerYear: [0, Validators.required], // FUEL_CONSUMPTION_PER_YEAR
+      costOfFuelPerYear: [0],
+      fuelQtyPerYearIsKnown: [null],
+      fuelConsumptionPerYear: [0, Validators.required],
       fuelConsumptionPerYearUnit: [0],
       fuelEnergyPerUnit: [0],
       fuelCarbonContent: [0],
       fuelCarbonContentUnit: [0],
-      costOfWaterPerUnit: [0], // COST_OF_WATER_FSLASH_UNIT
-      costOfWaterUnit: [0], // COST_OF_WATER_PER_YEAR
+      costOfWaterPerUnit: [0],
+      costOfWaterUnit: [0],
       costOfEffluentPerUnit: [0],
       costOfEffluentUnit: [0],
       boilerHouseWaterQtyPerYearIsKnown: [true],
       waterConsumptionPerYear: [0],
       waterConsumptionPerYearUnit: [0],
       boilerWaterTreatmentChemicalCostsIsKnown: [true],
-      totalChemicalCostPerYear: [0],
+      totalChemicalCostPerYear: [0], // TOTAL_CHEMICAL_COSTS_PER_YEAR
       totalChemicalCostPerYearUnit: [0],
       costOfChemistsPerUnitOfWater: [0],
       costOfChemistsPerUnitOfWaterUnit: [0],
-      o2ScavengingChemicalsCostSavings: [0],
+      o2ScavengingChemicalsCostSavings: [0], // O2_SCAVENGING_CHEMICALS_COST_SAVINGS
       o2ScavengingChemicalsCostSavingsUnit: [0],
-      carbonTaxLevyCostPerUnit: [0], // CARBON_TAX_LEVY_COST_PER_UNIT
-      carbonTaxLevyCostUnit: [0], // COST_OF_CO2_PER_UNIT_MAX
+      carbonTaxLevyCostPerUnit: [0],
+      carbonTaxLevyCostUnit: [0],
       costOfCo2PerUnitMass: [0],
       costOfCo2Unit: [0],
       isBlowdownVesselPresent: [true],
       isCoolingWaterUsed: [true],
       isSuperheatedSteam: [true],
       boilerEfficiency: [0],
-      isFeedWaterMeasured: [true], // IS_WATER_ENTERING_THE_BOILER_HOUSE_MEASURED
+      isFeedWaterMeasured: [null],
       boilerSteamPressure: [0],
       boilerSteamPressureUnit: [0],
       boilerSteamTemperature: [0],

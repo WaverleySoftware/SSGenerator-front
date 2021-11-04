@@ -39,7 +39,8 @@ import { FormListComponent } from './components/form-list/form-list.component';
 		FormFieldComponent,
 		ChartBarComponent,
 		BoilerSchemeComponent,
-    FormInputComponent
+		FormInputComponent,
+		FormListComponent
 	]
 })
 export class SharedModule { }

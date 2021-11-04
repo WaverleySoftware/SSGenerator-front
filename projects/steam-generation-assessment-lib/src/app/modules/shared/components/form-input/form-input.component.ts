@@ -1,4 +1,4 @@
-import { Component, ElementRef, forwardRef, Input, ViewChild } from "@angular/core";
+import { Component, ElementRef, EventEmitter, forwardRef, Input, Output, ViewChild } from "@angular/core";
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
 
 @Component({
@@ -26,8 +26,9 @@ export class FormInputComponent implements ControlValueAccessor {
   @Input() disabled: boolean;
   @Input() filled: boolean;
   @Input() private: any;
-
-  @ViewChild('temperatureRef', { static: true }) inputRef: ElementRef<HTMLInputElement>;
+  @Input() group: string;
+  @Output() changeRadio: EventEmitter<{ ref: any, group: string }> = new EventEmitter();
+  @ViewChild('inputRef', { static: true }) inputRef: ElementRef<HTMLInputElement>;
 
   value: any;
   touched: boolean;
@@ -59,5 +60,13 @@ export class FormInputComponent implements ControlValueAccessor {
     this.value = Number.isNaN(Number(insideValue)) ? insideValue : (insideValue && +insideValue);
     this.onChange(this.value);
     this.onTouched();
+  }
+
+  changeRadioInput(emitData: { ref: any, group: string }): void {
+    this.changeRadio.emit(emitData);
+    // Focus on input
+    if (this.inputRef && this.inputRef.nativeElement) {
+      setTimeout(() => this.inputRef.nativeElement.focus())
+    }
   }
 }
