@@ -15,9 +15,8 @@ export class FormInputComponent implements ControlValueAccessor {
   @Input('module-group-id') moduleGroupId: number = 9;
   @Input('preference-name') preferenceName: string;
   @Input('preference-unitType') preferenceUnitType: string;
-  @Input('masterTextKey') masterTextKey: string;
+  @Input('preference-masterTextKey') masterTextKey: string;
   @Input() unit: string;
-  @Input() unitBefore: string;
   @Input() label: string;
   @Input() error: string;
   @Input() message: string;

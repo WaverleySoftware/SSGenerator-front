@@ -1,0 +1,15 @@
+<label class="formRadio">
+  <span class="formRadio-above">
+    <ng-content></ng-content>
+  </span>
+  <span class="formRadio-row">
+    <input type="radio"
+           #inputRef
+           [name]="name"
+           [value]="value"
+           (change)="updateValue($event)"
+           [required]="required"
+           [disabled]="disabled">
+    <span class="formRadio-label" *ngIf="!!label">{{label | translate}}</span>
+  </span>
+</label>

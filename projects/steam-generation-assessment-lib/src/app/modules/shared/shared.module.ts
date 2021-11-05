@@ -12,6 +12,8 @@ import { BoilerSchemeComponent } from './components/boiler-scheme/boiler-scheme.
 import { FormInputComponent } from './components/form-input/form-input.component';
 import { SizingSharedLibModule } from "sizing-shared-lib";
 import { FormListComponent } from './components/form-list/form-list.component';
+import { FormToggleComponent } from './components/form-toggle/form-toggle.component';
+import { FormRadioComponent } from './components/form-radio/form-radio.component';
 
 
 @NgModule({
@@ -22,7 +24,9 @@ import { FormListComponent } from './components/form-list/form-list.component';
     ChartBarComponent,
     BoilerSchemeComponent,
     FormInputComponent,
-    FormListComponent
+    FormListComponent,
+    FormToggleComponent,
+    FormRadioComponent
   ],
   imports: [
     CommonModule,
@@ -33,14 +37,16 @@ import { FormListComponent } from './components/form-list/form-list.component';
     ReactiveFormsModule,
     ChartsModule
   ],
-	exports: [
-		SsButtonComponent,
-		SgaPanelComponent,
-		FormFieldComponent,
-		ChartBarComponent,
-		BoilerSchemeComponent,
-		FormInputComponent,
-		FormListComponent
-	]
+  exports: [
+    SsButtonComponent,
+    SgaPanelComponent,
+    FormFieldComponent,
+    ChartBarComponent,
+    BoilerSchemeComponent,
+    FormInputComponent,
+    FormListComponent,
+    FormToggleComponent,
+    FormRadioComponent
+  ]
 })
 export class SharedModule { }

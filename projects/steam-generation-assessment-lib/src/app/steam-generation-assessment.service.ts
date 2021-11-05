@@ -13,62 +13,67 @@ export class SteamGenerationAssessmentService {
     private fb: FormBuilder,
   ) {
 
+    // --- No fields ---
+    // COST_OF_WATER_PER_YEAR
+    // WATER_CONSUMPTION_HOUR
+    // STEAM_GENERATION_PER_HOUR
+    // STEAM_GENERATION_PER_YEAR
     this.steamGenerationForm = this.fb.group({
-      hoursOfOperation: [{value: 0, disabled: false}, Validators.required],
-      isSteamFlowMeasured: [true],
+      hoursOfOperation: [{value: 0, disabled: false}, Validators.required], // HOURS_OF_OPERATION
+      isSteamFlowMeasured: [null], // IS_STEAM_FLOW_MEASURED
       isAutoTdsControlPResent: [true],
       boilerSteamGeneratedPerYear: [0],
       boilerSteamGeneratedPerYearUnit: [0],
-      inputFuelId: [null],
+      inputFuelId: [null], // FUEL_TYPE
       inputFuelUnit: [{value: 1, disabled: false}, Validators.required],
-      costOfFuelPerUnit: [{value: 1, disabled: false}, Validators.required],
+      costOfFuelPerUnit: [{value: 1, disabled: false}, Validators.required], // COST_OF_FUEL_PER_UNIT
       costOfFuelUnit: [0],
-      costOfFuelPerYear: [0],
-      fuelQtyPerYearIsKnown: [null],
-      fuelConsumptionPerYear: [0, Validators.required],
+      costOfFuelPerYear: [0], // FUEL_COSTS_PER_YEAR : Original "Fuel Costs per Year"
+      fuelQtyPerYearIsKnown: [null], // IS_FUEL_CONSUMPTION_MEASURED
+      fuelConsumptionPerYear: [0, Validators.required], // FUEL_CONSUMPTION_PER_YEAR
       fuelConsumptionPerYearUnit: [0],
-      fuelEnergyPerUnit: [0],
-      fuelCarbonContent: [0],
+      fuelEnergyPerUnit: [0], // FUEL_CALORIFIC_VALUE
+      fuelCarbonContent: [0], // CO2_EMISSIONS_PER_UNIT_FUEL
       fuelCarbonContentUnit: [0],
-      costOfWaterPerUnit: [0],
+      costOfWaterPerUnit: [0], // COST_OF_WATER_FSLASH_UNIT
       costOfWaterUnit: [0],
-      costOfEffluentPerUnit: [0],
+      costOfEffluentPerUnit: [0], // COST_OF_EFFLUENT_FSLASH_UNIT
       costOfEffluentUnit: [0],
-      boilerHouseWaterQtyPerYearIsKnown: [true],
-      waterConsumptionPerYear: [0],
+      boilerHouseWaterQtyPerYearIsKnown: [false], // IS_WATER_ENTERING_THE_BOILER_HOUSE_MEASURED : Original IS_BOILER_HOUSE_WATER_MEASURED
+      waterConsumptionPerYear: [0], // WATER_CONSUMPTION_YEAR : Original WATER_CONSUMPTION_PER_YEAR
       waterConsumptionPerYearUnit: [0],
-      boilerWaterTreatmentChemicalCostsIsKnown: [true],
-      totalChemicalCostPerYear: [0], // TOTAL_CHEMICAL_COSTS_PER_YEAR
+      boilerWaterTreatmentChemicalCostsIsKnown: [true], // ARE_CHEMICAL_COST_KNOWN : Original IS_CHEMICAL_COSTS_PER_YEAR_KNOWN
+      totalChemicalCostPerYear: [0], // TOTAL_CHEMICAL_COSTS_PER_YEAR : Original TOTAL_CHEMICAL_COST_PER_YEAR
       totalChemicalCostPerYearUnit: [0],
       costOfChemistsPerUnitOfWater: [0],
       costOfChemistsPerUnitOfWaterUnit: [0],
       o2ScavengingChemicalsCostSavings: [0], // O2_SCAVENGING_CHEMICALS_COST_SAVINGS
       o2ScavengingChemicalsCostSavingsUnit: [0],
-      carbonTaxLevyCostPerUnit: [0],
+      carbonTaxLevyCostPerUnit: [0], // CARBON_TAX_LEVY_COST_PER_UNIT
       carbonTaxLevyCostUnit: [0],
-      costOfCo2PerUnitMass: [0],
+      costOfCo2PerUnitMass: [0], // COST_OF_CO2_PER_UNIT_MAX : Original "Cost of CO2 / Unit Mass"
       costOfCo2Unit: [0],
-      isBlowdownVesselPresent: [true],
-      isCoolingWaterUsed: [true],
-      isSuperheatedSteam: [true],
-      boilerEfficiency: [0],
-      isFeedWaterMeasured: [null],
-      boilerSteamPressure: [0],
+      isBlowdownVesselPresent: [null], // IS_BLOWDOWN_VESSEL_PRESENT
+      isCoolingWaterUsed: [true], // IS_COOLING_WATER_USED
+      isSuperheatedSteam: [null], // IS_SUPERHEATED_STEAM
+      boilerEfficiency: [50], // BOILER_EFFICIENCY
+      isFeedWaterMeasured: [null], // IS_FEEDWATER_FLOWRATE_MEASURED || IS_WATER_ENTERING_THE_BOILER_HOUSE_MEASURED
+      boilerSteamPressure: [0], // STEAM_PRESSURE
       boilerSteamPressureUnit: [0],
-      boilerSteamTemperature: [0],
+      boilerSteamTemperature: [0], // STEAM_TEMPERATURE
       boilerSteamTemperatureUnit: [0],
-      isEconomizerPresent: [true],
+      isEconomizerPresent: [null], // IS_ECONOMISER_PRESENT
       boilerAverageTds: [0],
       boilerAverageTdsUnit: [0],
       boilerMaxTds: [0],
       boilerMaxTdsUnit: [0],
-      boilerFeedwaterConsumption: [0],
-      boilerFeedwaterConsumptionUnit: [0],
+      boilerFeedwaterConsumption: [0], // CONSUMPTION_PER_HR
+      boilerFeedwaterConsumptionUnit: [0], // CONSUMPTION_PER_YEAR
       isFlashVesselPresent: [true],
       isHeatExchangerPresent: [true],
       waterTemperatureLeavingHeatExchanger: [0],
       waterTemperatureLeavingHeatExchangerUnit: [0],
-      waterTreatmentMethod: [0],
+      waterTreatmentMethod: [null], // WATER_TREATMENT_METHOD
       percentageWaterRejection: [0],
       percentageWaterRejectionUnit: [0],
       tdsOfMakeupWater: [0],
@@ -77,27 +82,27 @@ export class SteamGenerationAssessmentService {
       temperatureOfMakeupWaterUnit: [0],
       makeupWaterAmount: [0],
       makeupWaterAmountUnit: [0],
-      atmosphericDeaerator: [true],
-      pressurisedDeaerator: [true],
-      temperatureOfFeedtank: [0],
+      atmosphericDeaerator: [false], // AUTMOSPHERIC_DEAERATOR
+      pressurisedDeaerator: [false], // PRESSURLSED_DEAERATOR
+      temperatureOfFeedtank: [0], // TEMPERATURE_OF_FEEDTANK
       temperatureOfFeedtankUnit: [0],
-      tdsOfFeedwaterInFeedtank: [0],
+      tdsOfFeedwaterInFeedtank: [0], // TDS_OF_FEEDWATER_IN_FEEDTANK
       tdsOfFeedwaterInFeedtankUnit: [0],
-      tdsOfCondensateReturn: [0],
+      tdsOfCondensateReturn: [0], // TDS_OF_CONDENSATE_RETURN
       tdsOfCondensateReturnUnit: [0],
-      temperatureOfCondensateReturn: [0],
+      temperatureOfCondensateReturn: [0], // TEMPERATURE_OF_CONDENSATE_RETURN
       temperatureOfCondensateReturnUnit: [0],
       areChemicalsAddedDirectlyToFeedtank: [true],
       pressureOfFeedtank: [0],
       pressureOfFeedtankUnit: [0],
       pressureOfSteamSupplyingDsi: [0],
       pressureOfSteamSupplyingDsiUnit: [0],
-      isCondensateReturnKnown: [true],
-      percentageOfCondensateReturn: [0],
+      isCondensateReturnKnown: [true], // IS_CONDENSATE_RETURN_KNOWN
+      percentageOfCondensateReturn: [0], // PERCENTAGE_OF_CONDENSATE_RETURN
       percentageOfCondensateReturnUnit: [0],
-      volumeOfCondensateReturn: [0],
+      volumeOfCondensateReturn: [0], // VOLUME_OF_CONDENSATE_RETURN
       volumeOfCondensateReturnUnit: [0],
-      isDsiPresent: [true],
+      isDsiPresent: [true], // IS_DSI_PRESENT
       proposalTemperatureUnit: ["string"],
       proposalTemperatureUnitUnit: [0],
       isBoilerEfficiencySelected: [true],

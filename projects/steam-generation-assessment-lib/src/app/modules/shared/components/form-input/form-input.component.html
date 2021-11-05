@@ -32,9 +32,9 @@
            (ngModelChange)="updateValue($event)"
            class="formField-input">
 
-    <span class="formField-addon" *ngIf="temperatureRef?.preference?.masterTextKey || unit || unitBefore">
+    <span class="formField-addon" *ngIf="temperatureRef?.preference?.masterTextKey || unit">
 <!--      {{unitBefore}}{{temperatureRef?.preference?.masterTextKey && (temperatureRef?.preference?.masterTextKey | translate)}}{{unit}}-->
-      {{unitBefore}}{{temperatureRef?.preference?.unitName}}{{unit}}
+      <ng-content select="[unitBefore]"></ng-content>{{temperatureRef?.preference?.unitName}}{{unit}}<ng-content select="[unitAfter]"></ng-content>
     </span>
   </div>
   <span class="formField-message" [ngClass]="{error: error}">{{error || message}}</span>

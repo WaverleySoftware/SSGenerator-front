@@ -3275,19 +3275,15 @@
   "noTranslates": [
     {
       "masterTextKey": "CO2_EMISSIONS_PER_UNIT_FUEL",
-      "translationText": ""
+      "translationText": "CO2 emissions / unit fuel"
     },
     {
       "masterTextKey": "COST_OF_FUEL_PER_UNIT",
-      "translationText": ""
+      "translationText": "Cost of Fuel / unit"
     },
     {
       "masterTextKey": "COST_OF_FUEL_PER_YEAR",
-      "translationText": ""
-    },
-    {
-      "masterTextKey": "COST_OF_FUEL_PER_YEAR",
-      "translationText": ""
+      "translationText": "Cost of fuel / year"
     },
     {
       "masterTextKey": "ARE_CO2_OR_CARBON_EMISSIONS_TAXED",
@@ -3324,6 +3320,74 @@
     {
       "masterTextKey": "O2_SCAVENGING_CHEMICAL_COSTS_PER_YEAR",
       "translationText": "O2 scavenging chemical costs / year"
+    },
+    {
+      "masterTextKey": "STEAM_GENERATION_PER_HOUR",
+      "translationText": "Steam generation / hour"
+    },
+    {
+      "masterTextKey": "STEAM_GENERATION_PER_YEAR",
+      "translationText": "Steam generation / year"
+    },
+    {
+      "masterTextKey": "IS_AUTO_TDS_PRESENT",
+      "translationText": "Is auto tds present?"
+    },
+    {
+      "masterTextKey": "AVERAGE_BOILER_TDS",
+      "translationText": "Average boiler tds"
+    },
+    {
+      "masterTextKey": "MAXIMUM_ALLOWABLE_BOILER_TDS",
+      "translationText": "maximum allowable boiler TDS"
+    },
+    {
+      "masterTextKey": "IS_MAKE_UP_WATER_MONITORED",
+      "translationText": "Is make-up water monitored?"
+    },
+    {
+      "masterTextKey": "TEMPERATURE_OF_MAKE_UP_WATER",
+      "translationText": "Temperature of make-up water"
+    },
+    {
+      "masterTextKey": "MAKE_UP_WATER_PER_HOUR",
+      "translationText": "make-up water/hour"
+    },
+    {
+      "masterTextKey": "MAKE_UP_WATER_PER_YEAR",
+      "translationText": "make-up water/year"
+    },
+    {
+      "masterTextKey": "AUTMOSPHERIC_DEAERATOR",
+      "translationText": "Autmospheric Deaerator"
+    },
+    {
+      "masterTextKey": "PRESSURLSED_DEAERATOR",
+      "translationText": "Pressurlsed Deaerator"
+    },
+    {
+      "masterTextKey": "IS_FEEDWATER_FLOWRATE_MEASURED",
+      "translationText": "Is feedwater flowrate measured?"
+    },
+    {
+      "masterTextKey": "CONSUMPTION_PER_HR",
+      "translationText": "Consumption/hr"
+    },
+    {
+      "masterTextKey": "CONSUMPTION_PER_YEAR",
+      "translationText": "Consumption/year"
+    },
+    {
+      "masterTextKey": "ARE_CHEMICALS_ADDED_DIRECTLY_TO_THE_FEEDTANK",
+      "translationText": "Are chemicals added directly to the feedtank?"
+    },
+    {
+      "masterTextKey": "PERCENTAGE_OF_CONDENSATE_RETURNED",
+      "translationText": "Percentage of condensate returned"
+    },
+    {
+      "masterTextKey": "VOLUME_OF_CONDENSATE_RETURNED",
+      "translationText": "Volume of condensate returned"
     }
   ]
 }

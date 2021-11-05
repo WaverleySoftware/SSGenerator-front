@@ -2,7 +2,7 @@ import { Component, EventEmitter, forwardRef, Input, Output } from "@angular/cor
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
 import * as cloneDeep_ from 'lodash/cloneDeep';
 import { TranslationService } from "sizing-shared-lib";
-import { EnumListDefinitionInterface } from "../../interfaces/enum-list.interface";
+import { EnumListDefinitionInterface, EnumListInterface } from "../../interfaces/enum-list.interface";
 
 @Component({
   selector: 'form-list',
@@ -26,10 +26,13 @@ export class FormListComponent implements ControlValueAccessor {
   public cloneDeep = cloneDeep_;
 
   get list(): EnumListDefinitionInterface[] {
-    let list = this.enumerationName && this.translationService.displayGroup
+    const enumeration: EnumListInterface = this.enumerationName && this.translationService.displayGroup
       && this.translationService.displayGroup.enumerations.find(({ enumerationName, opCoOverride }) => {
         return enumerationName === this.enumerationName && opCoOverride === this.opCoOverride;
-      }).enumerationDefinitions.sort((a, b) => {
+      });
+
+    let list = enumeration && enumeration.enumerationDefinitions && enumeration.enumerationDefinitions
+      .sort((a, b) => {
         return a.sequence > b.sequence ? 1 : a.sequence < b.sequence ? -1 : 0;
       });
 
