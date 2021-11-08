@@ -1,4 +1,4 @@
-<sga-panel id="UtilityParameters" title="Utility parameters" titleSize="24px">
+<sga-panel [isCollapsed]="true" id="UtilityParameters" title="Utility parameters" titleSize="24px">
   <form body class="container-fluid" [formGroup]="formGroup" (ngSubmit)="submitForm()">
     <div class="row mb-5">
       <div class="col-md-5">
@@ -43,8 +43,7 @@
             </form-input>
 
             <form-toggle formControlName="fuelQtyPerYearIsKnown"
-                         label="IS_FUEL_CONSUMPTION_MEASURED"
-                         name="fuelQtyPerYearIsKnown">
+                         label="IS_FUEL_CONSUMPTION_MEASURED">
               <ng-container yes>
                 <form-input formControlName="costOfFuelPerYear"
                             label="FUEL_COSTS_PER_YEAR"
@@ -98,7 +97,6 @@
                         required></form-input>
 
             <form-toggle formControlName="boilerHouseWaterQtyPerYearIsKnown"
-                         name="isFeedWaterMeasured"
                          label="IS_WATER_ENTERING_THE_BOILER_HOUSE_MEASURED">
               <ng-container yes>
                 <form-input label="COST_OF_WATER_PER_YEAR"
@@ -127,7 +125,6 @@
         <sga-panel id="waterTreatmentChemicalsPanel" title="Water treatment chemicals" titleTooltip="Tooltip" background="#EDF2F4">
           <div body>
             <form-toggle formControlName="boilerWaterTreatmentChemicalCostsIsKnown"
-                         name="areChemicalCostKnown"
                          label="ARE_CHEMICAL_COST_KNOWN">
               <ng-container yes>
                 <form-input formControlName="totalChemicalCostPerYear"
@@ -155,13 +152,19 @@
   </form>
 </sga-panel>
 
-<sga-panel [isCollapsed]="true" [showSeparator]="false" id="BoilerHouseParameters" title="Boiler house parameters" titleSize="24px">
+<sga-panel [isCollapsed]="false"
+           [showSeparator]="false"
+           [title]="'BOILER_HOUSE_PARAMETERS' | translate"
+           id="BoilerHouseParameters"
+           titleSize="24px">
   <form body class="container-fluid" [formGroup]="formGroup">
     <div class="row">
       <div class="col-md-12">
         <tabset type="pills" class="sgaTabs">
-          <tab heading="Boiler" customClass="sgaTab">
-            <sga-panel id="boilerParametersPanel" title="Boiler parameters" background="#EDF2F4">
+          <tab [heading]="'BOILER' | translate" customClass="sgaTab">
+            <sga-panel id="boilerParametersPanel"
+                       [title]="'BOILER_PARAMETERS' | translate"
+                       background="#EDF2F4">
               <div body class="row">
                 <div class="col-md-6 border-r-md">
                   <form-toggle formControlName="isSuperheatedSteam"
@@ -202,49 +205,69 @@
               </div>
             </sga-panel>
           </tab>
-          <tab heading="TDS BLOWDOwn" customClass="sgaTab">
-            <sga-panel id="blowdownEquipmentPanel" title="Blowdown equipment" background="#EDF2F4">
+          <tab [heading]="'TDS_BLOWDOWN' | translate" customClass="sgaTab">
+            <sga-panel id="blowdownEquipmentPanel"
+                       [title]="'BLOWDOWN_EQUIPMENT' | translate"
+                       background="#EDF2F4">
               <div class="row" body>
                 <div class="col-md-4 border-r-md">
                   <form-toggle formControlName="isBlowdownVesselPresent"
-                               label="IS_BLOWDOWN_VESSEL_PRESENT"
-                               name="isBlowdownVesselPresent"></form-toggle>
+                               label="IS_BLOWDOWN_VESSEL_PRESENT"></form-toggle>
 
                   <form-toggle formControlName="isCoolingWaterUsed"
-                               label="IS_COOLING_WATER_USED"
-                               name="isCoolingWaterUsed"></form-toggle>
+                               label="IS_COOLING_WATER_USED"></form-toggle>
                 </div>
                 <div class="col-md-4 border-r-md">
-                  <!--  END FILLING -->
-                  <form-toggle name="isAutoTdsPresent" label="IS_AUTO_TDS_PRESENT"></form-toggle>
-                  <form-toggle name="isFlashVesselPresent" label="IS_FLASH_VESSEL_PRESENT"></form-toggle>
+                  <form-toggle formControlName="isAutoTdsControlPResent"
+                               label="IS_AUTO_TDS_PRESENT"></form-toggle>
+                  <form-toggle formControlName="isFlashVesselPresent"
+                               label="IS_FLASH_VESSEL_PRESENT"></form-toggle>
                 </div>
                 <div class="col-md-4">
-                  <form-toggle name="isHeatExchangerPresent" label="IS_HEAT_EXCHANGER_PRESENT"></form-toggle>
-                  <form-input label="WATER_TEMPERATURE_LEAVING_HEAT_EXCHANGER" unit="°C" filled></form-input>
+                  <form-toggle formControlName="isHeatExchangerPresent"
+                               label="IS_HEAT_EXCHANGER_PRESENT"></form-toggle>
+                  <form-input formControlName="waterTemperatureLeavingHeatExchanger"
+                              label="WATER_TEMPERATURE_LEAVING_HEAT_EXCHANGER"
+                              unit="°C"
+                              filled></form-input>
                 </div>
               </div>
             </sga-panel>
-            <sga-panel id="tdsBlowdownParametersPanel" title="tds Blowdown parameters" background="#EDF2F4">
+
+            <sga-panel id="tdsBlowdownParametersPanel"
+                       [title]="'TDS_BLOWDOWN_PARAMETERS' | translate"
+                       background="#EDF2F4">
               <div class="row" body>
                 <div class="col-md-4 border-r-md">
-                  <form-input label="TDS_OF_FEEDWATER_IN_FEEDTANK" unit="ppm" required></form-input>
+                  <form-input formControlName="tdsOfFeedwaterInFeedtank"
+                              label="TDS_OF_FEEDWATER_IN_FEEDTANK"
+                              unit="ppm"
+                              required></form-input>
                 </div>
                 <div class="col-md-4 border-r-md">
-                  <form-input label="AVERAGE_BOILER_TDS" unit="ppm" required></form-input>
+                  <form-input formControlName="boilerAverageTds"
+                              label="AVERAGE_BOILER_TDS"
+                              unit="ppm"
+                              required></form-input>
                 </div>
                 <div class="col-md-4">
-                  <form-input label="MAXIMUM_ALLOWABLE_BOILER_TDS" unit="ppm" required></form-input>
+                  <form-input formControlName="boilerMaxTds"
+                              label="MAXIMUM_ALLOWABLE_BOILER_TDS"
+                              unit="ppm"
+                              required></form-input>
                 </div>
               </div>
             </sga-panel>
           </tab>
-          <tab heading="Water Treatment" customClass="sgaTab">
-            <sga-panel id="makeUpWaterPanel" title="Make-up water" background="#EDF2F4">
+          <tab [heading]="'WATER_TREATMENT' | translate" customClass="sgaTab">
+            <sga-panel id="makeUpWaterPanel" [title]="'MAKE_UP_WATER' | translate" background="#EDF2F4">
               <div class="row" body>
                 <div class="col-md-6 border-r-md">
-                  <form-toggle name="isMakeUpWaterMonitored" label="IS_MAKE_UP_WATER_MONITORED">
-                    <form-input yes label="TEMPERATURE_OF_MAKE_UP_WATER" unit="°C"></form-input>
+                  <form-toggle name="isMakeUpWaterMonitored"
+                               label="IS_MAKE_UP_WATER_MONITORED">
+                    <form-input yes formControlName="temperatureOfMakeupWater"
+                                label="TEMPERATURE_OF_MAKE_UP_WATER"
+                                unit="°C"></form-input>
                   </form-toggle>
                 </div>
                 <div class="col-md-6">
@@ -253,7 +276,10 @@
                 </div>
               </div>
             </sga-panel>
-            <sga-panel id="waterTreatmentParametersPanel" title="water treatment parameters" background="#EDF2F4">
+
+            <sga-panel id="waterTreatmentParametersPanel"
+                       [title]="'WATER_TREATMENT_PARAMETERS' | translate"
+                       background="#EDF2F4">
               <div class="row" body>
                 <div class="col-md-4">
                   <form-list formControlName="waterTreatmentMethod"
@@ -275,8 +301,8 @@
               </div>
             </sga-panel>
           </tab>
-          <tab heading="Feedwater & Condensate" customClass="sgaTab">
-            <sga-panel id="deaeratorTypePanel" title="Deaerator type" background="#EDF2F4">
+          <tab [heading]="'FEEDWATER_AND_CONDENSATE' | translate" customClass="sgaTab">
+            <sga-panel id="deaeratorTypePanel" [title]="'DEAERATOR_TYPE' | translate" background="#EDF2F4">
               <div class="row" body>
                 <div class="col-md-4">
                   <form-radio (valueChange)="clearValues(['pressurisedDeaerator'], false)"
@@ -299,37 +325,42 @@
                 </div>
               </div>
             </sga-panel>
-            <sga-panel id="boilerFeedwaterPanel" title="Boiler feedwater" background="#EDF2F4">
+
+            <sga-panel id="boilerFeedwaterPanel" [title]="'BOILER_FEEDWATER' | translate" background="#EDF2F4">
               <div class="row" body>
                 <div class="col-md-4 border-r-md">
                   <form-toggle formControlName="isFeedWaterMeasured"
-                               name="isFeedWaterMeasured"
                                label="IS_FEEDWATER_FLOWRATE_MEASURED">
                     <ng-container yes>
-                      <form-input formControlName="boilerFeedwaterConsumption"
-                                  label="CONSUMPTION_PER_HR"
+                      <form-input label="CONSUMPTION_PER_HR"
                                   unit="m3/h"
                                   group="isFeedwaterFlowrateMeasured"
-                                  (changeRadio)="clearValues(['boilerFeedwaterConsumptionUnit'])"
+                                  (changeRadio)="clearValues([])"
                                   required></form-input>
 
-                      <form-input formControlName="boilerFeedwaterConsumptionUnit"
-                                  label="CONSUMPTION_PER_YEAR"
+                      <form-input label="CONSUMPTION_PER_YEAR"
                                   unit="m3/y"
                                   group="isFeedwaterFlowrateMeasured"
-                                  (changeRadio)="clearValues(['boilerFeedwaterConsumptionUnit'])"
+                                  (changeRadio)="clearValues([])"
                                   required></form-input>
                     </ng-container>
                   </form-toggle>
                 </div>
                 <div class="col-md-4 border-r-md">
-                  <form-input formControlName="temperatureOfFeedtank" label="TEMPERATURE_OF_FEEDTANK" unit="°C" required></form-input>
-                  <form-input formControlName="tdsOfFeedwaterInFeedtank" label="TDS_OF_FEEDWATER_IN_FEEDTANK" unit="ppm" required></form-input>
-                  <form-toggle name="areChemicalsAddedDirectlyToTheFeedtank"
-                               label="ARE_CHEMICALS_ADDED_DIRECTLY_TO_THE_FEEDTANK"></form-toggle>
+                  <form-input formControlName="temperatureOfFeedtank"
+                              label="TEMPERATURE_OF_FEEDTANK"
+                              unit="°C"
+                              required></form-input>
+                  <form-input formControlName="tdsOfFeedwaterInFeedtank"
+                              label="TDS_OF_FEEDWATER_IN_FEEDTANK"
+                              unit="ppm"
+                              required></form-input>
+                  <form-toggle formControlName="areChemicalsAddedDirectlyToFeedtank"
+                               label="ARE_CHEMICALS_ADDED_DIRECTLY_TO_FEEDTANK"></form-toggle>
                 </div>
                 <div class="col-md-4">
-                  <form-toggle formControlName="isDsiPresent" name="isDsiPresent" label="IS_DSI_PRESENT">
+                  <form-toggle formControlName="isDsiPresent"
+                               label="IS_DSI_PRESENT">
                     <form-input yes
                                 formControlName="pressureOfSteamSupplyingDsi"
                                 unit="barg"
@@ -339,11 +370,11 @@
                 </div>
               </div>
             </sga-panel>
-            <sga-panel id="condensateReturnPanel" title="CONDENSATE RETURN" background="#EDF2F4">
+
+            <sga-panel id="condensateReturnPanel" [title]="'CONDENSATE_RETURN' | translate" background="#EDF2F4">
               <div class="row" body>
                 <div class="col-md-6 border-r-md">
                   <form-toggle formControlName="isCondensateReturnKnown"
-                               name="isCondensateReturnKnown"
                                label="IS_CONDENSATE_RETURN_KNOWN">
                     <ng-container yes>
                       <form-input formControlName="percentageOfCondensateReturn"

@@ -3388,6 +3388,22 @@
     {
       "masterTextKey": "VOLUME_OF_CONDENSATE_RETURNED",
       "translationText": "Volume of condensate returned"
+    },
+    {
+      "masterTextKey": "BOILER_HOUSE_PARAMETERS",
+      "translationText": "Boiler house parameters"
+    },
+    {
+      "masterTextKey": "MAKE_UP_WATER",
+      "translationText": "Make-up water"
+    },
+    {
+      "masterTextKey": "DEAERATOR_TYPE",
+      "translationText": "Deaerator type"
+    },
+    {
+      "masterTextKey": "BOILER_FEEDWATER",
+      "translationText": "Boiler feedwater"
     }
   ]
 }

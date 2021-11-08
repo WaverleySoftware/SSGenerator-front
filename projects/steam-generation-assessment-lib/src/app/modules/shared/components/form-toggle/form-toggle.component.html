@@ -4,7 +4,7 @@
     <label>
       <input type="radio"
              [value]="true"
-             [name]="name"
+             [name]="name || formControlName"
              [ngModel]="value"
              (ngModelChange)="updateValue($event)"
              (blur)="onTouched()"
@@ -15,7 +15,7 @@
     <label>
       <input type="radio"
              [value]="false"
-             [name]="name"
+             [name]="name || formControlName"
              [ngModel]="value"
              (ngModelChange)="updateValue($event)"
              (blur)="onTouched()"

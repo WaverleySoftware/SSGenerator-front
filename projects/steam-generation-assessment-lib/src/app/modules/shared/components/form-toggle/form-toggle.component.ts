@@ -8,7 +8,7 @@ import {
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
 
 @Component({
-  selector: 'form-toggle[name]',
+  selector: 'form-toggle',
   templateUrl: './form-toggle.component.html',
   styleUrls: ['./form-toggle.component.scss'],
   providers: [{
@@ -19,6 +19,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
 })
 export class FormToggleComponent implements ControlValueAccessor {
   @Input() name: string;
+  @Input() formControlName: string;
   @Input() label: string;
   @Input() value: boolean;
   @Input() disabled: boolean;

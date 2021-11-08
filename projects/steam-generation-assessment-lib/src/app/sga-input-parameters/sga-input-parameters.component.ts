@@ -27,6 +27,8 @@ export class SgaInputParametersComponent {
   }
 
   public clearValues(clearFields: Array<keyof SteamGenerationFormInterface>, setVal: any = 0, event?: any) {
+    if (!clearFields.length) return;
+
     for (let fieldName of clearFields) {
       if (this.formGroup.get(fieldName).value || this.formGroup.get(fieldName).value === "") {
         this.formGroup.get(fieldName).setValue(setVal);
