@@ -96,4 +96,36 @@
   .mb-24 {
     margin-bottom: 24px;
   }
+
+  .setupParameters {
+    font-family: var(--font-proxima-nova);
+    font-style: normal;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 105%;
+    text-transform: uppercase;
+    color: var(--color-blue);
+    h5 {
+      font-family: inherit;
+      font-style: inherit;
+      font-size: inherit;
+      text-transform: inherit;
+      line-height: inherit;
+      color: inherit;
+      font-weight: inherit;
+    }
+
+    p {
+      height: 55px;
+      margin-bottom: 30px;
+      display: flex;
+      align-items: center;
+    }
+
+    &::ng-deep {
+      .formField-addon {
+        text-transform: none;
+      }
+    }
+  }
 }
