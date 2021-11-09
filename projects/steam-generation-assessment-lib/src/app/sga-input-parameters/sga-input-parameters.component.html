@@ -23,13 +23,17 @@
                           preference-masterTextKey="ENERGY"
                           label="FUEL_CALORIFIC_VALUE"
                           required>
-                <ng-container unitAfter>/{{fuelEnergyUnit?.preference?.unitName}}</ng-container>
+                <ng-container unitAfter>{{fuelEnergyUnit?.preference?.unitName}}</ng-container>
               </form-input>
 
               <form-input formControlName="fuelCarbonContent"
+                          preference-name="SolidFuelUnits"
+                          preference-unitType="BoilerHouseWeightUnits"
+                          preference-masterTextKey="WEIGHT"
                           label="CO2_EMISSIONS_PER_UNIT_FUEL"
-                          unit="kg/kWh"
-                          required filled></form-input>
+                          required filled>
+                <ng-container unitAfter>{{fuelEnergyUnit?.preference?.unitName}}</ng-container>
+              </form-input>
             </ng-container>
 
             <form-input formControlName="costOfFuelPerUnit"
@@ -37,9 +41,9 @@
                         preference-unitType="BoilerHouseGasFuelUnits"
                         preference-masterTextKey="GASEOUS_FUEL"
                         label="COST_OF_FUEL_PER_UNIT"
-                        [filled]="formGroup.get('inputFuelId').value === 'G-Natural Gas'"
+                        [filled]="formGroup.controls['inputFuelId'].value === 'G-Natural Gas'"
                         required>
-              <ng-container unitBefore>£/</ng-container>
+              <ng-container unitBefore>£</ng-container>
             </form-input>
 
             <form-toggle formControlName="fuelQtyPerYearIsKnown"
@@ -48,16 +52,26 @@
                 <form-input formControlName="costOfFuelPerYear"
                             label="FUEL_COSTS_PER_YEAR"
                             unit="£/y"
-                            group="group2"
-                            (changeRadio)="clearValues(['fuelConsumptionPerYear'])"
-                            required></form-input>
+                            [disabled]="formGroup.controls['costOfFuelUnit'].value !== 1"
+                            required>
+                  <input (change)="clearValues(['fuelConsumptionPerYear'])"
+                         [value]="1"
+                         radio
+                         formControlName="costOfFuelUnit"
+                         type="radio">
+                </form-input>
 
                 <form-input formControlName="fuelConsumptionPerYear"
                             label="FUEL_CONSUMPTION_PER_YEAR"
                             unit="m3/y"
-                            group="group2"
-                            (changeRadio)="clearValues(['costOfFuelPerYear'])"
-                            required></form-input>
+                            [disabled]="formGroup.controls['costOfFuelUnit'].value !== 2"
+                            required>
+                  <input (change)="clearValues(['costOfFuelPerYear'])"
+                         [value]="2"
+                         radio
+                         formControlName="costOfFuelUnit"
+                         type="radio">
+                </form-input>
               </ng-container>
             </form-toggle>
           </div>

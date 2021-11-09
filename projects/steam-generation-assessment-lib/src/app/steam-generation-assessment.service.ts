@@ -24,14 +24,14 @@ export class SteamGenerationAssessmentService {
     // CONSUMPTION_PER_HR
     // CONSUMPTION_PER_YEAR
     this.steamGenerationForm = this.fb.group({
-      hoursOfOperation: [{value: 0, disabled: false}, Validators.required], // HOURS_OF_OPERATION
+      hoursOfOperation: [0, Validators.required], // HOURS_OF_OPERATION
       isSteamFlowMeasured: [null], // IS_STEAM_FLOW_MEASURED
       isAutoTdsControlPResent: [null], // IS_AUTO_TDS_PRESENT
       boilerSteamGeneratedPerYear: [0],
       boilerSteamGeneratedPerYearUnit: [0],
       inputFuelId: [null], // FUEL_TYPE
-      inputFuelUnit: [{value: 1, disabled: false}, Validators.required],
-      costOfFuelPerUnit: [{value: 1, disabled: false}, Validators.required], // COST_OF_FUEL_PER_UNIT
+      inputFuelUnit: [0, Validators.required],
+      costOfFuelPerUnit: [0, Validators.required], // COST_OF_FUEL_PER_UNIT
       costOfFuelUnit: [0],
       costOfFuelPerYear: [0], // FUEL_COSTS_PER_YEAR : Original "Fuel Costs per Year"
       fuelQtyPerYearIsKnown: [null], // IS_FUEL_CONSUMPTION_MEASURED

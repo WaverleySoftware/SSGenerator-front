@@ -1,7 +1,58 @@
 <sga-panel title="Proposed setup" [disableToggle]="true">
   <ng-container body>
     <div class="sgaProposedSetup">
-      <p class="sgaProposedSetup_title">Potential Boiler House Savings by Project</p>
+      <sga-panel title="Setup parameters" titleTooltip="Some tooltip" id="SetupParametersPanel" background="#EDF2F4">
+        <div body class="setupParameters">
+          <div class="row">
+            <div class="col-md-4"></div>
+            <div class="col-md-4"><h5>{{'CURRENT_SITUATION' | translate}}</h5></div>
+            <div class="col-md-4"><h5>{{'PROPOSED_SITUATION' | translate}}</h5></div>
+          </div>
+          <div class="row">
+            <div class="col-md-4"><p>{{'PERCENT_CONDENSATE_RETURNED' | translate}}</p></div>
+            <div class="col-md-4"><form-input unit="%" filled></form-input></div>
+            <div class="col-md-4"><form-input unit="%" required></form-input></div>
+          </div>
+          <div class="row">
+            <div class="col-md-4"><p>{{'CONDENSATE_RETURNED' | translate}}</p></div>
+            <div class="col-md-4"><form-input unit="m3" filled></form-input></div>
+            <div class="col-md-4"><form-input unit="m3" required></form-input></div>
+          </div>
+          <div class="row">
+            <div class="col-md-4"><p>{{'TEMPERATURE_OF_CONDENSATE_RETURN' | translate}}</p></div>
+            <div class="col-md-4"><form-input unit="°C" filled></form-input></div>
+            <div class="col-md-4"><form-input unit="°C" required></form-input></div>
+          </div>
+          <div class="row">
+            <div class="col-md-4"><p>{{'WATER_REJECTION_RATE' | translate}}</p></div>
+            <div class="col-md-4"><form-input unit="%" filled></form-input></div>
+            <div class="col-md-4"><form-input unit="%" required></form-input></div>
+          </div>
+          <div class="row">
+            <div class="col-md-4"><p>{{'BOILER_EFFICIENCY' | translate}}</p></div>
+            <div class="col-md-4"><form-input unit="%" filled></form-input></div>
+            <div class="col-md-4"><form-input unit="%" required></form-input></div>
+          </div>
+          <div class="row">
+            <div class="col-md-4"><p>{{'ECONOMISER_REQUIRED' | translate}}</p></div>
+            <div class="col-md-8">
+              <form-toggle name="economiserRequired"></form-toggle>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4"><p>{{'TEMPERATURE_OF_FEEDTANK' | translate}}</p></div>
+            <div class="col-md-4"><form-input unit="°C" filled></form-input></div>
+            <div class="col-md-4"><form-input unit="°C" required></form-input></div>
+          </div>
+          <div class="row">
+            <div class="col-md-4"><p>{{'TEMPERATURE_OF_FEEDTANK' | translate}}</p></div>
+            <div class="col-md-4"><form-input unit="bar gauge" filled></form-input></div>
+            <div class="col-md-4"><form-input unit="bar gauge" required></form-input></div>
+          </div>
+        </div>
+      </sga-panel>
+
+      <p class="sgaProposedSetup_title">{{'POTENTIAL_BOILER_HOUSE_SAVINGS_BY_PROJECT' | translate}}</p>
       <p class="sgaProposedSetup_subtitle mb-24">Saving £’000s / yr</p>
       <app-chart-bar className="sgaProposedSetup_chart" [data]="chartData" [labels]="chartLabels"></app-chart-bar>
       <hr>

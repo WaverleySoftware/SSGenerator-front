@@ -3476,6 +3476,18 @@
     {
       "masterTextKey": "BREAKDOWN_OF_BOILER_HOUSE_ESTIMATED_COST_AND_SAVINGS",
       "translationText": "Breakdown of boiler house estimated cost and savings"
+    },
+    {
+      "masterTextKey": "CURRENT_SITUATION",
+      "translationText": "Current Situation"
+    },
+    {
+      "masterTextKey": "PROPOSED_SITUATION",
+      "translationText": "Proposed Situation"
+    },
+    {
+      "masterTextKey": "CONDENSATE_RETURNED",
+      "translationText": "Condensate returned"
     }
   ]
 }

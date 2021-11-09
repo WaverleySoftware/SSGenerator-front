@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, ElementRef, OnInit } from "@angular/core";
 import {
   BaseSizingModule,
   JobSizing,
@@ -6,10 +6,9 @@ import {
   Project,
   UnitsService,
 } from "sizing-shared-lib";
-import { AbstractControl, FormGroup } from "@angular/forms";
+import { FormGroup } from "@angular/forms";
 import { SteamGenerationAssessmentService } from "./steam-generation-assessment.service";
 import { SteamGenerationFormInterface } from "./steam-generation-form.interface";
-import { debounceTime, distinctUntilChanged } from "rxjs/operators";
 
 interface ErrorInterface {
   attemptedValue: any;
@@ -42,9 +41,11 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     private steamGenerationAssessmentService: SteamGenerationAssessmentService,
     private preferenceService: PreferenceService,
     private unitsService: UnitsService,
+    private elRef: ElementRef
   ) {
     super();
     this.getSettings();
+    // Get Base form from service FormBuilder
     this.sizingModuleForm = this.steamGenerationAssessmentService.getForm();
   }
 
@@ -108,14 +109,19 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     });
   }
 
-  private initFromValidationInChange(controls: { [key: string]: AbstractControl }): void {
-    Object.keys(controls).forEach(key => {
-      if (controls[key] && controls[key].valueChanges && typeof controls[key].value !== 'boolean') {
-        controls[key].valueChanges
-          .pipe(debounceTime(500), distinctUntilChanged())
-          .subscribe(([prev, next]: [any, any]) => this.validate(key as keyof SteamGenerationFormInterface))
+  private focusFirstErrorField(formGroup: FormGroup): void {
+    // check all fields
+    for (const key of Object.keys(formGroup.controls)) {
+      // get first invalid control
+      if (formGroup.controls[key].invalid) {
+        // get field by formcontrolname === name
+        const field = this.elRef.nativeElement.querySelector(`[formcontrolname="${key}"] input[ng-reflect-model]`);
+        // Focus on field
+        field && field.focus();
+        // loop stop
+        break;
       }
-    });
+    }
   }
 
   private validate(field: keyof SteamGenerationFormInterface): void {
