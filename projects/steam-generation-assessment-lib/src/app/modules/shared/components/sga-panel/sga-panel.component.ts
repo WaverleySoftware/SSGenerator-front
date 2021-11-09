@@ -1,16 +1,16 @@
-import { AfterViewInit, Component, Input, OnInit, TemplateRef } from "@angular/core";
+import { AfterContentInit, Component, Input, OnInit, TemplateRef } from "@angular/core";
 
 @Component({
   selector: 'sga-panel',
   templateUrl: './sga-panel.component.html',
   styleUrls: ['./sga-panel.component.scss']
 })
-export class SgaPanelComponent implements OnInit, AfterViewInit {
+export class SgaPanelComponent implements OnInit, AfterContentInit {
   @Input() id: string = 'SgaPanelComponent-ID';
   @Input() title: string;
   @Input() subtitle: string;
   @Input() titleSize: string = '16px';
-  @Input() titleTooltip: string;
+  @Input() titleTooltip: string | TemplateRef<any>;
   @Input() background: string;
   @Input() isCollapsed: boolean = false;
   @Input() showSeparator: boolean = true;
@@ -22,7 +22,7 @@ export class SgaPanelComponent implements OnInit, AfterViewInit {
   ngOnInit() {
   }
 
-  ngAfterViewInit() {
+  ngAfterContentInit() {
     this.checkExistingContent();
   }
 

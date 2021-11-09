@@ -43,7 +43,7 @@ export class FormFieldComponent implements ControlValueAccessor, AfterContentChe
   @Input() multiple?: boolean;
   @Input() filled?: boolean;
   @Input() error: boolean | string;
-  @Input() value: any = '';
+  @Input() value: any;
   @Input() model?: any;
   @Output() modelChange: EventEmitter<any> = new EventEmitter<any>();
   private _options: string[] | FormFieldSelectOption[];

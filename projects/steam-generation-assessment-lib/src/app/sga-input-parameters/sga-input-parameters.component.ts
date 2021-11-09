@@ -1,47 +1,38 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { Component, Input } from "@angular/core";
+import { FormGroup } from "@angular/forms";
+import { TranslatePipe } from "sizing-shared-lib";
+import { PreferenceService } from "sizing-shared-lib";
+import { SizingUnitPreference } from "../../../../sizing-shared-lib/src/lib/shared/preference/sizing-unit-preference.model";
+import { SteamGenerationFormInterface } from "../steam-generation-form.interface";
 
 @Component({
   selector: 'app-sga-input-parameters',
   templateUrl: './sga-input-parameters.component.html',
   styleUrls: ['./sga-input-parameters.component.scss']
 })
-export class SgaInputParametersComponent implements OnInit {
-
-  utilityParamsForm: FormGroup;
-  boilerParamsForm: FormGroup;
+export class SgaInputParametersComponent {
+  @Input() formGroup: FormGroup;
 
   public deaeratorType: string = 'autmosphericDeaerator';
 
-  constructor(private fb: FormBuilder) { }
-
-  ngOnInit() {
-    this.initForm();
+  get fuelEnergyUnit(): SizingUnitPreference {
+    return this.preferenceService.sizingUnitPreferences.find((item) => item.unitType === "BoilerHouseGasFuelUnits");
   }
 
-  private initForm():void {
-    this.utilityParamsForm = this.fb.group({
-      HOURS_OF_OPERATION: ["", Validators.required],
-      FUEL_TYPE: ["Natural Gas", Validators.required],
-      FUEL_CALORIFIC_VALUE: ["", Validators.required],
-      cO2EmissionsUnitFuel: ["0.1850", Validators.required],
-      costOfFuelUnit: ["0.025"],
-      isFuelComsumptionMeasured: [false],
-      costOfFuelYear: [""],
-      fuelConsumptionYear: [""],
-      areCO2OrCarbonEmissionsTaxed: [false],
-      carbonLeviTaxUnit: [""],
-      costOfCo2UnitMax: [""],
-      costOfWaterUnt: [""],
-      isWaterEnteringBoilerHouseMeasured: [false],
-      costOfWaterYear: [""],
-      waterConsumptionHour: [""],
-      waterConsumptionYear: [""],
-    });
+  constructor(private translatePipe: TranslatePipe, private preferenceService: PreferenceService) {}
 
-    this.boilerParamsForm = this.fb.group({
-      boilerEfficiency: [100, [Validators.required, Validators.max(100), Validators.min(10)]],
-    })
+  submitForm(): void {
+    console.log(this.formGroup.valid, '----valid')
+    console.log(this.formGroup.getRawValue());
   }
 
+  public clearValues(clearFields: Array<keyof SteamGenerationFormInterface>, setVal: any = 0, event?: any) {
+    if (!clearFields.length) return;
+
+    for (let fieldName of clearFields) {
+      if (this.formGroup.get(fieldName).value || this.formGroup.get(fieldName).value === "") {
+        this.formGroup.get(fieldName).setValue(setVal);
+      }
+    }
+  }
 }

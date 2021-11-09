@@ -134,7 +134,9 @@ export class PreferenceService {
   /**
    * Adds the specified preference name and unit type to a subject so that it can be interrogated later.
    * @param preference The preference.
-   * @param unitType The unit type.
+   * @param unitType {String} The unit type.
+   * @param masterTextKey {String} The modal label translation.
+   * @param moduleGroupId {Number} The module group ID.
    */
   addSizingUnitPreference(preference: Preference, unitType: string, masterTextKey: string, moduleGroupId: number) {
     const sizingUnitPreference = new SizingUnitPreference();

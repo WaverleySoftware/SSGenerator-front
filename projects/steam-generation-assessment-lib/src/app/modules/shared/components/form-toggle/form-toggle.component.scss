@@ -1,0 +1,77 @@
+.formToggle {
+  color: var(--color-blue);
+  font-family: var(--font-open-sans);
+  font-style: normal;
+  font-weight: normal;
+  font-size: 16px;
+  margin-bottom: 30px;
+  &-label {
+    display: inline-block;
+    width: 100%;
+    font-family: var(--font-proxima-nova);
+    font-weight: 600 !important;
+    font-size: inherit;
+    color: inherit;
+    line-height: 105%;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    padding-left: 0;
+  }
+
+  &-row {
+    display: flex;
+    align-items: stretch;
+    min-height: 50px;
+    label {
+      font-weight: 600!important;
+      text-transform: uppercase;
+      color: var(--color-blue);
+      margin-bottom: 0;
+      display: flex;
+      align-self: center;
+      &:hover {
+        cursor: pointer;
+      }
+
+      &:not(&:last-child) {
+        margin-right: 45px;
+      }
+    }
+
+    input[type='radio'] {
+      margin: 0 40px 20px 0;
+      width: 0;
+      height: 0;
+      outline: none;
+      position: relative;
+      align-self: center;
+      &:focus, &:active {
+        outline: none;
+      }
+
+      &:after {
+        content: '';
+        display: inline-block;
+        visibility: visible;
+        border: 1px solid var(--color-steel-80);
+        background-color: var(--color-white);
+        box-sizing: border-box;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        min-width: 20px;
+        min-height: 20px;
+      }
+
+      &:checked:after {
+        border-color: var(--color-blue);
+        background-color: var(--color-white);
+        border-width: 6px;
+      }
+
+      &:hover {
+        cursor: pointer;
+      }
+    }
+  }
+}

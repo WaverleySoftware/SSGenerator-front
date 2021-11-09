@@ -28,33 +28,33 @@ export class DisplayPreferenceDirective implements OnInit {
       return null;
     }
 
-    const sizingUnitPreference =
+    const sizingUnitPreference = this.preferenceService.sizingUnitPreferences &&
       this.preferenceService.sizingUnitPreferences.find(su => su.preference.name === this.displayPreference);
 
     return !!sizingUnitPreference ? sizingUnitPreference.preference : null;
   }
 
   ngOnInit() {
+		if (this.displayPreference) {
+			console.log('initializing display directive for ' + this.displayPreference)
+			const sizingUnitPreference = this.preferenceService.sizingUnitPreferences &&
+				this.preferenceService.sizingUnitPreferences.find(su => su.preference.name === this.displayPreference && su.moduleGroupId === this.moduleGroupId);
 
-    console.log('initializing display directive for ' + this.displayPreference)
+			if (!sizingUnitPreference){
 
-    const sizingUnitPreference =
-      this.preferenceService.sizingUnitPreferences.find(su => su.preference.name === this.displayPreference && su.moduleGroupId === this.moduleGroupId);
+				console.log("unit preference does not exist so adding it");
+				// Clone the object so that it does not interfere with the original preferences.
+				const preference = this.cloneDeep(this.preference || this.preferenceService.allPreferences.find(prefs => prefs.name === this.displayPreference));
 
-      if (!sizingUnitPreference){
+				;
 
-    console.log("unit preference does not exist so adding it");
-    // Clone the object so that it does not interfere with the original preferences.
-    const preference = this.cloneDeep(this.preference || this.preferenceService.allPreferences.find(prefs => prefs.name === this.displayPreference));
+				if (!!preference && preference.isUnit && !!this.unitType === false) {
+					console.error(`The preference '${this.displayPreference}' is a unit, but no 'display-preference-unit-type' parameter was provided.`);
+				}
 
-    ;
-
-    if (!!preference && preference.isUnit && !!this.unitType === false) {
-      console.error(`The preference '${this.displayPreference}' is a unit, but no 'display-preference-unit-type' parameter was provided.`);
-    }
-
-    // Add the preference name and unit type to the preference service, so that it can be used later (e.g. the unit modal component).
-    this.preferenceService.addSizingUnitPreference(preference, this.unitType, this.displayMasterTextKey, this.moduleGroupId);
-  }
-}
+				// Add the preference name and unit type to the preference service, so that it can be used later (e.g. the unit modal component).
+				this.preferenceService.addSizingUnitPreference(preference, this.unitType, this.displayMasterTextKey, this.moduleGroupId);
+			}
+		}
+	}
 }

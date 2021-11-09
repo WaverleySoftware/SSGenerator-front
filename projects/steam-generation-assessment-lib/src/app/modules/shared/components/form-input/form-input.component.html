@@ -1,0 +1,41 @@
+<div class="formField"
+     [ngClass]="{
+      error: !!error,
+      filled: filled !== undefined && filled !== false,
+      touched: touched,
+      disabled: disabled || (!!group && !radioInputRef.checked),
+      radio: !!group
+     }">
+  <label *ngIf="!!label" class="formField-label">{{label | translate}}</label>
+  <div class="formField-row" [ngClass]="{focus: focus}">
+    <input [type]="!group ? 'hidden' : 'radio'"
+           (change)="changeRadioInput({ref: radioInputRef, group: group})"
+           [value]="value"
+           [name]="group"
+           #radioInputRef
+           class="formField-radio">
+
+    <input #temperatureRef="display-preference"
+           #inputRef
+           [type]="type"
+           [display-preference]="preferenceName"
+           [display-masterTextKey]="masterTextKey"
+           [display-preference-unit-type]="preferenceUnitType"
+           [display-preference-module-group-id]="moduleGroupId"
+           [required]="required"
+           [disabled]="disabled || (!!group && !radioInputRef.checked)"
+           [ngClass]="{filled: filled !== undefined && filled !== false}"
+           (focusin)="focus = true"
+           (focusout)="touched = true; focus = false;"
+           (blur)="onTouched()"
+           [ngModel]="value"
+           (ngModelChange)="updateValue($event)"
+           class="formField-input">
+
+    <span class="formField-addon" *ngIf="temperatureRef?.preference?.masterTextKey || unit">
+<!--      {{unitBefore}}{{temperatureRef?.preference?.masterTextKey && (temperatureRef?.preference?.masterTextKey | translate)}}{{unit}}-->
+      <ng-content select="[unitBefore]"></ng-content>{{temperatureRef?.preference?.unitName}}{{unit}}<ng-content select="[unitAfter]"></ng-content>
+    </span>
+  </div>
+  <span class="formField-message" [ngClass]="{error: error}">{{error || message}}</span>
+</div>

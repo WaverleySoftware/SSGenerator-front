@@ -1,0 +1,14 @@
+<div class="formList">
+  <label *ngIf="!!label" class="formList-label">{{label | translate}}</label>
+
+  <select [disabled]="isDisabled"
+          (blur)="onTouched()"
+          (change)="onChange($event.target.value)">
+    <option selected disabled title="placeholder"></option>
+    <ng-container *ngIf="list?.length">
+      <option *ngFor="let item of list; let i = index"
+              [title]="item.translationText+item.extraPostText"
+              [value]="item.value">{{item.translationText}}{{item.extraPostText}}</option>
+    </ng-container>
+  </select>
+</div>
