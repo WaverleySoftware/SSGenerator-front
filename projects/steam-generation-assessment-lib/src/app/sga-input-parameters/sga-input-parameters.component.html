@@ -1,4 +1,4 @@
-<sga-panel [isCollapsed]="true" id="UtilityParameters" title="Utility parameters" titleSize="24px">
+<sga-panel id="UtilityParameters" title="Utility parameters" titleSize="24px">
   <form body class="container-fluid" [formGroup]="formGroup" (ngSubmit)="submitForm()">
     <div class="row mb-5">
       <div class="col-md-5">
@@ -152,7 +152,7 @@
   </form>
 </sga-panel>
 
-<sga-panel [isCollapsed]="false"
+<sga-panel [isCollapsed]="true"
            [showSeparator]="false"
            [title]="'BOILER_HOUSE_PARAMETERS' | translate"
            id="BoilerHouseParameters"

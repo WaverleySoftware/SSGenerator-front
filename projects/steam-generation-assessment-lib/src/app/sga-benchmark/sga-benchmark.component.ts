@@ -16,7 +16,7 @@ export class SgaBenchmarkComponent implements OnInit {
     { data: [46], label: 'Carbont tax' },
   ];
 
-  constructor() { }
+  constructor() {}
 
   ngOnInit() {
   }

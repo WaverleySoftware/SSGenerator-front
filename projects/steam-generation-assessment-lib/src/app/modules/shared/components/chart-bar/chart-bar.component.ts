@@ -1,4 +1,12 @@
-import { Component, Input, OnInit, ViewChild } from "@angular/core";
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnInit,
+  ViewChild
+} from "@angular/core";
 import { BaseChartDirective } from 'ng2-charts/ng2-charts';
 import { mergeDeep } from "../../utils/merge-deep";
 import {
@@ -10,9 +18,10 @@ import {
 @Component({
   selector: 'app-chart-bar',
   templateUrl: './chart-bar.component.html',
-  styleUrls: ['./chart-bar.component.scss']
+  styleUrls: ['./chart-bar.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ChartBarComponent implements OnInit {
+export class ChartBarComponent implements AfterViewInit {
   @Input() data: ChartBarDataInterface[];
   @Input() colors: ChartBarColorsInterface[] = [
     {backgroundColor: '#EC9231'},
@@ -96,9 +105,12 @@ export class ChartBarComponent implements OnInit {
   // Options: END
   @ViewChild('chartBarRef', { static: false }) chartRef: BaseChartDirective;
 
-  constructor() { }
+  constructor(private changeDetectorRef: ChangeDetectorRef) { }
 
-  ngOnInit() {
+  ngAfterViewInit() {
+    if (this.chartRef && this.chartRef.chart && this.chartRef.chart.data) {
+      this.changeDetectorRef.detectChanges();
+    }
   }
 
   public legendClick(legendItem) {

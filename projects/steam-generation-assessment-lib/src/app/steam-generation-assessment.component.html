@@ -8,18 +8,18 @@
     </p>
   </div>
 
-  <tabset class="sgaBaseTabs">
+  <tabset class="sgaBaseTabs" #tabsRef>
     <tab heading="Input parameters">
-      <app-sga-input-parameters [formGroup]="sizingModuleForm"></app-sga-input-parameters>
+      <app-sga-input-parameters *ngIf="tabsRef?.tabs[0]?.active" [formGroup]="sizingModuleForm"></app-sga-input-parameters>
     </tab>
     <tab heading="Benchmark">
-      <app-sga-benchmark [formGroup]="sizingModuleForm"></app-sga-benchmark>
+      <app-sga-benchmark *ngIf="tabsRef?.tabs[1]?.active" [formGroup]="sizingModuleForm"></app-sga-benchmark>
     </tab>
     <tab heading="Proposed Setup">
-      <app-sga-proposed-setup [formGroup]="sizingModuleForm"></app-sga-proposed-setup>
+      <app-sga-proposed-setup *ngIf="tabsRef?.tabs[2]?.active" [formGroup]="sizingModuleForm"></app-sga-proposed-setup>
     </tab>
     <tab heading="Final Proposal">
-      <app-sga-final-proposal [formGroup]="sizingModuleForm"></app-sga-final-proposal>
+      <app-sga-final-proposal *ngIf="tabsRef?.tabs[3]?.active" [formGroup]="sizingModuleForm"></app-sga-final-proposal>
     </tab>
   </tabset>
 

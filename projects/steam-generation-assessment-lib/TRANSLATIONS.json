@@ -3404,6 +3404,78 @@
     {
       "masterTextKey": "BOILER_FEEDWATER",
       "translationText": "Boiler feedwater"
+    },
+    {
+      "masterTextKey": "BENCHMARK",
+      "translationText": "Benchmark"
+    },
+    {
+      "masterTextKey": "HEAT_LOSS",
+      "translationText": "Heat loss"
+    },
+    {
+      "masterTextKey": "FUEL_CONSUMPTION",
+      "translationText": "Fuel Consumption"
+    },
+    {
+      "masterTextKey": "COST_OF_WATER_UNIT_VOLUME",
+      "translationText": "Cost of water / unit volume"
+    },
+    {
+      "masterTextKey": "COST_OF_BOILER_WATER_YEAR",
+      "translationText": "Cost of Boiler water / year"
+    },
+    {
+      "masterTextKey": "COST_OF_CHEMICALS_PER_UNIT",
+      "translationText": "Cost of chemicals / unit"
+    },
+    {
+      "masterTextKey": "Cost of CHEMICALS_PER_YR",
+      "translationText": "Cost of chemicals / Yr"
+    },
+    {
+      "masterTextKey": "BOILER_HOUSE",
+      "translationText": "Boiler house"
+    },
+    {
+      "masterTextKey": "MAJOR_STEAM_GENERATION_OUTPUTS_AND_CONDENSARE_RETURN_SAVINGS",
+      "translationText": "Major Steam generation Outputs and Condensare return Savings"
+    },
+    {
+      "masterTextKey": "BENCHMARK_CURRENT_SITUATION",
+      "translationText": "Benchmark Current Situation"
+    },
+    {
+      "masterTextKey": "BOILER_HOUSE_WATER_AND_CHEMICALS",
+      "translationText": "Boiler House water and Chemicals"
+    },
+    {
+      "masterTextKey": "TOTAL_STEAM_GENERATION_COSTS",
+      "translationText": "Total steam generation costs"
+    },
+    {
+      "masterTextKey": "MASS_FLOW_PER_H",
+      "translationText": "Mass Flow / h"
+    },
+    {
+      "masterTextKey": "OPPORTUNITIES_FOR_BOILER_HOUSE_SAVINGS",
+      "translationText": "opportunities for boiler house savings"
+    },
+    {
+      "masterTextKey": "PERCENT_OF_LOST_FUEL_ENERGY",
+      "translationText": "% of lost fuel energy"
+    },
+    {
+      "masterTextKey": "CONDENSATE_RETURN_PER_SAVINGS",
+      "translationText": "Condensate return / savings"
+    },
+    {
+      "masterTextKey": "CO2_EMISSION_REDUCED",
+      "translationText": "CO2 Emission Reduced"
+    },
+    {
+      "masterTextKey": "BREAKDOWN_OF_BOILER_HOUSE_ESTIMATED_COST_AND_SAVINGS",
+      "translationText": "Breakdown of boiler house estimated cost and savings"
     }
   ]
 }
