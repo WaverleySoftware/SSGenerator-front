@@ -1,6 +1,6 @@
 <div class="formField"
      [ngClass]="{
-      error: !!error,
+      error: !!error || !!control?.errors,
       filled: filled !== undefined && filled !== false,
       touched: touched,
       disabled: disabled || (!!group && !radioInputRef.checked),
