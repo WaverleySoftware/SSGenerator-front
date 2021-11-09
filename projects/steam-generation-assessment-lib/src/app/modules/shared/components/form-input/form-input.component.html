@@ -4,17 +4,23 @@
       filled: filled !== undefined && filled !== false,
       touched: touched,
       disabled: disabled || (!!group && !radioInputRef.checked),
-      radio: !!group
+      radio: !!group || !!radioWrapper?.innerHTML?.trim()
      }">
+  <!--  LABEL -->
   <label *ngIf="!!label" class="formField-label">{{label | translate}}</label>
-  <div class="formField-row" [ngClass]="{focus: focus}">
-    <input [type]="!group ? 'hidden' : 'radio'"
-           (change)="changeRadioInput({ref: radioInputRef, group: group})"
-           [value]="value"
-           [name]="group"
-           #radioInputRef
-           class="formField-radio">
 
+  <div class="formField-row" [ngClass]="{focus: focus}">
+    <!--  RADIO CHECK -->
+    <span class="formField-radio">
+      <span #radioWrapper><ng-content select="[radio]"></ng-content></span>
+      <input [type]="!group ? 'hidden' : 'radio'"
+             (change)="changeRadioInput({ref: radioInputRef, group: group})"
+             [value]="value"
+             [name]="group"
+             #radioInputRef>
+    </span>
+
+    <!--  BASE INPUT -->
     <input #temperatureRef="display-preference"
            #inputRef
            [type]="type"
@@ -32,10 +38,17 @@
            (ngModelChange)="updateValue($event)"
            class="formField-input">
 
+    <!--  UNIT -->
     <span class="formField-addon" *ngIf="temperatureRef?.preference?.masterTextKey || unit">
-<!--      {{unitBefore}}{{temperatureRef?.preference?.masterTextKey && (temperatureRef?.preference?.masterTextKey | translate)}}{{unit}}-->
-      <ng-content select="[unitBefore]"></ng-content>{{temperatureRef?.preference?.unitName}}{{unit}}<ng-content select="[unitAfter]"></ng-content>
+      <span class="unitBefore"><ng-content select="[unitBefore]"></ng-content></span>
+      {{temperatureRef?.preference?.unitName}}{{unit}}
+      <span class="unitAfter"><ng-content select="[unitAfter]"></ng-content></span>
     </span>
   </div>
-  <span class="formField-message" [ngClass]="{error: error}">{{error || message}}</span>
+
+  <!--  ERROR/MESSAGE -->
+  <span class="formField-message error" *ngIf="control?.errors; else messageTemplate">{{control?.errors | json}}</span>
+  <ng-template #messageTemplate>
+    <span class="formField-message" [ngClass]="{error: error}">{{error || message}}</span>
+  </ng-template>
 </div>

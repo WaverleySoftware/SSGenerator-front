@@ -1,5 +1,15 @@
-import { Component, ElementRef, EventEmitter, forwardRef, Input, Output, ViewChild } from "@angular/core";
-import { ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
+import {
+  AfterContentInit,
+  Component,
+  ElementRef,
+  EventEmitter,
+  forwardRef,
+  Injector,
+  Input,
+  Output,
+  ViewChild
+} from "@angular/core";
+import { ControlValueAccessor, NG_VALUE_ACCESSOR, NgControl } from "@angular/forms";
 
 @Component({
   selector: 'form-input',
@@ -11,7 +21,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
     multi: true,
   }],
 })
-export class FormInputComponent implements ControlValueAccessor {
+export class FormInputComponent implements ControlValueAccessor, AfterContentInit {
   @Input('module-group-id') moduleGroupId: number = 9;
   @Input('preference-name') preferenceName: string;
   @Input('preference-unitType') preferenceUnitType: string;
@@ -32,8 +42,13 @@ export class FormInputComponent implements ControlValueAccessor {
   value: any;
   touched: boolean;
   focus: boolean;
+  public control: NgControl;
 
-  constructor() { }
+  constructor(private injector: Injector) { }
+
+  ngAfterContentInit() {
+    this.getFormControl();
+  }
 
   // fake functions
   private onChange = (value: any) => {};
@@ -66,6 +81,13 @@ export class FormInputComponent implements ControlValueAccessor {
     // Focus on input
     if (this.inputRef && this.inputRef.nativeElement) {
       setTimeout(() => this.inputRef.nativeElement.focus())
+    }
+  }
+
+  private getFormControl(): void {
+    const ngControl: NgControl = this.injector.get(NgControl, null);
+    if (ngControl && ngControl.control) {
+      this.control = ngControl;
     }
   }
 }

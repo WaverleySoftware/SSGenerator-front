@@ -39,39 +39,48 @@
   }
 
   &-radio {
-    height: 20px;
-    width: 20px;
-    margin-top: 0;
-    margin-left: -30px!important;
-    display: flex;
-    align-self: center;
-    outline: none;
-    &:focus, &:active {
-      outline: none;
+    display: inline-flex;
+    &>span {
+      display: inline-flex;
     }
 
-    &:after {
-      content: '';
-      display: inline-block;
-      visibility: visible;
-      border: 1px solid var(--color-steel-80);
-      background-color: var(--color-white);
-      box-sizing: border-box;
-      border-radius: 50%;
-      width: 20px;
-      height: 20px;
-      min-width: 20px;
-      min-height: 20px;
-    }
+    &::ng-deep {
+      input[type="radio"] {
+        height: 20px;
+        width: 20px;
+        margin-top: 0;
+        margin-left: -30px!important;
+        display: flex;
+        align-self: center;
+        outline: none;
+        &:focus, &:active {
+          outline: none;
+        }
 
-    &:checked:after {
-      border-color: var(--color-blue);
-      background-color: var(--color-white);
-      border-width: 6px;
-    }
+        &:after {
+          content: '';
+          display: inline-block;
+          visibility: visible;
+          border: 1px solid var(--color-steel-80);
+          background-color: var(--color-white);
+          box-sizing: border-box;
+          border-radius: 50%;
+          width: 20px;
+          height: 20px;
+          min-width: 20px;
+          min-height: 20px;
+        }
 
-    &:hover {
-      cursor: pointer;
+        &:checked:after {
+          border-color: var(--color-blue);
+          background-color: var(--color-white);
+          border-width: 6px;
+        }
+
+        &:hover {
+          cursor: pointer;
+        }
+      }
     }
   }
 
@@ -115,6 +124,27 @@
     border-left: 1px solid;
     border-color: inherit;
     background-color: var(--color-white);
+    .unitBefore:not(:empty) {
+      &:after {
+        content: '/';
+        display: inline-block;
+      }
+    }
+
+    .unitAfter:not(:empty) {
+      &:before {
+        content: '/';
+        display: inline-block;
+      }
+    }
+
+    &::ng-deep {
+      input {
+        line-height: initial;
+        background: transparent;
+        border: none;
+      }
+    }
   }
 
   &-message {

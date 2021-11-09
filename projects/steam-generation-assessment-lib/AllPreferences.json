@@ -1,0 +1,335 @@
+[
+  {
+    "name": "AnnualInflation" ,
+    "label": null ,
+    "value": "2" ,
+    "decimalPlaces": 0 ,
+    "isUnit": false ,
+    "unitName": null ,
+    "masterTextKey": null
+  } ,
+  {
+    "name": "AreaUnit" ,
+    "label": null ,
+    "value": "12" ,
+    "decimalPlaces": 2 ,
+    "isUnit": true ,
+    "unitName": "in²" ,
+    "masterTextKey": "UNIT_IN2"
+  } ,
+  {
+    "name": "BHCurrency" ,
+    "label": null ,
+    "value": "USD" ,
+    "decimalPlaces": 2 ,
+    "isUnit": true ,
+    "unitName": null ,
+    "masterTextKey": null
+  } ,
+  {
+    "name": "BoilerHouseElectricalFuelUnits" ,
+    "label": null ,
+    "value": "108" ,
+    "decimalPlaces": 0 ,
+    "isUnit": true ,
+    "unitName": "kWh" ,
+    "masterTextKey": "UNIT_KWH"
+  } ,
+  {
+    "name": "BoilerHouseEmissionUnits" ,
+    "label": null ,
+    "value": "32" ,
+    "decimalPlaces": 2 ,
+    "isUnit": true ,
+    "unitName": "US ton" ,
+    "masterTextKey": "UNIT_US_TON"
+  } ,
+  {
+    "name": "BoilerHouseEnergyUnits" ,
+    "label": null ,
+    "value": "244" ,
+    "decimalPlaces": 2 ,
+    "isUnit": true ,
+    "unitName": "MMBtu" ,
+    "masterTextKey": "UNIT_MMBTU"
+  } ,
+  {
+    "name": "BoilerHouseGasFuelUnits" ,
+    "label": null ,
+    "value": "354" ,
+    "decimalPlaces": 0 ,
+    "isUnit": true ,
+    "unitName": "Mft³" ,
+    "masterTextKey": "UNIT_MFT3"
+  } ,
+  {
+    "name": "BoilerHouseLiquidFuelUnits" ,
+    "label": null ,
+    "value": "23" ,
+    "decimalPlaces": 0 ,
+    "isUnit": true ,
+    "unitName": "US gallon" ,
+    "masterTextKey": "UNIT_US_GALLON"
+  } ,
+  {
+    "name": "BoilerHouseMassFlowUnits" ,
+    "label": null ,
+    "value": "231" ,
+    "decimalPlaces": 2 ,
+    "isUnit": true ,
+    "unitName": "ton/yr (US)" ,
+    "masterTextKey": "UNIT_TON_FSLASH_YR_US"
+  } ,
+  {
+    "name": "BoilerHouseSolidFuelUnits" ,
+    "label": null ,
+    "value": "32" ,
+    "decimalPlaces": 0 ,
+    "isUnit": true ,
+    "unitName": "US ton" ,
+    "masterTextKey": "UNIT_US_TON"
+  } ,
+  {
+    "name": "BoilerHouseSpecificEnergyUnits" ,
+    "label": null ,
+    "value": "223" ,
+    "decimalPlaces": 0 ,
+    "isUnit": true ,
+    "unitName": "kWh/tonne" ,
+    "masterTextKey": "UNIT_KWH_FSLASH_TONNE"
+  } ,
+  {
+    "name": "BoilerHouseTDSUnits" ,
+    "label": null ,
+    "value": "232" ,
+    "decimalPlaces": 2 ,
+    "isUnit": true ,
+    "unitName": "µS/cm" ,
+    "masterTextKey": "UNIT_S_FSLASH_CM"
+  } ,
+  {
+    "name": "BoilerHouseVolumetricFlowUnits" ,
+    "label": null ,
+    "value": "81" ,
+    "decimalPlaces": 2 ,
+    "isUnit": true ,
+    "unitName": "gallon/min (US)" ,
+    "masterTextKey": "UNIT_GALLON_FSLASH_MIN_US"
+  } ,
+  {
+    "name": "BoilerHouseVolumeUnits" ,
+    "label": null ,
+    "value": "15" ,
+    "decimalPlaces": 2 ,
+    "isUnit": true ,
+    "unitName": "litre (dm³)" ,
+    "masterTextKey": "UNIT_LITRE_DM3"
+  } ,
+  {
+    "name": "BoilerHouseWeightUnits" ,
+    "label": null ,
+    "value": "28" ,
+    "decimalPlaces": 2 ,
+    "isUnit": true ,
+    "unitName": "lb" ,
+    "masterTextKey": "UNIT_LB"
+  } ,
+  {
+    "name": "CapacityUnit" ,
+    "label": null ,
+    "value": "90" ,
+    "decimalPlaces": 2 ,
+    "isUnit": true ,
+    "unitName": "Cv (US)" ,
+    "masterTextKey": "UNIT_CV_US"
+  } ,
+  {
+    "name": "CapitalAllowanceRate" ,
+    "label": null ,
+    "value": "18" ,
+    "decimalPlaces": 0 ,
+    "isUnit": false ,
+    "unitName": null ,
+    "masterTextKey": null
+  } ,
+  {
+    "name": "CvDesignStandard" ,
+    "label": null ,
+    "value": "ANSI" ,
+    "decimalPlaces": 0 ,
+    "isUnit": false ,
+    "unitName": null ,
+    "masterTextKey": null
+  } ,
+  {
+    "name": "DownloadAccess" ,
+    "label": null ,
+    "value": "2" ,
+    "decimalPlaces": 0 ,
+    "isUnit": false ,
+    "unitName": null ,
+    "masterTextKey": null
+  } ,
+  {
+    "name": "EnergyUnits" ,
+    "label": null ,
+    "value": "108" ,
+    "decimalPlaces": 0 ,
+    "isUnit": true ,
+    "unitName": "kWh" ,
+    "masterTextKey": "UNIT_KWH"
+  } ,
+  {
+    "name": "ForceUnit" ,
+    "label": null ,
+    "value": "91" ,
+    "decimalPlaces": 2 ,
+    "isUnit": true ,
+    "unitName": "lbf" ,
+    "masterTextKey": "UNIT_LBF"
+  } ,
+  {
+    "name": "GaseousFuelUnits" ,
+    "label": null ,
+    "value": "16" ,
+    "decimalPlaces": 0 ,
+    "isUnit": true ,
+    "unitName": "m³" ,
+    "masterTextKey": "UNIT_M3"
+  } ,
+  {
+    "name": "LengthUnit" ,
+    "label": null ,
+    "value": "5" ,
+    "decimalPlaces": 2 ,
+    "isUnit": true ,
+    "unitName": "in" ,
+    "masterTextKey": "UNIT_IN"
+  } ,
+  {
+    "name": "LiquidFuelUnits" ,
+    "label": null ,
+    "value": "15" ,
+    "decimalPlaces": 0 ,
+    "isUnit": true ,
+    "unitName": "litre (dm³)" ,
+    "masterTextKey": "UNIT_LITRE_DM3"
+  } ,
+  {
+    "name": "LoadUnit" ,
+    "label": null ,
+    "value": "95" ,
+    "decimalPlaces": 2 ,
+    "isUnit": true ,
+    "unitName": "Btu/h" ,
+    "masterTextKey": "UNIT_BTU_FSLASH_H"
+  } ,
+  {
+    "name": "MassFlowUnit" ,
+    "label": null ,
+    "value": "86" ,
+    "decimalPlaces": 2 ,
+    "isUnit": true ,
+    "unitName": "lb/h" ,
+    "masterTextKey": "UNIT_LB_FSLASH_H"
+  } ,
+  {
+    "name": "PressureUnit" ,
+    "label": null ,
+    "value": "58" ,
+    "decimalPlaces": 2 ,
+    "isUnit": true ,
+    "unitName": "psi gauge" ,
+    "masterTextKey": "UNIT_PSI_GAUGE"
+  } ,
+  {
+    "name": "ReverseOsmosisAvailable" ,
+    "label": null ,
+    "value": "0" ,
+    "decimalPlaces": 0 ,
+    "isUnit": false ,
+    "unitName": null ,
+    "masterTextKey": null
+  } ,
+  {
+    "name": "SolidFuelUnits" ,
+    "label": null ,
+    "value": "26" ,
+    "decimalPlaces": 0 ,
+    "isUnit": true ,
+    "unitName": "kg" ,
+    "masterTextKey": "UNIT_KG"
+  } ,
+  {
+    "name": "SpecLanguage" ,
+    "label": null ,
+    "value": "en-us" ,
+    "decimalPlaces": 0 ,
+    "isUnit": false ,
+    "unitName": null ,
+    "masterTextKey": null
+  } ,
+  {
+    "name": "Tax" ,
+    "label": null ,
+    "value": "20" ,
+    "decimalPlaces": 0 ,
+    "isUnit": false ,
+    "unitName": null ,
+    "masterTextKey": null
+  } ,
+  {
+    "name": "TemperatureUnit" ,
+    "label": null ,
+    "value": "148" ,
+    "decimalPlaces": 2 ,
+    "isUnit": true ,
+    "unitName": "K" ,
+    "masterTextKey": "UNIT_K"
+  } ,
+  {
+    "name": "VelocityUnit" ,
+    "label": null ,
+    "value": "140" ,
+    "decimalPlaces": 2 ,
+    "isUnit": true ,
+    "unitName": "ft/s" ,
+    "masterTextKey": "UNIT_FT_FSLASH_S"
+  } ,
+  {
+    "name": "VolumetricFlowUnit" ,
+    "label": null ,
+    "value": "81" ,
+    "decimalPlaces": 2 ,
+    "isUnit": true ,
+    "unitName": "gallon/min (US)" ,
+    "masterTextKey": "UNIT_GALLON_FSLASH_MIN_US"
+  } ,
+  {
+    "name": "WeightUnit" ,
+    "label": null ,
+    "value": "28" ,
+    "decimalPlaces": 2 ,
+    "isUnit": true ,
+    "unitName": "lb" ,
+    "masterTextKey": "UNIT_LB"
+  } ,
+  {
+    "name": "EHHideManufactureCosts" ,
+    "label": null ,
+    "value": "0" ,
+    "decimalPlaces": 0 ,
+    "isUnit": false ,
+    "unitName": null ,
+    "masterTextKey": null
+  } ,
+  {
+    "name": "EHHideSalesPrice" ,
+    "label": null ,
+    "value": "0" ,
+    "decimalPlaces": 0 ,
+    "isUnit": false ,
+    "unitName": null ,
+    "masterTextKey": null
+  }
+]
