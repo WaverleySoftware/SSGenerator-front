@@ -16,7 +16,7 @@
             <form-list formControlName="inputFuelId"
                        enumeration-name="FuelTypeList_BoilerHouseInput"
                        label="FUEL_TYPE"></form-list>
-            <ng-container *ngIf="formGroup.get('inputFuelId').value === 'G-Natural Gas'">
+            <ng-container *ngIf="formGroup.get('inputFuelId').value === 1">
               <form-input formControlName="fuelEnergyPerUnit"
                           preference-name="EnergyUnits"
                           preference-unitType="BoilerHouseElectricalFuelUnits"
@@ -41,7 +41,7 @@
                         preference-unitType="BoilerHouseGasFuelUnits"
                         preference-masterTextKey="GASEOUS_FUEL"
                         label="COST_OF_FUEL_PER_UNIT"
-                        [filled]="formGroup.controls['inputFuelId'].value === 'G-Natural Gas'"
+                        [filled]="formGroup.controls['inputFuelId'].value === 1"
                         required>
               <ng-container unitBefore>£</ng-container>
             </form-input>
