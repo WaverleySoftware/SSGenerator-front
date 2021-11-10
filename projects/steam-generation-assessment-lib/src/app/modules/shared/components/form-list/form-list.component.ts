@@ -18,7 +18,7 @@ export class FormListComponent implements ControlValueAccessor {
   @Input("enumeration-name") enumerationName: string;
   @Input("filter-by") filterBy: string[];
   @Input("opco-override") opCoOverride: boolean = false;
-  @Input('value') internalValue: string;
+  @Input('value') internalValue: any;
   @Input() label: string;
   @Output("on-change") externalOnChange = new EventEmitter<{ selectedValue: string, itemsCount: number }>();
 
@@ -44,8 +44,8 @@ export class FormListComponent implements ControlValueAccessor {
   }
 
   // Help functions
-  onChange: any = () => {};
-  onTouched: any = () => {};
+  private onChange: any = (val: any) => {};
+  public onTouched: any = () => {};
 
   constructor(protected translationService: TranslationService) { }
 
@@ -72,7 +72,12 @@ export class FormListComponent implements ControlValueAccessor {
   }
 
   writeValue(val: any): void {
-    this.internalValue = val;
+    this.internalValue = val && val.value || val;
   }
 
+  updateValue(val: any): void {
+    this.internalValue = Number.isNaN(Number(val)) ? val : (val && +val);
+    this.onChange(this.internalValue);
+    this.onTouched();
+  }
 }

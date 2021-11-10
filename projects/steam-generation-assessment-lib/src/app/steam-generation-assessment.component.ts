@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit } from "@angular/core";
+import { Component, ElementRef, OnDestroy, OnInit } from "@angular/core";
 import {
   BaseSizingModule,
   JobSizing,
@@ -9,6 +9,9 @@ import {
 import { FormGroup } from "@angular/forms";
 import { SteamGenerationAssessmentService } from "./steam-generation-assessment.service";
 import { SteamGenerationFormInterface } from "./steam-generation-form.interface";
+import { ActivatedRoute, Params } from "@angular/router";
+import { Subject } from "rxjs";
+import { takeUntil } from "rxjs/operators";
 
 interface ErrorInterface {
   attemptedValue: any;
@@ -28,7 +31,7 @@ interface ErrorInterface {
   templateUrl: './steam-generation-assessment.component.html',
   styleUrls: ['./steam-generation-assessment.component.scss']
 })
-export class SteamGenerationAssessmentComponent extends BaseSizingModule implements OnInit {
+export class SteamGenerationAssessmentComponent extends BaseSizingModule implements OnInit, OnDestroy {
   readonly moduleGroupId: number = 9;
   readonly moduleName: string = 'steamGenerationAssessment';
   moduleId = 2;
@@ -36,12 +39,14 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   sizingModuleForm: FormGroup;
 
   public errors: ErrorInterface[];
+  private ngUnsubscribe = new Subject<void>();
 
   constructor(
     private steamGenerationAssessmentService: SteamGenerationAssessmentService,
     private preferenceService: PreferenceService,
     private unitsService: UnitsService,
-    private elRef: ElementRef
+    private elRef: ElementRef,
+    private activatedRoute: ActivatedRoute,
   ) {
     super();
     this.getSettings();
@@ -50,10 +55,21 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   }
 
   ngOnInit() {
+    this.loadJob();
+  }
+
+  ngOnDestroy(): void {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
 
   onCalculateSizing(formGroup: FormGroup): any {
-    console.log(formGroup.getRawValue(), '-------CALCULATE');
+    this.steamGenerationAssessmentService
+      .calculateResults(formGroup.getRawValue())
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((response) => {
+        console.log(response, '-----response');
+      });
     return true;
   }
 
@@ -98,13 +114,13 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   }
 
   private getSettings(): void {
-    this.preferenceService.getAllPreferences().subscribe(data => {
+    this.preferenceService.getAllPreferences().pipe(takeUntil(this.ngUnsubscribe)).subscribe(data => {
       // console.log(data, '-----getAllPreferences')
     });
-    this.preferenceService.getUserPreferences().subscribe(data => {
+    this.preferenceService.getUserPreferences().pipe(takeUntil(this.ngUnsubscribe)).subscribe(data => {
       // console.log(data, '----getUserPreferences');
     });
-    this.unitsService.getAllUnitsByAllTypes().subscribe(data => {
+    this.unitsService.getAllUnitsByAllTypes().pipe(takeUntil(this.ngUnsubscribe)).subscribe(data => {
       // console.log(data, '----getAllUnitsByAllTypes')
     });
   }
@@ -131,7 +147,8 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     const value = Number.isNaN(Number(control.value)) ? control.value : +control.value;
 
     this.steamGenerationAssessmentService
-      .validateSgInput(field, { [field]: value || null }).subscribe(
+      .validateSgInput(field, { [field]: value || null })
+      .pipe(takeUntil(this.ngUnsubscribe)).subscribe(
       () => control.setErrors(null),
       ({error}) => {
         const errors  = (error.errors[`$.${field}`] || error.errors);
@@ -140,5 +157,14 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
         }
       }
     );
+  }
+
+  private loadJob(): void {
+    this.activatedRoute.params
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((params: Params) => {
+        const { projectId, jobId } = params;
+        console.log(`projectId=${projectId}, jobId=${jobId}`);
+      });
   }
 }

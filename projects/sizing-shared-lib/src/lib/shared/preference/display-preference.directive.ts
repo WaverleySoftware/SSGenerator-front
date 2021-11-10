@@ -29,7 +29,7 @@ export class DisplayPreferenceDirective implements OnInit {
     }
 
     const sizingUnitPreference = this.preferenceService.sizingUnitPreferences &&
-      this.preferenceService.sizingUnitPreferences.find(su => su.preference.name === this.displayPreference);
+      this.preferenceService.sizingUnitPreferences.find(su => su.preference && su.preference.name === this.displayPreference);
 
     return !!sizingUnitPreference ? sizingUnitPreference.preference : null;
   }
@@ -38,7 +38,7 @@ export class DisplayPreferenceDirective implements OnInit {
 		if (this.displayPreference) {
 			console.log('initializing display directive for ' + this.displayPreference)
 			const sizingUnitPreference = this.preferenceService.sizingUnitPreferences &&
-				this.preferenceService.sizingUnitPreferences.find(su => su.preference.name === this.displayPreference && su.moduleGroupId === this.moduleGroupId);
+				this.preferenceService.sizingUnitPreferences.find(su => su.preference && su.preference.name === this.displayPreference && su.moduleGroupId === this.moduleGroupId);
 
 			if (!sizingUnitPreference){
 
