@@ -5,11 +5,8 @@
           (blur)="onTouched()"
           [value]="internalValue"
           (change)="updateValue($event.target.value)">
-    <option selected disabled title="placeholder"></option>
-    <ng-container *ngIf="list?.length">
-      <option *ngFor="let item of list; let i = index"
-              [title]="item.translationText+item.extraPostText"
-              [value]="i+1">{{item.translationText}}{{item.extraPostText}}</option>
-    </ng-container>
+    <option *ngFor="let item of list; let i = index"
+            [title]="item.translationText+item.extraPostText"
+            [value]="item.value">{{item.translationText}}{{item.extraPostText}}</option>
   </select>
 </div>

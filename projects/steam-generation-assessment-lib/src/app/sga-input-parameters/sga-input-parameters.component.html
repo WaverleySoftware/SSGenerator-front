@@ -2,10 +2,7 @@
   <form body class="container-fluid" [formGroup]="formGroup" (ngSubmit)="submitForm()">
     <div class="row mb-5">
       <div class="col-md-5">
-        <form-input
-          formControlName="hoursOfOperation"
-          label="HOURS_OF_OPERATION"
-           required></form-input>
+        <form-input formControlName="hoursOfOperation" label="HOURS_OF_OPERATION" required></form-input>
       </div>
     </div>
 
@@ -18,16 +15,17 @@
           <div body>
             <form-list formControlName="inputFuelId"
                        enumeration-name="FuelTypeList_BoilerHouseInput"
-                       label="FUEL_TYPE"></form-list>
-            <ng-container *ngIf="formGroup.get('inputFuelId').value === 1">
-              <form-input formControlName="fuelEnergyPerUnit"
-                          preference-name="EnergyUnits"
-                          preference-unitType="BoilerHouseElectricalFuelUnits"
-                          preference-masterTextKey="ENERGY"
-                          label="FUEL_CALORIFIC_VALUE"
-                          required>
-                <ng-container unitAfter>{{fuelEnergyUnit?.preference?.unitName}}</ng-container>
-              </form-input>
+                       label="FUEL_TYPE">
+              <input type="hidden" preferenceSizingUnit="BoilerHouseEnergyUnits" formControlName="inputFuelUnit" [value]="1">
+            </form-list>
+            <form-input formControlName="fuelEnergyPerUnit"
+                        preference-name="EnergyUnits"
+                        preference-unitType="BoilerHouseElectricalFuelUnits"
+                        preference-masterTextKey="ENERGY"
+                        label="FUEL_CALORIFIC_VALUE"
+                        required>
+              <ng-container unitAfter>{{fuelEnergyUnit?.preference?.unitName}}</ng-container>
+            </form-input>
 
               <form-input formControlName="fuelCarbonContent"
                           preference-name="SolidFuelUnits"
@@ -184,21 +182,31 @@
                        background="#EDF2F4">
               <div body class="row">
                 <div class="col-md-6 border-r-md">
-                  <form-toggle formControlName="isSuperheatedSteam"
-                               name="isSuperheatedSteam"
-                               label="IS_SUPERHEATED_STEAM"></form-toggle>
-                  <form-toggle formControlName="isSteamFlowMeasured"
-                               name="isSteamFlowMeasured"
-                               label="IS_STEAM_FLOW_MEASURED"></form-toggle>
+                  <form-toggle formControlName="isSuperheatedSteam" label="IS_SUPERHEATED_STEAM"></form-toggle>
+                  <form-toggle formControlName="isSteamFlowMeasured" label="IS_STEAM_FLOW_MEASURED"></form-toggle>
 
-                  <form-input label="STEAM_GENERATION_PER_HOUR"
+                  <form-input formControlName="boilerSteamGeneratedPerYear"
+                              label="STEAM_GENERATION_PER_HOUR"
                               unit="kg/h"
-                              group="isSteamFlowMeasured"
-                              required></form-input>
-                  <form-input label="STEAM_GENERATION_PER_YEAR"
+                              [disabled]="formGroup.controls['boilerSteamGeneratedPerYearUnit'].value !== 1"
+                              required>
+                    <input radio
+                           [value]="1"
+                           (change)="clearValues(['boilerSteamGeneratedPerYear'])"
+                           type="radio"
+                           formControlName="boilerSteamGeneratedPerYearUnit">
+                  </form-input>
+                  <form-input formControlName="boilerSteamGeneratedPerYear"
+                              label="STEAM_GENERATION_PER_YEAR"
                               unit="tonnes/y"
-                              group="isSteamFlowMeasured"
-                              required></form-input>
+                              [disabled]="formGroup.controls['boilerSteamGeneratedPerYearUnit'].value !== 2"
+                              required>
+                    <input radio
+                           [value]="2"
+                           (change)="clearValues(['boilerSteamGeneratedPerYear'])"
+                           type="radio"
+                           formControlName="boilerSteamGeneratedPerYearUnit">
+                  </form-input>
                 </div>
                 <div class="col-md-6">
                   <form-input formControlName="boilerSteamTemperature"
@@ -210,9 +218,7 @@
                               label="STEAM_PRESSURE"
                               required></form-input>
 
-                  <form-toggle formControlName="isEconomizerPresent"
-                               name="isEconomiserPresent"
-                               label="IS_ECONOMISER_PRESENT"></form-toggle>
+                  <form-toggle formControlName="isEconomizerPresent" label="IS_ECONOMISER_PRESENT"></form-toggle>
 
                   <form-input formControlName="boilerEfficiency"
                               label="BOILER_EFFICIENCY"
@@ -346,19 +352,20 @@
             <sga-panel id="boilerFeedwaterPanel" [title]="'BOILER_FEEDWATER' | translate" background="#EDF2F4">
               <div class="row" body>
                 <div class="col-md-4 border-r-md">
-                  <form-toggle formControlName="isFeedWaterMeasured"
-                               label="IS_FEEDWATER_FLOWRATE_MEASURED">
+                  <form-toggle formControlName="isFeedWaterMeasured" label="IS_FEEDWATER_FLOWRATE_MEASURED">
                     <ng-container yes>
-                      <form-input label="CONSUMPTION_PER_HR"
+                      <form-input formControlName="boilerFeedwaterConsumption"
+                                  label="CONSUMPTION_PER_HR"
                                   unit="m3/h"
                                   group="isFeedwaterFlowrateMeasured"
-                                  (changeRadio)="clearValues([])"
+                                  (changeRadio)="clearValues(['boilerFeedwaterConsumption'])"
                                   required></form-input>
 
-                      <form-input label="CONSUMPTION_PER_YEAR"
+                      <form-input formControlName="boilerFeedwaterConsumption"
+                                  label="CONSUMPTION_PER_YEAR"
                                   unit="m3/y"
                                   group="isFeedwaterFlowrateMeasured"
-                                  (changeRadio)="clearValues([])"
+                                  (changeRadio)="clearValues(['boilerFeedwaterConsumption'])"
                                   required></form-input>
                     </ng-container>
                   </form-toggle>

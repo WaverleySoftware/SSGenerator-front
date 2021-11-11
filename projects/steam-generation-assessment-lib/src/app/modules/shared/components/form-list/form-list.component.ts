@@ -4,6 +4,8 @@ import * as cloneDeep_ from 'lodash/cloneDeep';
 import { TranslationService } from "sizing-shared-lib";
 import { EnumListDefinitionInterface, EnumListInterface } from "../../interfaces/enum-list.interface";
 
+
+
 @Component({
   selector: 'form-list',
   templateUrl: './form-list.component.html',
@@ -79,5 +81,29 @@ export class FormListComponent implements ControlValueAccessor {
     this.internalValue = Number.isNaN(Number(val)) ? val : (val && +val);
     this.onChange(this.internalValue);
     this.onTouched();
+  }
+
+  private static setEnumValues(list): EnumListDefinitionInterface[] {
+    return list.map((item) => {
+      let val = 5034;
+      switch (item.value) {
+        case 'L-Burning Oil': val = 5430; break;
+        case 'E-Electricity': val = 5976; break;
+        case 'L-Fuel Oil': val = 5429; break;
+        case 'L-Gas Oil': val = 5428; break;
+        case 'Grid electricity': val = 5426; break;
+        case 'S-Industrial Coal': val = 5433; break;
+        case 'L-LPG': val = 5427; break;
+        case 'G-Natural Gas': val = 5548; break;
+        case 'S-Wood Pellets': val = 5434; break;
+        case 'Diesel': val = 5431; break;
+        case 'Petrol': val = 5432; break;
+      }
+
+      return {
+        ...item,
+        apiValue: val,
+      }
+    });
   }
 }
