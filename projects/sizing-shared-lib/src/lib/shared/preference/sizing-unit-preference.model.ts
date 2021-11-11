@@ -22,7 +22,7 @@ export class SizingUnitPreference {
   /**
    * Gets or sets the currencies.
    */
-  currencies?: Currency[];
+  currencies: Currency[];
 
   /**
    * Gets or sets the masterTextKey.
