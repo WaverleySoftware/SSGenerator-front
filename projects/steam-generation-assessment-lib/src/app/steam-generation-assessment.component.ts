@@ -1,10 +1,11 @@
-import { Component, ElementRef, OnDestroy, OnInit } from "@angular/core";
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit } from "@angular/core";
 import {
   BaseSizingModule,
   JobSizing,
   PreferenceService,
   Project,
   UnitsService,
+  AdminService,
 } from "sizing-shared-lib";
 import { FormGroup } from "@angular/forms";
 import { SteamGenerationAssessmentService } from "./steam-generation-assessment.service";
@@ -12,6 +13,8 @@ import { SteamGenerationFormInterface } from "./steam-generation-form.interface"
 import { ActivatedRoute, Params } from "@angular/router";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
+import { Currency } from "../../../sizing-shared-lib/src/lib/modules/admin/currency/currency.model";
+import { SizingUnitPreference } from "../../../sizing-shared-lib/src/lib/shared/preference/sizing-unit-preference.model";
 
 interface ErrorInterface {
   attemptedValue: any;
@@ -31,7 +34,7 @@ interface ErrorInterface {
   templateUrl: './steam-generation-assessment.component.html',
   styleUrls: ['./steam-generation-assessment.component.scss']
 })
-export class SteamGenerationAssessmentComponent extends BaseSizingModule implements OnInit, OnDestroy {
+export class SteamGenerationAssessmentComponent extends BaseSizingModule implements OnInit, OnDestroy, AfterViewInit {
   readonly moduleGroupId: number = 9;
   readonly moduleName: string = 'steamGenerationAssessment';
   moduleId = 2;
@@ -47,6 +50,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     private unitsService: UnitsService,
     private elRef: ElementRef,
     private activatedRoute: ActivatedRoute,
+    private adminService: AdminService,
   ) {
     super();
     this.getSettings();
@@ -56,6 +60,9 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
 
   ngOnInit() {
     this.loadJob();
+  }
+
+  ngAfterViewInit() {
   }
 
   ngOnDestroy(): void {
@@ -123,8 +130,19 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     this.unitsService.getAllUnitsByAllTypes().pipe(takeUntil(this.ngUnsubscribe)).subscribe(data => {
       // console.log(data, '----getAllUnitsByAllTypes')
     });
+
+    // this.preferenceService.addSizingUnitPreference({
+    //   name: 'USD',
+    //   label: 'United States Dollar',
+    //   value: '31',
+    //   decimalPlaces: 0,
+    //   isUnit: false,
+    //   unitName: '$',
+    //   masterTextKey: 'CURRENCY_USD'
+    // }, 'currency', 'CURRENCY', this.moduleGroupId);
   }
 
+  // TODO: Function for focus on first invalid field (need to create toggle tabs to first invalid field)
   private focusFirstErrorField(formGroup: FormGroup): void {
     // check all fields
     for (const key of Object.keys(formGroup.controls)) {
@@ -164,6 +182,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((params: Params) => {
         const { projectId, jobId } = params;
+        // TODO: Create projects/jobs functionality
         console.log(`projectId=${projectId}, jobId=${jobId}`);
       });
   }

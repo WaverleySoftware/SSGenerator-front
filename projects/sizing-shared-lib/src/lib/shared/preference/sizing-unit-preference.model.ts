@@ -1,5 +1,6 @@
 import { Preference } from "./preference.model";
 import { Unit } from "../units/unit.model";
+import { Currency } from "../../modules/admin/currency/currency.model";
 
 export class SizingUnitPreference {
 
@@ -17,6 +18,11 @@ export class SizingUnitPreference {
    * Gets or sets the units.
    */
   units: Unit[];
+
+  /**
+   * Gets or sets the currencies.
+   */
+  currencies?: Currency[];
 
   /**
    * Gets or sets the masterTextKey.
