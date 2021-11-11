@@ -16,31 +16,20 @@
             <form-list formControlName="inputFuelId"
                        enumeration-name="FuelTypeList_BoilerHouseInput"
                        label="FUEL_TYPE">
-              <input type="hidden" preferenceSizingUnit="BoilerHouseEnergyUnits" formControlName="inputFuelUnit" [value]="1">
             </form-list>
             <form-input formControlName="fuelEnergyPerUnit"
-                        preference-name="EnergyUnits"
-                        preference-unitType="BoilerHouseElectricalFuelUnits"
-                        preference-masterTextKey="ENERGY"
                         label="FUEL_CALORIFIC_VALUE"
                         required>
               <ng-container unitAfter>{{fuelEnergyUnit?.preference?.unitName}}</ng-container>
             </form-input>
 
-              <form-input formControlName="fuelCarbonContent"
-                          preference-name="SolidFuelUnits"
-                          preference-unitType="BoilerHouseEmissionUnits"
-                          preference-masterTextKey="WEIGHT"
-                          label="CO2_EMISSIONS_PER_UNIT"
-                          required filled>
-                <ng-container unitAfter>{{fuelEnergyUnit?.preference?.unitName}}</ng-container>
-              </form-input>
-            </ng-container>
+            <form-input formControlName="fuelCarbonContent"
+                        label="CO2_EMISSIONS_PER_UNIT_FUEL"
+                        required filled>
+              <ng-container unitAfter>{{fuelEnergyUnit?.preference?.unitName}}</ng-container>
+            </form-input>
 
             <form-input formControlName="costOfFuelPerUnit"
-                        preference-name="GaseousFuelUnits"
-                        preference-unitType="BoilerHouseGasFuelUnits"
-                        preference-masterTextKey="GASEOUS_FUEL"
                         label="COST_OF_FUEL_PER_UNIT"
                         [filled]="formGroup.controls['inputFuelId'].value === 1"
                         required>

@@ -14,7 +14,6 @@ import { SizingSharedLibModule } from "sizing-shared-lib";
 import { FormListComponent } from './components/form-list/form-list.component';
 import { FormToggleComponent } from './components/form-toggle/form-toggle.component';
 import { FormRadioComponent } from './components/form-radio/form-radio.component';
-import { PreferenceSizingUnitDirective } from './directives/preference-sizing-unit.directive';
 
 
 @NgModule({
@@ -27,8 +26,7 @@ import { PreferenceSizingUnitDirective } from './directives/preference-sizing-un
     FormInputComponent,
     FormListComponent,
     FormToggleComponent,
-    FormRadioComponent,
-    PreferenceSizingUnitDirective
+    FormRadioComponent
   ],
   imports: [
     CommonModule,
@@ -48,8 +46,7 @@ import { PreferenceSizingUnitDirective } from './directives/preference-sizing-un
 		FormInputComponent,
 		FormListComponent,
 		FormToggleComponent,
-		FormRadioComponent,
-		PreferenceSizingUnitDirective
+		FormRadioComponent
 	]
 })
 export class SharedModule { }

@@ -7,6 +7,7 @@ import { SizingUnitPreference } from "./sizing-unit-preference.model";
 import { Observable, Subject } from "rxjs/Rx";
 import "rxjs/add/operator/map";
 import "rxjs/add/operator/catch";
+import { Unit } from "../units/unit.model";
 
 @Injectable({
   providedIn:'root'
@@ -137,14 +138,24 @@ export class PreferenceService {
    * @param unitType {String} The unit type.
    * @param masterTextKey {String} The modal label translation.
    * @param moduleGroupId {Number} The module group ID.
+   * @param units The list of units.
+   * @param currencies The list of units.
    */
-  addSizingUnitPreference(preference: Preference, unitType: string, masterTextKey: string, moduleGroupId: number) {
+  addSizingUnitPreference(
+    preference: Preference,
+    unitType: string,
+    masterTextKey: string,
+    moduleGroupId: number,
+    units?: any[],
+    currencies?: any[]
+  ) {
     const sizingUnitPreference = new SizingUnitPreference();
 
     sizingUnitPreference.preference = preference;
     sizingUnitPreference.unitType = unitType;
     sizingUnitPreference.masterTextKey = masterTextKey;
-
+    sizingUnitPreference.units = units;
+    sizingUnitPreference.currencies = currencies;
     sizingUnitPreference.moduleGroupId = moduleGroupId;
 
     this.sizingUnitPreferenceChange.next(sizingUnitPreference);
