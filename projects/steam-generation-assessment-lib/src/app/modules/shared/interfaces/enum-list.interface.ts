@@ -60,6 +60,8 @@ export class EnumListDefinitionInterface {
    * Gets or sets the isDeleted.
    */
   isDeleted: boolean;
+
+  apiValue?: string;
 }
 
 /**
