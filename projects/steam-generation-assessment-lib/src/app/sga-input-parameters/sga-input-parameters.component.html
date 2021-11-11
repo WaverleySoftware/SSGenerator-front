@@ -2,7 +2,10 @@
   <form body class="container-fluid" [formGroup]="formGroup" (ngSubmit)="submitForm()">
     <div class="row mb-5">
       <div class="col-md-5">
-        <form-input label="HOURS_OF_OPERATION" formControlName="hoursOfOperation" required></form-input>
+        <form-input
+          formControlName="hoursOfOperation"
+          label="HOURS_OF_OPERATION"
+           required></form-input>
       </div>
     </div>
 
@@ -28,9 +31,9 @@
 
               <form-input formControlName="fuelCarbonContent"
                           preference-name="SolidFuelUnits"
-                          preference-unitType="BoilerHouseWeightUnits"
+                          preference-unitType="BoilerHouseEmissionUnits"
                           preference-masterTextKey="WEIGHT"
-                          label="CO2_EMISSIONS_PER_UNIT_FUEL"
+                          label="CO2_EMISSIONS_PER_UNIT"
                           required filled>
                 <ng-container unitAfter>{{fuelEnergyUnit?.preference?.unitName}}</ng-container>
               </form-input>
