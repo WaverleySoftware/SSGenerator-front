@@ -12,12 +12,10 @@ import { SteamGenerationFormInterface } from "../steam-generation-form.interface
 })
 export class SgaInputParametersComponent {
   @Input() formGroup: FormGroup;
+  @Input() moduleGroupId: number;
 
   public deaeratorType: string = 'autmosphericDeaerator';
 
-  get fuelEnergyUnit(): SizingUnitPreference {
-    return this.preferenceService.sizingUnitPreferences.find((item) => item && item.unitType === "BoilerHouseEnergyUnits");
-  }
   get currency(): SizingUnitPreference {
     return this.preferenceService.sizingUnitPreferences.find((item) => item && item.unitType === 'BHCurrency');
   }

@@ -18,26 +18,28 @@
                        label="FUEL_TYPE">
             </form-list>
             <form-input formControlName="fuelEnergyPerUnit"
+                        [unit-names]="['BoilerHouseEnergyUnits', 'BHCurrency']"
+                        [unit-translations]="['ENERGY', 'CURRENCY']"
+                        [module-group-id]="moduleGroupId"
                         label="FUEL_CALORIFIC_VALUE"
-                        required>
-              <ng-container unitBefore>kWh</ng-container>
-              <ng-container unitAfter>{{fuelEnergyUnit?.preference?.unitName}}</ng-container>
-            </form-input>
+                        required></form-input>
 
             <form-input formControlName="fuelCarbonContent"
                         label="CO2_EMISSIONS_PER_UNIT_FUEL"
-                        required filled>
-              <ng-container unitBefore>kg</ng-container>
-              <ng-container unitAfter>{{fuelEnergyUnit?.preference?.unitName}}</ng-container>
-            </form-input>
+                        [unit-names]="['PressureUnit', 'BHCurrency']"
+                        [unit-translations]="['PRESSURE', 'CURRENCY']"
+                        [module-group-id]="moduleGroupId"
+                        required filled></form-input>
 
             <form-input formControlName="costOfFuelPerUnit"
                         label="COST_OF_FUEL_PER_UNIT"
+                        [unit-names]="['BoilerHouseEnergyUnits', 'PressureUnit']"
+                        [unit-types]="['BoilerHouseEnergyUnits', 'PressureUnits']"
+                        [unit-translations]="['ENERGY', 'PRESSURE']"
+                        [unit-controls]="['fuelCarbonContent', 'fuelEnergyPerUnit']"
+                        [module-group-id]="moduleGroupId"
                         [filled]="formGroup.controls['inputFuelId'].value === 1"
-                        required>
-              <ng-container unitBefore>{{currency?.preference?.unitName}}</ng-container>
-              <ng-container unitAfter>{{fuelEnergyUnit?.preference?.unitName}}</ng-container>
-            </form-input>
+                        required></form-input>
 
             <form-toggle formControlName="fuelQtyPerYearIsKnown"
                          label="IS_FUEL_CONSUMPTION_MEASURED">
@@ -84,7 +86,7 @@
                             (changeRadio)="clearValues(['costOfCo2PerUnitMass'])"
                             required></form-input>
                 <form-input formControlName="costOfCo2PerUnitMass"
-                            label="COST_OF_CO2_PER_UNIT_MAX"
+                            label="COST_OF_CO2_PER_UNIT_MASS"
                             group="emissions-taxed"
                             unit="???"
                             (changeRadio)="clearValues(['carbonTaxLevyCostUnit'])"

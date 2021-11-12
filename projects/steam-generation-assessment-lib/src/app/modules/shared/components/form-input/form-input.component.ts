@@ -22,10 +22,12 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR, NgControl } from "@angular/for
   }],
 })
 export class FormInputComponent implements ControlValueAccessor, AfterContentInit {
+  @Input('unit-names') setUnits: [string, string?];
+  @Input('unit-types') unitTypes: [string, string?];
+  @Input('unit-controls') unitControls: [string, string?];
+  @Input('unit-translations') masterTextKeys: [string, string?];
   @Input('module-group-id') moduleGroupId: number = 9;
-  @Input('preference-name') preferenceName: string;
-  @Input('preference-unitType') preferenceUnitType: string;
-  @Input('preference-masterTextKey') masterTextKey: string;
+
   @Input() unit: string;
   @Input() label: string;
   @Input() error: string;
