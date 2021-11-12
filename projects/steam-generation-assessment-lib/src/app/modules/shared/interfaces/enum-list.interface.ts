@@ -61,7 +61,10 @@ export class EnumListDefinitionInterface {
    */
   isDeleted: boolean;
 
-  apiValue?: string;
+	/**
+	* Static value numbers for API request value
+	* */
+	fromValue?: number;
 }
 
 /**

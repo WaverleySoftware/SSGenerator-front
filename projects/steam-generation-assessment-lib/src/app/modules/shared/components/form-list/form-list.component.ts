@@ -42,7 +42,7 @@ export class FormListComponent implements ControlValueAccessor {
       list = list.filter(({ value }) => this.filterBy && this.filterBy.includes(value));
     }
 
-    return list;
+    return FormListComponent.setEnumValues(list);
   }
 
   // Help functions
@@ -78,31 +78,30 @@ export class FormListComponent implements ControlValueAccessor {
   }
 
   updateValue(val: any): void {
-    this.internalValue = Number.isNaN(Number(val)) ? val : (val && +val);
+    // this.internalValue = Number.isNaN(Number(val)) ? val : (val && +val);
+    this.internalValue = parseInt(val);
     this.onChange(this.internalValue);
     this.onTouched();
   }
 
   private static setEnumValues(list): EnumListDefinitionInterface[] {
     return list.map((item) => {
-      let val = 5034;
-      switch (item.value) {
-        case 'L-Burning Oil': val = 5430; break;
-        case 'E-Electricity': val = 5976; break;
-        case 'L-Fuel Oil': val = 5429; break;
-        case 'L-Gas Oil': val = 5428; break;
-        case 'Grid electricity': val = 5426; break;
-        case 'S-Industrial Coal': val = 5433; break;
-        case 'L-LPG': val = 5427; break;
-        case 'G-Natural Gas': val = 5548; break;
-        case 'S-Wood Pellets': val = 5434; break;
-        case 'Diesel': val = 5431; break;
-        case 'Petrol': val = 5432; break;
+      let val = null;
+      switch (item.defaultText) {
+        case 'Natural Gas': val = 5548; break;
+        case 'LPG': val = 5427; break;
+        case 'Gas Oil': val = 5428; break;
+        case 'Fuel Oil': val = 5429; break;
+        case 'Burning Oil': val = 5430; break;
+        case 'Industrial Coal': val = 5433; break;
+        case 'Wood Pellets': val = 5434; break;
+        case 'Electricity': val = 5976; break;
+        case 'Other': val = 5549; break;
       }
 
       return {
         ...item,
-        apiValue: val,
+        fromValue: val,
       }
     });
   }
