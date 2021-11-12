@@ -39,9 +39,9 @@
            class="formField-input">
 
     <!--  UNIT -->
-    <span class="formField-addon" *ngIf="temperatureRef?.preference?.masterTextKey || unit">
+    <span class="formField-addon">
       <span class="unitBefore"><ng-content select="[unitBefore]"></ng-content></span>
-      {{temperatureRef?.preference?.unitName}}{{unit}}
+      <span class="unitCenter">{{temperatureRef?.preference?.unitName}}{{unit}}</span>
       <span class="unitAfter"><ng-content select="[unitAfter]"></ng-content></span>
     </span>
   </div>

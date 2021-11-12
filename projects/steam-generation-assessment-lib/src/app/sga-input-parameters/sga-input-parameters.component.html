@@ -20,12 +20,14 @@
             <form-input formControlName="fuelEnergyPerUnit"
                         label="FUEL_CALORIFIC_VALUE"
                         required>
+              <ng-container unitBefore>kWh</ng-container>
               <ng-container unitAfter>{{fuelEnergyUnit?.preference?.unitName}}</ng-container>
             </form-input>
 
             <form-input formControlName="fuelCarbonContent"
                         label="CO2_EMISSIONS_PER_UNIT_FUEL"
                         required filled>
+              <ng-container unitBefore>kg</ng-container>
               <ng-container unitAfter>{{fuelEnergyUnit?.preference?.unitName}}</ng-container>
             </form-input>
 
@@ -33,7 +35,8 @@
                         label="COST_OF_FUEL_PER_UNIT"
                         [filled]="formGroup.controls['inputFuelId'].value === 1"
                         required>
-              <ng-container unitBefore>£</ng-container>
+              <ng-container unitBefore>{{currency?.preference?.unitName}}</ng-container>
+              <ng-container unitAfter>{{fuelEnergyUnit?.preference?.unitName}}</ng-container>
             </form-input>
 
             <form-toggle formControlName="fuelQtyPerYearIsKnown"

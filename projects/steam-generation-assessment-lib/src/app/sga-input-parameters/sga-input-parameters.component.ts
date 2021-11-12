@@ -16,7 +16,10 @@ export class SgaInputParametersComponent {
   public deaeratorType: string = 'autmosphericDeaerator';
 
   get fuelEnergyUnit(): SizingUnitPreference {
-    return this.preferenceService.sizingUnitPreferences.find((item) => item.unitType === "BoilerHouseGasFuelUnits");
+    return this.preferenceService.sizingUnitPreferences.find((item) => item && item.unitType === "BoilerHouseEnergyUnits");
+  }
+  get currency(): SizingUnitPreference {
+    return this.preferenceService.sizingUnitPreferences.find((item) => item && item.unitType === 'BHCurrency');
   }
 
   constructor(private translatePipe: TranslatePipe, private preferenceService: PreferenceService) {}

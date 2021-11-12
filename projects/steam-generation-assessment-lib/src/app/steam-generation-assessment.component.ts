@@ -13,6 +13,8 @@ import { SteamGenerationFormInterface } from "./steam-generation-form.interface"
 import { ActivatedRoute, Params } from "@angular/router";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
+import { Preference } from "../../../sizing-shared-lib/src/lib/shared/preference/preference.model";
+import { SizingUnitPreference } from "../../../sizing-shared-lib/src/lib/shared/preference/sizing-unit-preference.model";
 
 interface ErrorInterface {
   attemptedValue: any;
@@ -41,6 +43,15 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
 
   public errors: ErrorInterface[];
   private ngUnsubscribe = new Subject<void>();
+  private staticFieldsArr: {
+    preferenceName: string; // name: from "GetAllPreference" request
+    unitType?: string; // type: from "GetAllUnitsByAllTypes" request (if this not passed we gets from "preferenceName")
+    masterKeyText?: string; // Translate key for change units modal
+    controlName?: string; // formControlName for set value
+  }[] = [
+    {preferenceName: 'BoilerHouseEnergyUnits', masterKeyText: 'ENERGY', controlName: 'inputFuelUnit'},
+    {preferenceName: 'PressureUnit', unitType: 'PressureUnits', masterKeyText: 'PRESSURE'},
+  ];
 
   constructor(
     private steamGenerationAssessmentService: SteamGenerationAssessmentService,
@@ -251,32 +262,29 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   }
 
   private setStaticFormFields(): void {
-    const staticFieldsArr: {controlName: string; preferenceName: string; modalMasterKey?: string;}[] = [
-      {controlName: 'inputFuelUnit', preferenceName: 'BoilerHouseEnergyUnits', modalMasterKey: 'ENERGY'},
-    ];
-
-    for (const { controlName, preferenceName, modalMasterKey} of staticFieldsArr) {
-      this.sizingModuleForm.get(controlName).setValue(this.getUnitValueByName(preferenceName, modalMasterKey));
+    for (const { preferenceName, unitType, masterKeyText, controlName} of this.staticFieldsArr) {
+      // Get value from sizing preferences or create new preference and gets default value from all preferences
+      const value = this.getUnitValueByName(preferenceName, unitType, masterKeyText);
+      // Set formControl value if controlName exists
+      controlName && this.sizingModuleForm.get(controlName).setValue(value);
     }
-
-    console.log(this.preferenceService.sizingUnitPreferences, '-----');
   }
 
-  private getUnitValueByName(name: string, newSizingItemKey?: string, units?: any[], currencies?: any[]): number | string {
-    const sizingPreference = this.preferenceService.sizingUnitPreferences.find(({ unitType }) => unitType === name);
+  private getUnitValueByName(preferenceName: string, unitType: string, masterKeyText: string): number | string {
+    if (!unitType) {
+      // If unitType the same with preferenceName
+      unitType = preferenceName;
+    }
+    // Get Sizing preference
+    const sizingPreference = this.getSizingPreferenceByName(unitType);
     let value = sizingPreference && sizingPreference.preference && sizingPreference.preference.value;
 
+    // If Sizing preference not exists we create new
     if (!sizingPreference) {
-      const preference = this.preferenceService.allPreferences.find((p) => p && p.name === name);
-      if (preference) {
-        this.preferenceService.addSizingUnitPreference(
-          preference,
-          name,
-          newSizingItemKey || preference.masterTextKey,
-          this.moduleGroupId,
-          units,
-          currencies
-        );
+      const preference = this.getPreferenceByName(preferenceName);
+      this.createNewSizingPreference(preference, unitType, masterKeyText);
+
+      if (preference && preference.value) {
         value = preference.value;
       }
     }
@@ -297,10 +305,49 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     this.setSizingCurrencies();
   }
 
+  private createNewSizingPreference(preference: Preference, unitType: string, masterTextKey: string, units?: any[], currencies?: any[]): void {
+    if (preference) {
+      this.preferenceService.addSizingUnitPreference(
+        preference,
+        unitType,
+        masterTextKey,
+        this.moduleGroupId,
+        units,
+        currencies
+      );
+    }
+  }
+
+  private getPreferenceByName(name: string): Preference {
+    return this.preferenceService.allPreferences.find((preference) => preference.name === name);
+  }
+
+  private getSizingPreferenceByName(name: string): SizingUnitPreference {
+    return this.preferenceService.sizingUnitPreferences
+      .find(({ unitType }) => unitType === name || unitType === `${name}s`);
+  }
+
   private setSizingCurrencies() {
-    this.adminService.getCurrencyData().subscribe((currencies) => {
-      this.getUnitValueByName('BHCurrency', 'CURRENCY', null, currencies);
-    });
+    this.adminService.getCurrencyData()
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((currencies) => this.setCurrenciesToSizingModal(currencies));
+  }
+
+  private setCurrenciesToSizingModal(currencies: any[]): void {
+    const sizingPreference = this.getSizingPreferenceByName('BHCurrency');
+    if (!sizingPreference) {
+      const preference = this.getPreferenceByName('BHCurrency');
+      const unit = currencies.find(({ currencyCode }) => currencyCode === preference.value);
+      this.createNewSizingPreference({
+        decimalPlaces: preference.decimalPlaces,
+        isUnit: preference.isUnit,
+        label: unit && unit.translationText,
+        masterTextKey: unit && unit.masterTextKey,
+        name: preference.name,
+        unitName: unit && unit.symbol,
+        value: unit && unit.currencyCode,
+      }, 'BHCurrency', 'CURRENCY', null, currencies);
+    }
   }
 
   // TODO: Function for focus on first invalid field (need to create toggle tabs to first invalid field)
