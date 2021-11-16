@@ -84,7 +84,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       costOfWaterPerUnit: [0, Validators.required], // COST_OF_WATER_FSLASH_UNIT
       costOfWaterUnit: [0], // UNIT / BoilerHouseVolumeUnits
       costOfEffluentPerUnit: [0, Validators.required], // COST_OF_EFFLUENT_FSLASH_UNIT
-      costOfEffluentUnit: [0], // UNIT
+      costOfEffluentUnit: [0], // UNIT ????????????
       boilerHouseWaterQtyPerYearIsKnown: [false], // IS_WATER_ENTERING_THE_BOILER_HOUSE_MEASURED : Original IS_BOILER_HOUSE_WATER_MEASURED
       waterConsumptionPerYear: [0, Validators.required], // WATER_CONSUMPTION_YEAR : Original WATER_CONSUMPTION_PER_YEAR
       waterConsumptionPerYearUnit: [0], // UNIT / BoilerHouseVolumeUnits

@@ -205,10 +205,14 @@
 
         <sga-panel id="waterEffluentPanel" title="Water effluent" titleTooltip="Tooltip" background="#EDF2F4">
           <div body>
-            <form-input formControlName="costOfEffluentPerUnit"
-                        label="COST_OF_EFFLUENT_FSLASH_UNIT"
-                        unit="£/m3"
-                        required></form-input>
+            <form-input [formControlName]="fields.costOfEffluentPerUnit.formControlName"
+                        [label]="fields.costOfEffluentPerUnit.label"
+                        [unit-names]="fields.costOfEffluentPerUnit.unitNames"
+                        [unit-types]="fields.costOfEffluentPerUnit.unitTypes"
+                        [unit-translations]="fields.costOfEffluentPerUnit.translations"
+                        [unit-controls]="fields.costOfEffluentPerUnit.controlNames"
+                        [required]="fields.costOfEffluentPerUnit.required"
+                        [filled]="fields.costOfEffluentPerUnit.filled"></form-input>
           </div>
         </sga-panel>
       </div>

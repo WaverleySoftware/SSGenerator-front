@@ -102,6 +102,14 @@ export class SgaInputParametersComponent implements OnInit{
       label: 'O2_SCAVENGING_CHEMICALS_COST_SAVINGS',
       unitNames: ['BHCurrency'],
       translations: ['CURRENCY'],
+    },
+    // WATER EFFLUENT
+    costOfEffluentPerUnit: {
+      formControlName: 'costOfEffluentPerUnit',
+      label: 'COST_OF_EFFLUENT_FSLASH_UNIT',
+      unitNames: ['BHCurrency', 'BoilerHouseVolumeUnits'],
+      translations: ['CURRENCY', 'VOLUME'],
+      required: true,
     }
   };
 
