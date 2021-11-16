@@ -19,6 +19,7 @@ export class SgaInputParametersComponent implements OnInit{
       label: 'HOURS_OF_OPERATION',
       required: true
     },
+    // FUEL
     fuelEnergyPerUnit: {
       formControlName: 'fuelEnergyPerUnit',
       label: 'FUEL_CALORIFIC_VALUE',
@@ -53,6 +54,7 @@ export class SgaInputParametersComponent implements OnInit{
       label: 'FUEL_CONSUMPTION_PER_YEAR',
       required: true
     },
+    // CO2 EMISSION
     carbonTaxLevyCostPerUnit: {
       formControlName: 'carbonTaxLevyCostPerUnit',
       label: 'CARBON_TAX_LEVY_COST_PER_UNIT',
@@ -66,6 +68,25 @@ export class SgaInputParametersComponent implements OnInit{
       unitNames: ['BHCurrency', 'BoilerHouseEmissionUnits'],
       translations: ['CURRENCY', 'CO2_EMISSIONS'],
       controlNames: [null, 'costOfCo2Unit'],
+      required: true,
+    },
+    // WATER
+    costOfWaterPerUnit: {
+      formControlName: 'costOfWaterPerUnit',
+      label: 'COST_OF_WATER_FSLASH_UNIT',
+      unitNames: ['BHCurrency', 'BoilerHouseVolumeUnits'],
+      translations: ['CURRENCY', 'VOLUME'],
+      controlNames: [null, 'costOfWaterUnit'],
+      required: true,
+      filled: false,
+    },
+    // TODO: missing fields in form "COST_OF_WATER_PER_YEAR" && "WATER_CONSUMPTION_HOUR"
+    waterConsumptionPerYear: {
+      formControlName: 'waterConsumptionPerYear',
+      label: 'WATER_CONSUMPTION_YEAR',
+      unitNames: ['BoilerHouseVolumeUnits'],
+      translations: ['VOLUME'],
+      controlNames: ['waterConsumptionPerYearUnit'],
       required: true,
     }
   };

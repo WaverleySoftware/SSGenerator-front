@@ -192,6 +192,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   ngOnDestroy(): void {
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
+    this.preferenceService.clearUnitPreferences();
   }
 
   onCalculateSizing(formGroup: FormGroup): any {

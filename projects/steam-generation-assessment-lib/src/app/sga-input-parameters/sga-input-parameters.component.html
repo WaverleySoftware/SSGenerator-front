@@ -4,7 +4,13 @@
       <div class="col-md-5">
         <form-input [formControlName]="fields.hoursOfOperation.formControlName"
                     [label]="fields.hoursOfOperation.label"
-                    [required]="fields.hoursOfOperation.required"></form-input>
+                    [unit-names]="fields.hoursOfOperation.controlNames"
+                    [unit-types]="fields.hoursOfOperation.unitTypes"
+                    [unit-translations]="fields.hoursOfOperation.translations"
+                    [unit-controls]="fields.hoursOfOperation.controlNames"
+                    [required]="fields.hoursOfOperation.required"
+                    [filled]="fields.hoursOfOperation.filled"
+                    [module-group-id]="moduleGroupId"></form-input>
       </div>
     </div>
 
@@ -20,10 +26,12 @@
             <form-input [formControlName]="fields.fuelEnergyPerUnit.formControlName"
                         [label]="fields.fuelEnergyPerUnit.label"
                         [unit-names]="setFuelType('fuelEnergyPerUnit')"
+                        [unit-types]="fields.fuelEnergyPerUnit.unitTypes"
                         [unit-translations]="fields.fuelEnergyPerUnit?.translations"
                         [unit-controls]="fields.fuelEnergyPerUnit?.controlNames"
-                        [module-group-id]="moduleGroupId"
-                        [required]="fields.fuelEnergyPerUnit.required"></form-input>
+                        [required]="fields.fuelEnergyPerUnit.required"
+                        [filled]="fields.fuelEnergyPerUnit.filled"
+                        [module-group-id]="moduleGroupId"></form-input>
 
             <form-input [formControlName]="fields.fuelCarbonContent.formControlName"
                         [label]="fields.fuelCarbonContent.label"
@@ -32,6 +40,7 @@
                         [unit-translations]="fields.fuelCarbonContent.translations"
                         [unit-controls]="fields.fuelCarbonContent.controlNames"
                         [module-group-id]="moduleGroupId"
+                        [filled]="fields.fuelCarbonContent.filled"
                         [required]="fields.fuelCarbonContent.required"></form-input>
 
             <form-input [formControlName]="fields.costOfFuelPerUnit.formControlName"
@@ -41,6 +50,7 @@
                         [unit-translations]="fields.costOfFuelPerUnit?.translations"
                         [unit-controls]="fields.costOfFuelPerUnit?.controlNames"
                         [module-group-id]="moduleGroupId"
+                        [filled]="fields.costOfFuelPerUnit.filled"
                         [required]="fields.costOfFuelPerUnit.required"></form-input>
 
             <form-toggle formControlName="fuelQtyPerYearIsKnown"
@@ -52,8 +62,10 @@
                             [unit-types]="fields.costOfFuelPerYear?.unitTypes"
                             [unit-controls]="fields.costOfFuelPerYear?.controlNames"
                             [unit-translations]="fields.costOfFuelPerYear?.translations"
+                            [module-group-id]="moduleGroupId"
                             [disabled]="!costOfFuelPerYearActive?.checked"
                             [required]="fields.costOfFuelPerYear.required"
+                            [filled]="fields.costOfFuelPerYear.filled"
                             unit="/y">
                   <input (change)="clearValues(['fuelConsumptionPerYear'])"
                          value="costOfFuelPerYear"
@@ -66,8 +78,13 @@
                 <form-input [formControlName]="fields.fuelConsumptionPerYear.formControlName"
                             [label]="fields.fuelConsumptionPerYear.label"
                             [unit-names]="setFuelType('fuelConsumptionPerYear', 0)"
+                            [unit-types]="fields.fuelConsumptionPerYear.unitTypes"
+                            [unit-translations]="fields.fuelConsumptionPerYear.translations"
+                            [unit-controls]="fields.fuelConsumptionPerYear.controlNames"
                             [disabled]="!fuelConsumptionPerYearActive?.checked"
                             [required]="fields.fuelConsumptionPerYear.required"
+                            [filled]="fields.fuelConsumptionPerYear.filled"
+                            [module-group-id]="moduleGroupId"
                             unit="/yr">
                   <input (change)="clearValues(['costOfFuelPerYear'])"
                          value="fuelConsumptionPerYear"
@@ -94,15 +111,18 @@
                             [unit-types]="fields.carbonTaxLevyCostPerUnit.unitTypes"
                             [unit-translations]="fields.carbonTaxLevyCostPerUnit.translations"
                             [unit-controls]="fields.carbonTaxLevyCostPerUnit.controlNames"
+                            [module-group-id]="moduleGroupId"
                             [required]="fields.carbonTaxLevyCostPerUnit.required"
                             (changeRadio)="clearValues(['costOfCo2PerUnitMass'])"
                             group="emissions-taxed"></form-input>
+
                 <form-input [formControlName]="fields.costOfCo2PerUnitMass.formControlName"
                             [label]="fields.costOfCo2PerUnitMass.label"
                             [unit-names]="fields.costOfCo2PerUnitMass.unitNames"
                             [unit-types]="fields.costOfCo2PerUnitMass.unitTypes"
                             [unit-translations]="fields.costOfCo2PerUnitMass.translations"
                             [unit-controls]="fields.costOfCo2PerUnitMass.controlNames"
+                            [module-group-id]="moduleGroupId"
                             [required]="fields.costOfCo2PerUnitMass.required"
                             (changeRadio)="clearValues(['carbonTaxLevyCostUnit'])"
                             group="emissions-taxed"></form-input>
@@ -115,32 +135,41 @@
       <div class="col-md-6">
         <sga-panel id="WaterPanel" title="Water" titleTooltip="Tooltip" background="#EDF2F4">
           <div body>
-            <form-input formControlName="costOfWaterPerUnit"
-                        label="COST_OF_WATER_FSLASH_UNIT"
-                        unit="£/m3"
-                        required></form-input>
+            <form-input [formControlName]="fields.costOfWaterPerUnit.formControlName"
+                        [label]="fields.costOfWaterPerUnit.label"
+                        [unit-names]="fields.costOfWaterPerUnit.unitNames"
+                        [unit-types]="fields.costOfWaterPerUnit.unitTypes"
+                        [unit-translations]="fields.costOfWaterPerUnit.translations"
+                        [unit-controls]="fields.costOfWaterPerUnit.controlNames"
+                        [required]="fields.costOfWaterPerUnit.required"
+                        [filled]="fields.costOfWaterPerUnit.filled"></form-input>
 
             <form-toggle formControlName="boilerHouseWaterQtyPerYearIsKnown"
                          label="IS_WATER_ENTERING_THE_BOILER_HOUSE_MEASURED">
               <ng-container yes>
                 <form-input label="COST_OF_WATER_PER_YEAR"
-                            unit="£/y"
+                            unit="???/y"
                             group="isWaterEnteringBoilerHouseMeasured"
-                            (changeRadio)="clearValues(['waterConsumptionPerYearUnit', 'waterConsumptionPerYear'])"
+                            (changeRadio)="clearValues(['waterConsumptionPerYear'])"
                             required></form-input>
 
                 <form-input label="WATER_CONSUMPTION_HOUR"
-                            unit="m3/h"
+                            unit="???/h"
                             group="isWaterEnteringBoilerHouseMeasured"
-                            (changeRadio)="clearValues(['waterConsumptionPerYear', 'costOfWaterUnit'])"
+                            (changeRadio)="clearValues(['waterConsumptionPerYear'])"
                             required></form-input>
 
-                <form-input formControlName="waterConsumptionPerYear"
-                            label="WATER_CONSUMPTION_YEAR"
-                            unit="m3/y"
+                <form-input [formControlName]="fields.waterConsumptionPerYear.formControlName"
+                            [label]="fields.waterConsumptionPerYear.label"
+                            [unit-names]="fields.waterConsumptionPerYear.unitNames"
+                            [unit-types]="fields.waterConsumptionPerYear.unitTypes"
+                            [unit-translations]="fields.waterConsumptionPerYear.translations"
+                            [unit-controls]="fields.waterConsumptionPerYear.controlNames"
+                            [required]="fields.waterConsumptionPerYear.required"
+                            [filled]="fields.waterConsumptionPerYear.filled"
+                            (changeRadio)="clearValues([])"
                             group="isWaterEnteringBoilerHouseMeasured"
-                            (changeRadio)="clearValues(['costOfWaterUnit', 'waterConsumptionPerYearUnit'])"
-                            required></form-input>
+                            unit="/y"></form-input>
               </ng-container>
             </form-toggle>
           </div>
