@@ -10,7 +10,9 @@
 
   <tabset class="sgaBaseTabs" #tabsRef>
     <tab heading="Input parameters">
-      <app-sga-input-parameters *ngIf="tabsRef?.tabs[0]?.active" [formGroup]="sizingModuleForm"></app-sga-input-parameters>
+      <app-sga-input-parameters *ngIf="tabsRef?.tabs[0]?.active"
+                                [moduleGroupId]="moduleGroupId"
+                                [formGroup]="sizingModuleForm"></app-sga-input-parameters>
     </tab>
     <tab heading="Benchmark">
       <app-sga-benchmark *ngIf="tabsRef?.tabs[1]?.active" [formGroup]="sizingModuleForm"></app-sga-benchmark>

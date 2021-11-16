@@ -3290,8 +3290,8 @@
       "translationText": "Are CO2 or carbon emissions taxed?"
     },
     {
-      "masterTextKey": "COST_OF_CO2_PER_UNIT_MAX",
-      "translationText": "cost of co2 / unit max"
+      "masterTextKey": "COST_OF_CO2_PER_UNIT_MASS",
+      "translationText": "cost of co2 / unit mass"
     },
     {
       "masterTextKey": "IS_WATER_ENTERING_THE_BOILER_HOUSE_MEASURED",

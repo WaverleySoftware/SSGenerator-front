@@ -14,6 +14,7 @@ import { SizingSharedLibModule } from "sizing-shared-lib";
 import { FormListComponent } from './components/form-list/form-list.component';
 import { FormToggleComponent } from './components/form-toggle/form-toggle.component';
 import { FormRadioComponent } from './components/form-radio/form-radio.component';
+import { SetUnitsDirective } from './directives/set-units.directive';
 
 
 @NgModule({
@@ -26,15 +27,16 @@ import { FormRadioComponent } from './components/form-radio/form-radio.component
     FormInputComponent,
     FormListComponent,
     FormToggleComponent,
-    FormRadioComponent
+    FormRadioComponent,
+    SetUnitsDirective
   ],
   imports: [
     CommonModule,
     FormsModule,
+    ReactiveFormsModule,
     CollapseModule.forRoot(),
     TooltipModule.forRoot(),
     SizingSharedLibModule.forRoot(),
-    ReactiveFormsModule,
     ChartsModule
   ],
 	exports: [
@@ -46,7 +48,8 @@ import { FormRadioComponent } from './components/form-radio/form-radio.component
 		FormInputComponent,
 		FormListComponent,
 		FormToggleComponent,
-		FormRadioComponent
-	]
+		FormRadioComponent,
+		SetUnitsDirective
+	],
 })
 export class SharedModule { }

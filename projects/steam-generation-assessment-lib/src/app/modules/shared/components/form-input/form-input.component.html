@@ -21,13 +21,15 @@
     </span>
 
     <!--  BASE INPUT -->
-    <input #temperatureRef="display-preference"
+    <input #ref="preference-units"
+           [set-units]="setUnits"
+           [unit-types]="unitTypes"
+           [unit-controls]="unitControls"
+           [masterText-Keys]="masterTextKeys"
+           [moduleGroupId]="moduleGroupId"
+           [control]="control"
            #inputRef
            [type]="type"
-           [display-preference]="preferenceName"
-           [display-masterTextKey]="masterTextKey"
-           [display-preference-unit-type]="preferenceUnitType"
-           [display-preference-module-group-id]="moduleGroupId"
            [required]="required"
            [disabled]="disabled || (!!group && !radioInputRef.checked)"
            [ngClass]="{filled: filled !== undefined && filled !== false}"
@@ -39,9 +41,12 @@
            class="formField-input">
 
     <!--  UNIT -->
-    <span class="formField-addon">
+    <span class="formField-addon" *ngIf="ref?.preferences || unit">
       <span class="unitBefore"><ng-content select="[unitBefore]"></ng-content></span>
-      <span class="unitCenter">{{temperatureRef?.preference?.unitName}}{{unit}}</span>
+      <span *ngFor="let preference of ref?.preferences; let i = index;">
+        {{i > 0 ? '/' : ''}}{{preference?.unitName}}
+      </span>
+      {{unit}}
       <span class="unitAfter"><ng-content select="[unitAfter]"></ng-content></span>
     </span>
   </div>

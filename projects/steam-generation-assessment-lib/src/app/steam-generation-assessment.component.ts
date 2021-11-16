@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit } from "@angular/core";
+import { Component, ElementRef, OnDestroy, OnInit } from "@angular/core";
 import {
   BaseSizingModule,
   JobSizing,
@@ -9,7 +9,6 @@ import {
 } from "sizing-shared-lib";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { SteamGenerationAssessmentService } from "./steam-generation-assessment.service";
-import { SteamGenerationFormInterface } from "./steam-generation-form.interface";
 import { ActivatedRoute, Params } from "@angular/router";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
@@ -34,7 +33,7 @@ interface ErrorInterface {
   templateUrl: './steam-generation-assessment.component.html',
   styleUrls: ['./steam-generation-assessment.component.scss']
 })
-export class SteamGenerationAssessmentComponent extends BaseSizingModule implements OnInit, OnDestroy, AfterViewInit {
+export class SteamGenerationAssessmentComponent extends BaseSizingModule implements OnInit, OnDestroy {
   readonly moduleGroupId: number = 9;
   readonly moduleName: string = 'steamGenerationAssessment';
   moduleId = 2;
@@ -43,15 +42,6 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
 
   public errors: ErrorInterface[];
   private ngUnsubscribe = new Subject<void>();
-  private staticFieldsArr: {
-    preferenceName: string; // name: from "GetAllPreference" request
-    unitType?: string; // type: from "GetAllUnitsByAllTypes" request (if this not passed we gets from "preferenceName")
-    masterKeyText?: string; // Translate key for change units modal
-    controlName?: string; // formControlName for set value
-  }[] = [
-    {preferenceName: 'BoilerHouseEnergyUnits', masterKeyText: 'ENERGY', controlName: 'inputFuelUnit'},
-    {preferenceName: 'PressureUnit', unitType: 'PressureUnits', masterKeyText: 'PRESSURE'},
-  ];
 
   constructor(
     private steamGenerationAssessmentService: SteamGenerationAssessmentService,
@@ -74,41 +64,41 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     // CONSUMPTION_PER_HR
     // CONSUMPTION_PER_YEAR
     this.sizingModuleForm = this.fb.group({
-      hoursOfOperation: [8.736, { validators: [Validators.required], asyncValidators: [], updateOn: 'blur' }], // HOURS_OF_OPERATION
+      hoursOfOperation: [0, { validators: [Validators.required], asyncValidators: [], updateOn: 'blur' }], // HOURS_OF_OPERATION
       isSteamFlowMeasured: [false], // IS_STEAM_FLOW_MEASURED
       isAutoTdsControlPResent: [false], // IS_AUTO_TDS_PRESENT
       boilerSteamGeneratedPerYear: [0], // STEAM_GENERATION_PER_HOUR && STEAM_GENERATION_PER_YEAR
       boilerSteamGeneratedPerYearUnit: [0], // UNIT
-      inputFuelId: [5427], // FUEL_TYPE
-      inputFuelUnit: [0, Validators.required], // UNIT type: "BoilerHouseEnergy" unitType: "BoilerHouseEnergyUnits"
-      costOfFuelPerUnit: [0.025, Validators.required], // COST_OF_FUEL_PER_UNIT
-      costOfFuelUnit: [0], // UNIT
-      costOfFuelPerYear: [1337500, Validators.required], // FUEL_COSTS_PER_YEAR : Original "Fuel Costs per Year"
+      inputFuelId: [null], // FUEL_TYPE
+      inputFuelUnit: [null, Validators.required], // UNIT 'LiquidFuelUnits' / 'GaseousFuelUnits' / 'SolidFuelUnits'
+      costOfFuelPerUnit: [0, Validators.required], // COST_OF_FUEL_PER_UNIT
+      costOfFuelUnit: [0], // UNIT ----------- fuelType
+      costOfFuelPerYear: [0, Validators.required], // FUEL_COSTS_PER_YEAR : Original "Fuel Costs per Year"
       fuelQtyPerYearIsKnown: [false], // IS_FUEL_CONSUMPTION_MEASURED
       fuelConsumptionPerYear: [0, Validators.required], // FUEL_CONSUMPTION_PER_YEAR
-      fuelConsumptionPerYearUnit: [0], // UNIT
+      fuelConsumptionPerYearUnit: [0], // UNIT ----------- fuelType
       fuelEnergyPerUnit: [0, Validators.required], // FUEL_CALORIFIC_VALUE
-      fuelEnergyPerUnitUnit: [0], // UNIT
+      fuelEnergyPerUnitUnit: [0], // UNIT ----------- fuelType
       fuelCarbonContent: [0, Validators.required], // CO2_EMISSIONS_PER_UNIT_FUEL
-      fuelCarbonContentUnit: [0], // UNIT
+      fuelCarbonContentUnit: [0], // UNIT - preference name = WeightUnit
       costOfWaterPerUnit: [0, Validators.required], // COST_OF_WATER_FSLASH_UNIT
-      costOfWaterUnit: [0], // UNIT
+      costOfWaterUnit: [0], // UNIT / BoilerHouseVolumeUnits
       costOfEffluentPerUnit: [0, Validators.required], // COST_OF_EFFLUENT_FSLASH_UNIT
-      costOfEffluentUnit: [0], // UNIT
+      costOfEffluentUnit: [0], // UNIT ????????????
       boilerHouseWaterQtyPerYearIsKnown: [false], // IS_WATER_ENTERING_THE_BOILER_HOUSE_MEASURED : Original IS_BOILER_HOUSE_WATER_MEASURED
       waterConsumptionPerYear: [0, Validators.required], // WATER_CONSUMPTION_YEAR : Original WATER_CONSUMPTION_PER_YEAR
-      waterConsumptionPerYearUnit: [0], // UNIT
+      waterConsumptionPerYearUnit: [0], // UNIT / BoilerHouseVolumeUnits
       boilerWaterTreatmentChemicalCostsIsKnown: [false], // ARE_CHEMICAL_COST_KNOWN : Original IS_CHEMICAL_COSTS_PER_YEAR_KNOWN
       totalChemicalCostPerYear: [0, Validators.required], // TOTAL_CHEMICAL_COSTS_PER_YEAR : Original TOTAL_CHEMICAL_COST_PER_YEAR
-      totalChemicalCostPerYearUnit: [0], // UNIT
+      totalChemicalCostPerYearUnit: [0], // UNIT ???????????
       costOfChemistsPerUnitOfWater: [0], // ------------
       costOfChemistsPerUnitOfWaterUnit: [0], // ------------
       o2ScavengingChemicalsCostSavings: [0], // O2_SCAVENGING_CHEMICALS_COST_SAVINGS
-      o2ScavengingChemicalsCostSavingsUnit: [0], // UNIT
+      o2ScavengingChemicalsCostSavingsUnit: [0], // UNIT ??????????
       carbonTaxLevyCostPerUnit: [0, Validators.required], // CARBON_TAX_LEVY_COST_PER_UNIT
-      carbonTaxLevyCostUnit: [0], // UNIT
-      costOfCo2PerUnitMass: [0, Validators.required], // COST_OF_CO2_PER_UNIT_MAX : Original "Cost of CO2 / Unit Mass"
-      costOfCo2Unit: [0], // UNIT
+      carbonTaxLevyCostUnit: [0], // UNIT / ENERGY UNITS
+      costOfCo2PerUnitMass: [0, Validators.required], // COST_OF_CO2_PER_UNIT_MASS : Original "Cost of CO2 / Unit Mass"
+      costOfCo2Unit: [0], // UNIT // BoilerHouseEmissionUnits
       isBlowdownVesselPresent: [false], // IS_BLOWDOWN_VESSEL_PRESENT
       isCoolingWaterUsed: [false], // IS_COOLING_WATER_USED
       isSuperheatedSteam: [false], // IS_SUPERHEATED_STEAM
@@ -196,18 +186,17 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
 
   ngOnInit() {
     this.loadJob();
-  }
-
-  ngAfterViewInit() {
-    this.setStaticFormFields();
+    setTimeout(() => console.log(this.preferenceService.sizingUnitPreferences, '---sizingUnitPreferences'), 500);
   }
 
   ngOnDestroy(): void {
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
+    this.preferenceService.clearUnitPreferences();
   }
 
   onCalculateSizing(formGroup: FormGroup): any {
+    console.log(formGroup.getRawValue(), '------CALCULATE')
     this.steamGenerationAssessmentService
       .calculateResults(formGroup.getRawValue())
       .pipe(takeUntil(this.ngUnsubscribe))
@@ -253,43 +242,12 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   }
 
   onUnitsChanged(): any {
-    this.setStaticFormFields();
+    console.log('----SteamGenerationAssessmentComponent -> onUnitsChanged-----');
     return true;
   }
 
   repackageSizing(): any {
     return true;
-  }
-
-  private setStaticFormFields(): void {
-    for (const { preferenceName, unitType, masterKeyText, controlName} of this.staticFieldsArr) {
-      // Get value from sizing preferences or create new preference and gets default value from all preferences
-      const value = this.getUnitValueByName(preferenceName, unitType, masterKeyText);
-      // Set formControl value if controlName exists
-      controlName && this.sizingModuleForm.get(controlName).setValue(value);
-    }
-  }
-
-  private getUnitValueByName(preferenceName: string, unitType: string, masterKeyText: string): number | string {
-    if (!unitType) {
-      // If unitType the same with preferenceName
-      unitType = preferenceName;
-    }
-    // Get Sizing preference
-    const sizingPreference = this.getSizingPreferenceByName(unitType);
-    let value = sizingPreference && sizingPreference.preference && sizingPreference.preference.value;
-
-    // If Sizing preference not exists we create new
-    if (!sizingPreference) {
-      const preference = this.getPreferenceByName(preferenceName);
-      this.createNewSizingPreference(preference, unitType, masterKeyText);
-
-      if (preference && preference.value) {
-        value = preference.value;
-      }
-    }
-
-    return Number.isNaN(Number(value)) ? value : (value && +value);
   }
 
   private getSettings(): void {
@@ -302,20 +260,6 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     this.unitsService.getAllUnitsByAllTypes().pipe(takeUntil(this.ngUnsubscribe)).subscribe(data => {
       // console.log(data, '----getAllUnitsByAllTypes')
     });
-    this.setSizingCurrencies();
-  }
-
-  private createNewSizingPreference(preference: Preference, unitType: string, masterTextKey: string, units?: any[], currencies?: any[]): void {
-    if (preference) {
-      this.preferenceService.addSizingUnitPreference(
-        preference,
-        unitType,
-        masterTextKey,
-        this.moduleGroupId,
-        units,
-        currencies
-      );
-    }
   }
 
   private getPreferenceByName(name: string): Preference {
@@ -325,29 +269,6 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   private getSizingPreferenceByName(name: string): SizingUnitPreference {
     return this.preferenceService.sizingUnitPreferences
       .find(({ unitType }) => unitType === name || unitType === `${name}s`);
-  }
-
-  private setSizingCurrencies() {
-    this.adminService.getCurrencyData()
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe((currencies) => this.setCurrenciesToSizingModal(currencies));
-  }
-
-  private setCurrenciesToSizingModal(currencies: any[]): void {
-    const sizingPreference = this.getSizingPreferenceByName('BHCurrency');
-    if (!sizingPreference) {
-      const preference = this.getPreferenceByName('BHCurrency');
-      const unit = currencies.find(({ currencyCode }) => currencyCode === preference.value);
-      this.createNewSizingPreference({
-        decimalPlaces: preference.decimalPlaces,
-        isUnit: preference.isUnit,
-        label: unit && unit.translationText,
-        masterTextKey: unit && unit.masterTextKey,
-        name: preference.name,
-        unitName: unit && unit.symbol,
-        value: unit && unit.currencyCode,
-      }, 'BHCurrency', 'CURRENCY', null, currencies);
-    }
   }
 
   // TODO: Function for focus on first invalid field (need to create toggle tabs to first invalid field)
@@ -364,25 +285,6 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
         break;
       }
     }
-  }
-
-  private validate(field: keyof SteamGenerationFormInterface): void {
-    const control = this.sizingModuleForm.controls[field];
-    if (!control) return null;
-
-    const value = Number.isNaN(Number(control.value)) ? control.value : +control.value;
-
-    this.steamGenerationAssessmentService
-      .validateSgInput(field, { [field]: value || null })
-      .pipe(takeUntil(this.ngUnsubscribe)).subscribe(
-      () => control.setErrors(null),
-      ({error}) => {
-        const errors  = (error.errors[`$.${field}`] || error.errors);
-        if (errors) {
-          control.setErrors({ validation: errors[0] });
-        }
-      }
-    );
   }
 
   private loadJob(): void {
