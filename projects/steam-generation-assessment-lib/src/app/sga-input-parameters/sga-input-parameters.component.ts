@@ -13,7 +13,7 @@ export class SgaInputParametersComponent implements OnInit{
   @Input() moduleGroupId: number;
 
   public fuelType: Preference
-  public formFieldNames: FormFieldTypesInterface =  {
+  public fields: FormFieldTypesInterface =  {
     hoursOfOperation: {
       formControlName: 'hoursOfOperation',
       label: 'HOURS_OF_OPERATION',
@@ -52,6 +52,21 @@ export class SgaInputParametersComponent implements OnInit{
       formControlName: 'fuelConsumptionPerYear',
       label: 'FUEL_CONSUMPTION_PER_YEAR',
       required: true
+    },
+    carbonTaxLevyCostPerUnit: {
+      formControlName: 'carbonTaxLevyCostPerUnit',
+      label: 'CARBON_TAX_LEVY_COST_PER_UNIT',
+      unitNames: ['BHCurrency', 'BoilerHouseEnergyUnits'],
+      translations: ['CURRENCY', 'ENERGY'],
+      required: true,
+    },
+    costOfCo2PerUnitMass: {
+      formControlName: 'costOfCo2PerUnitMass',
+      label: 'COST_OF_CO2_PER_UNIT_MASS',
+      unitNames: ['BHCurrency', 'BoilerHouseEmissionUnits'],
+      translations: ['CURRENCY', 'CO2_EMISSIONS'],
+      controlNames: [null, 'costOfCo2Unit'],
+      required: true,
     }
   };
 
@@ -75,14 +90,14 @@ export class SgaInputParametersComponent implements OnInit{
     value: string = this.fuelType && this.fuelType.name,
     key: 'unitNames' | 'translations' = 'unitNames'
   ): [string, string?] {
-    if (this.formFieldNames[fieldName]) {
-      if (!this.formFieldNames[fieldName][key]) {
-        this.formFieldNames[fieldName][key] = [null, null];
+    if (this.fields[fieldName]) {
+      if (!this.fields[fieldName][key]) {
+        this.fields[fieldName][key] = [null, null];
       }
 
-      this.formFieldNames[fieldName][key][index] = value;
+      this.fields[fieldName][key][index] = value;
     }
 
-    return this.formFieldNames[fieldName][key];
+    return this.fields[fieldName][key];
   }
 }

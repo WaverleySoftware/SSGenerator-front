@@ -2,9 +2,9 @@
   <form body class="container-fluid" [formGroup]="formGroup">
     <div class="row mb-5">
       <div class="col-md-5">
-        <form-input [formControlName]="formFieldNames.hoursOfOperation.formControlName"
-                    [label]="formFieldNames.hoursOfOperation.label"
-                    [required]="formFieldNames.hoursOfOperation.required"></form-input>
+        <form-input [formControlName]="fields.hoursOfOperation.formControlName"
+                    [label]="fields.hoursOfOperation.label"
+                    [required]="fields.hoursOfOperation.required"></form-input>
       </div>
     </div>
 
@@ -17,43 +17,43 @@
           <div body>
             <fuel-type-field [module-group-id]="moduleGroupId" [(preference)]="fuelType"></fuel-type-field>
 
-            <form-input [formControlName]="formFieldNames.fuelEnergyPerUnit.formControlName"
-                        [label]="formFieldNames.fuelEnergyPerUnit.label"
+            <form-input [formControlName]="fields.fuelEnergyPerUnit.formControlName"
+                        [label]="fields.fuelEnergyPerUnit.label"
                         [unit-names]="setFuelType('fuelEnergyPerUnit')"
-                        [unit-translations]="formFieldNames.fuelEnergyPerUnit?.translations"
-                        [unit-controls]="formFieldNames.fuelEnergyPerUnit?.controlNames"
+                        [unit-translations]="fields.fuelEnergyPerUnit?.translations"
+                        [unit-controls]="fields.fuelEnergyPerUnit?.controlNames"
                         [module-group-id]="moduleGroupId"
-                        [required]="formFieldNames.fuelEnergyPerUnit.required"></form-input>
+                        [required]="fields.fuelEnergyPerUnit.required"></form-input>
 
-            <form-input [formControlName]="formFieldNames.fuelCarbonContent.formControlName"
-                        [label]="formFieldNames.fuelCarbonContent.label"
+            <form-input [formControlName]="fields.fuelCarbonContent.formControlName"
+                        [label]="fields.fuelCarbonContent.label"
                         [unit-names]="setFuelType('fuelCarbonContent')"
-                        [unit-types]="formFieldNames.fuelCarbonContent.unitTypes"
-                        [unit-translations]="formFieldNames.fuelCarbonContent.translations"
-                        [unit-controls]="formFieldNames.fuelCarbonContent.controlNames"
+                        [unit-types]="fields.fuelCarbonContent.unitTypes"
+                        [unit-translations]="fields.fuelCarbonContent.translations"
+                        [unit-controls]="fields.fuelCarbonContent.controlNames"
                         [module-group-id]="moduleGroupId"
-                        [required]="formFieldNames.fuelCarbonContent.required"></form-input>
+                        [required]="fields.fuelCarbonContent.required"></form-input>
 
-            <form-input [formControlName]="formFieldNames.costOfFuelPerUnit.formControlName"
-                        [label]="formFieldNames.costOfFuelPerUnit.label"
+            <form-input [formControlName]="fields.costOfFuelPerUnit.formControlName"
+                        [label]="fields.costOfFuelPerUnit.label"
                         [unit-names]="setFuelType('costOfFuelPerUnit')"
-                        [unit-types]="formFieldNames.costOfFuelPerUnit?.unitTypes"
-                        [unit-translations]="formFieldNames.costOfFuelPerUnit?.translations"
-                        [unit-controls]="formFieldNames.costOfFuelPerUnit?.controlNames"
+                        [unit-types]="fields.costOfFuelPerUnit?.unitTypes"
+                        [unit-translations]="fields.costOfFuelPerUnit?.translations"
+                        [unit-controls]="fields.costOfFuelPerUnit?.controlNames"
                         [module-group-id]="moduleGroupId"
-                        [required]="formFieldNames.costOfFuelPerUnit.required"></form-input>
+                        [required]="fields.costOfFuelPerUnit.required"></form-input>
 
             <form-toggle formControlName="fuelQtyPerYearIsKnown"
                          label="IS_FUEL_CONSUMPTION_MEASURED">
               <ng-container yes>
-                <form-input [formControlName]="formFieldNames.costOfFuelPerYear.formControlName"
-                            [label]="formFieldNames.costOfFuelPerYear.label"
-                            [unit-names]="formFieldNames.costOfFuelPerYear?.unitNames"
-                            [unit-types]="formFieldNames.costOfFuelPerYear?.unitTypes"
-                            [unit-controls]="formFieldNames.costOfFuelPerYear?.controlNames"
-                            [unit-translations]="formFieldNames.costOfFuelPerYear?.translations"
+                <form-input [formControlName]="fields.costOfFuelPerYear.formControlName"
+                            [label]="fields.costOfFuelPerYear.label"
+                            [unit-names]="fields.costOfFuelPerYear?.unitNames"
+                            [unit-types]="fields.costOfFuelPerYear?.unitTypes"
+                            [unit-controls]="fields.costOfFuelPerYear?.controlNames"
+                            [unit-translations]="fields.costOfFuelPerYear?.translations"
                             [disabled]="!costOfFuelPerYearActive?.checked"
-                            [required]="formFieldNames.costOfFuelPerYear.required"
+                            [required]="fields.costOfFuelPerYear.required"
                             unit="/y">
                   <input (change)="clearValues(['fuelConsumptionPerYear'])"
                          value="costOfFuelPerYear"
@@ -63,11 +63,11 @@
                          type="radio">
                 </form-input>
 
-                <form-input [formControlName]="formFieldNames.fuelConsumptionPerYear.formControlName"
-                            [label]="formFieldNames.fuelConsumptionPerYear.label"
+                <form-input [formControlName]="fields.fuelConsumptionPerYear.formControlName"
+                            [label]="fields.fuelConsumptionPerYear.label"
                             [unit-names]="setFuelType('fuelConsumptionPerYear', 0)"
                             [disabled]="!fuelConsumptionPerYearActive?.checked"
-                            [required]="formFieldNames.fuelConsumptionPerYear.required"
+                            [required]="fields.fuelConsumptionPerYear.required"
                             unit="/yr">
                   <input (change)="clearValues(['costOfFuelPerYear'])"
                          value="fuelConsumptionPerYear"
@@ -88,18 +88,24 @@
           <div body>
             <form-toggle name="CO2Emission" label="ARE_CO2_OR_CARBON_EMISSIONS_TAXED">
               <ng-container yes>
-                <form-input formControlName="carbonTaxLevyCostPerUnit"
-                            label="CARBON_TAX_LEVY_COST_PER_UNIT"
-                            group="emissions-taxed"
-                            unit="???"
+                <form-input [formControlName]="fields.carbonTaxLevyCostPerUnit.formControlName"
+                            [label]="fields.carbonTaxLevyCostPerUnit.label"
+                            [unit-names]="fields.carbonTaxLevyCostPerUnit.unitNames"
+                            [unit-types]="fields.carbonTaxLevyCostPerUnit.unitTypes"
+                            [unit-translations]="fields.carbonTaxLevyCostPerUnit.translations"
+                            [unit-controls]="fields.carbonTaxLevyCostPerUnit.controlNames"
+                            [required]="fields.carbonTaxLevyCostPerUnit.required"
                             (changeRadio)="clearValues(['costOfCo2PerUnitMass'])"
-                            required></form-input>
-                <form-input formControlName="costOfCo2PerUnitMass"
-                            label="COST_OF_CO2_PER_UNIT_MASS"
-                            group="emissions-taxed"
-                            unit="???"
+                            group="emissions-taxed"></form-input>
+                <form-input [formControlName]="fields.costOfCo2PerUnitMass.formControlName"
+                            [label]="fields.costOfCo2PerUnitMass.label"
+                            [unit-names]="fields.costOfCo2PerUnitMass.unitNames"
+                            [unit-types]="fields.costOfCo2PerUnitMass.unitTypes"
+                            [unit-translations]="fields.costOfCo2PerUnitMass.translations"
+                            [unit-controls]="fields.costOfCo2PerUnitMass.controlNames"
+                            [required]="fields.costOfCo2PerUnitMass.required"
                             (changeRadio)="clearValues(['carbonTaxLevyCostUnit'])"
-                            required></form-input>
+                            group="emissions-taxed"></form-input>
               </ng-container>
             </form-toggle>
           </div>
