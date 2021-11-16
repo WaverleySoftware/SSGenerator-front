@@ -88,6 +88,20 @@ export class SgaInputParametersComponent implements OnInit{
       translations: ['VOLUME'],
       controlNames: ['waterConsumptionPerYearUnit'],
       required: true,
+    },
+    // WATER TREATMENT CHEMICALS
+    totalChemicalCostPerYear: {
+      formControlName: 'totalChemicalCostPerYear',
+      label: 'TOTAL_CHEMICAL_COSTS_PER_YEAR',
+      unitNames: ['BHCurrency'],
+      translations: ['CURRENCY'],
+      required: true
+    },
+    o2ScavengingChemicalsCostSavings: {
+      formControlName: 'o2ScavengingChemicalsCostSavings',
+      label: 'O2_SCAVENGING_CHEMICALS_COST_SAVINGS',
+      unitNames: ['BHCurrency'],
+      translations: ['CURRENCY'],
     }
   };
 

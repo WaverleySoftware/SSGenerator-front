@@ -90,11 +90,11 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       waterConsumptionPerYearUnit: [0], // UNIT / BoilerHouseVolumeUnits
       boilerWaterTreatmentChemicalCostsIsKnown: [false], // ARE_CHEMICAL_COST_KNOWN : Original IS_CHEMICAL_COSTS_PER_YEAR_KNOWN
       totalChemicalCostPerYear: [0, Validators.required], // TOTAL_CHEMICAL_COSTS_PER_YEAR : Original TOTAL_CHEMICAL_COST_PER_YEAR
-      totalChemicalCostPerYearUnit: [0], // UNIT
+      totalChemicalCostPerYearUnit: [0], // UNIT ???????????
       costOfChemistsPerUnitOfWater: [0], // ------------
       costOfChemistsPerUnitOfWaterUnit: [0], // ------------
       o2ScavengingChemicalsCostSavings: [0], // O2_SCAVENGING_CHEMICALS_COST_SAVINGS
-      o2ScavengingChemicalsCostSavingsUnit: [0], // UNIT
+      o2ScavengingChemicalsCostSavingsUnit: [0], // UNIT ??????????
       carbonTaxLevyCostPerUnit: [0, Validators.required], // CARBON_TAX_LEVY_COST_PER_UNIT
       carbonTaxLevyCostUnit: [0], // UNIT / ENERGY UNITS
       costOfCo2PerUnitMass: [0, Validators.required], // COST_OF_CO2_PER_UNIT_MASS : Original "Cost of CO2 / Unit Mass"

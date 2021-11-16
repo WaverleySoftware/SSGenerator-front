@@ -180,13 +180,24 @@
             <form-toggle formControlName="boilerWaterTreatmentChemicalCostsIsKnown"
                          label="ARE_CHEMICAL_COST_KNOWN">
               <ng-container yes>
-                <form-input formControlName="totalChemicalCostPerYear"
-                            label="TOTAL_CHEMICAL_COSTS_PER_YEAR"
-                            unit="£/y"
-                            required></form-input>
-                <form-input formControlName="o2ScavengingChemicalsCostSavings"
-                            label="O2_SCAVENGING_CHEMICALS_COST_SAVINGS"
-                            unit="£/y"></form-input>
+                <form-input [formControlName]="fields.totalChemicalCostPerYear.formControlName"
+                            [label]="fields.totalChemicalCostPerYear.label"
+                            [unit-names]="fields.totalChemicalCostPerYear.unitNames"
+                            [unit-types]="fields.totalChemicalCostPerYear.unitTypes"
+                            [unit-translations]="fields.totalChemicalCostPerYear.translations"
+                            [unit-controls]="fields.totalChemicalCostPerYear.controlNames"
+                            [required]="fields.totalChemicalCostPerYear.required"
+                            [filled]="fields.totalChemicalCostPerYear.filled"
+                            unit="/y"></form-input>
+                <form-input [formControlName]="fields.o2ScavengingChemicalsCostSavings.formControlName"
+                            [label]="fields.o2ScavengingChemicalsCostSavings.label"
+                            [unit-names]="fields.o2ScavengingChemicalsCostSavings.unitNames"
+                            [unit-types]="fields.o2ScavengingChemicalsCostSavings.unitTypes"
+                            [unit-translations]="fields.o2ScavengingChemicalsCostSavings.translations"
+                            [unit-controls]="fields.o2ScavengingChemicalsCostSavings.controlNames"
+                            [required]="fields.o2ScavengingChemicalsCostSavings.required"
+                            [filled]="fields.o2ScavengingChemicalsCostSavings.filled"
+                            unit="/y"></form-input>
               </ng-container>
             </form-toggle>
           </div>

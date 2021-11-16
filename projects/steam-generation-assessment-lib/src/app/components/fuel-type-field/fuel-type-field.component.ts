@@ -113,14 +113,14 @@ export class FuelTypeFieldComponent implements ControlValueAccessor, OnInit {
   }
 
   private static getFuelTypeName(item: EnumListDefinitionInterface): string {
-    // 'BoilerHouseLiquidFuelUnits' / 'BoilerHouseElectricalFuelUnits' / 'BoilerHouseGasFuelUnits' / '???' / 'BoilerHouseSolidFuelUnits'
+    // 'BoilerHouseLiquidFuelUnits' / 'BoilerHouseElectricalFuelUnits' / 'BoilerHouseGasFuelUnits' / 'BoilerHouseGasFuelUnits' / 'BoilerHouseSolidFuelUnits'
     // L, E, G, O, S
     const firstLetter = item && item.value && item.value.charAt(0);
     switch (firstLetter) {
       case 'L': return 'BoilerHouseLiquidFuelUnits';
       case 'E': return 'BoilerHouseElectricalFuelUnits';
       case 'G': return 'BoilerHouseGasFuelUnits';
-      case 'O': return null;
+      case 'O': return 'BoilerHouseGasFuelUnits';
       case 'S': return 'BoilerHouseSolidFuelUnits';
       default: return null;
     }
