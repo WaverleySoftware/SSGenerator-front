@@ -41,11 +41,13 @@
            class="formField-input">
 
     <!--  UNIT -->
-    <span class="formField-addon" *ngIf="ref?.preferenceObj || unit">
-       <span *ngFor="let preference of ref?.preferenceObj | keyvalue; let i = index;">
-         {{i > 0 ? '/' : ''}}{{preference?.value?.unitName}}
-       </span>
+    <span class="formField-addon" *ngIf="ref?.preferences || unit">
+      <span class="unitBefore"><ng-content select="[unitBefore]"></ng-content></span>
+      <span *ngFor="let preference of ref?.preferences; let i = index;">
+        {{i > 0 ? '/' : ''}}{{preference?.unitName}}
+      </span>
       {{unit}}
+      <span class="unitAfter"><ng-content select="[unitAfter]"></ng-content></span>
     </span>
   </div>
 

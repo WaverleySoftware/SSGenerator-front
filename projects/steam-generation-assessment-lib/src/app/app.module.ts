@@ -11,6 +11,7 @@ import { SgaBenchmarkComponent } from './sga-benchmark/sga-benchmark.component';
 import { SgaProposedSetupComponent } from './sga-proposed-setup/sga-proposed-setup.component';
 import { SgaFinalProposalComponent } from './sga-final-proposal/sga-final-proposal.component';
 import { SteamGenerationAssessmentService } from "./steam-generation-assessment.service";
+import { FuelTypeFieldComponent } from './components/fuel-type-field/fuel-type-field.component';
 
 const providers = [SteamGenerationAssessmentService];
 
@@ -20,7 +21,8 @@ const providers = [SteamGenerationAssessmentService];
     SgaInputParametersComponent,
     SgaBenchmarkComponent,
     SgaProposedSetupComponent,
-    SgaFinalProposalComponent
+    SgaFinalProposalComponent,
+    FuelTypeFieldComponent
   ],
 	imports: [
 		CommonModule,

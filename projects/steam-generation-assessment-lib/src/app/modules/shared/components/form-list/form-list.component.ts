@@ -42,7 +42,7 @@ export class FormListComponent implements ControlValueAccessor {
       list = list.filter(({ value }) => this.filterBy && this.filterBy.includes(value));
     }
 
-    return FormListComponent.setEnumValues(list);
+    return list;
   }
 
   // Help functions
@@ -82,27 +82,5 @@ export class FormListComponent implements ControlValueAccessor {
     this.internalValue = parseInt(val);
     this.onChange(this.internalValue);
     this.onTouched();
-  }
-
-  private static setEnumValues(list): EnumListDefinitionInterface[] {
-    return list.map((item) => {
-      let val = null;
-      switch (item.defaultText) {
-        case 'Natural Gas': val = 5548; break;
-        case 'LPG': val = 5427; break;
-        case 'Gas Oil': val = 5428; break;
-        case 'Fuel Oil': val = 5429; break;
-        case 'Burning Oil': val = 5430; break;
-        case 'Industrial Coal': val = 5433; break;
-        case 'Wood Pellets': val = 5434; break;
-        case 'Electricity': val = 5976; break;
-        case 'Other': val = 5549; break;
-      }
-
-      return {
-        ...item,
-        fromValue: val,
-      }
-    });
   }
 }

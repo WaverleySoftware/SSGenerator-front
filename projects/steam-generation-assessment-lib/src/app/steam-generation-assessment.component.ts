@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit } from "@angular/core";
+import { Component, ElementRef, OnDestroy, OnInit } from "@angular/core";
 import {
   BaseSizingModule,
   JobSizing,
@@ -9,7 +9,6 @@ import {
 } from "sizing-shared-lib";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { SteamGenerationAssessmentService } from "./steam-generation-assessment.service";
-import { SteamGenerationFormInterface } from "./steam-generation-form.interface";
 import { ActivatedRoute, Params } from "@angular/router";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
@@ -34,7 +33,7 @@ interface ErrorInterface {
   templateUrl: './steam-generation-assessment.component.html',
   styleUrls: ['./steam-generation-assessment.component.scss']
 })
-export class SteamGenerationAssessmentComponent extends BaseSizingModule implements OnInit, OnDestroy, AfterViewInit {
+export class SteamGenerationAssessmentComponent extends BaseSizingModule implements OnInit, OnDestroy {
   readonly moduleGroupId: number = 9;
   readonly moduleName: string = 'steamGenerationAssessment';
   moduleId = 2;
@@ -65,23 +64,23 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     // CONSUMPTION_PER_HR
     // CONSUMPTION_PER_YEAR
     this.sizingModuleForm = this.fb.group({
-      hoursOfOperation: [8.736, { validators: [Validators.required], asyncValidators: [], updateOn: 'blur' }], // HOURS_OF_OPERATION
+      hoursOfOperation: [0, { validators: [Validators.required], asyncValidators: [], updateOn: 'blur' }], // HOURS_OF_OPERATION
       isSteamFlowMeasured: [false], // IS_STEAM_FLOW_MEASURED
       isAutoTdsControlPResent: [false], // IS_AUTO_TDS_PRESENT
       boilerSteamGeneratedPerYear: [0], // STEAM_GENERATION_PER_HOUR && STEAM_GENERATION_PER_YEAR
       boilerSteamGeneratedPerYearUnit: [0], // UNIT
-      inputFuelId: [5427], // FUEL_TYPE
-      inputFuelUnit: [0, Validators.required], // UNIT 'LiquidFuelUnits' / 'GaseousFuelUnits' / 'SolidFuelUnits'
-      costOfFuelPerUnit: [0.025, Validators.required], // COST_OF_FUEL_PER_UNIT
-      costOfFuelUnit: [0], // UNIT / FUEL UNIT - can remove this field
-      costOfFuelPerYear: [1337500, Validators.required], // FUEL_COSTS_PER_YEAR : Original "Fuel Costs per Year"
+      inputFuelId: [null], // FUEL_TYPE
+      inputFuelUnit: [null, Validators.required], // UNIT 'LiquidFuelUnits' / 'GaseousFuelUnits' / 'SolidFuelUnits'
+      costOfFuelPerUnit: [0, Validators.required], // COST_OF_FUEL_PER_UNIT
+      costOfFuelUnit: [0], // UNIT ----------- fuelType
+      costOfFuelPerYear: [0, Validators.required], // FUEL_COSTS_PER_YEAR : Original "Fuel Costs per Year"
       fuelQtyPerYearIsKnown: [false], // IS_FUEL_CONSUMPTION_MEASURED
       fuelConsumptionPerYear: [0, Validators.required], // FUEL_CONSUMPTION_PER_YEAR
-      fuelConsumptionPerYearUnit: [0], // UNIT - no needed
+      fuelConsumptionPerYearUnit: [0], // UNIT ----------- fuelType
       fuelEnergyPerUnit: [0, Validators.required], // FUEL_CALORIFIC_VALUE
-      fuelEnergyPerUnitUnit: [0], // UNIT
+      fuelEnergyPerUnitUnit: [0], // UNIT ----------- fuelType
       fuelCarbonContent: [0, Validators.required], // CO2_EMISSIONS_PER_UNIT_FUEL
-      fuelCarbonContentUnit: [0], // UNIT
+      fuelCarbonContentUnit: [0], // UNIT - preference name = WeightUnit
       costOfWaterPerUnit: [0, Validators.required], // COST_OF_WATER_FSLASH_UNIT
       costOfWaterUnit: [0], // UNIT / BoilerHouseVolumeUnits
       costOfEffluentPerUnit: [0, Validators.required], // COST_OF_EFFLUENT_FSLASH_UNIT
@@ -187,9 +186,8 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
 
   ngOnInit() {
     this.loadJob();
+    setTimeout(() => console.log(this.preferenceService.sizingUnitPreferences, '---sizingUnitPreferences'), 500);
   }
-
-  ngAfterViewInit() {}
 
   ngOnDestroy(): void {
     this.ngUnsubscribe.next();
@@ -243,7 +241,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   }
 
   onUnitsChanged(): any {
-    console.log('----onUnitsChanged-----');
+    console.log('----SteamGenerationAssessmentComponent -> onUnitsChanged-----');
     return true;
   }
 
@@ -286,25 +284,6 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
         break;
       }
     }
-  }
-
-  private validate(field: keyof SteamGenerationFormInterface): void {
-    const control = this.sizingModuleForm.controls[field];
-    if (!control) return null;
-
-    const value = Number.isNaN(Number(control.value)) ? control.value : +control.value;
-
-    this.steamGenerationAssessmentService
-      .validateSgInput(field, { [field]: value || null })
-      .pipe(takeUntil(this.ngUnsubscribe)).subscribe(
-      () => control.setErrors(null),
-      ({error}) => {
-        const errors  = (error.errors[`$.${field}`] || error.errors);
-        if (errors) {
-          control.setErrors({ validation: errors[0] });
-        }
-      }
-    );
   }
 
   private loadJob(): void {

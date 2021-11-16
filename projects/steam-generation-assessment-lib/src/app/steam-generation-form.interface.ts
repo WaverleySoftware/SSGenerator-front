@@ -4,7 +4,7 @@ export interface SteamGenerationFormInterface {
   isAutoTdsControlPResent: boolean;
   boilerSteamGeneratedPerYear: number;
   boilerSteamGeneratedPerYearUnit: number;
-  inputFuelId: number;
+  inputFuelId: string;
   inputFuelUnit: number;
   costOfFuelPerUnit: number;
   costOfFuelUnit: number;
@@ -115,4 +115,17 @@ export interface SteamGenerationFormInterface {
   proposalCostOfSodiumSulphiteUnit: number;
   proposalDSIPressure: number;
   proposalDSIPressureUnit: number;
+}
+
+export type FormFieldTypesInterface = {
+  [key in keyof Partial<SteamGenerationFormInterface>]: {
+    formControlName: string;
+    label: string;
+    unitNames?: [string, string?];
+    unitTypes?: [string, string?];
+    translations?: [string, string?];
+    controlNames?: [string, string?];
+    required?: boolean;
+    filled?: boolean;
+  }
 }

@@ -15,18 +15,18 @@ export class SetUnitsDirective implements OnInit {
   @Input('moduleGroupId') private moduleGroupId: number;
   @Input() private control: NgControl;
 
-  get preferenceObj(): { [key: string]: Preference } {
+  get preferences(): Preference[] {
     if (!this.preferenceNames || !this.preferenceNames.length) {
       return null;
     }
 
-    const preferencesObj: { [key: string]: Preference } = {};
+    const preferences = [];
 
     for (const preferenceName of this.preferenceNames) {
-      preferencesObj[preferenceName] = this.getSizingPreference(preferenceName);
+      preferenceName && preferences.push(this.getSizingPreference(preferenceName));
     }
 
-    return preferencesObj;
+    return preferences;
   }
 
   constructor(
@@ -121,7 +121,7 @@ export class SetUnitsDirective implements OnInit {
       return this.unitTypes[index];
     }
 
-    const lastSymbol = preferenceName.substring(preferenceName.length - 1);
+    const lastSymbol = preferenceName && preferenceName.substring(preferenceName.length - 1);
 
     return lastSymbol !== 's' ? `${preferenceName}s` : preferenceName;
   }
