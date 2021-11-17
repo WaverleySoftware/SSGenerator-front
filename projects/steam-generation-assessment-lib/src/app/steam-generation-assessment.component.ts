@@ -67,8 +67,10 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       hoursOfOperation: [0, { validators: [Validators.required], asyncValidators: [], updateOn: 'blur' }], // HOURS_OF_OPERATION
       isSteamFlowMeasured: [false], // IS_STEAM_FLOW_MEASURED
       isAutoTdsControlPResent: [false], // IS_AUTO_TDS_PRESENT
-      boilerSteamGeneratedPerYear: [0], // STEAM_GENERATION_PER_HOUR && STEAM_GENERATION_PER_YEAR
+      boilerSteamGeneratedPerYear: [0], // STEAM_GENERATION_PER_YEAR
       boilerSteamGeneratedPerYearUnit: [0], // UNIT
+      boilerSteamGeneratedPerHour: [0],  // STEAM_GENERATION_PER_HOUR
+      boilerSteamGeneratedPerHourUnit: [0], // UNIT
       inputFuelId: [null], // FUEL_TYPE
       inputFuelUnit: [null, Validators.required], // UNIT 'LiquidFuelUnits' / 'GaseousFuelUnits' / 'SolidFuelUnits'
       costOfFuelPerUnit: [0, Validators.required], // COST_OF_FUEL_PER_UNIT
@@ -107,12 +109,12 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       boilerSteamPressure: [0, Validators.required], // STEAM_PRESSURE
       boilerSteamPressureUnit: [0], // UNIT
       boilerSteamTemperature: [0], // STEAM_TEMPERATURE
-      boilerSteamTemperatureUnit: [0], // UNIT
+      boilerSteamTemperatureUnit: [0], // UNIT "TemperatureUnit"
       isEconomizerPresent: [false], // IS_ECONOMISER_PRESENT
       boilerAverageTds: [0], // AVERAGE_BOILER_TDS : Original BOILER_AVERAGE_TDS
-      boilerAverageTdsUnit: [0], // UNIT
+      boilerAverageTdsUnit: [0], // UNIT BoilerHouseTDSUnits
       boilerMaxTds: [0], // MAXIMUM_ALLOWABLE_BOILER_TDS : Original BOILER_MAX_TDS
-      boilerMaxTdsUnit: [0], // UNIT
+      boilerMaxTdsUnit: [0], // UNIT BoilerHouseTDSUnits
       boilerFeedwaterConsumption: [0], // CONSUMPTION_PER_HR && CONSUMPTION_PER_YEAR
       boilerFeedwaterConsumptionUnit: [0], // UNIT
       isFlashVesselPresent: [false], // IS_FLASH_VESSEL_PRESENT
@@ -121,11 +123,11 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       waterTemperatureLeavingHeatExchangerUnit: [0],
       waterTreatmentMethod: [1], // WATER_TREATMENT_METHOD
       percentageWaterRejection: [0], // PERCENTAGE_WATER_REJECTION
-      percentageWaterRejectionUnit: [0], // UNIT
+      percentageWaterRejectionUnit: [0], // UNIT ???????
       tdsOfMakeupWater: [0], // TDS_OF_MAKEUP_WATER
       tdsOfMakeupWaterUnit: [0], // UNIT
       temperatureOfMakeupWater: [0], // TEMPERATURE_OF_MAKE_UP_WATER : Original TEMPERATURE_OF_MAKEUP_WATER
-      temperatureOfMakeupWaterUnit: [0], // UNIT
+      temperatureOfMakeupWaterUnit: [0], // UNIT TemperatureUnit
       makeupWaterAmount: [0], // ------------
       makeupWaterAmountUnit: [0], // ------------
       atmosphericDeaerator: [false], // AUTMOSPHERIC_DEAERATOR
@@ -133,11 +135,11 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       temperatureOfFeedtank: [0], // TEMPERATURE_OF_FEEDTANK
       temperatureOfFeedtankUnit: [0], // UNIT
       tdsOfFeedwaterInFeedtank: [0], // TDS_OF_FEEDWATER_IN_FEEDTANK
-      tdsOfFeedwaterInFeedtankUnit: [0], // UNIT
+      tdsOfFeedwaterInFeedtankUnit: [0], // UNIT BoilerHouseTDSUnits
       tdsOfCondensateReturn: [0], // TDS_OF_CONDENSATE_RETURN
-      tdsOfCondensateReturnUnit: [0], // UNIT
+      tdsOfCondensateReturnUnit: [0], // UNIT "BoilerHouseTDSUnits"
       temperatureOfCondensateReturn: [0], // TEMPERATURE_OF_CONDENSATE_RETURN
-      temperatureOfCondensateReturnUnit: [0], // UNIT
+      temperatureOfCondensateReturnUnit: [0], // UNIT TemperatureUnit
       areChemicalsAddedDirectlyToFeedtank: [false], // ARE_CHEMICALS_ADDED_DIRECTLY_TO_FEEDTANK
       pressureOfFeedtank: [0], // ------------
       pressureOfFeedtankUnit: [0], // ------------
@@ -145,9 +147,9 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       pressureOfSteamSupplyingDsiUnit: [0], // UNIT
       isCondensateReturnKnown: [false], // IS_CONDENSATE_RETURN_KNOWN
       percentageOfCondensateReturn: [0], // PERCENTAGE_OF_CONDENSATE_RETURN
-      percentageOfCondensateReturnUnit: [0], // UNIT
+      percentageOfCondensateReturnUnit: [0], // UNIT ???????
       volumeOfCondensateReturn: [0], // VOLUME_OF_CONDENSATE_RETURN
-      volumeOfCondensateReturnUnit: [0], // UNIT
+      volumeOfCondensateReturnUnit: [0], // UNIT "BoilerHouseVolumeUnits"
       isDsiPresent: [false], // IS_DSI_PRESENT
       proposalTemperatureUnit: ["string"],
       proposalTemperatureUnitUnit: [0],

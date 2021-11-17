@@ -4,6 +4,8 @@ export interface SteamGenerationFormInterface {
   isAutoTdsControlPResent: boolean;
   boilerSteamGeneratedPerYear: number;
   boilerSteamGeneratedPerYearUnit: number;
+	boilerSteamGeneratedPerHour: number;
+	boilerSteamGeneratedPerHourUnit: number;
   inputFuelId: string;
   inputFuelUnit: number;
   costOfFuelPerUnit: number;
