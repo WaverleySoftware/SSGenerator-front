@@ -12,8 +12,9 @@ import { SgaProposedSetupComponent } from './sga-proposed-setup/sga-proposed-set
 import { SgaFinalProposalComponent } from './sga-final-proposal/sga-final-proposal.component';
 import { SteamGenerationAssessmentService } from "./steam-generation-assessment.service";
 import { FuelTypeFieldComponent } from './components/fuel-type-field/fuel-type-field.component';
+import { SteamGenerationValidator } from "./steam-generation.validator";
 
-const providers = [SteamGenerationAssessmentService];
+const providers = [SteamGenerationAssessmentService, SteamGenerationValidator];
 
 @NgModule({
   declarations: [
