@@ -121,7 +121,7 @@ export interface SteamGenerationFormInterface {
 
 export type FormFieldTypesInterface = {
   [key in keyof Partial<SteamGenerationFormInterface>]: {
-    formControlName: string;
+    formControlName: keyof SteamGenerationFormInterface;
     label: string;
     unitNames?: [string, string?];
     unitTypes?: [string, string?];
@@ -130,4 +130,20 @@ export type FormFieldTypesInterface = {
     required?: boolean;
     filled?: boolean;
   }
+}
+
+export interface SteamCalorificRequestInterface {
+  energyUnitSelected: number
+  smallWeightUnitSelected: number;
+  inputFuelId: string;
+  inputFuelUnit: number;
+}
+
+export interface SteamCarbonEmissionInterface {
+  energyUnitSelected: number;
+  smallWeightUnitSelected: number;
+  inputFuelId: string;
+  inputFuelUnit: number;
+  fuelEnergyPerUnit: number;
+  fuelCarbonContent: number;
 }

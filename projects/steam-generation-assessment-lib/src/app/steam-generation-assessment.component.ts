@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnDestroy, OnInit } from "@angular/core";
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit } from "@angular/core";
 import {
   BaseSizingModule,
   JobSizing,
@@ -16,9 +16,8 @@ import { SteamGenerationAssessmentService } from "./steam-generation-assessment.
 import { ActivatedRoute, Params } from "@angular/router";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
-import { Preference } from "../../../sizing-shared-lib/src/lib/shared/preference/preference.model";
-import { SizingUnitPreference } from "../../../sizing-shared-lib/src/lib/shared/preference/sizing-unit-preference.model";
 import { SteamGenerationValidator } from "./steam-generation.validator";
+import { FormFieldTypesInterface, SteamCalorificRequestInterface } from "./steam-generation-form.interface";
 
 interface ErrorInterface {
   attemptedValue: any;
@@ -38,7 +37,7 @@ interface ErrorInterface {
   templateUrl: './steam-generation-assessment.component.html',
   styleUrls: ['./steam-generation-assessment.component.scss']
 })
-export class SteamGenerationAssessmentComponent extends BaseSizingModule implements OnInit, OnDestroy {
+export class SteamGenerationAssessmentComponent extends BaseSizingModule implements OnInit, OnDestroy, AfterViewInit {
   readonly moduleGroupId: number = 9;
   readonly moduleName: string = 'steamGenerationAssessment';
   moduleId = 2;
@@ -193,8 +192,13 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   }
 
   ngOnInit() {
-    // this.loadJob();
-    setTimeout(() => console.log(this.preferenceService.sizingUnitPreferences, '---sizingUnitPreferences'), 500);
+  }
+
+  ngAfterViewInit() {
+    console.log({
+      sizingUnitPreferences: this.preferenceService.sizingUnitPreferences
+    }, '---ngAfterViewInit');
+    this.initializedData(); // Load start module data
   }
 
   ngOnDestroy(): void {
@@ -250,12 +254,55 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   }
 
   onUnitsChanged(): any {
-    console.log('----SteamGenerationAssessmentComponent -> onUnitsChanged-----');
+    this.steamGenerationAssessmentService.changeSizingUnits(this.sizingModuleForm);
+    this.changeFuelType(); // Calculate CALORIFIC VALUE request on unit changed
     return true;
   }
 
   repackageSizing(): any {
     return true;
+  }
+
+  public changeFuelType(fuelTypeData?: SteamCalorificRequestInterface): void {
+    this.steamGenerationAssessmentService
+      .calculateCalorific(this.getFuelTypeData(fuelTypeData))
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((response) => {
+        if (response && typeof response === "object") {
+          for (let responseKey in response) {
+            this.steamGenerationAssessmentService
+              .changeSgaFieldFilled(responseKey as keyof FormFieldTypesInterface, true);
+            this.sizingModuleForm
+              .get(responseKey)
+              .patchValue(response[responseKey], { emitEvent: false, onlySelf: true });
+          }
+        }
+      });
+  }
+
+  private getFuelTypeData(staticData?: SteamCalorificRequestInterface): SteamCalorificRequestInterface {
+    let energyUnitSelected = staticData && staticData.energyUnitSelected;
+    let smallWeightUnitSelected = staticData && staticData.smallWeightUnitSelected ||
+      this.sizingModuleForm.controls['fuelCarbonContentUnit'].value;
+
+    if (!energyUnitSelected) {
+      energyUnitSelected = this.steamGenerationAssessmentService
+        .getSizingPreferenceValues({energyUnitSelected: 'BoilerHouseEnergyUnits'})
+        .energyUnitSelected;
+    }
+
+    if (!smallWeightUnitSelected) {
+      smallWeightUnitSelected = this.steamGenerationAssessmentService
+        .getSizingPreferenceValues({smallWeightUnitSelected: 'WeightUnit'})
+        .smallWeightUnitSelected;
+    }
+
+    return {
+      energyUnitSelected,
+      smallWeightUnitSelected,
+      inputFuelId: (staticData && staticData.inputFuelId) || this.sizingModuleForm.controls['inputFuelId'].value,
+      inputFuelUnit: (staticData && staticData.inputFuelUnit) || this.sizingModuleForm.controls['inputFuelUnit'].value,
+    };
   }
 
   private getSettings(): void {
@@ -268,15 +315,6 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     this.unitsService.getAllUnitsByAllTypes().pipe(takeUntil(this.ngUnsubscribe)).subscribe(data => {
       // console.log(data, '----getAllUnitsByAllTypes')
     });
-  }
-
-  private getPreferenceByName(name: string): Preference {
-    return this.preferenceService.allPreferences.find((preference) => preference.name === name);
-  }
-
-  private getSizingPreferenceByName(name: string): SizingUnitPreference {
-    return this.preferenceService.sizingUnitPreferences
-      .find(({ unitType }) => unitType === name || unitType === `${name}s`);
   }
 
   // TODO: Function for focus on first invalid field (need to create toggle tabs to first invalid field)
@@ -303,5 +341,10 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
         // TODO: Create projects/jobs functionality
         console.log(`projectId=${projectId}, jobId=${jobId}`);
       });
+  }
+
+  private initializedData(): void {
+    // this.loadJob();
+    this.changeFuelType(); // Calculate CALORIFIC VALUE request on init
   }
 }

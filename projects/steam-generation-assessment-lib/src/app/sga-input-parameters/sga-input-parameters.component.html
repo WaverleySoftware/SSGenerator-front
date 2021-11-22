@@ -25,7 +25,7 @@
                    background="#EDF2F4">
           <div body>
             <fuel-type-field [module-group-id]="moduleGroupId"
-                             (preferenceChange)="fuelType = $event"></fuel-type-field>
+                             (preferenceChange)="changeFuelTypeHandle($event)"></fuel-type-field>
 
             <form-input [formControlName]="fields.fuelEnergyPerUnit.formControlName"
                         [label]="fields.fuelEnergyPerUnit.label"
@@ -35,7 +35,8 @@
                         [unit-controls]="fields.fuelEnergyPerUnit?.controlNames"
                         [required]="fields.fuelEnergyPerUnit.required"
                         [filled]="fields.fuelEnergyPerUnit.filled"
-                        [module-group-id]="moduleGroupId"></form-input>
+                        [module-group-id]="moduleGroupId"
+                        (inputChange)="inputChangeHandle($event)"> </form-input>
 
             <form-input [formControlName]="fields.fuelCarbonContent.formControlName"
                         [label]="fields.fuelCarbonContent.label"
@@ -45,7 +46,8 @@
                         [unit-controls]="fields.fuelCarbonContent.controlNames"
                         [module-group-id]="moduleGroupId"
                         [filled]="fields.fuelCarbonContent.filled"
-                        [required]="fields.fuelCarbonContent.required"></form-input>
+                        [required]="fields.fuelCarbonContent.required"
+                        (inputChange)="inputChangeHandle($event)"></form-input>
 
             <form-input [formControlName]="fields.costOfFuelPerUnit.formControlName"
                         [label]="fields.costOfFuelPerUnit.label"
@@ -231,29 +233,31 @@
                                [label]="fields.isSuperheatedSteam.label"></form-toggle>
 
                   <form-toggle [formControlName]="fields.isSteamFlowMeasured.formControlName"
-                               [label]="fields.isSteamFlowMeasured.label"></form-toggle>
+                               [label]="fields.isSteamFlowMeasured.label">
+                    <ng-container yes>
+                      <form-input [formControlName]="fields.boilerSteamGeneratedPerHour.formControlName"
+                                  [label]="fields.boilerSteamGeneratedPerHour.label"
+                                  [unit-names]="fields.boilerSteamGeneratedPerHour.unitNames"
+                                  [unit-types]="fields.boilerSteamGeneratedPerHour.unitTypes"
+                                  [unit-translations]="fields.boilerSteamGeneratedPerHour.translations"
+                                  [unit-controls]="fields.boilerSteamGeneratedPerHour.controlNames"
+                                  [required]="fields.boilerSteamGeneratedPerHour.required"
+                                  [filled]="fields.boilerSteamGeneratedPerHour.filled"
+                                  (changeRadio)="clearValues(['boilerSteamGeneratedPerYear'])"
+                                  group="boilerSteamGeneratedTime"></form-input>
 
-                  <form-input [formControlName]="fields.boilerSteamGeneratedPerHour.formControlName"
-                              [label]="fields.boilerSteamGeneratedPerHour.label"
-                              [unit-names]="fields.boilerSteamGeneratedPerHour.unitNames"
-                              [unit-types]="fields.boilerSteamGeneratedPerHour.unitTypes"
-                              [unit-translations]="fields.boilerSteamGeneratedPerHour.translations"
-                              [unit-controls]="fields.boilerSteamGeneratedPerHour.controlNames"
-                              [required]="fields.boilerSteamGeneratedPerHour.required"
-                              [filled]="fields.boilerSteamGeneratedPerHour.filled"
-                              (changeRadio)="clearValues(['boilerSteamGeneratedPerYear'])"
-                              group="boilerSteamGeneratedTime"></form-input>
-
-                  <form-input [formControlName]="fields.boilerSteamGeneratedPerYear.formControlName"
-                              [label]="fields.boilerSteamGeneratedPerYear.label"
-                              [unit-names]="fields.boilerSteamGeneratedPerYear.unitNames"
-                              [unit-types]="fields.boilerSteamGeneratedPerYear.unitTypes"
-                              [unit-translations]="fields.boilerSteamGeneratedPerYear.translations"
-                              [unit-controls]="fields.boilerSteamGeneratedPerYear.controlNames"
-                              [required]="fields.boilerSteamGeneratedPerYear.required"
-                              [filled]="fields.boilerSteamGeneratedPerYear.filled"
-                              (changeRadio)="clearValues(['boilerSteamGeneratedPerHour'])"
-                              group="boilerSteamGeneratedTime"></form-input>
+                      <form-input [formControlName]="fields.boilerSteamGeneratedPerYear.formControlName"
+                                  [label]="fields.boilerSteamGeneratedPerYear.label"
+                                  [unit-names]="fields.boilerSteamGeneratedPerYear.unitNames"
+                                  [unit-types]="fields.boilerSteamGeneratedPerYear.unitTypes"
+                                  [unit-translations]="fields.boilerSteamGeneratedPerYear.translations"
+                                  [unit-controls]="fields.boilerSteamGeneratedPerYear.controlNames"
+                                  [required]="fields.boilerSteamGeneratedPerYear.required"
+                                  [filled]="fields.boilerSteamGeneratedPerYear.filled"
+                                  (changeRadio)="clearValues(['boilerSteamGeneratedPerHour'])"
+                                  group="boilerSteamGeneratedTime"></form-input>
+                    </ng-container>
+                  </form-toggle>
                 </div>
                 <div class="col-md-6">
                   <form-input [formControlName]="fields.boilerSteamTemperature.formControlName"
@@ -263,6 +267,7 @@
                               [unit-translations]="fields.boilerSteamTemperature.translations"
                               [unit-controls]="fields.boilerSteamTemperature.controlNames"
                               [required]="fields.boilerSteamTemperature.required"
+                              [disabled]="!formGroup.controls[fields.isSuperheatedSteam.formControlName].value"
                               [filled]="fields.boilerSteamTemperature.filled"></form-input>
 
                   <form-input [formControlName]="fields.boilerSteamPressure.formControlName"
@@ -310,15 +315,17 @@
                 </div>
                 <div class="col-md-4">
                   <form-toggle [formControlName]="fields.isHeatExchangerPresent.formControlName"
-                               [label]="fields.isHeatExchangerPresent.label"></form-toggle>
-                  <form-input [formControlName]="fields.waterTemperatureLeavingHeatExchanger.formControlName"
-                              [label]="fields.waterTemperatureLeavingHeatExchanger.label"
-                              [unit-names]="fields.waterTemperatureLeavingHeatExchanger.unitNames"
-                              [unit-types]="fields.waterTemperatureLeavingHeatExchanger.unitTypes"
-                              [unit-translations]="fields.waterTemperatureLeavingHeatExchanger.translations"
-                              [unit-controls]="fields.waterTemperatureLeavingHeatExchanger.controlNames"
-                              [required]="fields.waterTemperatureLeavingHeatExchanger.required"
-                              [filled]="fields.waterTemperatureLeavingHeatExchanger.filled"></form-input>
+                               [label]="fields.isHeatExchangerPresent.label">
+                    <form-input yes
+                                [formControlName]="fields.waterTemperatureLeavingHeatExchanger.formControlName"
+                                [label]="fields.waterTemperatureLeavingHeatExchanger.label"
+                                [unit-names]="fields.waterTemperatureLeavingHeatExchanger.unitNames"
+                                [unit-types]="fields.waterTemperatureLeavingHeatExchanger.unitTypes"
+                                [unit-translations]="fields.waterTemperatureLeavingHeatExchanger.translations"
+                                [unit-controls]="fields.waterTemperatureLeavingHeatExchanger.controlNames"
+                                [required]="fields.waterTemperatureLeavingHeatExchanger.required"
+                                [filled]="fields.waterTemperatureLeavingHeatExchanger.filled"></form-input>
+                  </form-toggle>
                 </div>
               </div>
             </sga-panel>

@@ -11,6 +11,7 @@ import { AbstractControl, ControlContainer, ControlValueAccessor, NG_VALUE_ACCES
 import { TranslationService, PreferenceService } from "sizing-shared-lib";
 import { EnumListDefinitionInterface, EnumListInterface } from "../../modules/shared/interfaces/enum-list.interface";
 import { Preference } from "../../../../../sizing-shared-lib/src/lib/shared/preference/preference.model";
+import { SteamGenerationAssessmentService } from "../../steam-generation-assessment.service";
 
 @Component({
   selector: 'fuel-type-field',
@@ -68,6 +69,8 @@ export class FuelTypeFieldComponent implements ControlValueAccessor, OnInit {
   onTouched = () => {};
   onChanged = (_: any) => {};
 
+  fuelTypeSubject;
+
   constructor(
     protected translationService: TranslationService,
     private preferenceService: PreferenceService,
@@ -92,10 +95,10 @@ export class FuelTypeFieldComponent implements ControlValueAccessor, OnInit {
   }
 
   public updateValue(item: EnumListDefinitionInterface): void {
-    this.fuelTypeName = FuelTypeFieldComponent.getFuelTypeName(item);
+    this.fuelTypeName = SteamGenerationAssessmentService.getFuelTypeName(item && item.value);
 
-    this.preference && this.preferenceChange.emit(this.preference);
     this.setFormValue(item.value, parseInt(this.preference && this.preference.value));
+    this.preference && this.preferenceChange.emit(this.preference);
   }
 
   registerOnChange(fn: any): void {
@@ -112,20 +115,6 @@ export class FuelTypeFieldComponent implements ControlValueAccessor, OnInit {
 
   writeValue(val: any): void {
     // console.log(val, '----val') // not logic
-  }
-
-  private static getFuelTypeName(item: EnumListDefinitionInterface): string {
-    // 'BoilerHouseLiquidFuelUnits' / 'BoilerHouseElectricalFuelUnits' / 'BoilerHouseGasFuelUnits' / 'BoilerHouseGasFuelUnits' / 'BoilerHouseSolidFuelUnits'
-    // L, E, G, O, S
-    const firstLetter = item && item.value && item.value.charAt(0);
-    switch (firstLetter) {
-      case 'L': return 'BoilerHouseLiquidFuelUnits';
-      case 'E': return 'BoilerHouseElectricalFuelUnits';
-      case 'G': return 'BoilerHouseGasFuelUnits';
-      case 'O': return 'BoilerHouseGasFuelUnits';
-      case 'S': return 'BoilerHouseSolidFuelUnits';
-      default: return null;
-    }
   }
 
   private getPreferenceByName(name: string): Preference {

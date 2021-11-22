@@ -10,6 +10,7 @@ import {
   ViewChild
 } from "@angular/core";
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, NgControl } from "@angular/forms";
+import { SteamGenerationFormInterface } from "../../../../steam-generation-form.interface";
 
 @Component({
   selector: 'form-input',
@@ -28,7 +29,7 @@ export class FormInputComponent implements ControlValueAccessor, AfterContentIni
   @Input('unit-translations') masterTextKeys: [string, string?];
   @Input('module-group-id') moduleGroupId: number = 9;
 
-  @Input() formControlName: string;
+  @Input() formControlName: keyof SteamGenerationFormInterface;
   @Input() unit: string;
   @Input() label: string;
   @Input() error: string;
@@ -39,7 +40,7 @@ export class FormInputComponent implements ControlValueAccessor, AfterContentIni
   @Input() filled: boolean;
   @Input() private: any;
   @Input() group: string;
-  @Output() inputChange: EventEmitter<{ name: string, value: any }> = new EventEmitter();
+  @Output() inputChange: EventEmitter<{ name: keyof SteamGenerationFormInterface, value: any }> = new EventEmitter();
   @Output() inputBlur: EventEmitter<{ name: string, value: any }> = new EventEmitter();
   @Output() changeRadio: EventEmitter<{ ref: any, group: string }> = new EventEmitter();
   @ViewChild('inputRef', { static: true }) inputRef: ElementRef<HTMLInputElement>;

@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Observable, of, timer } from "rxjs";
 import { AbstractControl, AsyncValidatorFn, ValidationErrors } from "@angular/forms";
-import { SteamGenerationFormInterface } from "./steam-generation-form.interface";
+import { FormFieldTypesInterface, SteamGenerationFormInterface } from "./steam-generation-form.interface";
 import { catchError, map, switchMap } from "rxjs/operators";
 import { SteamGenerationAssessmentService } from "./steam-generation-assessment.service";
 import { HttpErrorResponse, HttpResponse } from "@angular/common/http";
@@ -28,10 +28,13 @@ interface HttpApiResponseInterface {
 
 @Injectable()
 export class SteamGenerationValidator {
+  private _fields: FormFieldTypesInterface;
   constructor(
     private translatePipe: TranslatePipe,
     private steamGenerationAssessmentService: SteamGenerationAssessmentService
-  ){}
+  ){
+    this._fields = this.steamGenerationAssessmentService.getSgaFormFields();
+  }
 
   validateField(name?: string): AsyncValidatorFn {
     return (control: AbstractControl): Observable<ValidationErrors> => this.validate(control, name);
@@ -47,7 +50,8 @@ export class SteamGenerationValidator {
     return timer(500).pipe(
       switchMap(() => {
         const { value } = control;
-        if (value === 0) return of(null);
+        const isFilled = this.checkFieldIsFilled(name);
+        if (value === 0 || isFilled) return of(null);
         if (!value) return of({ required: true });
 
         return this.steamGenerationAssessmentService
@@ -60,6 +64,10 @@ export class SteamGenerationValidator {
           );
       })
     )
+  }
+
+  private checkFieldIsFilled(fieldName: string): boolean {
+    return this._fields[fieldName] && this._fields[fieldName].filled;
   }
 
   private static parseErrors(response: HttpApiResponseInterface): ValidationErrors {
