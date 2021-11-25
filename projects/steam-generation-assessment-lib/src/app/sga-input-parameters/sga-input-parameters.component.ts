@@ -1,16 +1,14 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from "@angular/core";
+import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { FormGroup } from "@angular/forms";
+import { Subject } from "rxjs";
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { Preference } from "sizing-shared-lib";
 import {
   FormFieldTypesInterface,
-  SteamCalorificRequestInterface, SteamCarbonEmissionInterface,
-  SteamGenerationFormInterface
+  SteamCalorificRequestInterface,
+  SteamGeneratorInputsInterface
 } from "../steam-generation-form.interface";
-import { Preference } from "sizing-shared-lib";
 import { SteamGenerationAssessmentService } from "../steam-generation-assessment.service";
-import { debounceTime, distinctUntilChanged, filter, tap } from 'rxjs/operators';
-import { fromEvent, Observable, Subject } from "rxjs";
-import { SizingUnitPreference } from "../../../../sizing-shared-lib/src/lib/shared/preference/sizing-unit-preference.model";
-import { number } from "ng2-validation/dist/number";
 
 @Component({
   selector: 'app-sga-input-parameters',
@@ -20,11 +18,12 @@ import { number } from "ng2-validation/dist/number";
 export class SgaInputParametersComponent implements OnInit {
   @Input() formGroup: FormGroup;
   @Input() moduleGroupId: number;
-  @Output() changeFuelType: EventEmitter<SteamCalorificRequestInterface> = new EventEmitter<SteamCalorificRequestInterface>()
+  @Output() changeFuelType: EventEmitter<SteamCalorificRequestInterface> = new EventEmitter<SteamCalorificRequestInterface>();
 
   public fuelType: Preference
   public fields: FormFieldTypesInterface;
   public carbonEmissionUpdate = new Subject<string>();
+  public formGroupKey = 'steamGeneratorInputs'; // Form builder child formGroup key
 
   constructor(private steamGenerationAssessmentService: SteamGenerationAssessmentService) {
     this.fields = this.steamGenerationAssessmentService.getSgaFormFields();
@@ -40,12 +39,15 @@ export class SgaInputParametersComponent implements OnInit {
   /**
    * Clear fields value when user change radio or another variant
    * **/
-  public clearValues(clearFields: Array<keyof SteamGenerationFormInterface>, setVal: any = 0, event?: any) {
+  public clearValues(clearFields: Array<keyof SteamGeneratorInputsInterface>, setVal: any = 0, event?: any) {
     if (!clearFields.length) return;
 
     for (let fieldName of clearFields) {
-      if (this.formGroup.get(fieldName).value || this.formGroup.get(fieldName).value === "") {
-        this.formGroup.get(fieldName).setValue(setVal);
+      const childFieldName = `${this.formGroupKey}.${fieldName}`;
+      if (this.formGroup.get(childFieldName).value || this.formGroup.get(childFieldName).value === "") {
+        this.formGroup
+          .get(childFieldName)
+          .patchValue(setVal, { emitEvent: false, onlySelf: true });
       }
     }
   }
@@ -54,7 +56,9 @@ export class SgaInputParametersComponent implements OnInit {
    * Set some FormGroup value from view
    * **/
   public setFormValue(name: string, value: any): void {
-    this.formGroup.get(name).setValue(value);
+    this.formGroup
+      .get(`${this.formGroupKey}.${name}`)
+      .patchValue(value, { emitEvent: false, onlySelf: true });
   }
 
   /**
@@ -81,8 +85,8 @@ export class SgaInputParametersComponent implements OnInit {
   public changeFuelTypeHandle(preference: Preference): void {
     if (this.fuelType && preference) { // Not first init
       this.changeFuelType.emit({
-        inputFuelId: this.formGroup.get('inputFuelId').value,
-        inputFuelUnit: this.formGroup.get('inputFuelUnit').value,
+        inputFuelId: this.formGroup.get(`${this.formGroupKey}.inputFuelId`).value,
+        inputFuelUnit: this.formGroup.get(`${this.formGroupKey}.inputFuelUnit`).value,
         energyUnitSelected: null, // From preferences
         smallWeightUnitSelected: null, // From preferences
       });
@@ -95,8 +99,8 @@ export class SgaInputParametersComponent implements OnInit {
    * form-input Component inputChangeEvent (change)
    * @pram { name: formControlName; value: input value }
    * **/
-  public inputChangeHandle({ name, value }: { name: keyof SteamGenerationFormInterface, value: any }): void {
-    this._disableFilled(name);
+  public inputChangeHandle({ name, value }: { name: string, value: any }): void {
+    this._disableFilled(name as keyof FormFieldTypesInterface);
 
     switch (name) {
       case "fuelEnergyPerUnit": this.carbonEmissionUpdate.next(value); break;
@@ -128,10 +132,17 @@ export class SgaInputParametersComponent implements OnInit {
 
     this.steamGenerationAssessmentService
       .calculateCarbonEmission(req)
-      .subscribe(res => {
-        this.steamGenerationAssessmentService.changeSgaFieldFilled('fuelCarbonContent', true);
-        this.formGroup.get('fuelCarbonContent').patchValue(res, { emitEvent: false, onlySelf: true });
-      });
+      .subscribe((res) => this._setInputFormFields(res));
+  }
+
+  private _setInputFormFields(data: Partial<Record<keyof FormFieldTypesInterface, any>>): void {
+    for (let formKey in data) {
+      this.steamGenerationAssessmentService
+        .changeSgaFieldFilled(formKey as keyof FormFieldTypesInterface, true);
+      this.formGroup
+        .get(`${this.formGroupKey}.${formKey}`)
+        .patchValue(data[formKey], { emitEvent: false, onlySelf: true });
+    }
   }
 
   private _disableFilled(fieldName: keyof FormFieldTypesInterface): void {
@@ -144,7 +155,7 @@ export class SgaInputParametersComponent implements OnInit {
     const result = {};
 
     for (let objKey in obj) {
-      result[objKey] = this.formGroup.controls[obj[objKey]].value;
+      result[objKey] = this.formGroup.get(`${this.formGroupKey}.${obj[objKey]}`).value;
     }
 
     return result;

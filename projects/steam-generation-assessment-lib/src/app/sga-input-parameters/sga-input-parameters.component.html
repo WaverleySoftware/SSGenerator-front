@@ -3,7 +3,7 @@
            title="Utility parameters"
            titleSize="24px">
   <form body class="container-fluid" [formGroup]="formGroup">
-    <div class="row mb-5">
+    <div class="row mb-5" [formGroupName]="formGroupKey">
       <div class="col-md-5">
         <form-input [formControlName]="fields.hoursOfOperation.formControlName"
                     [label]="fields.hoursOfOperation.label"
@@ -17,7 +17,7 @@
       </div>
     </div>
 
-    <div class="row">
+    <div class="row" [formGroupName]="formGroupKey">
       <div class="col-md-6">
         <sga-panel id="FuelPanel"
                    [title]="'FUEL' | translate"
@@ -63,6 +63,7 @@
                          [label]="fields.fuelQtyPerYearIsKnown.label">
               <ng-container yes>
                 <form-input [formControlName]="fields.costOfFuelPerYear.formControlName"
+                            #costOfFuelPerYearRef
                             [label]="fields.costOfFuelPerYear.label"
                             [unit-names]="fields.costOfFuelPerYear?.unitNames"
                             [unit-types]="fields.costOfFuelPerYear?.unitTypes"
@@ -71,11 +72,12 @@
                             [module-group-id]="moduleGroupId"
                             [required]="fields.costOfFuelPerYear.required"
                             [filled]="fields.costOfFuelPerYear.filled"
-                            (changeRadio)="setFormValue('costOfFuelPerYear', formGroup.get('fuelConsumptionPerYear').value * 10);clearValues(['fuelConsumptionPerYear'])"
+                            (changeRadio)="clearValues(['fuelConsumptionPerYear'])"
                             group="fuelQtyPerYearIsKnownGroup"
                             unit="/y"></form-input>
 
                 <form-input [formControlName]="fields.fuelConsumptionPerYear.formControlName"
+                            #fuelConsumptionPerYearRef
                             [label]="fields.fuelConsumptionPerYear.label"
                             [unit-names]="setFuelType('fuelConsumptionPerYear', 0)"
                             [unit-types]="fields.fuelConsumptionPerYear.unitTypes"
@@ -84,7 +86,7 @@
                             [required]="fields.fuelConsumptionPerYear.required"
                             [filled]="fields.fuelConsumptionPerYear.filled"
                             [module-group-id]="moduleGroupId"
-                            (changeRadio)="setFormValue('fuelConsumptionPerYear', formGroup.get('costOfFuelPerYear').value / 10);clearValues(['costOfFuelPerYear'])"
+                            (changeRadio)="clearValues(['costOfFuelPerYear'])"
                             group="fuelQtyPerYearIsKnownGroup"
                             unit="/yr"></form-input>
               </ng-container>
@@ -107,7 +109,6 @@
                             [unit-controls]="fields.carbonTaxLevyCostPerUnit.controlNames"
                             [module-group-id]="moduleGroupId"
                             [required]="fields.carbonTaxLevyCostPerUnit.required"
-                            (changeRadio)="clearValues(['costOfCo2PerUnitMass'])"
                             group="emissions-taxed"></form-input>
 
                 <form-input [formControlName]="fields.costOfCo2PerUnitMass.formControlName"
@@ -118,7 +119,6 @@
                             [unit-controls]="fields.costOfCo2PerUnitMass.controlNames"
                             [module-group-id]="moduleGroupId"
                             [required]="fields.costOfCo2PerUnitMass.required"
-                            (changeRadio)="clearValues(['carbonTaxLevyCostUnit'])"
                             group="emissions-taxed"></form-input>
               </ng-container>
             </form-toggle>
@@ -220,7 +220,7 @@
            id="BoilerHouseParameters"
            titleSize="24px">
   <form body class="container-fluid" [formGroup]="formGroup">
-    <div class="row">
+    <div class="row" [formGroupName]="formGroupKey">
       <div class="col-md-12">
         <tabset type="pills" class="sgaTabs">
           <tab [heading]="'BOILER' | translate" customClass="sgaTab">
@@ -267,7 +267,7 @@
                               [unit-translations]="fields.boilerSteamTemperature.translations"
                               [unit-controls]="fields.boilerSteamTemperature.controlNames"
                               [required]="fields.boilerSteamTemperature.required"
-                              [disabled]="!formGroup.controls[fields.isSuperheatedSteam.formControlName].value"
+                              [disabled]="!formGroup.get(formGroupKey+'.'+fields.isSuperheatedSteam.formControlName)?.value"
                               [filled]="fields.boilerSteamTemperature.filled"></form-input>
 
                   <form-input [formControlName]="fields.boilerSteamPressure.formControlName"
