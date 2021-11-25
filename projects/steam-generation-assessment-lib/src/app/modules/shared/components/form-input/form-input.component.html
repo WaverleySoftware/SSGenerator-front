@@ -4,7 +4,8 @@
       filled: filled !== undefined && filled !== false,
       touched: touched,
       disabled: disabled || (!!group && !radioInputRef.checked),
-      radio: !!group || !!radioWrapper?.innerHTML?.trim()
+      radio: !!group || !!radioWrapper?.innerHTML?.trim(),
+      pending: control?.pending
      }">
   <!--  LABEL -->
   <label *ngIf="!!label" class="formField-label">{{label | translate}}</label>
@@ -35,7 +36,7 @@
            [ngClass]="{filled: filled !== undefined && filled !== false}"
            (focusin)="focus = true"
            (focusout)="touched = true; focus = false;"
-           (blur)="onTouched()"
+           (blur)="onTouched(); inputBlur.emit({ name: formControlName, value: value })"
            [ngModel]="value"
            (ngModelChange)="updateValue($event)"
            class="formField-input">
@@ -52,7 +53,13 @@
   </div>
 
   <!--  ERROR/MESSAGE -->
-  <span class="formField-message error" *ngIf="control?.errors; else messageTemplate">{{control?.errors | json}}</span>
+  <span class="formField-message error" *ngIf="control?.errors; else messageTemplate">
+    <ng-container *ngIf="control.errors?.error">
+      {{control.errors?.error | translate}}
+    </ng-container>
+    <ng-container *ngIf="control.errors?.required">{{'REQUIRED_FIELD' | translate}}</ng-container>
+    <ng-container *ngIf="control.errors?.message">{{control.errors?.message}}</ng-container>
+  </span>
   <ng-template #messageTemplate>
     <span class="formField-message" [ngClass]="{error: error}">{{error || message}}</span>
   </ng-template>

@@ -11,6 +11,7 @@ import { AbstractControl, ControlContainer, ControlValueAccessor, NG_VALUE_ACCES
 import { TranslationService, PreferenceService } from "sizing-shared-lib";
 import { EnumListDefinitionInterface, EnumListInterface } from "../../modules/shared/interfaces/enum-list.interface";
 import { Preference } from "../../../../../sizing-shared-lib/src/lib/shared/preference/preference.model";
+import { SteamGenerationAssessmentService } from "../../steam-generation-assessment.service";
 
 @Component({
   selector: 'fuel-type-field',
@@ -27,16 +28,6 @@ export class FuelTypeFieldComponent implements ControlValueAccessor, OnInit {
   @Input("opco-override") opCoOverride: boolean = false;
   @Input("module-group-id") moduleGroupId: number = 9;
   @Input() label: string = 'FUEL_TYPE';
-  @Output() preferenceChange: EventEmitter<Preference> = new EventEmitter<Preference>();
-
-  public isDisabled: boolean;
-  public isTouched: boolean;
-  public ngModel: EnumListDefinitionInterface;
-  private control;
-  private unitControl;
-  private formControlName: string = 'inputFuelId';
-  private formControlUnitName: string = 'inputFuelUnit';
-  private fuelTypeName: string;
 
   get list(): EnumListDefinitionInterface[] {
     const enumeration: EnumListInterface = this.translationService.displayGroup
@@ -55,16 +46,30 @@ export class FuelTypeFieldComponent implements ControlValueAccessor, OnInit {
 
     return list;
   }
+
   private _preference: Preference;
   get preference(): Preference {
     return this.getSizingPreferenceByName(this.fuelTypeName);
   }
+
   @Input() set preference(preference) {
     this._preference = preference;
   }
+  @Output() preferenceChange: EventEmitter<Preference> = new EventEmitter<Preference>();
+
+  public isDisabled: boolean;
+  public isTouched: boolean;
+  public ngModel: EnumListDefinitionInterface;
+  private control;
+  private unitControl;
+  private formControlName: string = 'inputFuelId';
+  private formControlUnitName: string = 'inputFuelUnit';
+  private fuelTypeName: string;
 
   onTouched = () => {};
   onChanged = (_: any) => {};
+
+  fuelTypeSubject;
 
   constructor(
     protected translationService: TranslationService,
@@ -77,10 +82,10 @@ export class FuelTypeFieldComponent implements ControlValueAccessor, OnInit {
     this.setSizingPreference();
     this.control = this.getControlByName(this.formControlName);
     this.unitControl = this.getControlByName(this.formControlUnitName);
-    this.ngModel = this.control && this.control.value && this.list &&
-      this.list.find((item) => item['value'] === this.control.value) || this.list[0];
+    this.ngModel = (this.control && this.control.value && this.list &&
+      this.list.find((item) => item['value'] === this.control.value)) || this.list[0];
 
-    this.ngModel && this.updateValue(this.ngModel, true);
+    this.ngModel && this.updateValue(this.ngModel);
   }
 
   public compareWith(a: any, b: any): boolean {
@@ -89,11 +94,11 @@ export class FuelTypeFieldComponent implements ControlValueAccessor, OnInit {
     return a && a[fieldName] && b && b[fieldName] && a[fieldName] === b[fieldName];
   }
 
-  public updateValue(item: EnumListDefinitionInterface, isInit?: boolean): void {
-    this.fuelTypeName = FuelTypeFieldComponent.getFuelTypeName(item);
-    const value = this.preference && this.preference.value;
-    this.preferenceChange.emit(this.preference);
-    this.setFormValue(item.value, parseInt(value));
+  public updateValue(item: EnumListDefinitionInterface): void {
+    this.fuelTypeName = SteamGenerationAssessmentService.getFuelTypeName(item && item.value);
+
+    this.setFormValue(item.value, parseInt(this.preference && this.preference.value));
+    this.preference && this.preferenceChange.emit(this.preference);
   }
 
   registerOnChange(fn: any): void {
@@ -110,20 +115,6 @@ export class FuelTypeFieldComponent implements ControlValueAccessor, OnInit {
 
   writeValue(val: any): void {
     // console.log(val, '----val') // not logic
-  }
-
-  private static getFuelTypeName(item: EnumListDefinitionInterface): string {
-    // 'BoilerHouseLiquidFuelUnits' / 'BoilerHouseElectricalFuelUnits' / 'BoilerHouseGasFuelUnits' / 'BoilerHouseGasFuelUnits' / 'BoilerHouseSolidFuelUnits'
-    // L, E, G, O, S
-    const firstLetter = item && item.value && item.value.charAt(0);
-    switch (firstLetter) {
-      case 'L': return 'BoilerHouseLiquidFuelUnits';
-      case 'E': return 'BoilerHouseElectricalFuelUnits';
-      case 'G': return 'BoilerHouseGasFuelUnits';
-      case 'O': return 'BoilerHouseGasFuelUnits';
-      case 'S': return 'BoilerHouseSolidFuelUnits';
-      default: return null;
-    }
   }
 
   private getPreferenceByName(name: string): Preference {

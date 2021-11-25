@@ -1,58 +1,71 @@
-export interface SteamGenerationFormInterface {
+
+export interface SteamCalorificRequestInterface {
+  energyUnitSelected: number
+  smallWeightUnitSelected: number;
+  inputFuelId: string;
+  inputFuelUnit: number;
+}
+
+export interface SteamCarbonEmissionInterface {
+  energyUnitSelected: number;
+  smallWeightUnitSelected: number;
+  inputFuelId: string;
+  inputFuelUnit: number;
+  fuelEnergyPerUnit: number;
+  fuelCarbonContent: number;
+}
+
+export interface SteamGeneratorSelectedUnitsInterface {
+  energyUnitSelected: number;
+  smallWeightUnitSelected: number;
+  emissionUnitSelected: number;
+  volumeUnitSelected: number;
+  carbonDioxideEmissionsUnitSelected: number;
+  massFlowUnitSelected: number;
+  pressureUnitSelected: number;
+  temperatureUnitSelected: number;
+}
+
+export interface SteamGeneratorInputsInterface {
   hoursOfOperation: number;
   isSteamFlowMeasured: boolean;
   isAutoTdsControlPResent: boolean;
   boilerSteamGeneratedPerYear: number;
   boilerSteamGeneratedPerYearUnit: number;
+  boilerSteamGeneratedPerHour: number;
+  boilerSteamGeneratedPerHourUnit: number;
   inputFuelId: string;
   inputFuelUnit: number;
   costOfFuelPerUnit: number;
-  costOfFuelUnit: number;
   costOfFuelPerYear: number;
   fuelQtyPerYearIsKnown: boolean;
   fuelConsumptionPerYear: number;
-  fuelConsumptionPerYearUnit: number;
   fuelEnergyPerUnit: number;
   fuelCarbonContent: number;
-  fuelCarbonContentUnit: number;
   costOfWaterPerUnit: number;
-  costOfWaterUnit: number;
   costOfEffluentPerUnit: number;
-  costOfEffluentUnit: number;
   boilerHouseWaterQtyPerYearIsKnown: boolean;
   waterConsumptionPerYear: number;
-  waterConsumptionPerYearUnit: number;
   boilerWaterTreatmentChemicalCostsIsKnown: boolean;
   totalChemicalCostPerYear: number;
-  totalChemicalCostPerYearUnit: number;
   costOfChemistsPerUnitOfWater: number;
-  costOfChemistsPerUnitOfWaterUnit: number;
   o2ScavengingChemicalsCostSavings: number;
-  o2ScavengingChemicalsCostSavingsUnit: number;
   carbonTaxLevyCostPerUnit: number;
-  carbonTaxLevyCostUnit: number;
   costOfCo2PerUnitMass: number;
-  costOfCo2Unit: number;
   isBlowdownVesselPresent: boolean;
   isCoolingWaterUsed: boolean;
   isSuperheatedSteam: boolean;
   boilerEfficiency: number;
   isFeedWaterMeasured: boolean;
   boilerSteamPressure: number;
-  boilerSteamPressureUnit: number;
   boilerSteamTemperature: number;
-  boilerSteamTemperatureUnit: number;
   isEconomizerPresent: boolean;
   boilerAverageTds: number;
-  boilerAverageTdsUnit: number;
   boilerMaxTds: number;
-  boilerMaxTdsUnit: number;
   boilerFeedwaterConsumption: number;
-  boilerFeedwaterConsumptionUnit: number;
   isFlashVesselPresent: boolean;
   isHeatExchangerPresent: boolean;
   waterTemperatureLeavingHeatExchanger: number;
-  waterTemperatureLeavingHeatExchangerUnit: number;
   waterTreatmentMethod: number;
   percentageWaterRejection: number;
   percentageWaterRejectionUnit: number;
@@ -117,8 +130,13 @@ export interface SteamGenerationFormInterface {
   proposalDSIPressureUnit: number;
 }
 
+export interface SgaSizingModuleFormInterface {
+  selectedUnits: SteamGeneratorSelectedUnitsInterface,
+  steamGeneratorInputs: SteamGeneratorInputsInterface
+}
+
 export type FormFieldTypesInterface = {
-  [key in keyof Partial<SteamGenerationFormInterface>]: {
+  [key in keyof Partial<SteamGeneratorInputsInterface>]: {
     formControlName: string;
     label: string;
     unitNames?: [string, string?];
@@ -129,3 +147,40 @@ export type FormFieldTypesInterface = {
     filled?: boolean;
   }
 }
+
+export interface SgaHttpValidationResponseInterface {
+  errors: {
+    attemptedValue: number;
+    customState: any
+    errorCode: string;
+    errorMessage: string;
+    formattedMessagePlaceholderValues: {
+      ComparisonValue: number;
+      ComparisonProperty: string;
+      PropertyName: string;
+      PropertyValue: number;
+    };
+    propertyName: string;
+    severity: number;
+  }[];
+  isValid: boolean;
+  ruleSetsExecuted: string[]
+}
+
+
+/* REMOVED ITEMS
+FuelEnergyPerUnitUnit
+FuelCarbonContentUnit
+CostOfWaterUnit
+CostOfEffluentUnit
+WaterConsumptionPerYearUnit
+TotalChemicalCostPerYearUnit
+CostOfChemistsPerUnitOfWaterUnit
+O2ScavengingChemicalsCostSavingsUnit
+BoilerSteamPressureUnit
+BoilerSteamTemperatureUnit
+BoilerAverageTdsUnit
+BoilerMaxTdsUnit
+BoilerFeedwaterConsumptionUnit
+WaterTemperatureLeavingHeatExchangerUnit
+* */

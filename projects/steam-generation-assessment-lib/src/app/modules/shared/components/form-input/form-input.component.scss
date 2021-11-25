@@ -5,6 +5,26 @@
       border-color: var(--color-alarm-red) !important;
     }
   }
+
+  &.ng-touched.ng-dirty {
+    &.ng-invalid {
+      .formField-input {
+        background-image: url("assets/Cross.png");
+        background-repeat: no-repeat;
+        background-size: 14px;
+        background-position: calc(100% - 5px) center;
+      }
+    }
+
+    &.ng-valid {
+      .formField-input {
+        background-image: url("assets/Tick.png");
+        background-repeat: no-repeat;
+        background-size: 14px;
+        background-position: calc(100% - 5px) center;
+      }
+    }
+  }
 }
 
 .formField {
@@ -95,6 +115,11 @@
     padding: 0 0 0 22px;
     margin: 0;
     border: none;
+    -moz-appearance: textfield;
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+    }
     &:required, &.required {
       border-left: 5px solid var(--color-orange);
     }
@@ -172,5 +197,15 @@
 
   &.radio {
     margin-left: 30px;
+  }
+
+  &.pending {
+    .formField-input {
+      background-color: #ffffff;
+      background-image: url("./assets/loading.gif");
+      background-size: 30px 25px;
+      background-position: left center;
+      background-repeat: no-repeat;
+    }
   }
 }
