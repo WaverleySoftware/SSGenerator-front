@@ -16,8 +16,10 @@ export class SgaValidator {
       if (
         !name || !control || !service ||
         !service.checkSgaFieldIsFilled ||
-        !service.validateSgInput
+        !service.validateSgInput ||
+        (control && !control.touched)
       ) return of(null);
+
 
       return timer(500).pipe(
         switchMap(() => {

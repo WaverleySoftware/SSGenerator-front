@@ -28,7 +28,6 @@
            [unit-controls]="unitControls"
            [masterText-Keys]="masterTextKeys"
            [moduleGroupId]="moduleGroupId"
-           [control]="control"
            #inputRef
            [type]="type"
            [required]="required"
@@ -36,7 +35,7 @@
            [ngClass]="{filled: filled !== undefined && filled !== false}"
            (focusin)="focus = true"
            (focusout)="touched = true; focus = false;"
-           (blur)="onTouched(); inputBlur.emit({ name: formControlName, value: value })"
+           (blur)="blurHandle()"
            [ngModel]="value"
            (ngModelChange)="updateValue($event)"
            class="formField-input">

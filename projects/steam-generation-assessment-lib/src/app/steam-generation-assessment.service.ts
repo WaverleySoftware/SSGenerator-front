@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
-import { Observable } from "rxjs";
+import { Observable, Subject } from "rxjs";
 import {
   FormFieldTypesInterface, SgaHttpValidationResponseInterface, SgaSizingModuleFormInterface,
   SteamCalorificRequestInterface,
@@ -8,7 +8,7 @@ import {
 } from "./steam-generation-form.interface";
 import { PreferenceService, Preference } from "sizing-shared-lib";
 import { SizingUnitPreference } from "../../../sizing-shared-lib/src/lib/shared/preference/sizing-unit-preference.model";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { AbstractControl, FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { SgaValidator } from "./steam-generation-assessment.validator";
 import { map } from 'rxjs/operators';
 
@@ -26,7 +26,7 @@ export class SteamGenerationAssessmentService {
       label: 'FUEL_CALORIFIC_VALUE',
       unitNames: ['BoilerHouseEnergyUnits', /*inputFuelUnit*/],
       translations: ['ENERGY'],
-      controlNames: ['fuelEnergyPerUnitUnit', 'inputFuelUnit'],
+      controlNames: [null, 'inputFuelUnit'],
       required: true
     },
     fuelCarbonContent: {
@@ -34,7 +34,6 @@ export class SteamGenerationAssessmentService {
       label: 'CO2_EMISSIONS_PER_UNIT_FUEL',
       unitNames: ['WeightUnit'],
       translations: ['SMALL_WEIGHT'],
-      controlNames: ['fuelCarbonContentUnit'],
       required: true,
     },
     costOfFuelPerUnit: {
@@ -73,7 +72,6 @@ export class SteamGenerationAssessmentService {
       label: 'COST_OF_CO2_PER_UNIT_MASS',
       unitNames: ['BHCurrency', 'BoilerHouseEmissionUnits'],
       translations: ['CURRENCY', 'CO2_EMISSIONS'],
-      controlNames: [null, 'costOfCo2Unit'],
       required: true,
     },
     // WATER
@@ -86,7 +84,6 @@ export class SteamGenerationAssessmentService {
       label: 'COST_OF_WATER_FSLASH_UNIT',
       unitNames: ['BHCurrency', 'BoilerHouseVolumeUnits'],
       translations: ['CURRENCY', 'VOLUME'],
-      controlNames: [null, 'costOfWaterUnit'],
       required: true,
       filled: false,
     },
@@ -96,7 +93,6 @@ export class SteamGenerationAssessmentService {
       label: 'WATER_CONSUMPTION_YEAR',
       unitNames: ['BoilerHouseVolumeUnits'],
       translations: ['VOLUME'],
-      controlNames: ['waterConsumptionPerYearUnit'],
       required: true,
     },
     // WATER TREATMENT CHEMICALS
@@ -159,7 +155,6 @@ export class SteamGenerationAssessmentService {
       unitNames: ['TemperatureUnit'],
       unitTypes: ['TemperatureUnits'],
       translations: ['TEMPERATURE'],
-      controlNames: ['boilerSteamTemperatureUnit'],
     },
     boilerSteamPressure: {
       formControlName: 'boilerSteamPressure',
@@ -167,7 +162,6 @@ export class SteamGenerationAssessmentService {
       unitNames: ['PressureUnit'],
       unitTypes: ['PressureUnits'],
       translations: ['PRESSURE'],
-      controlNames: ['boilerSteamPressureUnit'],
       required: true,
     },
     boilerEfficiency: {
@@ -203,7 +197,6 @@ export class SteamGenerationAssessmentService {
       unitNames: ['TemperatureUnit'],
       unitTypes: ['TemperatureUnits'],
       translations: ['TEMPERATURE'],
-      controlNames: ['waterTemperatureLeavingHeatExchangerUnit'],
       required: true,
       filled: false,
     },
@@ -220,7 +213,6 @@ export class SteamGenerationAssessmentService {
       label: 'AVERAGE_BOILER_TDS',
       unitNames: ['BoilerHouseTDSUnits'],
       translations: ['TDS'],
-      controlNames: ['boilerAverageTdsUnit'],
       required: true,
     },
     boilerMaxTds: {
@@ -228,7 +220,6 @@ export class SteamGenerationAssessmentService {
       label: 'MAXIMUM_ALLOWABLE_BOILER_TDS',
       unitNames: ['BoilerHouseTDSUnits'],
       translations: ['TDS'],
-      controlNames: ['boilerMaxTdsUnit'],
       required: false,
     },
     // WATER_TREATMENT
@@ -280,7 +271,6 @@ export class SteamGenerationAssessmentService {
       label: 'CONSUMPTION_PER_HR', // CONSUMPTION_PER_YEAR
       unitNames: ['BoilerHouseVolumeUnits'],
       translations: ['VOLUME'],
-      controlNames: ['boilerFeedwaterConsumptionUnit'],
       required: true,
     },
     temperatureOfFeedtank: {
@@ -352,13 +342,13 @@ export class SteamGenerationAssessmentService {
       smallWeightUnitSelected: [0],
       emissionUnitSelected: [0],
       volumeUnitSelected: [0],
-      carbonDioxideEmissionsUnitSelected: [0],
       massFlowUnitSelected: [0],
+      massFlowBoilerHouseUnitSelected: [0],
       pressureUnitSelected: [0],
       temperatureUnitSelected: [0],
     },
     steamGeneratorInputs: {
-      hoursOfOperation: [0, {
+      hoursOfOperation: [8736, {
         updateOn: 'blur',
         asyncValidators: SgaValidator.validateAsyncFn(this, 'hoursOfOperation'),
         validators: Validators.required
@@ -459,7 +449,7 @@ export class SteamGenerationAssessmentService {
       isFlashVesselPresent: [false], // IS_FLASH_VESSEL_PRESENT
       isHeatExchangerPresent: [false], // IS_HEAT_EXCHANGER_PRESENT
       waterTemperatureLeavingHeatExchanger: [0], // WATER_TEMPERATURE_LEAVING_HEAT_EXCHANGER
-      waterTreatmentMethod: [1], // WATER_TREATMENT_METHOD
+      waterTreatmentMethod: [0], // WATER_TREATMENT_METHOD
       percentageWaterRejection: [0], // PERCENTAGE_WATER_REJECTION
       percentageWaterRejectionUnit: [0], // UNIT ???????
       tdsOfMakeupWater: [0], // TDS_OF_MAKEUP_WATER
@@ -530,6 +520,7 @@ export class SteamGenerationAssessmentService {
     private preferenceService: PreferenceService,
     private fb: FormBuilder,
     ) {
+    // Initialize Sizing form
     this._sizingFormGroup = this.fb.group({
       selectedUnits: this.fb.group(this._sizingFormGroupControls.selectedUnits),
       steamGeneratorInputs: this.fb.group(this._sizingFormGroupControls.steamGeneratorInputs)
@@ -586,7 +577,114 @@ export class SteamGenerationAssessmentService {
     return this._sgaFormFields[fieldName] && this._sgaFormFields[fieldName].filled;
   }
 
-  public changeSizingUnits(form?: FormGroup): {[key: string]: number} {
+  public changeSizingUnits(): void {
+    this._changeSgaFieldsFromSizingPref();
+    this.setSelectedValues();
+  }
+
+  /**
+   * Get multiple Sizing preferences values
+   * @param obj { Object }  object where [key] is returned obj key and 'value' is returned sizing preference value
+   * @returns { {[key: string]: number} } object of Sizing preferences values
+   * **/
+  public getSizingPreferenceValues(obj: { [key: string]: string }): {[key: string]: number} {
+    let res: { [key: string]: number } = {};
+
+    for (let sizingUnitPreference of this.preferenceService.sizingUnitPreferences) {
+      for (let nameKey in obj) {
+        if (
+          obj[nameKey] &&
+          sizingUnitPreference &&
+          sizingUnitPreference.preference &&
+          sizingUnitPreference.preference.name === obj[nameKey]
+        ) {
+          res[nameKey] = parseInt(sizingUnitPreference.preference.value);
+
+          break;
+        }
+      }
+    }
+
+    return res;
+  }
+
+  /**
+   * Get sizing preference from sizing preferences
+   * @param name { string } sizing preference name
+   * @returns 'SizingUnitPreference' interface
+   * **/
+  public getSizingPreferenceByName(name: string): SizingUnitPreference {
+    return this.preferenceService.sizingUnitPreferences
+      .find(({ unitType, preference }) => {
+        return unitType === name || unitType === `${name}s` || (preference && preference.name === name);
+      });
+  }
+
+  /**
+   * Set selected form values from sizing preferences
+   @listens: {
+     energyUnitSelected: BoilerHouseEnergyUnits
+     smallWeightUnitSelected: WeightUnit
+     emissionUnitSelected: BoilerHouseEmissionUnits
+     volumeUnitSelected: BoilerHouseVolumeUnits
+     massFlowUnitSelected: MassFlowUnit (per hour)
+     massFlowBoilerHouseUnitSelected: BoilerHouseEmissionUnits (per year)
+     pressureUnitSelected: PressureUnit
+     temperatureUnitSelected: TemperatureUnit
+   }
+  **/
+  public setSelectedValues(): void {
+    const sizingPreferences = this.preferenceService.sizingUnitPreferences;
+
+    if (!sizingPreferences || !sizingPreferences.length) return null;
+
+    const values = this.getSizingPreferenceValues({
+      energyUnitSelected: 'BoilerHouseEnergyUnits',
+      smallWeightUnitSelected: 'WeightUnit',
+      emissionUnitSelected: 'BoilerHouseEmissionUnits',
+      volumeUnitSelected: 'BoilerHouseVolumeUnits',
+      massFlowUnitSelected: 'MassFlowUnit',
+      massFlowBoilerHouseUnitSelected: 'BoilerHouseMassFlowUnits',
+      pressureUnitSelected: 'PressureUnit',
+      temperatureUnitSelected: 'TemperatureUnit'
+    }) as Record<keyof SteamGeneratorSelectedUnitsInterface, number>;
+
+
+    for (let valuesKey in values) {
+      if (values[valuesKey]) {
+        this.setFormValue(valuesKey, values[valuesKey], 'selectedUnits');
+      }
+    }
+  }
+
+  /**
+   * Set FormGroup values - Sizing form
+   * @param {string} formControlName name of form control field
+   * @param {any} value value
+   * @param {string} [formGroupName = 'steamGeneratorInputs'] key-name of parent formGroup
+   * @param {emitEvent?: true, onlySelf?: false} [opt] form control options
+   * */
+  public setFormValue(
+    formControlName: string,
+    value: any,
+    formGroupName: keyof SgaSizingModuleFormInterface = 'steamGeneratorInputs',
+    opt?: { emitEvent?: boolean, onlySelf?: boolean }
+  ): void {
+    const control = this._sizingFormGroup.get(`${formGroupName}.${formControlName}`);
+    const parsedValue = Number.isNaN(Number(value)) ? value : (value && +value);
+
+    if (control && (control.value !== parsedValue)) {
+      console.groupCollapsed('%c  %c CHANGE FIELD:' + formControlName, 'background-color:green;margin-right:10px', 'background-color:transparent');
+      console.table({
+        Name: { value: formControlName },
+        Value: { value: parsedValue }
+      });
+      console.groupEnd();
+      control.patchValue(parsedValue, opt);
+    }
+  }
+
+  private _changeSgaFieldsFromSizingPref(): void {
     if (!this.preferenceService.sizingUnitPreferences) return null;
 
     const sizingUnitPreference = this.preferenceService.sizingUnitPreferences;
@@ -613,43 +711,11 @@ export class SteamGenerationAssessmentService {
       }
     }
 
-    if (result && Object.keys(result).length && form && form.patchValue) {
-      form.patchValue(result, { onlySelf: true, emitEvent: false });
+    if (result && Object.keys(result).length) {
+      console.log('???', result);
+
+      this._sizingFormGroup.get('steamGeneratorInputs').patchValue(result, { emitEvent: false });
     }
-
-    return result;
-  }
-
-  public getSizingPreferenceValues(obj: { [key: string]: string }): {[key: string]: number} {
-    let res: { [key: string]: number } = {};
-
-    for (let sizingUnitPreference of this.preferenceService.sizingUnitPreferences) {
-      for (let nameKey in obj) {
-        if (
-          obj[nameKey] &&
-          sizingUnitPreference &&
-          sizingUnitPreference.preference &&
-          sizingUnitPreference.preference.name === obj[nameKey]
-        ) {
-          res[nameKey] = parseInt(sizingUnitPreference.preference.value);
-
-          break;
-        }
-      }
-    }
-
-    return res;
-  }
-
-  public getSizingPreferenceByName(name: string): SizingUnitPreference {
-    return this.preferenceService.sizingUnitPreferences
-      .find(({ unitType, preference }) => {
-        return unitType === name || unitType === `${name}s` || (preference && preference.name === name);
-      });
-  }
-
-  public getPreferenceByName(name: string): Preference {
-    return this.preferenceService.allPreferences.find((preference) => preference.name === name);
   }
 
   static getFuelTypeName(fuelTypeValue: string): string {

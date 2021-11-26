@@ -20,8 +20,8 @@ export interface SteamGeneratorSelectedUnitsInterface {
   smallWeightUnitSelected: number;
   emissionUnitSelected: number;
   volumeUnitSelected: number;
-  carbonDioxideEmissionsUnitSelected: number;
   massFlowUnitSelected: number;
+  massFlowBoilerHouseUnitSelected: number;
   pressureUnitSelected: number;
   temperatureUnitSelected: number;
 }

@@ -72,10 +72,17 @@ export class FormInputComponent implements ControlValueAccessor, AfterContentIni
   }
 
   writeValue(outsideValue: any): void {
-    this.value = outsideValue;
+    if (outsideValue && typeof outsideValue === "object") {
+      if ('disabled' in outsideValue) this.disabled = outsideValue.disabled;
+      if ('required' in outsideValue) this.required = outsideValue.required;
+      if ('value' in outsideValue) this.value = outsideValue.value;
+    } else {
+      this.value = outsideValue;
+    }
   }
 
   updateValue(insideValue: any) {
+    this.error = null;
     this.value = Number.isNaN(Number(insideValue)) ? insideValue : (insideValue && +insideValue);
     this.inputChange.emit({ name: this.formControlName, value: this.value});
     this.onChange(this.value);
@@ -88,6 +95,11 @@ export class FormInputComponent implements ControlValueAccessor, AfterContentIni
     if (this.inputRef && this.inputRef.nativeElement) {
       setTimeout(() => this.inputRef.nativeElement.focus())
     }
+  }
+
+  blurHandle(): void {
+    this.onTouched();
+    this.error = this.required && !this.value && this.value !== 0 ? 'Required' : null;
   }
 
   private getFormControl(): void {

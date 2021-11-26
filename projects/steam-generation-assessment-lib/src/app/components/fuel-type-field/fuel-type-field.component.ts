@@ -74,6 +74,7 @@ export class FuelTypeFieldComponent implements ControlValueAccessor, OnInit {
   constructor(
     protected translationService: TranslationService,
     private preferenceService: PreferenceService,
+    private steamGenerationAssessmentService: SteamGenerationAssessmentService,
     @Optional() @Host() @SkipSelf() private controlContainer: ControlContainer,
   ) { }
 
@@ -97,7 +98,7 @@ export class FuelTypeFieldComponent implements ControlValueAccessor, OnInit {
   public updateValue(item: EnumListDefinitionInterface): void {
     this.fuelTypeName = SteamGenerationAssessmentService.getFuelTypeName(item && item.value);
 
-    this.setFormValue(item.value, parseInt(this.preference && this.preference.value));
+    this.setFormValue(item.value, this.preference && this.preference.value);
     this.preference && this.preferenceChange.emit(this.preference);
   }
 
@@ -136,9 +137,9 @@ export class FuelTypeFieldComponent implements ControlValueAccessor, OnInit {
     return null;
   }
 
-  private setFormValue(value: string, unitValue: number): void {
-    this.control && value && this.control.value !== value && this.control.setValue(value);
-    this.unitControl && unitValue && this.unitControl.value !== unitValue && this.unitControl.setValue(unitValue);
+  private setFormValue(value: any, unitValue: any): void {
+    value && this.steamGenerationAssessmentService.setFormValue(this.formControlName, value);
+    unitValue && this.steamGenerationAssessmentService.setFormValue(this.formControlUnitName, unitValue);
   }
 
   private setSizingPreference(): void {

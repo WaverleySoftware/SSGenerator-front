@@ -45,9 +45,7 @@ export class SgaInputParametersComponent implements OnInit {
     for (let fieldName of clearFields) {
       const childFieldName = `${this.formGroupKey}.${fieldName}`;
       if (this.formGroup.get(childFieldName).value || this.formGroup.get(childFieldName).value === "") {
-        this.formGroup
-          .get(childFieldName)
-          .patchValue(setVal, { emitEvent: false, onlySelf: true });
+        this.setFormValue(childFieldName, setVal);
       }
     }
   }
@@ -56,9 +54,7 @@ export class SgaInputParametersComponent implements OnInit {
    * Set some FormGroup value from view
    * **/
   public setFormValue(name: string, value: any): void {
-    this.formGroup
-      .get(`${this.formGroupKey}.${name}`)
-      .patchValue(value, { emitEvent: false, onlySelf: true });
+    this.steamGenerationAssessmentService.setFormValue(name, value);
   }
 
   /**
@@ -137,11 +133,8 @@ export class SgaInputParametersComponent implements OnInit {
 
   private _setInputFormFields(data: Partial<Record<keyof FormFieldTypesInterface, any>>): void {
     for (let formKey in data) {
-      this.steamGenerationAssessmentService
-        .changeSgaFieldFilled(formKey as keyof FormFieldTypesInterface, true);
-      this.formGroup
-        .get(`${this.formGroupKey}.${formKey}`)
-        .patchValue(data[formKey], { emitEvent: false, onlySelf: true });
+      this.steamGenerationAssessmentService.changeSgaFieldFilled(formKey as keyof FormFieldTypesInterface, true);
+      this.setFormValue(formKey, data[formKey]);
     }
   }
 

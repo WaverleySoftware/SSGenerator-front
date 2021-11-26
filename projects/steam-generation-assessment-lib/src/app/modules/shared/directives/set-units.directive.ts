@@ -1,7 +1,7 @@
-import { Directive, Host, Input, OnInit, Optional, SkipSelf } from "@angular/core";
-import { AbstractControl, ControlContainer, NgControl } from "@angular/forms";
+import { Directive, Input, OnInit } from "@angular/core";
 import { PreferenceService, AdminService } from "sizing-shared-lib";
 import { Preference } from "../../../../../../sizing-shared-lib/src/lib/shared/preference/preference.model";
+import { SteamGenerationAssessmentService } from "../../../steam-generation-assessment.service";
 
 @Directive({
   selector: '[set-units]',
@@ -13,7 +13,6 @@ export class SetUnitsDirective implements OnInit {
   @Input('unit-types') private unitTypes: [string, string?];
   @Input('masterText-Keys') private masterTextKeys: [string, string?];
   @Input('moduleGroupId') private moduleGroupId: number;
-  @Input() private control: NgControl;
 
   get preferences(): Preference[] {
     if (!this.preferenceNames || !this.preferenceNames.length) {
@@ -32,7 +31,7 @@ export class SetUnitsDirective implements OnInit {
   constructor(
     private preferenceService: PreferenceService,
     private adminService: AdminService,
-    @Optional() @Host() @SkipSelf() private controlContainer: ControlContainer
+    private steamGenerationAssessmentService: SteamGenerationAssessmentService,
   ) { }
 
   ngOnInit() {
@@ -128,19 +127,7 @@ export class SetUnitsDirective implements OnInit {
 
   private setFormControlValues(formControlName: string, preference: Preference):  void {
     if (formControlName && preference && preference.value) {
-      const control = this.getControl(formControlName);
-
-      if (control) {
-        const value = preference.value;
-        control.setValue(Number.isNaN(Number(value)) ? value : (value && +value));
-      }
+      this.steamGenerationAssessmentService.setFormValue(formControlName, preference.value);
     }
   }
-
-  private getControl(formControlName: string): AbstractControl {
-    if (this.control && this.control.control && this.control.control.root && formControlName) {
-      return this.control.control.root.get(formControlName)
-    }
-  }
-
 }

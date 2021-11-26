@@ -5,6 +5,7 @@ import {
   PreferenceService,
   Project,
   UnitsService,
+  UnitConvert,
 } from "sizing-shared-lib";
 import { FormGroup } from "@angular/forms";
 import { SteamGenerationAssessmentService } from "./steam-generation-assessment.service";
@@ -44,7 +45,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     console.log({
       sizingUnitPreferences: this.preferenceService.sizingUnitPreferences
     }, '---ngAfterViewInit');
-    // this.initializedData(); // Load start module data
+    this._initializedData(); // Load start module data
   }
 
   ngOnDestroy(): void {
@@ -54,7 +55,6 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   }
 
   onCalculateSizing(formGroup: FormGroup): any {
-    console.log(formGroup.value, '------CALCULATE')
     this.steamGenerationAssessmentService
       .calculateResults(formGroup.value)
       .pipe(takeUntil(this.ngUnsubscribe))
@@ -101,8 +101,8 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
 
   onUnitsChanged(): any {
     console.log('----- CHANGE_UNITS -----');
-    this.steamGenerationAssessmentService.changeSizingUnits(this.sizingModuleForm);
-    this.changeFuelType(); // Calculate CALORIFIC VALUE request on unit changed
+    this.steamGenerationAssessmentService.changeSizingUnits();
+    this._calculateCalorificValue(); // Calculate CALORIFIC VALUE request on unit changed
     return true;
   }
 
@@ -111,20 +111,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   }
 
   public changeFuelType(fuelTypeData?: SteamCalorificRequestInterface): void {
-    this.steamGenerationAssessmentService
-      .calculateCalorific(this.getFuelTypeData(fuelTypeData))
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe((response) => {
-        if (response && typeof response === "object") {
-          for (let responseKey in response) {
-            this.steamGenerationAssessmentService
-              .changeSgaFieldFilled(responseKey as keyof FormFieldTypesInterface, true);
-            this.sizingModuleForm
-              .get(`steamGeneratorInputs.${responseKey}`)
-              .patchValue(response[responseKey], { emitEvent: false, onlySelf: true });
-          }
-        }
-      });
+    this._calculateCalorificValue(fuelTypeData);
   }
 
   private getFuelTypeData(staticData?: SteamCalorificRequestInterface): SteamCalorificRequestInterface {
@@ -167,7 +154,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   }
 
   // TODO: Function for focus on first invalid field (need to create toggle tabs to first invalid field)
-  private focusFirstErrorField(formGroup: FormGroup): void {
+  private _focusFirstErrorField(formGroup: FormGroup): void {
     // check all fields
     for (const key of Object.keys(formGroup.controls)) {
       // get first invalid control
@@ -182,7 +169,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     }
   }
 
-  private loadJob(): void {
+  private _loadJob(): void {
     this.activatedRoute.params
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((params: Params) => {
@@ -192,8 +179,45 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       });
   }
 
-  private initializedData(): void {
+  private _calculateCalorificValue(data?: SteamCalorificRequestInterface): void {
+    const fuelTypeData = this.getFuelTypeData(data);
+
+    this.steamGenerationAssessmentService
+      .calculateCalorific(fuelTypeData)
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((response) => {
+        if (response && typeof response === "object") {
+          for (let responseKey in response) {
+            this.steamGenerationAssessmentService
+              .changeSgaFieldFilled(responseKey as keyof FormFieldTypesInterface, true);
+            this.steamGenerationAssessmentService
+              .setFormValue(responseKey, response[responseKey]);
+          }
+        }
+      });
+  }
+
+  private _initializedData(): void {
     // this.loadJob();
+    this.steamGenerationAssessmentService.setSelectedValues();
     this.changeFuelType(); // Calculate CALORIFIC VALUE request on init
+    // this._convertUnits();
+  }
+
+  private _convertUnits(): void { // TODO: create convert units functionality
+    const unitsConverter: UnitConvert[] = [{
+      propertyName: 'pressureOfFeedtank',
+      convertedValue: null,
+      initialUnitId: 57,
+      initialValue: 0,
+      targetUnitId: 60
+    }];
+
+
+    this.unitsService.unitsConverter({unitsConverter})
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((response) => {
+        console.log(response);
+      });
   }
 }
