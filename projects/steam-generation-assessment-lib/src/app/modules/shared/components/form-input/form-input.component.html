@@ -30,7 +30,7 @@
            [moduleGroupId]="moduleGroupId"
            #inputRef
            [type]="type"
-           [required]="required"
+           [required]="group ? (required && radioInputRef.checked) : required"
            [disabled]="disabled || (!!group && !radioInputRef.checked)"
            [ngClass]="{filled: filled !== undefined && filled !== false}"
            (focusin)="focus = true"

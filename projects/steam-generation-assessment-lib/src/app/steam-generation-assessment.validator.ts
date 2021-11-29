@@ -1,6 +1,6 @@
 import { AbstractControl, AsyncValidatorFn, FormGroup, ValidationErrors } from "@angular/forms";
-import { Observable, of, timer } from "rxjs";
-import { map, first, switchMap, catchError } from "rxjs/operators";
+import { Observable, of } from "rxjs";
+import { map, first, switchMap, catchError, distinctUntilChanged, debounceTime, filter } from "rxjs/operators";
 import { SteamGenerationAssessmentService } from "./steam-generation-assessment.service";
 import { SgaHttpValidationResponseInterface, SteamGeneratorInputsInterface } from "./steam-generation-form.interface";
 import { HttpErrorResponse } from "@angular/common/http";
@@ -21,19 +21,21 @@ export class SgaValidator {
       ) return of(null);
 
 
-      return timer(500).pipe(
-        switchMap(() => {
-          const { root, value } = control;
+      return control.valueChanges.pipe(
+        debounceTime(500),
+        distinctUntilChanged(),
+        filter(v => v && v !== 0),
+        switchMap((value) => {
+          const { root } = control;
           const isFilled = service.checkSgaFieldIsFilled(name);
 
           if (value === 0 || isFilled || !root || !root.value) return of(null);
           if (!value) return of({ required: true });
 
-          return service.validateSgInput(name as keyof SteamGeneratorInputsInterface, root.value)
-            .pipe(
-              map((errors) => errors && SgaValidator._parseErrors(errors)),
-              catchError((errors: HttpErrorResponse) => SgaValidator._parseSpecificErrors(errors))
-            );
+          return service.validateSgInput(name as keyof SteamGeneratorInputsInterface, root.value).pipe(
+            map((errors) => errors && SgaValidator._parseErrors(errors)),
+            catchError((errors: HttpErrorResponse) => SgaValidator._parseSpecificErrors(errors))
+          );
         }),
         first()
       );

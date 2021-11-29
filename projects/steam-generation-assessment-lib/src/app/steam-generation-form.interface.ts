@@ -36,7 +36,7 @@ export interface SteamGeneratorInputsInterface {
   boilerSteamGeneratedPerHourUnit: number;
   inputFuelId: string;
   inputFuelUnit: number;
-  costOfFuelPerUnit: number;
+  costOfFuelPerUnit: number; // 0.02 khW
   costOfFuelPerYear: number;
   fuelQtyPerYearIsKnown: boolean;
   fuelConsumptionPerYear: number;
@@ -66,7 +66,7 @@ export interface SteamGeneratorInputsInterface {
   isFlashVesselPresent: boolean;
   isHeatExchangerPresent: boolean;
   waterTemperatureLeavingHeatExchanger: number;
-  waterTreatmentMethod: number;
+  waterTreatmentMethod: string;
   percentageWaterRejection: number;
   percentageWaterRejectionUnit: number;
   tdsOfMakeupWater: number;
@@ -167,6 +167,13 @@ export interface SgaHttpValidationResponseInterface {
   ruleSetsExecuted: string[]
 }
 
+export interface SgaSaturatedTemperatureBodyInterface {
+  temperatureUnitSelected: number;
+  pressureUnitSelected: number;
+  isSuperheatedSteam: boolean;
+  boilerSteamPressure: number;
+  boilerSteamTemperature: number;
+}
 
 /* REMOVED ITEMS
 FuelEnergyPerUnitUnit
