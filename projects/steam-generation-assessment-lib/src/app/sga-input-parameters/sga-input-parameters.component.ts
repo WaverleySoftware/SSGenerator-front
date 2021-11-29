@@ -1,7 +1,7 @@
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import { Component, ElementRef, EventEmitter, Input, OnDestroy, Output } from "@angular/core";
 import { FormGroup } from "@angular/forms";
 import { Subject } from "rxjs";
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, filter, takeUntil } from "rxjs/operators";
 import { Preference } from "sizing-shared-lib";
 import {
   FormFieldTypesInterface,
@@ -15,26 +15,49 @@ import { SteamGenerationAssessmentService } from "../steam-generation-assessment
   templateUrl: './sga-input-parameters.component.html',
   styleUrls: ['./sga-input-parameters.component.scss']
 })
-export class SgaInputParametersComponent implements OnInit {
+export class SgaInputParametersComponent implements OnDestroy {
   @Input() formGroup: FormGroup;
   @Input() moduleGroupId: number;
   @Output() changeFuelType: EventEmitter<SteamCalorificRequestInterface> = new EventEmitter<SteamCalorificRequestInterface>();
 
   public fuelType: Preference
   public fields: FormFieldTypesInterface;
-  public carbonEmissionUpdate = new Subject<string>();
+  public carbonEmissionUpdate$ = new Subject<string>();
+  public pressureTemperatureUpdate$ = new Subject<string>();
   public formGroupKey = 'steamGeneratorInputs'; // Form builder child formGroup key
 
-  constructor(private steamGenerationAssessmentService: SteamGenerationAssessmentService) {
+  private _ngUnsubscribe = new Subject<void>();
+
+  constructor(
+    private steamGenerationAssessmentService: SteamGenerationAssessmentService,
+    private elRef: ElementRef,
+  ) {
     this.fields = this.steamGenerationAssessmentService.getSgaFormFields();
 
     // Calculate Carbon emission
-    this.carbonEmissionUpdate
-      .pipe(debounceTime(800), distinctUntilChanged())
+    this.carbonEmissionUpdate$
+      .pipe(
+        takeUntil(this._ngUnsubscribe),
+        debounceTime(800),
+        distinctUntilChanged(),
+        filter(v => !!v && v !== 0)
+      )
       .subscribe(v => this._changeCarbonEmission(v));
+
+    this.pressureTemperatureUpdate$
+      .pipe(
+        takeUntil(this._ngUnsubscribe),
+        debounceTime(800),
+        distinctUntilChanged(),
+        filter(v => !!v && v !== 0)
+      )
+      .subscribe(v => this._changeSteamPressure(v));
   }
 
-  ngOnInit() {}
+  ngOnDestroy() {
+    this._ngUnsubscribe.next();
+    this._ngUnsubscribe.complete();
+  }
 
   /**
    * Clear fields value when user change radio or another variant
@@ -43,18 +66,8 @@ export class SgaInputParametersComponent implements OnInit {
     if (!clearFields.length) return;
 
     for (let fieldName of clearFields) {
-      const childFieldName = `${this.formGroupKey}.${fieldName}`;
-      if (this.formGroup.get(childFieldName).value || this.formGroup.get(childFieldName).value === "") {
-        this.setFormValue(childFieldName, setVal);
-      }
+      this.steamGenerationAssessmentService.setFormValue(fieldName, setVal);
     }
-  }
-
-  /**
-   * Set some FormGroup value from view
-   * **/
-  public setFormValue(name: string, value: any): void {
-    this.steamGenerationAssessmentService.setFormValue(name, value);
   }
 
   /**
@@ -99,13 +112,41 @@ export class SgaInputParametersComponent implements OnInit {
     this._disableFilled(name as keyof FormFieldTypesInterface);
 
     switch (name) {
-      case "fuelEnergyPerUnit": this.carbonEmissionUpdate.next(value); break;
+      case 'fuelEnergyPerUnit': this.carbonEmissionUpdate$.next(value); break;
+      case 'boilerSteamPressure': this.pressureTemperatureUpdate$.next(value); break;
     }
   }
 
-  private _changeCarbonEmission(fuelEnergyPerUnit): void {
-    if (!fuelEnergyPerUnit || fuelEnergyPerUnit === 0) return null;
+  public focusOnField(formControlName: keyof SteamGeneratorInputsInterface, isFocused: boolean = true): void {
+    if (isFocused) {
+      const field = this.elRef.nativeElement
+        .querySelector(`[ng-reflect-name="${formControlName}"] input[type="number"]`);
 
+      if (field && field.focus) {
+        setTimeout(() => field.focus(), 100);
+      }
+    }
+  }
+
+  private _changeSteamPressure(value): void {
+    const selectedUnits = this.steamGenerationAssessmentService.getSizingPreferenceValues({
+      temperatureUnitSelected: 'TemperatureUnit',
+      pressureUnitSelected: 'PressureUnit',
+    }) as { temperatureUnitSelected: number; pressureUnitSelected: number; };
+    const inputValues = this._getMultipleControlValues({
+      isSuperheatedSteam: 'isSuperheatedSteam',
+      boilerSteamPressure: 'boilerSteamPressure',
+      boilerSteamTemperature: 'boilerSteamTemperature',
+    }) as { isSuperheatedSteam: boolean; boilerSteamPressure: number; boilerSteamTemperature: number; };
+
+    this.steamGenerationAssessmentService.calculateSaturatedAndTemperature({...selectedUnits, ...inputValues})
+      .pipe(takeUntil(this._ngUnsubscribe), filter(res => res && (res.isValid === undefined || res.isValid)))
+      .subscribe(res => {
+        console.log(res, '-----_changeSteamPressure() [RESPONSE]');
+      });
+  }
+
+  private _changeCarbonEmission(fuelEnergyPerUnit): void {
     const { energyUnitSelected, smallWeightUnitSelected } = this.steamGenerationAssessmentService.getSizingPreferenceValues({
         energyUnitSelected: 'BoilerHouseEnergyUnits',
         smallWeightUnitSelected: 'WeightUnit'
@@ -128,13 +169,14 @@ export class SgaInputParametersComponent implements OnInit {
 
     this.steamGenerationAssessmentService
       .calculateCarbonEmission(req)
+      .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe((res) => this._setInputFormFields(res));
   }
 
   private _setInputFormFields(data: Partial<Record<keyof FormFieldTypesInterface, any>>): void {
     for (let formKey in data) {
       this.steamGenerationAssessmentService.changeSgaFieldFilled(formKey as keyof FormFieldTypesInterface, true);
-      this.setFormValue(formKey, data[formKey]);
+      this.steamGenerationAssessmentService.setFormValue(formKey, data[formKey]);
     }
   }
 

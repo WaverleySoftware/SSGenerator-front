@@ -1,5 +1,16 @@
-import { Component, EventEmitter, forwardRef, Input, Output } from "@angular/core";
-import { ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
+import {
+  AfterViewInit,
+  Component,
+  EventEmitter,
+  forwardRef,
+  Host,
+  Input,
+  OnInit,
+  Optional,
+  Output,
+  SkipSelf
+} from "@angular/core";
+import { AbstractControl, ControlContainer, ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
 import * as cloneDeep_ from 'lodash/cloneDeep';
 import { TranslationService } from "sizing-shared-lib";
 import { EnumListDefinitionInterface, EnumListInterface } from "../../interfaces/enum-list.interface";
@@ -16,16 +27,18 @@ import { EnumListDefinitionInterface, EnumListInterface } from "../../interfaces
     useExisting: forwardRef(() => FormListComponent),
   }]
 })
-export class FormListComponent implements ControlValueAccessor {
+export class FormListComponent implements ControlValueAccessor, AfterViewInit {
   @Input("enumeration-name") enumerationName: string;
   @Input("filter-by") filterBy: string[];
   @Input("opco-override") opCoOverride: boolean = false;
   @Input('value') internalValue: any;
   @Input() label: string;
+  @Input() formControlName: string;
   @Output("on-change") externalOnChange = new EventEmitter<{ selectedValue: string, itemsCount: number }>();
 
   public isDisabled: boolean;
   public cloneDeep = cloneDeep_;
+  private control: AbstractControl;
 
   get list(): EnumListDefinitionInterface[] {
     const enumeration: EnumListInterface = this.enumerationName && this.translationService.displayGroup
@@ -49,7 +62,19 @@ export class FormListComponent implements ControlValueAccessor {
   private onChange: any = (val: any) => {};
   public onTouched: any = () => {};
 
-  constructor(protected translationService: TranslationService) { }
+  constructor(
+    protected translationService: TranslationService,
+    @Optional() @Host() @SkipSelf() private controlContainer: ControlContainer,
+  ) { }
+
+  ngAfterViewInit() {
+    if (this.controlContainer && this.formControlName) {
+      this.control = this.controlContainer.control.get(this.formControlName);
+      if (!this.control.value && this.list && this.list.length) {
+        this.control.patchValue(this.list[0].id, { emitEvent: false });
+      }
+    }
+  }
 
   registerOnChange(fn: any): void {
     this.onChange = (newValue: string) => {
@@ -78,8 +103,8 @@ export class FormListComponent implements ControlValueAccessor {
   }
 
   updateValue(val: any): void {
-    // this.internalValue = Number.isNaN(Number(val)) ? val : (val && +val);
-    this.internalValue = parseInt(val);
+    console.log(this.internalValue, '----this.internalValue')
+    this.internalValue = val;
     this.onChange(this.internalValue);
     this.onTouched();
   }

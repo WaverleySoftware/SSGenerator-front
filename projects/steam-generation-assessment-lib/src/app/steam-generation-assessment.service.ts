@@ -2,9 +2,14 @@ import { Injectable } from "@angular/core";
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { Observable, Subject } from "rxjs";
 import {
-  FormFieldTypesInterface, SgaHttpValidationResponseInterface, SgaSizingModuleFormInterface,
+  FormFieldTypesInterface,
+  SgaHttpValidationResponseInterface,
+  SgaSaturatedTemperatureBodyInterface,
+  SgaSizingModuleFormInterface,
   SteamCalorificRequestInterface,
-  SteamCarbonEmissionInterface, SteamGeneratorInputsInterface, SteamGeneratorSelectedUnitsInterface,
+  SteamCarbonEmissionInterface,
+  SteamGeneratorInputsInterface,
+  SteamGeneratorSelectedUnitsInterface,
 } from "./steam-generation-form.interface";
 import { PreferenceService, Preference } from "sizing-shared-lib";
 import { SizingUnitPreference } from "../../../sizing-shared-lib/src/lib/shared/preference/sizing-unit-preference.model";
@@ -52,12 +57,10 @@ export class SteamGenerationAssessmentService {
       label: 'FUEL_COSTS_PER_YEAR',
       unitNames: ['BHCurrency'],
       translations: ['CURRENCY'],
-      required: true,
     },
     fuelConsumptionPerYear: {
       formControlName: 'fuelConsumptionPerYear',
       label: 'FUEL_CONSUMPTION_PER_YEAR',
-      required: true
     },
     // CO2 EMISSION
     carbonTaxLevyCostPerUnit: {
@@ -338,92 +341,76 @@ export class SteamGenerationAssessmentService {
     steamGeneratorInputs: Record<keyof SteamGeneratorInputsInterface, any>
   } = {
     selectedUnits: {
-      energyUnitSelected: [0],
-      smallWeightUnitSelected: [0],
-      emissionUnitSelected: [0],
-      volumeUnitSelected: [0],
-      massFlowUnitSelected: [0],
-      massFlowBoilerHouseUnitSelected: [0],
-      pressureUnitSelected: [0],
-      temperatureUnitSelected: [0],
+      energyUnitSelected: [0], // BoilerHouseEnergyUnits
+      smallWeightUnitSelected: [0], // WeightUnit
+      emissionUnitSelected: [0], // BoilerHouseEmissionUnits
+      volumeUnitSelected: [0], // BoilerHouseVolumeUnits
+      massFlowUnitSelected: [0], // MassFlowUnit
+      massFlowBoilerHouseUnitSelected: [0], // BoilerHouseMassFlowUnits
+      pressureUnitSelected: [0], // PressureUnit
+      temperatureUnitSelected: [0], // TemperatureUnit
     },
     steamGeneratorInputs: {
       hoursOfOperation: [8736, {
-        updateOn: 'blur',
         asyncValidators: SgaValidator.validateAsyncFn(this, 'hoursOfOperation'),
         validators: Validators.required
       }], // HOURS_OF_OPERATION
       isSteamFlowMeasured: [false], // IS_STEAM_FLOW_MEASURED
       isAutoTdsControlPResent: [false], // IS_AUTO_TDS_PRESENT
       boilerSteamGeneratedPerYear: [0], // STEAM_GENERATION_PER_YEAR
-      boilerSteamGeneratedPerYearUnit: [0], // UNIT
+      boilerSteamGeneratedPerYearUnit: [0], // STEAM_GENERATION_PER_YEAR - UNIT
       boilerSteamGeneratedPerHour: [0],  // STEAM_GENERATION_PER_HOUR
-      boilerSteamGeneratedPerHourUnit: [0], // UNIT
-      inputFuelId: [null,  {
-        updateOn: 'blur',
-        validators: Validators.required
-      }], // FUEL_TYPE
+      boilerSteamGeneratedPerHourUnit: [0], // STEAM_GENERATION_PER_HOUR - UNIT
+      inputFuelId: [null,  { validators: Validators.required }], // FUEL_TYPE
       inputFuelUnit: [null,  {
-        updateOn: 'blur',
         validators: Validators.required
       }], // UNIT 'LiquidFuelUnits' / 'GaseousFuelUnits' / 'SolidFuelUnits'
-      costOfFuelPerUnit: [0,  {
-        updateOn: 'blur',
+      costOfFuelPerUnit: [0.2226,  {
         asyncValidators: SgaValidator.validateAsyncFn(this,'costOfFuelPerUnit'),
         validators: Validators.required
       }], // COST_OF_FUEL_PER_UNIT
-      costOfFuelPerYear: [0, {
-        updateOn: 'blur',
+      fuelQtyPerYearIsKnown: [false], // IS_FUEL_CONSUMPTION_MEASURED
+      costOfFuelPerYear: [null, {
         asyncValidators: SgaValidator.validateAsyncFn(this,'costOfFuelPerYear'),
         validators: Validators.required
       }], // FUEL_COSTS_PER_YEAR : Original "Fuel Costs per Year"
-      fuelQtyPerYearIsKnown: [false], // IS_FUEL_CONSUMPTION_MEASURED
-      fuelConsumptionPerYear: [0, {
-        updateOn: 'blur',
+      fuelConsumptionPerYear: [null, {
         asyncValidators: SgaValidator.validateAsyncFn(this,'fuelConsumptionPerYear'),
         validators: Validators.required
       }], // FUEL_CONSUMPTION_PER_YEAR
       fuelEnergyPerUnit: [0, {
-        updateOn: 'blur',
         asyncValidators: SgaValidator.validateAsyncFn(this, 'fuelEnergyPerUnit'),
         validators: Validators.required
       }], // FUEL_CALORIFIC_VALUE
       fuelCarbonContent: [0, {
-        updateOn: 'blur',
         asyncValidators: SgaValidator.validateAsyncFn(this, 'fuelCarbonContent'),
         validators: Validators.required
       }], // CO2_EMISSIONS_PER_UNIT_FUEL
-      costOfWaterPerUnit: [0, {
-        updateOn: 'blur',
+      costOfWaterPerUnit: [1, {
         asyncValidators: SgaValidator.validateAsyncFn(this, 'costOfWaterPerUnit'),
         validators: Validators.required
       }], // COST_OF_WATER_FSLASH_UNIT
-      costOfEffluentPerUnit: [0, {
-        updateOn: 'blur',
+      costOfEffluentPerUnit: [0.5, {
         asyncValidators: SgaValidator.validateAsyncFn(this, 'costOfEffluentPerUnit'),
         validators: Validators.required
       }], // COST_OF_EFFLUENT_FSLASH_UNIT
       boilerHouseWaterQtyPerYearIsKnown: [false], // IS_WATER_ENTERING_THE_BOILER_HOUSE_MEASURED : Original IS_BOILER_HOUSE_WATER_MEASURED
       waterConsumptionPerYear: [0, {
-        updateOn: 'blur',
         asyncValidators: SgaValidator.validateAsyncFn(this, 'waterConsumptionPerYear'),
         validators: Validators.required
       }], // WATER_CONSUMPTION_YEAR : Original WATER_CONSUMPTION_PER_YEAR
       boilerWaterTreatmentChemicalCostsIsKnown: [false], // ARE_CHEMICAL_COST_KNOWN : Original IS_CHEMICAL_COSTS_PER_YEAR_KNOWN
       totalChemicalCostPerYear: [0, {
-        updateOn: 'blur',
         asyncValidators: SgaValidator.validateAsyncFn(this, 'totalChemicalCostPerYear'),
         validators: Validators.required
       }], // TOTAL_CHEMICAL_COSTS_PER_YEAR : Original TOTAL_CHEMICAL_COST_PER_YEAR
       costOfChemistsPerUnitOfWater: [0], // ------------
       o2ScavengingChemicalsCostSavings: [0], // O2_SCAVENGING_CHEMICALS_COST_SAVINGS
       carbonTaxLevyCostPerUnit: [0, {
-        updateOn: 'blur',
         asyncValidators: SgaValidator.validateAsyncFn(this, 'carbonTaxLevyCostPerUnit'),
         validators: Validators.required
       }], // CARBON_TAX_LEVY_COST_PER_UNIT
       costOfCo2PerUnitMass: [0, {
-        updateOn: 'blur',
         asyncValidators: SgaValidator.validateAsyncFn(this, 'costOfCo2PerUnitMass'),
         validators: Validators.required
       }], // COST_OF_CO2_PER_UNIT_MASS : Original "Cost of CO2 / Unit Mass"
@@ -431,13 +418,11 @@ export class SteamGenerationAssessmentService {
       isCoolingWaterUsed: [false], // IS_COOLING_WATER_USED
       isSuperheatedSteam: [false], // IS_SUPERHEATED_STEAM
       boilerEfficiency: [50, {
-        updateOn: 'blur',
         asyncValidators: SgaValidator.validateAsyncFn(this, 'boilerEfficiency'),
         validators: Validators.required
       }], // BOILER_EFFICIENCY
       isFeedWaterMeasured: [false], // IS_FEEDWATER_FLOWRATE_MEASURED
       boilerSteamPressure: [0, {
-        updateOn: 'blur',
         asyncValidators: SgaValidator.validateAsyncFn(this, 'boilerSteamPressure'),
         validators: Validators.required
       }], // STEAM_PRESSURE
@@ -449,7 +434,9 @@ export class SteamGenerationAssessmentService {
       isFlashVesselPresent: [false], // IS_FLASH_VESSEL_PRESENT
       isHeatExchangerPresent: [false], // IS_HEAT_EXCHANGER_PRESENT
       waterTemperatureLeavingHeatExchanger: [0], // WATER_TEMPERATURE_LEAVING_HEAT_EXCHANGER
-      waterTreatmentMethod: [0], // WATER_TREATMENT_METHOD
+      waterTreatmentMethod: [null, {
+        validators: Validators.required
+      }], // WATER_TREATMENT_METHOD
       percentageWaterRejection: [0], // PERCENTAGE_WATER_REJECTION
       percentageWaterRejectionUnit: [0], // UNIT ???????
       tdsOfMakeupWater: [0], // TDS_OF_MAKEUP_WATER
@@ -552,6 +539,18 @@ export class SteamGenerationAssessmentService {
 
   calculateCarbonEmission(data: SteamCarbonEmissionInterface): Observable<{ fuelCarbonContent: number }> {
     return this.http.post<any>('./Api/SteamGenerator/calculate-carbon-emission-value', data);
+  }
+
+  calculateSaturatedAndTemperature(data: SgaSaturatedTemperatureBodyInterface): Observable<any> {
+    return this.http.post('./Api/SteamGenerator/calculate-saturated-and-freezing-temperature', data);
+  }
+
+  calculateBoilerEfficiency(data: {isEconomizerPresent: boolean; inputFuelId: string;}): Observable<any> {
+    return this.http.post('./Api/SteamGenerator/calculate-boiler-efficiency', data);
+  }
+
+  calculateWaterTemperature(data: { temperatureUnitSelected: number }): Observable<any> {
+    return this.http.post('./Api/SteamGenerator/calculate-water-temperature-leaving-heat-exchanger', data);
   }
 
   public getSizingFormGroup(): FormGroup {
@@ -671,7 +670,7 @@ export class SteamGenerationAssessmentService {
     opt?: { emitEvent?: boolean, onlySelf?: boolean }
   ): void {
     const control = this._sizingFormGroup.get(`${formGroupName}.${formControlName}`);
-    const parsedValue = Number.isNaN(Number(value)) ? value : (value && +value);
+    const parsedValue = (Number.isNaN(Number(value)) ? value : (value && +value)) || null;
 
     if (control && (control.value !== parsedValue)) {
       console.groupCollapsed('%c  %c CHANGE FIELD:' + formControlName, 'background-color:green;margin-right:10px', 'background-color:transparent');

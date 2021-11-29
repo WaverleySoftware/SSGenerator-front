@@ -83,7 +83,7 @@ export class FormInputComponent implements ControlValueAccessor, AfterContentIni
 
   updateValue(insideValue: any) {
     this.error = null;
-    this.value = Number.isNaN(Number(insideValue)) ? insideValue : (insideValue && +insideValue);
+    this.value = (Number.isNaN(Number(insideValue)) ? insideValue : (insideValue && +insideValue)) || null;
     this.inputChange.emit({ name: this.formControlName, value: this.value});
     this.onChange(this.value);
     this.onTouched();
@@ -99,7 +99,9 @@ export class FormInputComponent implements ControlValueAccessor, AfterContentIni
 
   blurHandle(): void {
     this.onTouched();
-    this.error = this.required && !this.value && this.value !== 0 ? 'Required' : null;
+    if (!this.group) {
+      this.error = this.required && !this.value && this.value !== 0 ? 'Required' : null;
+    }
   }
 
   private getFormControl(): void {

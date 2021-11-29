@@ -72,7 +72,7 @@
                             [module-group-id]="moduleGroupId"
                             [required]="fields.costOfFuelPerYear.required"
                             [filled]="fields.costOfFuelPerYear.filled"
-                            (changeRadio)="clearValues(['fuelConsumptionPerYear'])"
+                            (changeRadio)="clearValues(['fuelConsumptionPerYear'], null)"
                             group="fuelQtyPerYearIsKnownGroup"
                             unit="/y"></form-input>
 
@@ -86,7 +86,7 @@
                             [required]="fields.fuelConsumptionPerYear.required"
                             [filled]="fields.fuelConsumptionPerYear.filled"
                             [module-group-id]="moduleGroupId"
-                            (changeRadio)="clearValues(['costOfFuelPerYear'])"
+                            (changeRadio)="clearValues(['costOfFuelPerYear'], null)"
                             group="fuelQtyPerYearIsKnownGroup"
                             unit="/yr"></form-input>
               </ng-container>
@@ -230,6 +230,7 @@
               <div body class="row">
                 <div class="col-md-6 border-r-md">
                   <form-toggle [formControlName]="fields.isSuperheatedSteam.formControlName"
+                               (valueChange)="clearValues(['boilerSteamTemperature', null]); focusOnField('boilerSteamTemperature', $event);"
                                [label]="fields.isSuperheatedSteam.label" #isSuperheatedSteamRef></form-toggle>
 
                   <form-toggle [formControlName]="fields.isSteamFlowMeasured.formControlName"
@@ -271,6 +272,7 @@
                               [filled]="fields.boilerSteamTemperature.filled"></form-input>
 
                   <form-input [formControlName]="fields.boilerSteamPressure.formControlName"
+                              (inputChange)="inputChangeHandle($event)"
                               [label]="fields.boilerSteamPressure.label"
                               [unit-names]="fields.boilerSteamPressure.unitNames"
                               [unit-types]="fields.boilerSteamPressure.unitTypes"
