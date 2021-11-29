@@ -84,6 +84,10 @@ export class Enumeration {
  * The EnumerationDefinition model class.
  */
 export class EnumerationDefinition {
+  /**
+   * Gets item ID.
+   */
+  id: string | number;
 
   /**
      * Gets or sets the masterTextKey.
@@ -104,7 +108,7 @@ export class EnumerationDefinition {
    * Gets or sets the extraPostText.
    * Usefull to augment append data, such as pricing helpers in list items (CSG).
    */
-  extraPostText: string; 
+  extraPostText: string;
 
   /**
   * Gets or sets the value.

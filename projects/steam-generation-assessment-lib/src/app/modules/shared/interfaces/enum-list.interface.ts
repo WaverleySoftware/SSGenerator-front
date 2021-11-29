@@ -24,6 +24,10 @@ export class EnumListInterface {
  * The EnumerationDefinition model class.
  */
 export class EnumListDefinitionInterface {
+  /**
+   * Gets item ID.
+   */
+  id: string | number;
 
   /**
    * Gets or sets the masterTextKey.

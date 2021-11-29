@@ -8,9 +8,7 @@ import {
   SkipSelf
 } from "@angular/core";
 import { AbstractControl, ControlContainer, ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
-import { TranslationService, PreferenceService } from "sizing-shared-lib";
-import { EnumListDefinitionInterface, EnumListInterface } from "../../modules/shared/interfaces/enum-list.interface";
-import { Preference } from "../../../../../sizing-shared-lib/src/lib/shared/preference/preference.model";
+import { TranslationService, PreferenceService, Enumeration, EnumerationDefinition, Preference } from "sizing-shared-lib";
 import { SteamGenerationAssessmentService } from "../../steam-generation-assessment.service";
 
 @Component({
@@ -29,8 +27,8 @@ export class FuelTypeFieldComponent implements ControlValueAccessor, OnInit {
   @Input("module-group-id") moduleGroupId: number = 9;
   @Input() label: string = 'FUEL_TYPE';
 
-  get list(): EnumListDefinitionInterface[] {
-    const enumeration: EnumListInterface = this.translationService.displayGroup
+  get list(): EnumerationDefinition[] {
+    const enumeration: Enumeration = this.translationService.displayGroup
       && this.translationService.displayGroup.enumerations.find(({ enumerationName, opCoOverride }) => {
         return enumerationName === 'FuelTypeList_BoilerHouseInput' && opCoOverride === this.opCoOverride;
       });
@@ -59,7 +57,7 @@ export class FuelTypeFieldComponent implements ControlValueAccessor, OnInit {
 
   public isDisabled: boolean;
   public isTouched: boolean;
-  public ngModel: EnumListDefinitionInterface;
+  public ngModel: EnumerationDefinition;
   private control;
   private unitControl;
   private formControlName: string = 'inputFuelId';
@@ -90,15 +88,14 @@ export class FuelTypeFieldComponent implements ControlValueAccessor, OnInit {
   }
 
   public compareWith(a: any, b: any): boolean {
-    const fieldName: keyof EnumListDefinitionInterface = 'value';
+    const fieldName: keyof EnumerationDefinition = 'id';
 
     return a && a[fieldName] && b && b[fieldName] && a[fieldName] === b[fieldName];
   }
 
-  public updateValue(item: EnumListDefinitionInterface): void {
+  public updateValue(item: EnumerationDefinition): void {
     this.fuelTypeName = SteamGenerationAssessmentService.getFuelTypeName(item && item.value);
-
-    this.setFormValue(item.value, this.preference && this.preference.value);
+    this.setFormValue(item.id, this.preference && this.preference.value);
     this.preference && this.preferenceChange.emit(this.preference);
   }
 
