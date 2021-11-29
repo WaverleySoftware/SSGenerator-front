@@ -7,7 +7,7 @@
           [(ngModel)]="ngModel"
           [compareWith]="compareWith">
     <option *ngFor="let item of list; let i = index" [ngValue]="item">
-      {{item.translationText}}
+      {{item?.translationText}}{{item?.extraPostText}}
     </option>
   </select>
 </div>
