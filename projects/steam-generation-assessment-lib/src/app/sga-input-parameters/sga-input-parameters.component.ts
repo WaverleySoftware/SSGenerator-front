@@ -40,7 +40,7 @@ export class SgaInputParametersComponent implements OnDestroy {
         takeUntil(this._ngUnsubscribe),
         debounceTime(800),
         distinctUntilChanged(),
-        filter(v => !!v && v !== 0)
+        filter(v => !!v)
       )
       .subscribe(v => this._changeCarbonEmission(v));
 
@@ -49,7 +49,7 @@ export class SgaInputParametersComponent implements OnDestroy {
         takeUntil(this._ngUnsubscribe),
         debounceTime(800),
         distinctUntilChanged(),
-        filter(v => !!v && v !== 0)
+        filter(v => !!v)
       )
       .subscribe(v => this._changeSteamPressure(v));
   }

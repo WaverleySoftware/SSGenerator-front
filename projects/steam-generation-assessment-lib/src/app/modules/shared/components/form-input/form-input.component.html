@@ -1,16 +1,19 @@
 <div class="formField"
      [ngClass]="{
-      error: !!error || !!control?.errors,
       filled: filled !== undefined && filled !== false,
       touched: touched,
-      disabled: disabled || (!!group && !radioInputRef.checked),
+      disabled: disabled,
       radio: !!group || !!radioWrapper?.innerHTML?.trim(),
-      pending: control?.pending
+      pending: control?.pending,
+      invalid: control?.touched && (error || control?.errors),
+      valid: control?.touched && control?.dirty && !error && !control?.errors,
+      required: required || control?.errors?.required,
+      focus: focus
      }">
   <!--  LABEL -->
   <label *ngIf="!!label" class="formField-label">{{label | translate}}</label>
 
-  <div class="formField-row" [ngClass]="{focus: focus}">
+  <div class="formField-row">
     <!--  RADIO CHECK -->
     <span class="formField-radio">
       <span #radioWrapper><ng-content select="[radio]"></ng-content></span>
@@ -18,6 +21,7 @@
              (change)="changeRadioInput({ref: radioInputRef, group: group})"
              [value]="value"
              [name]="group"
+             [checked]="!disabled"
              #radioInputRef>
     </span>
 
@@ -30,9 +34,7 @@
            [moduleGroupId]="moduleGroupId"
            #inputRef
            [type]="type"
-           [required]="group ? (required && radioInputRef.checked) : required"
-           [disabled]="disabled || (!!group && !radioInputRef.checked)"
-           [ngClass]="{filled: filled !== undefined && filled !== false}"
+           [disabled]="disabled"
            (focusin)="focus = true"
            (focusout)="touched = true; focus = false;"
            (blur)="blurHandle()"
@@ -56,7 +58,7 @@
     <ng-container *ngIf="control.errors?.error">
       {{control.errors?.error | translate}}
     </ng-container>
-    <ng-container *ngIf="control.errors?.required">{{'REQUIRED_FIELD' | translate}}</ng-container>
+    <ng-container *ngIf="control.errors?.required && control.touched">{{'REQUIRED_FIELD' | translate}}</ng-container>
     <ng-container *ngIf="control.errors?.message">{{control.errors?.message}}</ng-container>
   </span>
   <ng-template #messageTemplate>
