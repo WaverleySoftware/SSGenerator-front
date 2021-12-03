@@ -373,12 +373,10 @@ export class SteamGenerationAssessmentService {
       }], // COST_OF_FUEL_PER_UNIT
       fuelQtyPerYearIsKnown: [false, SgaValidator.fuelQtyPerYearIsKnown], // IS_FUEL_CONSUMPTION_MEASURED
       costOfFuelPerYear: [null, {
-        // updateOn: 'blur',
         validators: Validators.required,
         asyncValidators: SgaValidator.validateAsyncFn(this,'costOfFuelPerYear', true),
       }], // FUEL_COSTS_PER_YEAR : Original "Fuel Costs per Year"
       fuelConsumptionPerYear: [null, {
-        // updateOn: 'blur',
         validators: Validators.required,
         asyncValidators: SgaValidator.validateAsyncFn(this,'fuelConsumptionPerYear', true),
       }], // FUEL_CONSUMPTION_PER_YEAR
@@ -395,10 +393,10 @@ export class SteamGenerationAssessmentService {
         asyncValidators: SgaValidator.validateAsyncFn(this, 'costOfEffluentPerUnit'),
         validators: Validators.required
       }], // COST_OF_EFFLUENT_FSLASH_UNIT
-      boilerHouseWaterQtyPerYearIsKnown: [false], // IS_WATER_ENTERING_THE_BOILER_HOUSE_MEASURED : Original IS_BOILER_HOUSE_WATER_MEASURED
-      waterConsumptionPerYear: [0, {
+      boilerHouseWaterQtyPerYearIsKnown: [false, SgaValidator.boilerHouseWaterQtyPerYearIsKnown], // IS_WATER_ENTERING_THE_BOILER_HOUSE_MEASURED : Original IS_BOILER_HOUSE_WATER_MEASURED
+      waterConsumptionPerYear: [null, {
+        validators: Validators.required,
         asyncValidators: SgaValidator.validateAsyncFn(this, 'waterConsumptionPerYear'),
-        validators: Validators.required
       }], // WATER_CONSUMPTION_YEAR : Original WATER_CONSUMPTION_PER_YEAR
       boilerWaterTreatmentChemicalCostsIsKnown: [false], // ARE_CHEMICAL_COST_KNOWN : Original IS_CHEMICAL_COSTS_PER_YEAR_KNOWN
       totalChemicalCostPerYear: [0, {

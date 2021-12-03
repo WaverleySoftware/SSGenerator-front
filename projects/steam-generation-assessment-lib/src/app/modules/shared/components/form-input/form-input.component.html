@@ -21,7 +21,7 @@
              (change)="changeRadioInput({ref: radioInputRef, group: group})"
              [value]="value"
              [name]="group"
-             [checked]="!disabled"
+             [checked]="disabled === false"
              #radioInputRef>
     </span>
 

@@ -139,12 +139,14 @@
                          [label]="fields.boilerHouseWaterQtyPerYearIsKnown.label">
               <ng-container yes>
                 <form-input label="COST_OF_WATER_PER_YEAR"
+                            [disabled]="true"
                             unit="???/y"
                             group="isWaterEnteringBoilerHouseMeasured"
                             (changeRadio)="clearValues(['waterConsumptionPerYear'])"
                             required></form-input>
 
                 <form-input label="WATER_CONSUMPTION_HOUR"
+                            [disabled]="true"
                             unit="???/h"
                             group="isWaterEnteringBoilerHouseMeasured"
                             (changeRadio)="clearValues(['waterConsumptionPerYear'])"

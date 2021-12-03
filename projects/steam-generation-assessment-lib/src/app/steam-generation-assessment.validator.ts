@@ -1,4 +1,4 @@
-import { AbstractControl, AsyncValidatorFn, FormGroup, ValidationErrors } from "@angular/forms";
+import { AbstractControl, AsyncValidatorFn, FormGroup, ValidationErrors, Validators } from "@angular/forms";
 import { Observable, of, timer } from "rxjs";
 import { map, first, switchMap, catchError } from "rxjs/operators";
 import { SteamGenerationAssessmentService } from "./steam-generation-assessment.service";
@@ -16,13 +16,25 @@ export class SgaValidator {
       const fuelConsumptionPerYear = fg.get('fuelConsumptionPerYear');
 
       if (control.value) {
-        costOfFuelPerYear.enable({ onlySelf: true });
+        SgaValidator.toggleFields(costOfFuelPerYear, true);
       } else {
-        !costOfFuelPerYear.disabled && costOfFuelPerYear.disable({ onlySelf: true });
+        SgaValidator.toggleFields([costOfFuelPerYear, fuelConsumptionPerYear]);
         costOfFuelPerYear.value && costOfFuelPerYear.setValue(null, { onlySelf: true });
-        !fuelConsumptionPerYear.disabled && fuelConsumptionPerYear.disable({ onlySelf: true });
         fuelConsumptionPerYear.value && fuelConsumptionPerYear.setValue(null, { onlySelf: true });
       }
+    }
+
+    return null;
+  }
+
+  static boilerHouseWaterQtyPerYearIsKnown(control: AbstractControl): ValidationErrors {
+    const fg = control && control.parent;
+
+    if (fg && !control.value) {
+      const waterConsumptionPerYear = fg.get('waterConsumptionPerYear');
+
+      !waterConsumptionPerYear.disabled && waterConsumptionPerYear.disable({ onlySelf: true });
+      waterConsumptionPerYear.value && waterConsumptionPerYear.setValue(null, { onlySelf: true });
     }
 
     return null;
@@ -115,5 +127,24 @@ export class SgaValidator {
   private static _checkSameValues(value: any, prevValue: any): boolean {
     if (!prevValue) return false;
     return (value === prevValue);
+  }
+
+  private static toggleFields(fields: AbstractControl | AbstractControl[], isEnable: boolean = false): void {
+    const toggleFn = (control: AbstractControl) => {
+      if (isEnable) {
+        control && control.disabled && control.enable({ onlySelf: true });
+      } else {
+        control && control.enabled && control.disable({ onlySelf: true });
+        control && control.value && control.setValue(null, { onlySelf: true });
+      }
+    }
+
+    if (Array.isArray(fields)) {
+      for (let field of fields) {
+        toggleFn(field);
+      }
+    } else {
+      toggleFn(fields);
+    }
   }
 }
