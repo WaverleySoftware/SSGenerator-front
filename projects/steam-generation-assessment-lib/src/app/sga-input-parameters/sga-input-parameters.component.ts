@@ -1,5 +1,5 @@
 import { Component, ElementRef, EventEmitter, Input, OnDestroy, Output } from "@angular/core";
-import { FormGroup } from "@angular/forms";
+import { AbstractControl, FormGroup } from "@angular/forms";
 import { Subject } from "rxjs";
 import { debounceTime, distinctUntilChanged, filter, takeUntil } from "rxjs/operators";
 import { Preference } from "sizing-shared-lib";
@@ -126,6 +126,18 @@ export class SgaInputParametersComponent implements OnDestroy {
         setTimeout(() => field.focus(), 100);
       }
     }
+  }
+
+  /**
+   * @name isRequired check is field has required validator
+   * @param {string} controlName name of Inputs form field
+   * @returns {boolean} is has Validators.required
+   * */
+  public isRequired(controlName: keyof SteamGeneratorInputsInterface): boolean {
+    const control = this.formGroup.get(`${this.formGroupKey}.${controlName}`);
+    const validator = control && control.validator && control.validator({} as AbstractControl);
+
+    return validator && validator.required;
   }
 
   private _changeSteamPressure(value): void {

@@ -37,6 +37,19 @@ export class SgaValidator {
     return null;
   }
 
+  static boilerWaterTreatmentChemicalCostsIsKnown(control: AbstractControl): ValidationErrors {
+    const fg = control && control.parent;
+
+    if (fg) {
+      const totalChemicalCostPerYear = fg.get('totalChemicalCostPerYear');
+      const o2ScavengingChemicalsCostSavings = fg.get('o2ScavengingChemicalsCostSavings');
+
+      SgaValidator.toggleFields([totalChemicalCostPerYear, o2ScavengingChemicalsCostSavings], control.value);
+    }
+
+    return null;
+  }
+
   static validateAsyncFn(service: SteamGenerationAssessmentService, name?: keyof SteamGeneratorInputsInterface, isNullable?: boolean): AsyncValidatorFn {
     return function (control): Observable<ValidationErrors> {
       if (control && !SgaValidator.beforeValue[name] && !control.dirty && control.untouched) {
@@ -54,14 +67,16 @@ export class SgaValidator {
         !control.dirty && control.untouched
       ) return of(null);
 
+      console.log(control.value, name, '----VALIDATOR')
       return timer(500).pipe(
         switchMap(() => {
           const { root, value } = control;
+          const validator = control.validator({} as AbstractControl);
           const isFilled = service.checkSgaFieldIsFilled(name);
           const isTheSameValue = SgaValidator._checkSameValues(value, SgaValidator.beforeValue[name]);
 
           if (isFilled || !root || !root.value || isTheSameValue || control.disabled) return of(null);
-          if (!value && !isNullable) return of({ required: true });
+          if (!value && !isNullable && validator && validator.required) return of({ required: true });
 
           SgaValidator.beforeValue[name] = value;
 

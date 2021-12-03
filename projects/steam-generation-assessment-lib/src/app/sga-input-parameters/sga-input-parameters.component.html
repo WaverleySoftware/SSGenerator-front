@@ -11,7 +11,7 @@
                     [unit-types]="fields.hoursOfOperation.unitTypes"
                     [unit-translations]="fields.hoursOfOperation.translations"
                     [unit-controls]="fields.hoursOfOperation.controlNames"
-                    [required]="fields.hoursOfOperation.required"
+                    [required]="isRequired('hoursOfOperation')"
                     [(filled)]="fields.hoursOfOperation.filled"
                     [module-group-id]="moduleGroupId"></form-input>
       </div>
@@ -33,7 +33,7 @@
                         [unit-types]="fields.fuelEnergyPerUnit.unitTypes"
                         [unit-translations]="fields.fuelEnergyPerUnit?.translations"
                         [unit-controls]="fields.fuelEnergyPerUnit?.controlNames"
-                        [required]="fields.fuelEnergyPerUnit.required"
+                        [required]="isRequired('fuelEnergyPerUnit')"
                         [(filled)]="fields.fuelEnergyPerUnit.filled"
                         [module-group-id]="moduleGroupId"
                         (inputChange)="inputChangeHandle($event)"> </form-input>
@@ -46,7 +46,7 @@
                         [unit-controls]="fields.fuelCarbonContent.controlNames"
                         [module-group-id]="moduleGroupId"
                         [(filled)]="fields.fuelCarbonContent.filled"
-                        [required]="fields.fuelCarbonContent.required"
+                        [required]="isRequired('fuelCarbonContent')"
                         (inputChange)="inputChangeHandle($event)"></form-input>
 
             <form-input [formControlName]="fields.costOfFuelPerUnit.formControlName"
@@ -57,7 +57,7 @@
                         [unit-controls]="fields.costOfFuelPerUnit?.controlNames"
                         [module-group-id]="moduleGroupId"
                         [(filled)]="fields.costOfFuelPerUnit.filled"
-                        [required]="fields.costOfFuelPerUnit.required"></form-input>
+                        [required]="isRequired('costOfFuelPerUnit')"></form-input>
 
             <form-toggle [formControlName]="fields.fuelQtyPerYearIsKnown.formControlName"
                          [label]="fields.fuelQtyPerYearIsKnown.label">
@@ -69,7 +69,7 @@
                             [unit-controls]="fields.costOfFuelPerYear?.controlNames"
                             [unit-translations]="fields.costOfFuelPerYear?.translations"
                             [module-group-id]="moduleGroupId"
-                            [required]="fields.costOfFuelPerYear.required"
+                            [required]="isRequired('costOfFuelPerYear')"
                             [(filled)]="fields.costOfFuelPerYear.filled"
                             [groupControls]="['fuelConsumptionPerYear']"
                             group="fuelQtyPerYearIsKnownGroup"
@@ -80,7 +80,7 @@
                             [unit-types]="fields.fuelConsumptionPerYear.unitTypes"
                             [unit-translations]="fields.fuelConsumptionPerYear.translations"
                             [unit-controls]="fields.fuelConsumptionPerYear.controlNames"
-                            [required]="fields.fuelConsumptionPerYear.required"
+                            [required]="isRequired('fuelConsumptionPerYear')"
                             [(filled)]="fields.fuelConsumptionPerYear.filled"
                             [groupControls]="['costOfFuelPerYear']"
                             [module-group-id]="moduleGroupId"
@@ -105,7 +105,7 @@
                             [unit-translations]="fields.carbonTaxLevyCostPerUnit.translations"
                             [unit-controls]="fields.carbonTaxLevyCostPerUnit.controlNames"
                             [module-group-id]="moduleGroupId"
-                            [required]="fields.carbonTaxLevyCostPerUnit.required"
+                            [required]="isRequired('carbonTaxLevyCostPerUnit')"
                             group="emissions-taxed"></form-input>
 
                 <form-input [formControlName]="fields.costOfCo2PerUnitMass.formControlName"
@@ -115,7 +115,7 @@
                             [unit-translations]="fields.costOfCo2PerUnitMass.translations"
                             [unit-controls]="fields.costOfCo2PerUnitMass.controlNames"
                             [module-group-id]="moduleGroupId"
-                            [required]="fields.costOfCo2PerUnitMass.required"
+                            [required]="isRequired('costOfCo2PerUnitMass')"
                             group="emissions-taxed"></form-input>
               </ng-container>
             </form-toggle>
@@ -132,7 +132,7 @@
                         [unit-types]="fields.costOfWaterPerUnit.unitTypes"
                         [unit-translations]="fields.costOfWaterPerUnit.translations"
                         [unit-controls]="fields.costOfWaterPerUnit.controlNames"
-                        [required]="fields.costOfWaterPerUnit.required"
+                        [required]="isRequired('costOfWaterPerUnit')"
                         [(filled)]="fields.costOfWaterPerUnit.filled"></form-input>
 
             <form-toggle [formControlName]="fields.boilerHouseWaterQtyPerYearIsKnown.formControlName"
@@ -142,7 +142,8 @@
                             type="text"
                             [value]="'no form field'"
                             [disabled]="true"
-                            unit="???/y"
+                            [required]="true"
+                            unit="£/y"
                             group="isWaterEnteringBoilerHouseMeasured"
                             required></form-input>
 
@@ -150,7 +151,8 @@
                             type="text"
                             [value]="'no form field'"
                             [disabled]="true"
-                            unit="???/h"
+                            [required]="true"
+                            unit="m3/h"
                             group="isWaterEnteringBoilerHouseMeasured"
                             required></form-input>
 
@@ -160,7 +162,7 @@
                             [unit-types]="fields.waterConsumptionPerYear.unitTypes"
                             [unit-translations]="fields.waterConsumptionPerYear.translations"
                             [unit-controls]="fields.waterConsumptionPerYear.controlNames"
-                            [required]="fields.waterConsumptionPerYear.required"
+                            [required]="isRequired('waterConsumptionPerYear')"
                             [(filled)]="fields.waterConsumptionPerYear.filled"
                             group="isWaterEnteringBoilerHouseMeasured"
                             unit="/y"></form-input>
@@ -180,7 +182,7 @@
                             [unit-types]="fields.totalChemicalCostPerYear.unitTypes"
                             [unit-translations]="fields.totalChemicalCostPerYear.translations"
                             [unit-controls]="fields.totalChemicalCostPerYear.controlNames"
-                            [required]="fields.totalChemicalCostPerYear.required"
+                            [required]="isRequired('totalChemicalCostPerYear')"
                             [(filled)]="fields.totalChemicalCostPerYear.filled"
                             unit="/y"></form-input>
                 <form-input [formControlName]="fields.o2ScavengingChemicalsCostSavings.formControlName"
@@ -205,7 +207,7 @@
                         [unit-types]="fields.costOfEffluentPerUnit.unitTypes"
                         [unit-translations]="fields.costOfEffluentPerUnit.translations"
                         [unit-controls]="fields.costOfEffluentPerUnit.controlNames"
-                        [required]="fields.costOfEffluentPerUnit.required"
+                        [required]="isRequired('costOfEffluentPerUnit')"
                         [(filled)]="fields.costOfEffluentPerUnit.filled"></form-input>
           </div>
         </sga-panel>
@@ -242,7 +244,7 @@
                                   [unit-types]="fields.boilerSteamGeneratedPerHour.unitTypes"
                                   [unit-translations]="fields.boilerSteamGeneratedPerHour.translations"
                                   [unit-controls]="fields.boilerSteamGeneratedPerHour.controlNames"
-                                  [required]="fields.boilerSteamGeneratedPerHour.required"
+                                  [required]="isRequired('boilerSteamGeneratedPerHour')"
                                   [(filled)]="fields.boilerSteamGeneratedPerHour.filled"
                                   (changeRadio)="clearValues(['boilerSteamGeneratedPerYear'])"
                                   group="boilerSteamGeneratedTime"></form-input>
@@ -253,7 +255,7 @@
                                   [unit-types]="fields.boilerSteamGeneratedPerYear.unitTypes"
                                   [unit-translations]="fields.boilerSteamGeneratedPerYear.translations"
                                   [unit-controls]="fields.boilerSteamGeneratedPerYear.controlNames"
-                                  [required]="fields.boilerSteamGeneratedPerYear.required"
+                                  [required]="isRequired('boilerSteamGeneratedPerHour')"
                                   [(filled)]="fields.boilerSteamGeneratedPerYear.filled"
                                   (changeRadio)="clearValues(['boilerSteamGeneratedPerHour'])"
                                   group="boilerSteamGeneratedTime"></form-input>
@@ -278,7 +280,7 @@
                               [unit-types]="fields.boilerSteamPressure.unitTypes"
                               [unit-translations]="fields.boilerSteamPressure.translations"
                               [unit-controls]="fields.boilerSteamPressure.controlNames"
-                              [required]="fields.boilerSteamPressure.required"
+                              [required]="isRequired('boilerSteamPressure')"
                               [(filled)]="fields.boilerSteamPressure.filled"></form-input>
 
                   <form-toggle formControlName="isEconomizerPresent" label="IS_ECONOMISER_PRESENT"></form-toggle>
@@ -289,7 +291,7 @@
                               [unit-types]="fields.boilerEfficiency.unitTypes"
                               [unit-translations]="fields.boilerEfficiency.translations"
                               [unit-controls]="fields.boilerEfficiency.controlNames"
-                              [required]="fields.boilerEfficiency.required"
+                              [required]="isRequired('boilerEfficiency')"
                               [(filled)]="fields.boilerEfficiency.filled"
                               unit="%"></form-input>
                 </div>
@@ -325,7 +327,7 @@
                                 [unit-types]="fields.waterTemperatureLeavingHeatExchanger.unitTypes"
                                 [unit-translations]="fields.waterTemperatureLeavingHeatExchanger.translations"
                                 [unit-controls]="fields.waterTemperatureLeavingHeatExchanger.controlNames"
-                                [required]="fields.waterTemperatureLeavingHeatExchanger.required"
+                                [required]="isRequired('waterTemperatureLeavingHeatExchanger')"
                                 [(filled)]="fields.waterTemperatureLeavingHeatExchanger.filled"></form-input>
                   </form-toggle>
                 </div>
@@ -343,7 +345,7 @@
                               [unit-types]="fields.tdsOfFeedwaterInFeedtank.unitTypes"
                               [unit-translations]="fields.tdsOfFeedwaterInFeedtank.translations"
                               [unit-controls]="fields.tdsOfFeedwaterInFeedtank.controlNames"
-                              [required]="fields.tdsOfFeedwaterInFeedtank.required"
+                              [required]="isRequired('tdsOfFeedwaterInFeedtank')"
                               [(filled)]="fields.tdsOfFeedwaterInFeedtank.filled"></form-input>
                 </div>
                 <div class="col-md-4 border-r-md">
@@ -353,7 +355,7 @@
                               [unit-types]="fields.boilerAverageTds.unitTypes"
                               [unit-translations]="fields.boilerAverageTds.translations"
                               [unit-controls]="fields.boilerAverageTds.controlNames"
-                              [required]="fields.boilerAverageTds.required"
+                              [required]="isRequired('boilerAverageTds')"
                               [(filled)]="fields.boilerAverageTds.filled"></form-input>
                 </div>
                 <div class="col-md-4">
@@ -363,7 +365,7 @@
                               [unit-types]="fields.boilerMaxTds.unitTypes"
                               [unit-translations]="fields.boilerMaxTds.translations"
                               [unit-controls]="fields.boilerMaxTds.controlNames"
-                              [required]="fields.boilerMaxTds.required"
+                              [required]="isRequired('boilerMaxTds')"
                               [(filled)]="fields.boilerMaxTds.filled"></form-input>
                 </div>
               </div>
@@ -393,7 +395,7 @@
                               [unit-types]="fields.makeupWaterAmount.unitTypes"
                               [unit-translations]="fields.makeupWaterAmount.translations"
                               [unit-controls]="fields.makeupWaterAmount.controlNames"
-                              [required]="fields.makeupWaterAmount.required"
+                              [required]="isRequired('makeupWaterAmount')"
                               [(filled)]="fields.makeupWaterAmount.filled"
                               (changeRadio)="clearValues(['makeupWaterAmount'])"
                               unit="/h"
@@ -429,7 +431,7 @@
                               [unit-types]="fields.percentageWaterRejection.unitTypes"
                               [unit-translations]="fields.percentageWaterRejection.translations"
                               [unit-controls]="fields.percentageWaterRejection.controlNames"
-                              [required]="fields.percentageWaterRejection.required"
+                              [required]="isRequired('percentageWaterRejection')"
                               [(filled)]="fields.percentageWaterRejection.filled"
                               unit="%"></form-input>
                 </div>
@@ -440,7 +442,7 @@
                               [unit-types]="fields.tdsOfMakeupWater.unitTypes"
                               [unit-translations]="fields.tdsOfMakeupWater.translations"
                               [unit-controls]="fields.tdsOfMakeupWater.controlNames"
-                              [required]="fields.tdsOfMakeupWater.required"
+                              [required]="isRequired('tdsOfMakeupWater')"
                               [(filled)]="fields.tdsOfMakeupWater.filled"></form-input>
                 </div>
               </div>
@@ -483,7 +485,7 @@
                                   [unit-types]="fields.boilerFeedwaterConsumption.unitTypes"
                                   [unit-translations]="fields.boilerFeedwaterConsumption.translations"
                                   [unit-controls]="fields.boilerFeedwaterConsumption.controlNames"
-                                  [required]="fields.boilerFeedwaterConsumption.required"
+                                  [required]="isRequired('boilerFeedwaterConsumption')"
                                   [(filled)]="fields.boilerFeedwaterConsumption.filled"
                                   (changeRadio)="clearValues(['boilerFeedwaterConsumption'])"
                                   unit="/h"
@@ -510,7 +512,7 @@
                               [unit-types]="fields.temperatureOfFeedtank.unitTypes"
                               [unit-translations]="fields.temperatureOfFeedtank.translations"
                               [unit-controls]="fields.temperatureOfFeedtank.controlNames"
-                              [required]="fields.temperatureOfFeedtank.required"
+                              [required]="isRequired('temperatureOfFeedtank')"
                               [(filled)]="fields.temperatureOfFeedtank.filled"></form-input>
 
                   <form-input [formControlName]="fields.tdsOfFeedwaterInFeedtank.formControlName"
@@ -519,7 +521,7 @@
                               [unit-types]="fields.tdsOfFeedwaterInFeedtank.unitTypes"
                               [unit-translations]="fields.tdsOfFeedwaterInFeedtank.translations"
                               [unit-controls]="fields.tdsOfFeedwaterInFeedtank.controlNames"
-                              [required]="fields.tdsOfFeedwaterInFeedtank.required"
+                              [required]="isRequired('tdsOfFeedwaterInFeedtank')"
                               [(filled)]="fields.tdsOfFeedwaterInFeedtank.filled"></form-input>
 
                   <form-toggle [formControlName]="fields.areChemicalsAddedDirectlyToFeedtank.formControlName"
@@ -535,7 +537,7 @@
                                 [unit-types]="fields.pressureOfSteamSupplyingDsi.unitTypes"
                                 [unit-translations]="fields.pressureOfSteamSupplyingDsi.translations"
                                 [unit-controls]="fields.pressureOfSteamSupplyingDsi.controlNames"
-                                [required]="fields.pressureOfSteamSupplyingDsi.required"
+                                [required]="isRequired('pressureOfSteamSupplyingDsi')"
                                 [(filled)]="fields.pressureOfSteamSupplyingDsi.filled"></form-input>
                   </form-toggle>
                 </div>
@@ -554,7 +556,7 @@
                                   [unit-types]="fields.percentageOfCondensateReturn.unitTypes"
                                   [unit-translations]="fields.percentageOfCondensateReturn.translations"
                                   [unit-controls]="fields.percentageOfCondensateReturn.controlNames"
-                                  [required]="fields.percentageOfCondensateReturn.required"
+                                  [required]="isRequired('percentageOfCondensateReturn')"
                                   [(filled)]="fields.percentageOfCondensateReturn.filled"
                                   unit="%"
                                   group="isCondensateReturnKnown"></form-input>
@@ -579,7 +581,7 @@
                               [unit-types]="fields.temperatureOfCondensateReturn.unitTypes"
                               [unit-translations]="fields.temperatureOfCondensateReturn.translations"
                               [unit-controls]="fields.temperatureOfCondensateReturn.controlNames"
-                              [required]="fields.temperatureOfCondensateReturn.required"
+                              [required]="isRequired('temperatureOfCondensateReturn')"
                               [(filled)]="fields.temperatureOfCondensateReturn.filled"></form-input>
 
                   <form-input [formControlName]="fields.tdsOfCondensateReturn.formControlName"
@@ -588,7 +590,7 @@
                               [unit-types]="fields.tdsOfCondensateReturn.unitTypes"
                               [unit-translations]="fields.tdsOfCondensateReturn.translations"
                               [unit-controls]="fields.tdsOfCondensateReturn.controlNames"
-                              [required]="fields.tdsOfCondensateReturn.required"
+                              [required]="isRequired('tdsOfCondensateReturn')"
                               [(filled)]="fields.tdsOfCondensateReturn.filled"></form-input>
                 </div>
               </div>
