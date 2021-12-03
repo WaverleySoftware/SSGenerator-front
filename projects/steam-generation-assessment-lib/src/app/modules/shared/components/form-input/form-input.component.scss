@@ -1,30 +1,5 @@
 :host(form-input) {
   border: none !important;
-  &.ng-invalid, .error {
-    .touched .formField-row {
-      border-color: var(--color-alarm-red) !important;
-    }
-  }
-
-  &.ng-touched.ng-dirty {
-    &.ng-invalid {
-      .formField-input {
-        background-image: url("assets/Cross.png");
-        background-repeat: no-repeat;
-        background-size: 14px;
-        background-position: calc(100% - 5px) center;
-      }
-    }
-
-    &.ng-valid {
-      .formField-input {
-        background-image: url("assets/Tick.png");
-        background-repeat: no-repeat;
-        background-size: 14px;
-        background-position: calc(100% - 5px) center;
-      }
-    }
-  }
 }
 
 .formField {
@@ -53,9 +28,6 @@
     border-width: 1px;
     border-style: solid;
     line-height: calc(50px - 2px);
-    &.focus {
-      outline: 4px solid var(--color-steel-80) !important;
-    }
   }
 
   &-radio {
@@ -120,19 +92,6 @@
     &::-webkit-inner-spin-button {
       -webkit-appearance: none;
     }
-    &:required, &.required {
-      border-left: 5px solid var(--color-orange);
-    }
-    &[filled], &.filled {
-      border-left: 5px solid var(--color-blue);
-    }
-    &.error,&.ng-invalid.ng-touched {
-      border-left: 5px solid var(--color-alarm-red);
-    }
-    &:disabled, &.disabled {
-      opacity: .5;
-      cursor: not-allowed;
-    }
   }
 
   &-addon {
@@ -182,30 +141,78 @@
     }
   }
 
-  &.error {
-    .formField-row, .formField-input {
-      border-color: var(--color-alarm-red);
-    }
-  }
-
+  &.touched {}
   &.disabled {
     opacity: .5;
-    .formField-addon {
-      background-color: transparent;
+    .formField {
+      &-input {
+        cursor: not-allowed;
+      }
+      &-addon {
+        background-color: transparent;
+      }
     }
   }
-
   &.radio {
     margin-left: 30px;
   }
-
+  &.required {
+    .formField {
+      &-input {
+        border-left: 5px solid var(--color-orange);
+      }
+    }
+  }
+  &.filled {
+    .formField {
+      &-input {
+        border-left: 5px solid var(--color-blue);
+      }
+      &-row {
+        border-color: var(--color-blue);
+      }
+    }
+  }
+  &.invalid {
+    .formField {
+      &-input {
+        border-left: 5px solid var(--color-alarm-red);
+        background-image: url("assets/Cross.png");
+        background-repeat: no-repeat;
+        background-size: 14px;
+        background-position: calc(100% - 5px) center;
+      }
+      &-row {
+        border-color: var(--color-alarm-red);
+      }
+    }
+  }
+  &.valid {
+    .formField {
+      &-input {
+        background-image: url("assets/Tick.png");
+        background-repeat: no-repeat;
+        background-size: 14px;
+        background-position: calc(100% - 5px) center;
+      }
+    }
+  }
+  &.focus {
+    .formField {
+      &-row {
+        outline: 4px solid var(--color-steel-80) !important;
+      }
+    }
+  }
   &.pending {
-    .formField-input {
-      background-color: #ffffff;
-      background-image: url("./assets/loading.gif");
-      background-size: 30px 25px;
-      background-position: left center;
-      background-repeat: no-repeat;
+    .formField {
+      &-input {
+        background-color: #ffffff;
+        background-image: url("./assets/loading.gif");
+        background-size: 30px 25px;
+        background-position: left center;
+        background-repeat: no-repeat;
+      }
     }
   }
 }

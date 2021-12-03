@@ -1,14 +1,48 @@
-import { AbstractControl, AsyncValidatorFn, FormGroup, ValidationErrors } from "@angular/forms";
-import { Observable, of } from "rxjs";
-import { map, first, switchMap, catchError, distinctUntilChanged, debounceTime, filter } from "rxjs/operators";
+import { AbstractControl, AsyncValidatorFn, FormGroup, ValidationErrors, Validators } from "@angular/forms";
+import { Observable, of, timer } from "rxjs";
+import { map, first, switchMap, catchError } from "rxjs/operators";
 import { SteamGenerationAssessmentService } from "./steam-generation-assessment.service";
 import { SgaHttpValidationResponseInterface, SteamGeneratorInputsInterface } from "./steam-generation-form.interface";
 import { HttpErrorResponse } from "@angular/common/http";
 
 export class SgaValidator {
+  static beforeValue = {};
 
-  static validateAsyncFn(service: SteamGenerationAssessmentService, name?: keyof SteamGeneratorInputsInterface): AsyncValidatorFn {
+  static fuelQtyPerYearIsKnown(control: AbstractControl): ValidationErrors {
+    const fg = control && control.parent;
+
+    if (fg) {
+      const costOfFuelPerYear = fg.get('costOfFuelPerYear');
+      const fuelConsumptionPerYear = fg.get('fuelConsumptionPerYear');
+
+      if (control.value) {
+        SgaValidator.toggleFields(costOfFuelPerYear, true);
+      } else {
+        SgaValidator.toggleFields([costOfFuelPerYear, fuelConsumptionPerYear]);
+        costOfFuelPerYear.value && costOfFuelPerYear.setValue(null, { onlySelf: true });
+        fuelConsumptionPerYear.value && fuelConsumptionPerYear.setValue(null, { onlySelf: true });
+      }
+    }
+
+    return null;
+  }
+
+  static boilerHouseWaterQtyPerYearIsKnown(control: AbstractControl): ValidationErrors {
+    const fg = control && control.parent;
+
+    if (fg) {
+      SgaValidator.toggleFields(fg.get('waterConsumptionPerYear'), control.value);
+    }
+
+    return null;
+  }
+
+  static validateAsyncFn(service: SteamGenerationAssessmentService, name?: keyof SteamGeneratorInputsInterface, isNullable?: boolean): AsyncValidatorFn {
     return function (control): Observable<ValidationErrors> {
+      if (control && !SgaValidator.beforeValue[name] && !control.dirty && control.untouched) {
+        SgaValidator.beforeValue[name] = control && control.value;
+      }
+
       if (!name) {
         name = SgaValidator._getControlName(control);
       }
@@ -17,28 +51,26 @@ export class SgaValidator {
         !name || !control || !service ||
         !service.checkSgaFieldIsFilled ||
         !service.validateSgInput ||
-        (control && !control.touched)
+        !control.dirty && control.untouched
       ) return of(null);
 
-
-      return control.valueChanges.pipe(
-        debounceTime(500),
-        distinctUntilChanged(),
-        filter(v => v && v !== 0),
-        switchMap((value) => {
-          const { root } = control;
+      return timer(500).pipe(
+        switchMap(() => {
+          const { root, value } = control;
           const isFilled = service.checkSgaFieldIsFilled(name);
+          const isTheSameValue = SgaValidator._checkSameValues(value, SgaValidator.beforeValue[name]);
 
-          if (value === 0 || isFilled || !root || !root.value) return of(null);
-          if (!value) return of({ required: true });
+          if (isFilled || !root || !root.value || isTheSameValue || control.disabled) return of(null);
+          if (!value && !isNullable) return of({ required: true });
+
+          SgaValidator.beforeValue[name] = value;
 
           return service.validateSgInput(name as keyof SteamGeneratorInputsInterface, root.value).pipe(
             map((errors) => errors && SgaValidator._parseErrors(errors)),
-            catchError((errors: HttpErrorResponse) => SgaValidator._parseSpecificErrors(errors))
+            catchError((errors: HttpErrorResponse) => SgaValidator._parseSpecificErrors(errors)),
           );
-        }),
-        first()
-      );
+        })
+      ).pipe(first());
     }
   }
 
@@ -87,5 +119,31 @@ export class SgaValidator {
     }
 
     return of({ message: error && error.errorMessage || 'ERROR'});
+  }
+
+  private static _checkSameValues(value: any, prevValue: any): boolean {
+    if (!prevValue) return false;
+    return (value === prevValue);
+  }
+
+  private static toggleFields(fields: AbstractControl | AbstractControl[], isEnable: boolean = false): void {
+    if (!fields) return null;
+
+    const toggleFn = (control: AbstractControl) => {
+      if (isEnable) {
+        control && control.disabled && control.enable({ onlySelf: true });
+      } else {
+        control && control.enabled && control.disable({ onlySelf: true });
+        control && control.value && control.setValue(null, { onlySelf: true });
+      }
+    }
+
+    if (Array.isArray(fields)) {
+      for (let field of fields) {
+        toggleFn(field);
+      }
+    } else {
+      toggleFn(fields);
+    }
   }
 }
