@@ -1,4 +1,4 @@
-<sga-panel [isCollapsed]="false"
+<sga-panel [isCollapsed]="true"
            id="UtilityParameters"
            title="Utility parameters"
            titleSize="24px">
@@ -96,7 +96,7 @@
                    titleTooltip="Tooltip"
                    background="#EDF2F4">
           <div body>
-            <form-toggle name="CO2Emission" label="ARE_CO2_OR_CARBON_EMISSIONS_TAXED">
+            <form-toggle name="CO2Emission" label="ARE_CO2_OR_CARBON_EMISSIONS_TAXED" [value]="false">
               <ng-container yes>
                 <form-input [formControlName]="fields.carbonTaxLevyCostPerUnit.formControlName"
                             [label]="fields.carbonTaxLevyCostPerUnit.label"
@@ -105,6 +105,7 @@
                             [unit-translations]="fields.carbonTaxLevyCostPerUnit.translations"
                             [unit-controls]="fields.carbonTaxLevyCostPerUnit.controlNames"
                             [module-group-id]="moduleGroupId"
+                            [(filled)]="fields.carbonTaxLevyCostPerUnit.filled"
                             [required]="isRequired('carbonTaxLevyCostPerUnit')"
                             group="emissions-taxed"></form-input>
 
@@ -115,6 +116,7 @@
                             [unit-translations]="fields.costOfCo2PerUnitMass.translations"
                             [unit-controls]="fields.costOfCo2PerUnitMass.controlNames"
                             [module-group-id]="moduleGroupId"
+                            [(filled)]="fields.costOfCo2PerUnitMass.filled"
                             [required]="isRequired('costOfCo2PerUnitMass')"
                             group="emissions-taxed"></form-input>
               </ng-container>
@@ -216,7 +218,7 @@
   </form>
 </sga-panel>
 
-<sga-panel [isCollapsed]="true"
+<sga-panel [isCollapsed]="false"
            [showSeparator]="false"
            [title]="'BOILER_HOUSE_PARAMETERS' | translate"
            id="BoilerHouseParameters"
@@ -232,8 +234,8 @@
               <div body class="row">
                 <div class="col-md-6 border-r-md">
                   <form-toggle [formControlName]="fields.isSuperheatedSteam.formControlName"
-                               (valueChange)="clearValues(['boilerSteamTemperature', null]); focusOnField('boilerSteamTemperature', $event);"
-                               [label]="fields.isSuperheatedSteam.label" #isSuperheatedSteamRef></form-toggle>
+                               (valueChange)="focusOnField('boilerSteamTemperature', $event);"
+                               [label]="fields.isSuperheatedSteam.label"></form-toggle>
 
                   <form-toggle [formControlName]="fields.isSteamFlowMeasured.formControlName"
                                [label]="fields.isSteamFlowMeasured.label">
@@ -246,7 +248,7 @@
                                   [unit-controls]="fields.boilerSteamGeneratedPerHour.controlNames"
                                   [required]="isRequired('boilerSteamGeneratedPerHour')"
                                   [(filled)]="fields.boilerSteamGeneratedPerHour.filled"
-                                  (changeRadio)="clearValues(['boilerSteamGeneratedPerYear'])"
+                                  [groupControls]="['boilerSteamGeneratedPerYear']"
                                   group="boilerSteamGeneratedTime"></form-input>
 
                       <form-input [formControlName]="fields.boilerSteamGeneratedPerYear.formControlName"
@@ -257,7 +259,7 @@
                                   [unit-controls]="fields.boilerSteamGeneratedPerYear.controlNames"
                                   [required]="isRequired('boilerSteamGeneratedPerHour')"
                                   [(filled)]="fields.boilerSteamGeneratedPerYear.filled"
-                                  (changeRadio)="clearValues(['boilerSteamGeneratedPerHour'])"
+                                  [groupControls]="['boilerSteamGeneratedPerHour']"
                                   group="boilerSteamGeneratedTime"></form-input>
                     </ng-container>
                   </form-toggle>
@@ -269,8 +271,8 @@
                               [unit-types]="fields.boilerSteamTemperature.unitTypes"
                               [unit-translations]="fields.boilerSteamTemperature.translations"
                               [unit-controls]="fields.boilerSteamTemperature.controlNames"
-                              [required]="fields.boilerSteamTemperature.required"
-                              [disabled]="!isSuperheatedSteamRef.value"
+                              [required]="isRequired('boilerSteamTemperature')"
+                              (inputChange)="inputChangeHandle($event)"
                               [(filled)]="fields.boilerSteamTemperature.filled"></form-input>
 
                   <form-input [formControlName]="fields.boilerSteamPressure.formControlName"
@@ -487,7 +489,6 @@
                                   [unit-controls]="fields.boilerFeedwaterConsumption.controlNames"
                                   [required]="isRequired('boilerFeedwaterConsumption')"
                                   [(filled)]="fields.boilerFeedwaterConsumption.filled"
-                                  (changeRadio)="clearValues(['boilerFeedwaterConsumption'])"
                                   unit="/h"
                                   group="boilerFeedwaterConsumptionGroup"></form-input>
 
@@ -497,9 +498,8 @@
                                   [unit-types]="fields.boilerFeedwaterConsumption.unitTypes"
                                   [unit-translations]="fields.boilerFeedwaterConsumption.translations"
                                   [unit-controls]="fields.boilerFeedwaterConsumption.controlNames"
-                                  [required]="fields.boilerFeedwaterConsumption.required"
+                                  [required]="isRequired('boilerFeedwaterConsumption')"
                                   [(filled)]="fields.boilerFeedwaterConsumption.filled"
-                                  (changeRadio)="clearValues(['boilerFeedwaterConsumption'])"
                                   unit="/y"
                                   group="boilerFeedwaterConsumptionGroup"></form-input>
                     </ng-container>

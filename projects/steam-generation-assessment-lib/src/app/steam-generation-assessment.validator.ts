@@ -50,6 +50,47 @@ export class SgaValidator {
     return null;
   }
 
+  static isSuperheatedSteam(control: AbstractControl): ValidationErrors {
+    const fg = control && control.parent;
+
+    if (fg) {
+      const boilerSteamTemperature = fg.get('boilerSteamTemperature');
+
+      SgaValidator.toggleFields(boilerSteamTemperature, control.value);
+    }
+
+    return null;
+  }
+
+  static isSteamFlowMeasured(control: AbstractControl): ValidationErrors {
+    const fg = control && control.parent;
+
+    if (fg) {
+      const boilerSteamGeneratedPerHour = fg.get('boilerSteamGeneratedPerHour');
+      const boilerSteamGeneratedPerYear = fg.get('boilerSteamGeneratedPerYear');
+
+      if (control.value) {
+        SgaValidator.toggleFields(boilerSteamGeneratedPerHour, true);
+      } else {
+        SgaValidator.toggleFields([boilerSteamGeneratedPerHour, boilerSteamGeneratedPerYear]);
+      }
+    }
+
+    return null;
+  }
+
+  static isFeedWaterMeasured(control: AbstractControl): ValidationErrors {
+    const fg = control && control.parent;
+
+    if (fg) {
+      const boilerFeedwaterConsumption = fg.get('boilerFeedwaterConsumption');
+      // TODO: need to create new separate fields for "boilerFeedwaterConsumptionPreHour" && "boilerFeedwaterConsumptionPerYear"
+      SgaValidator.toggleFields(boilerFeedwaterConsumption, control.value);
+    }
+
+    return null;
+  }
+
   static validateAsyncFn(service: SteamGenerationAssessmentService, name?: keyof SteamGeneratorInputsInterface, isNullable?: boolean): AsyncValidatorFn {
     return function (control): Observable<ValidationErrors> {
       if (control && !SgaValidator.beforeValue[name] && !control.dirty && control.untouched) {
@@ -67,11 +108,10 @@ export class SgaValidator {
         !control.dirty && control.untouched
       ) return of(null);
 
-      console.log(control.value, name, '----VALIDATOR')
       return timer(500).pipe(
         switchMap(() => {
           const { root, value } = control;
-          const validator = control.validator({} as AbstractControl);
+          const validator = control && control.validator && control.validator({} as AbstractControl);
           const isFilled = service.checkSgaFieldIsFilled(name);
           const isTheSameValue = SgaValidator._checkSameValues(value, SgaValidator.beforeValue[name]);
 
@@ -100,7 +140,10 @@ export class SgaValidator {
         const control: AbstractControl = formGroup.get(formControlName);
 
         control && control.setErrors &&
-        control.setErrors({ error: error.errorMessage }, { emitEvent: false });
+        control.setErrors({
+          error: error.errorMessage,
+          message: (error.customState || error.customState === 0)&& `(${error.customState})`
+        }, { emitEvent: false });
       }
     }
 
@@ -125,7 +168,7 @@ export class SgaValidator {
       error = errors[0].errorMessage;
     }
 
-    return { error: error, message: errors[0] && errors[0].customState && `(${errors[0].customState})` };
+    return { error: error, message: errors[0] && (errors[0].customState || errors[0].customState === 0) && `(${errors[0].customState})` };
   }
 
   private static _parseSpecificErrors({ error }: HttpErrorResponse): Observable<ValidationErrors> {
@@ -146,9 +189,9 @@ export class SgaValidator {
 
     const toggleFn = (control: AbstractControl) => {
       if (isEnable) {
-        control && control.disabled && control.enable({ onlySelf: true });
+        control && (control.disabled || control.disabled === undefined) && control.enable({ onlySelf: true });
       } else {
-        control && control.enabled && control.disable({ onlySelf: true });
+        control && (control.enabled || control.enabled === undefined) && control.disable({ onlySelf: true });
         control && control.value && control.setValue(null, { onlySelf: true });
       }
     }

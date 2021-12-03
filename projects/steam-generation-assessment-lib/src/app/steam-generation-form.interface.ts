@@ -24,6 +24,8 @@ export interface SteamGeneratorSelectedUnitsInterface {
   massFlowBoilerHouseUnitSelected: number;
   pressureUnitSelected: number;
   temperatureUnitSelected: number;
+  tdsUnitSelected: number;
+  carbonDioxideEmissionsUnitSelected: number;
 }
 
 export interface SteamGeneratorInputsInterface {
@@ -68,7 +70,6 @@ export interface SteamGeneratorInputsInterface {
   waterTemperatureLeavingHeatExchanger: number;
   waterTreatmentMethod: string;
   percentageWaterRejection: number;
-  percentageWaterRejectionUnit: number;
   tdsOfMakeupWater: number;
   tdsOfMakeupWaterUnit: number;
   temperatureOfMakeupWater: number;
@@ -173,6 +174,17 @@ export interface SgaSaturatedTemperatureBodyInterface {
   isSuperheatedSteam: boolean;
   boilerSteamPressure: number;
   boilerSteamTemperature: number;
+}
+
+export interface SgaSaturatedAndTemperatureRespInterface {
+  boilerSteamPressure: number;
+  boilerSteamPressureUnit: number;
+  boilerSteamTemperature: number;
+  boilerSteamTemperatureUnit: number;
+  dialogMessage: string | null;
+  media: string;
+  mediaState: string;
+  meltingPoint: number;
 }
 
 /* REMOVED ITEMS
