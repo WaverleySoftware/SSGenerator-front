@@ -40,7 +40,6 @@ export class FormInputComponent implements ControlValueAccessor, AfterViewInit {
   @Output() filledChange: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Input() private: any;
   @Input() group: string;
-  @Input() defaultChecked: boolean;
   @Input() groupControls: string[];
   @Output() inputChange: EventEmitter<{ name: string, value: any }> = new EventEmitter();
   @Output() inputBlur: EventEmitter<{ name: string, value: any }> = new EventEmitter();
@@ -48,7 +47,7 @@ export class FormInputComponent implements ControlValueAccessor, AfterViewInit {
   @ViewChild('inputRef', { static: true }) inputRef: ElementRef<HTMLInputElement>;
   @ViewChild('radioInputRef', { static: true }) radioInputRef: ElementRef<HTMLInputElement>;
 
-  value: any;
+  @Input() value: any;
   touched: boolean;
   focus: boolean;
   public control: NgControl;

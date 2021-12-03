@@ -30,11 +30,8 @@ export class SgaValidator {
   static boilerHouseWaterQtyPerYearIsKnown(control: AbstractControl): ValidationErrors {
     const fg = control && control.parent;
 
-    if (fg && !control.value) {
-      const waterConsumptionPerYear = fg.get('waterConsumptionPerYear');
-
-      !waterConsumptionPerYear.disabled && waterConsumptionPerYear.disable({ onlySelf: true });
-      waterConsumptionPerYear.value && waterConsumptionPerYear.setValue(null, { onlySelf: true });
+    if (fg) {
+      SgaValidator.toggleFields(fg.get('waterConsumptionPerYear'), control.value);
     }
 
     return null;
@@ -130,6 +127,8 @@ export class SgaValidator {
   }
 
   private static toggleFields(fields: AbstractControl | AbstractControl[], isEnable: boolean = false): void {
+    if (!fields) return null;
+
     const toggleFn = (control: AbstractControl) => {
       if (isEnable) {
         control && control.disabled && control.enable({ onlySelf: true });
