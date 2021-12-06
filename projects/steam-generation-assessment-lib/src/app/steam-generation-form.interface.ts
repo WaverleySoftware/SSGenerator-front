@@ -52,6 +52,8 @@ export interface SteamGeneratorInputsInterface {
   costOfWaterPerUnit: number;
   costOfEffluentPerUnit: number;
   boilerHouseWaterQtyPerYearIsKnown: boolean;
+  costOfWaterPerYear: number; // COST_OF_WATER_PER_YEAR  --- NEW FIELD
+  waterConsumptionPerHour: number; // WATER_CONSUMPTION_HOUR  --- NEW FIELD
   waterConsumptionPerYear: number;
   boilerWaterTreatmentChemicalCostsIsKnown: boolean;
   totalChemicalCostPerYear: number;
@@ -76,8 +78,10 @@ export interface SteamGeneratorInputsInterface {
   waterTemperatureLeavingHeatExchanger: number;
   waterTreatmentMethod: string;
   percentageWaterRejection: number;
+  // percentageWaterRejectionUnit --- PERCENTAGE WATER REJECTION (unit) --- REMOVED FIELD (need to remove unit only percentage %)
   tdsOfMakeupWater: number;
   tdsOfMakeupWaterUnit: number;
+  isMakeUpWaterMonitored: boolean; // IS_MAKE_UP_WATER_MONITORED  --- NEW FIELD
   temperatureOfMakeupWater: number;
   temperatureOfMakeupWaterUnit: number;
   makeupWaterAmount: number;

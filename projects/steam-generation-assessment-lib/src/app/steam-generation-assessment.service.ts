@@ -77,17 +77,28 @@ export class SteamGenerationAssessmentService {
       translations: ['CURRENCY', 'CO2_EMISSIONS'],
     },
     // WATER
-    boilerHouseWaterQtyPerYearIsKnown: {
-      formControlName: 'boilerHouseWaterQtyPerYearIsKnown',
-      label: 'IS_WATER_ENTERING_THE_BOILER_HOUSE_MEASURED'
-    },
     costOfWaterPerUnit: {
       formControlName: 'costOfWaterPerUnit',
       label: 'COST_OF_WATER_FSLASH_UNIT',
       unitNames: ['BHCurrency', 'BoilerHouseVolumeUnits'],
       translations: ['CURRENCY', 'VOLUME'],
     },
-    // TODO: missing fields in form "COST_OF_WATER_PER_YEAR (BoilerHouseVolume)" && "WATER_CONSUMPTION_HOUR (BoilerHouseVolume)"
+    boilerHouseWaterQtyPerYearIsKnown: {
+      formControlName: 'boilerHouseWaterQtyPerYearIsKnown',
+      label: 'IS_WATER_ENTERING_THE_BOILER_HOUSE_MEASURED'
+    },
+    costOfWaterPerYear: {
+      formControlName: 'costOfWaterPerYear',
+      label: 'COST_OF_WATER_PER_YEAR',
+      unitNames: ['BHCurrency'],
+      translations: ['CURRENCY']
+    },
+    waterConsumptionPerHour: {
+      formControlName: 'waterConsumptionPerHour',
+      label: 'WATER_CONSUMPTION_HOUR',
+      unitNames: ['BoilerHouseVolumeUnits'],
+      translations: ['VOLUME'],
+    },
     waterConsumptionPerYear: {
       formControlName: 'waterConsumptionPerYear',
       label: 'WATER_CONSUMPTION_YEAR',
@@ -212,6 +223,10 @@ export class SteamGenerationAssessmentService {
       translations: ['TDS'],
     },
     // WATER_TREATMENT
+    isMakeUpWaterMonitored: {
+      formControlName: 'isMakeUpWaterMonitored',
+      label: 'IS_MAKE_UP_WATER_MONITORED'
+    },
     temperatureOfMakeupWater: {
       formControlName: 'temperatureOfMakeupWater',
       label: 'TEMPERATURE_OF_MAKE_UP_WATER',
@@ -348,6 +363,8 @@ export class SteamGenerationAssessmentService {
       costOfWaterPerUnit: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'costOfWaterPerUnit')], // COST_OF_WATER_FSLASH_UNIT
       costOfEffluentPerUnit: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'costOfEffluentPerUnit')], // COST_OF_EFFLUENT_FSLASH_UNIT
       boilerHouseWaterQtyPerYearIsKnown: [false, SgaValidator.boilerHouseWaterQtyPerYearIsKnown], // IS_WATER_ENTERING_THE_BOILER_HOUSE_MEASURED : Original IS_BOILER_HOUSE_WATER_MEASURED
+      costOfWaterPerYear: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'costOfWaterPerYear')], // WATER_CONSUMPTION_HOUR : NEW FIELD
+      waterConsumptionPerHour: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'waterConsumptionPerHour')], // WATER_CONSUMPTION_HOUR : NEW FIELD
       waterConsumptionPerYear: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'waterConsumptionPerYear')], // WATER_CONSUMPTION_YEAR : Original WATER_CONSUMPTION_PER_YEAR
       boilerWaterTreatmentChemicalCostsIsKnown: [false, SgaValidator.boilerWaterTreatmentChemicalCostsIsKnown], // ARE_CHEMICAL_COST_KNOWN : Original IS_CHEMICAL_COSTS_PER_YEAR_KNOWN
       totalChemicalCostPerYear: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'totalChemicalCostPerYear')], // TOTAL_CHEMICAL_COSTS_PER_YEAR : Original TOTAL_CHEMICAL_COST_PER_YEAR
@@ -371,12 +388,12 @@ export class SteamGenerationAssessmentService {
       isHeatExchangerPresent: [false], // IS_HEAT_EXCHANGER_PRESENT
       waterTemperatureLeavingHeatExchanger: [0, Validators.required], // WATER_TEMPERATURE_LEAVING_HEAT_EXCHANGER
       waterTreatmentMethod: [null, Validators.required], // WATER_TREATMENT_METHOD
-      percentageWaterRejection: [0, Validators.required, SgaValidator.validateAsyncFn(this, 'percentageWaterRejection')], // PERCENTAGE_WATER_REJECTION
-      // percentageWaterRejectionUnit: [0, Validators.required], // UNIT ??????? --- need to remove unit only percentage (%)
+      percentageWaterRejection: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'percentageWaterRejection')], // PERCENTAGE_WATER_REJECTION
       tdsOfMakeupWater: [0, Validators.required], // TDS_OF_MAKEUP_WATER
       tdsOfMakeupWaterUnit: [0, Validators.required], // UNIT
-      temperatureOfMakeupWater: [0], // TEMPERATURE_OF_MAKE_UP_WATER : Original TEMPERATURE_OF_MAKEUP_WATER
-      temperatureOfMakeupWaterUnit: [0], // UNIT TemperatureUnit
+      isMakeUpWaterMonitored: [false, SgaValidator.isMakeUpWaterMonitored],
+      temperatureOfMakeupWater: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'temperatureOfMakeupWater', true)], // TEMPERATURE_OF_MAKE_UP_WATER : Original TEMPERATURE_OF_MAKEUP_WATER
+      temperatureOfMakeupWaterUnit: [null], // UNIT TemperatureUnit
       makeupWaterAmount: [0, Validators.required], // ------------
       makeupWaterAmountUnit: [0, Validators.required], // ------------
       atmosphericDeaerator: [false], // AUTMOSPHERIC_DEAERATOR

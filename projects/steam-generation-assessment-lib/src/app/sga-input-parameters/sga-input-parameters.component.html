@@ -1,4 +1,4 @@
-<sga-panel [isCollapsed]="true"
+<sga-panel [isCollapsed]="false"
            id="UtilityParameters"
            title="Utility parameters"
            titleSize="24px">
@@ -143,23 +143,29 @@
             <form-toggle [formControlName]="fields.boilerHouseWaterQtyPerYearIsKnown.formControlName"
                          [label]="fields.boilerHouseWaterQtyPerYearIsKnown.label">
               <ng-container yes>
-                <form-input label="COST_OF_WATER_PER_YEAR"
-                            type="text"
-                            [value]="'no form field'"
-                            [disabled]="true"
-                            [required]="true"
-                            unit="£/y"
-                            group="isWaterEnteringBoilerHouseMeasured"
-                            required></form-input>
+                <form-input [formControlName]="fields.costOfWaterPerYear.formControlName"
+                            [label]="fields.costOfWaterPerYear.label"
+                            [unit-names]="fields.costOfWaterPerYear.unitNames"
+                            [unit-types]="fields.costOfWaterPerYear.unitTypes"
+                            [unit-translations]="fields.costOfWaterPerYear.translations"
+                            [unit-controls]="fields.costOfWaterPerYear.controlNames"
+                            [required]="isRequired('costOfWaterPerYear')"
+                            [(filled)]="fields.costOfWaterPerYear.filled"
+                            [groupControls]="['waterConsumptionPerHour', 'waterConsumptionPerYear']"
+                            unit="/y"
+                            group="isWaterEnteringBoilerHouseMeasured"></form-input>
 
-                <form-input label="WATER_CONSUMPTION_HOUR"
-                            type="text"
-                            [value]="'no form field'"
-                            [disabled]="true"
-                            [required]="true"
-                            unit="m3/h"
-                            group="isWaterEnteringBoilerHouseMeasured"
-                            required></form-input>
+                <form-input [formControlName]="fields.waterConsumptionPerHour.formControlName"
+                            [label]="fields.waterConsumptionPerHour.label"
+                            [unit-names]="fields.waterConsumptionPerHour.unitNames"
+                            [unit-types]="fields.waterConsumptionPerHour.unitTypes"
+                            [unit-translations]="fields.waterConsumptionPerHour.translations"
+                            [unit-controls]="fields.waterConsumptionPerHour.controlNames"
+                            [required]="isRequired('waterConsumptionPerHour')"
+                            [(filled)]="fields.waterConsumptionPerHour.filled"
+                            [groupControls]="['costOfWaterPerYear', 'waterConsumptionPerYear']"
+                            unit="/h"
+                            group="isWaterEnteringBoilerHouseMeasured"></form-input>
 
                 <form-input [formControlName]="fields.waterConsumptionPerYear.formControlName"
                             [label]="fields.waterConsumptionPerYear.label"
@@ -169,8 +175,9 @@
                             [unit-controls]="fields.waterConsumptionPerYear.controlNames"
                             [required]="isRequired('waterConsumptionPerYear')"
                             [(filled)]="fields.waterConsumptionPerYear.filled"
-                            group="isWaterEnteringBoilerHouseMeasured"
-                            unit="/y"></form-input>
+                            [groupControls]="['costOfWaterPerYear', 'waterConsumptionPerHour']"
+                            unit="/y"
+                            group="isWaterEnteringBoilerHouseMeasured"></form-input>
               </ng-container>
             </form-toggle>
           </div>
@@ -221,7 +228,7 @@
   </form>
 </sga-panel>
 
-<sga-panel [isCollapsed]="false"
+<sga-panel [isCollapsed]="true"
            [showSeparator]="false"
            [title]="'BOILER_HOUSE_PARAMETERS' | translate"
            id="BoilerHouseParameters"
@@ -382,8 +389,8 @@
             <sga-panel id="makeUpWaterPanel" [title]="'MAKE_UP_WATER' | translate" background="#EDF2F4">
               <div class="row" body>
                 <div class="col-md-6 border-r-md">
-                  <form-toggle name="isMakeUpWaterMonitored"
-                               label="IS_MAKE_UP_WATER_MONITORED">
+                  <form-toggle [formControlName]="fields.isMakeUpWaterMonitored.formControlName"
+                               [label]="fields.isMakeUpWaterMonitored.label">
                     <form-input yes
                                 [formControlName]="fields.temperatureOfMakeupWater.formControlName"
                                 [label]="fields.temperatureOfMakeupWater.label"

@@ -1,4 +1,4 @@
-import { AbstractControl, AsyncValidatorFn, FormGroup, ValidationErrors, Validators } from "@angular/forms";
+import { AbstractControl, AsyncValidatorFn, FormGroup, ValidationErrors } from "@angular/forms";
 import { Observable, of, timer } from "rxjs";
 import { map, first, switchMap, catchError } from "rxjs/operators";
 import { SteamGenerationAssessmentService } from "./steam-generation-assessment.service";
@@ -31,7 +31,15 @@ export class SgaValidator {
     const fg = control && control.parent;
 
     if (fg) {
-      SgaValidator.toggleFields(fg.get('waterConsumptionPerYear'), control.value);
+      const costOfWaterPerYear = fg.get('costOfWaterPerYear');
+      const waterConsumptionPerHour = fg.get('waterConsumptionPerHour');
+      const waterConsumptionPerYear = fg.get('waterConsumptionPerYear');
+
+      if (control.value) {
+        SgaValidator.toggleFields(costOfWaterPerYear, true);
+      } else {
+        SgaValidator.toggleFields([costOfWaterPerYear, waterConsumptionPerHour, waterConsumptionPerYear]);
+      }
     }
 
     return null;
@@ -57,6 +65,18 @@ export class SgaValidator {
       const boilerSteamTemperature = fg.get('boilerSteamTemperature');
 
       SgaValidator.toggleFields(boilerSteamTemperature, control.value, false);
+    }
+
+    return null;
+  }
+
+  static isMakeUpWaterMonitored(control: AbstractControl): ValidationErrors {
+    const fg = control && control.parent;
+
+    if (fg) {
+      const temperatureOfMakeupWater = fg.get('temperatureOfMakeupWater');
+
+      SgaValidator.toggleFields(temperatureOfMakeupWater, control.value);
     }
 
     return null;

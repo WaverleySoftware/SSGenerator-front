@@ -140,7 +140,7 @@ export class FormInputComponent implements ControlValueAccessor, AfterViewInit {
         const control = fg.get(groupControl);
 
         control && !control.disabled && control.disable({ onlySelf: true });
-        (control.value || control.value === 0) && control.setValue(null);
+        control && (control.value || control.value === 0) && control.setValue(null);
       }
     }
   }
