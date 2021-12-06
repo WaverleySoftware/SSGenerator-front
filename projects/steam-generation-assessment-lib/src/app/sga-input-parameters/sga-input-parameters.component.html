@@ -96,7 +96,8 @@
                    titleTooltip="Tooltip"
                    background="#EDF2F4">
           <div body>
-            <form-toggle name="CO2Emission" label="ARE_CO2_OR_CARBON_EMISSIONS_TAXED" [value]="false">
+            <form-toggle [formControlName]="fields.isCo2OrCarbonEmissionsTaxed.formControlName"
+                         [label]="fields.isCo2OrCarbonEmissionsTaxed.label">
               <ng-container yes>
                 <form-input [formControlName]="fields.carbonTaxLevyCostPerUnit.formControlName"
                             [label]="fields.carbonTaxLevyCostPerUnit.label"
@@ -107,6 +108,7 @@
                             [module-group-id]="moduleGroupId"
                             [(filled)]="fields.carbonTaxLevyCostPerUnit.filled"
                             [required]="isRequired('carbonTaxLevyCostPerUnit')"
+                            [groupControls]="['costOfCo2PerUnitMass']"
                             group="emissions-taxed"></form-input>
 
                 <form-input [formControlName]="fields.costOfCo2PerUnitMass.formControlName"
@@ -118,6 +120,7 @@
                             [module-group-id]="moduleGroupId"
                             [(filled)]="fields.costOfCo2PerUnitMass.filled"
                             [required]="isRequired('costOfCo2PerUnitMass')"
+                            [groupControls]="['carbonTaxLevyCostPerUnit']"
                             group="emissions-taxed"></form-input>
               </ng-container>
             </form-toggle>

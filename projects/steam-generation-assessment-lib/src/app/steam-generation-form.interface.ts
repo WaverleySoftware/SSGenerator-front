@@ -52,6 +52,7 @@ export interface SteamGeneratorInputsInterface {
   totalChemicalCostPerYear: number;
   costOfChemistsPerUnitOfWater: number;
   o2ScavengingChemicalsCostSavings: number;
+  isCo2OrCarbonEmissionsTaxed: boolean; // ARE_CO2_OR_CARBON_EMISSIONS_TAXED   --- NEW FIELD
   carbonTaxLevyCostPerUnit: number;
   costOfCo2PerUnitMass: number;
   isBlowdownVesselPresent: boolean;

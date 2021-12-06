@@ -15,7 +15,7 @@ import { PreferenceService, Preference } from "sizing-shared-lib";
 import { SizingUnitPreference } from "../../../sizing-shared-lib/src/lib/shared/preference/sizing-unit-preference.model";
 import { AbstractControl, FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { SgaValidator } from "./steam-generation-assessment.validator";
-import { catchError, map, tap } from "rxjs/operators";
+import { catchError, filter, map, tap } from "rxjs/operators";
 
 @Injectable()
 export class SteamGenerationAssessmentService {
@@ -60,7 +60,11 @@ export class SteamGenerationAssessmentService {
       label: 'FUEL_CONSUMPTION_PER_YEAR',
     },
     // CO2 EMISSION
-    carbonTaxLevyCostPerUnit: {
+    isCo2OrCarbonEmissionsTaxed: {
+      formControlName: 'isCo2OrCarbonEmissionsTaxed',
+      label: 'ARE_CO2_OR_CARBON_EMISSIONS_TAXED'
+    },
+    carbonTaxLevyCostPerUnit: { // NEW FIELD
       formControlName: 'carbonTaxLevyCostPerUnit',
       label: 'CARBON_TAX_LEVY_COST_PER_UNIT',
       unitNames: ['BHCurrency', 'BoilerHouseEnergyUnits'],
@@ -155,7 +159,6 @@ export class SteamGenerationAssessmentService {
     boilerEfficiency: {
       formControlName: 'boilerEfficiency',
       label: 'BOILER_EFFICIENCY',
-      filled: true
     },
     // TDS BLOWDOWN
     isBlowdownVesselPresent: {
@@ -346,12 +349,13 @@ export class SteamGenerationAssessmentService {
       totalChemicalCostPerYear: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'totalChemicalCostPerYear')], // TOTAL_CHEMICAL_COSTS_PER_YEAR : Original TOTAL_CHEMICAL_COST_PER_YEAR
       costOfChemistsPerUnitOfWater: [null], // ------------ NO FIELD
       o2ScavengingChemicalsCostSavings: [null, null, SgaValidator.validateAsyncFn(this, 'o2ScavengingChemicalsCostSavings')], // O2_SCAVENGING_CHEMICALS_COST_SAVINGS
-      carbonTaxLevyCostPerUnit: [1, Validators.required, SgaValidator.validateAsyncFn(this, 'carbonTaxLevyCostPerUnit')], // CARBON_TAX_LEVY_COST_PER_UNIT
-      costOfCo2PerUnitMass: [1, Validators.required, SgaValidator.validateAsyncFn(this, 'costOfCo2PerUnitMass')], // COST_OF_CO2_PER_UNIT_MASS : Original "Cost of CO2 / Unit Mass"
+      isCo2OrCarbonEmissionsTaxed: [false, SgaValidator.isCo2OrCarbonEmissionsTaxed],
+      carbonTaxLevyCostPerUnit: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'carbonTaxLevyCostPerUnit')], // CARBON_TAX_LEVY_COST_PER_UNIT
+      costOfCo2PerUnitMass: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'costOfCo2PerUnitMass')], // COST_OF_CO2_PER_UNIT_MASS : Original "Cost of CO2 / Unit Mass"
       isBlowdownVesselPresent: [false], // IS_BLOWDOWN_VESSEL_PRESENT
       isCoolingWaterUsed: [false], // IS_COOLING_WATER_USED
       isSuperheatedSteam: [false, SgaValidator.isSuperheatedSteam], // IS_SUPERHEATED_STEAM
-      boilerEfficiency: [80, [Validators.required, Validators.max(100)], SgaValidator.validateAsyncFn(this, 'boilerEfficiency')], // BOILER_EFFICIENCY
+      boilerEfficiency: [null, [Validators.required, Validators.max(100)], SgaValidator.validateAsyncFn(this, 'boilerEfficiency')], // BOILER_EFFICIENCY
       isFeedWaterMeasured: [false, SgaValidator.isFeedWaterMeasured], // IS_FEEDWATER_FLOWRATE_MEASURED
       boilerSteamPressure: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'boilerSteamPressure', true)], // STEAM_PRESSURE
       boilerSteamTemperature: [null, null, SgaValidator.validateAsyncFn(this, 'boilerSteamTemperature', true)], // STEAM_TEMPERATURE
@@ -484,9 +488,9 @@ export class SteamGenerationAssessmentService {
       }));
   }
 
-  calculateBoilerEfficiency(data: {isEconomizerPresent: boolean; inputFuelId: string;}): Observable<any> {
+  calculateBoilerEfficiency(data: {isEconomizerPresent: boolean; inputFuelId: string;}): Observable<{boilerEfficiency: number}> {
     this.requestLoading.next(true);
-    return this.http.post('./Api/SteamGenerator/calculate-boiler-efficiency', data)
+    return this.http.post<{boilerEfficiency: number}>('./Api/SteamGenerator/calculate-boiler-efficiency', data)
       .pipe(tap(() => this.requestLoading.next(false)));
   }
 

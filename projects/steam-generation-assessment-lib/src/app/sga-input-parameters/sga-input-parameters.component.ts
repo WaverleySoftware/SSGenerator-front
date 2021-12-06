@@ -159,20 +159,26 @@ export class SgaInputParametersComponent implements OnDestroy {
     this.steamGenerationAssessmentService.calculateSaturatedAndTemperature({...selectedUnits, ...inputValues, boilerSteamTemperature: null })
       .pipe(takeUntil(this._ngUnsubscribe), filter(res => res && (res.isValid === undefined || res.isValid)))
       .subscribe(({ boilerSteamTemperature }) => {
-        if (boilerSteamTemperature && boilerSteamTemperature.boilerSteamTemperature) {
+        const temperature = boilerSteamTemperature && boilerSteamTemperature.boilerSteamTemperature;
 
-          this.steamGenerationAssessmentService
-            .changeSgaFieldFilled('boilerSteamTemperature', true);
-          this.steamGenerationAssessmentService
-            .setFormValue('boilerSteamTemperature', boilerSteamTemperature.boilerSteamTemperature);
+        if (temperature) {
           this.formGroup
             .get(`${this.formGroupKey}.boilerSteamTemperature`)
-            .setValidators([Validators.min(boilerSteamTemperature.boilerSteamTemperature)]);
-          this.formGroup
-            .get(`${this.formGroupKey}.boilerSteamTemperature`)
-            .updateValueAndValidity({ onlySelf: true })
+            .setValidators([Validators.required, Validators.min(temperature)]);
+
+          if (
+            !inputValues.isSuperheatedSteam || !inputValues.boilerSteamTemperature ||
+            inputValues.boilerSteamTemperature < boilerSteamTemperature.boilerSteamTemperature
+          ) {
+            this.steamGenerationAssessmentService
+              .changeSgaFieldFilled('boilerSteamTemperature', true);
+            this.steamGenerationAssessmentService
+              .setFormValue('boilerSteamTemperature', temperature);
+            this.formGroup
+              .get(`${this.formGroupKey}.boilerSteamTemperature`)
+              .updateValueAndValidity({ onlySelf: true });
+          }
         }
-        console.log(boilerSteamTemperature, '-----_changeSteamPressure() [RESPONSE]');
       });
   }
 

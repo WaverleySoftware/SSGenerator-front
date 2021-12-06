@@ -56,7 +56,7 @@ export class SgaValidator {
     if (fg) {
       const boilerSteamTemperature = fg.get('boilerSteamTemperature');
 
-      SgaValidator.toggleFields(boilerSteamTemperature, control.value);
+      SgaValidator.toggleFields(boilerSteamTemperature, control.value, false);
     }
 
     return null;
@@ -73,6 +73,24 @@ export class SgaValidator {
         SgaValidator.toggleFields(boilerSteamGeneratedPerHour, true);
       } else {
         SgaValidator.toggleFields([boilerSteamGeneratedPerHour, boilerSteamGeneratedPerYear]);
+      }
+    }
+
+    return null;
+  }
+
+  static isCo2OrCarbonEmissionsTaxed(control: AbstractControl): ValidationErrors {
+    const fg = control && control.parent;
+
+    if (fg) {
+      const carbonTaxLevyCostPerUnit = fg.get('carbonTaxLevyCostPerUnit');
+
+      if (control.value) {
+        SgaValidator.toggleFields(carbonTaxLevyCostPerUnit, true);
+      } else {
+        const costOfCo2PerUnitMass = fg.get('costOfCo2PerUnitMass');
+
+        SgaValidator.toggleFields([carbonTaxLevyCostPerUnit, costOfCo2PerUnitMass]);
       }
     }
 
@@ -184,7 +202,7 @@ export class SgaValidator {
     return (value === prevValue);
   }
 
-  private static toggleFields(fields: AbstractControl | AbstractControl[], isEnable: boolean = false): void {
+  private static toggleFields(fields: AbstractControl | AbstractControl[], isEnable: boolean = false, isClearValue: boolean = true): void {
     if (!fields) return null;
 
     const toggleFn = (control: AbstractControl) => {
@@ -192,7 +210,10 @@ export class SgaValidator {
         control && (control.disabled || control.disabled === undefined) && control.enable({ onlySelf: true });
       } else {
         control && (control.enabled || control.enabled === undefined) && control.disable({ onlySelf: true });
-        control && control.value && control.setValue(null, { onlySelf: true });
+
+        if (isClearValue && control && control.value) {
+          control.setValue(null, { onlySelf: true });
+        }
       }
     }
 

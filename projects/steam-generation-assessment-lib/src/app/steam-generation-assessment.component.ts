@@ -50,9 +50,6 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   }
 
   ngAfterViewInit() {
-    console.log({
-      sizingUnitPreferences: this.preferenceService.sizingUnitPreferences
-    }, '---ngAfterViewInit');
     this._initializedData(); // Load start module data
   }
 
@@ -292,6 +289,16 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
           this.steamGenerationAssessmentService.setFormValues(newValues);
           this._calculateCalorificValue(); // Calculate CALORIFIC VALUE request on init
         }
+      });
+
+    this.steamGenerationAssessmentService.calculateBoilerEfficiency({
+      inputFuelId: this.sizingModuleForm.get('steamGeneratorInputs.inputFuelId').value,
+      isEconomizerPresent: this.sizingModuleForm.get('steamGeneratorInputs.isEconomizerPresent').value,
+    })
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(({ boilerEfficiency }) => {
+        this.steamGenerationAssessmentService.changeSgaFieldFilled('boilerEfficiency', true);
+        this.steamGenerationAssessmentService.setFormValue('boilerEfficiency', boilerEfficiency);
       });
   }
 
