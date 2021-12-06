@@ -156,6 +156,10 @@ export class SteamGenerationAssessmentService {
       unitTypes: ['PressureUnits'],
       translations: ['PRESSURE'],
     },
+    isEconomizerPresent: {
+      formControlName: 'isEconomizerPresent',
+      label: 'IS_ECONOMISER_PRESENT'
+    },
     boilerEfficiency: {
       formControlName: 'boilerEfficiency',
       label: 'BOILER_EFFICIENCY',
@@ -659,8 +663,6 @@ export class SteamGenerationAssessmentService {
     }
 
     if (result && Object.keys(result).length) {
-      console.log('???', result);
-
       this._sizingFormGroup.get('steamGeneratorInputs').patchValue(result, { emitEvent: false });
     }
   }

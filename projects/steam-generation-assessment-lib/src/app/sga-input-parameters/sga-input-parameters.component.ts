@@ -4,7 +4,7 @@ import { Subject } from "rxjs";
 import { debounceTime, distinctUntilChanged, filter, takeUntil } from "rxjs/operators";
 import { Preference } from "sizing-shared-lib";
 import {
-  FormFieldTypesInterface,
+  FormFieldTypesInterface, SgaBoilerEfficiencyInterface,
   SteamCalorificRequestInterface,
   SteamGeneratorInputsInterface
 } from "../steam-generation-form.interface";
@@ -19,6 +19,7 @@ export class SgaInputParametersComponent implements OnDestroy {
   @Input() formGroup: FormGroup;
   @Input() moduleGroupId: number;
   @Output() changeFuelType: EventEmitter<SteamCalorificRequestInterface> = new EventEmitter<SteamCalorificRequestInterface>();
+  @Output() calculateEfficiency: EventEmitter<SgaBoilerEfficiencyInterface> = new EventEmitter<SgaBoilerEfficiencyInterface>();
 
   public fuelType: Preference
   public fields: FormFieldTypesInterface;
@@ -93,12 +94,14 @@ export class SgaInputParametersComponent implements OnDestroy {
 
   public changeFuelTypeHandle(preference: Preference): void {
     if (this.fuelType && preference) { // Not first init
-      this.changeFuelType.emit({
-        inputFuelId: this.formGroup.get(`${this.formGroupKey}.inputFuelId`).value,
-        inputFuelUnit: this.formGroup.get(`${this.formGroupKey}.inputFuelUnit`).value,
-        energyUnitSelected: null, // From preferences
-        smallWeightUnitSelected: null, // From preferences
-      });
+      const {inputFuelId, inputFuelUnit, isEconomizerPresent} = this._getMultipleControlValues({
+        inputFuelId: 'inputFuelId',
+        inputFuelUnit: 'inputFuelUnit',
+        isEconomizerPresent: 'isEconomizerPresent',
+      }) as {inputFuelId: string, inputFuelUnit: number, isEconomizerPresent: boolean};
+
+      this.changeFuelType.emit({ inputFuelId, inputFuelUnit, energyUnitSelected: null, smallWeightUnitSelected: null });
+      this.calculateEfficiency.emit({ inputFuelId, isEconomizerPresent })
     }
 
     this.fuelType = preference;

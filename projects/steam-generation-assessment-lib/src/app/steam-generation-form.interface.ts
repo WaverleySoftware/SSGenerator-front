@@ -6,6 +6,11 @@ export interface SteamCalorificRequestInterface {
   inputFuelUnit: number;
 }
 
+export interface SgaBoilerEfficiencyInterface {
+  inputFuelId: string;
+  isEconomizerPresent: boolean
+}
+
 export interface SteamCarbonEmissionInterface {
   energyUnitSelected: number;
   smallWeightUnitSelected: number;

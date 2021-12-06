@@ -15,7 +15,7 @@ import { ActivatedRoute, Params } from "@angular/router";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import {
-  FormFieldTypesInterface,
+  FormFieldTypesInterface, SgaBoilerEfficiencyInterface,
   SteamCalorificRequestInterface,
   SteamGeneratorInputsInterface
 } from "./steam-generation-form.interface";
@@ -116,8 +116,26 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   }
 
   public changeFuelType(fuelTypeData: SteamCalorificRequestInterface): void {
-    console.log('-----INIT CHANGE FUELT TYPE ----');
     this._calculateCalorificValue(fuelTypeData);
+  }
+
+  public calculateBoilerEfficiency(data: SgaBoilerEfficiencyInterface = {inputFuelId: null, isEconomizerPresent: undefined}): void {
+    if (!data.inputFuelId) {
+      data.inputFuelId = this.sizingModuleForm.get('steamGeneratorInputs.inputFuelId').value;
+    }
+
+    if (!data || data.isEconomizerPresent === undefined) {
+      data.isEconomizerPresent = this.sizingModuleForm.get('steamGeneratorInputs.isEconomizerPresent').value;
+    }
+
+    if (!data.inputFuelId || data.isEconomizerPresent === undefined) return null;
+
+    this.steamGenerationAssessmentService.calculateBoilerEfficiency(data)
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(({ boilerEfficiency }) => {
+        this.steamGenerationAssessmentService.changeSgaFieldFilled('boilerEfficiency', true);
+        this.steamGenerationAssessmentService.setFormValue('boilerEfficiency', boilerEfficiency);
+      });
   }
 
   private _initializedData(): void {
@@ -291,15 +309,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
         }
       });
 
-    this.steamGenerationAssessmentService.calculateBoilerEfficiency({
-      inputFuelId: this.sizingModuleForm.get('steamGeneratorInputs.inputFuelId').value,
-      isEconomizerPresent: this.sizingModuleForm.get('steamGeneratorInputs.isEconomizerPresent').value,
-    })
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe(({ boilerEfficiency }) => {
-        this.steamGenerationAssessmentService.changeSgaFieldFilled('boilerEfficiency', true);
-        this.steamGenerationAssessmentService.setFormValue('boilerEfficiency', boilerEfficiency);
-      });
+    this.calculateBoilerEfficiency();
   }
 
   private _getFuelTypeListItemId(value: string): string | number {

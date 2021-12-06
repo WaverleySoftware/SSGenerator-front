@@ -13,6 +13,7 @@
       <app-sga-input-parameters *ngIf="tabsRef?.tabs[0]?.active"
                                 [moduleGroupId]="moduleGroupId"
                                 (changeFuelType)="changeFuelType($event)"
+                                (calculateEfficiency)="calculateBoilerEfficiency($event)"
                                 [formGroup]="sizingModuleForm"></app-sga-input-parameters>
     </tab>
     <tab heading="Benchmark">

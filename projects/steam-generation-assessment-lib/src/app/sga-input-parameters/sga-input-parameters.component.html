@@ -288,7 +288,9 @@
                               [required]="isRequired('boilerSteamPressure')"
                               [(filled)]="fields.boilerSteamPressure.filled"></form-input>
 
-                  <form-toggle formControlName="isEconomizerPresent" label="IS_ECONOMISER_PRESENT"></form-toggle>
+                  <form-toggle [formControlName]="fields.isEconomizerPresent.formControlName"
+                               [label]="fields.isEconomizerPresent.label"
+                               (valueChange)="calculateEfficiency.emit({isEconomizerPresent: $event, inputFuelId: formGroup.get(formGroupKey+'.inputFuelId').value})"></form-toggle>
 
                   <form-input [formControlName]="fields.boilerEfficiency.formControlName"
                               [label]="fields.boilerEfficiency.label"

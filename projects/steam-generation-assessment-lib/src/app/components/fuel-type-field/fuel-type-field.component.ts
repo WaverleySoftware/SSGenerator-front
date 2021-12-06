@@ -67,8 +67,6 @@ export class FuelTypeFieldComponent implements ControlValueAccessor, OnInit {
   onTouched = () => {};
   onChanged = (_: any) => {};
 
-  fuelTypeSubject;
-
   constructor(
     protected translationService: TranslationService,
     private preferenceService: PreferenceService,
