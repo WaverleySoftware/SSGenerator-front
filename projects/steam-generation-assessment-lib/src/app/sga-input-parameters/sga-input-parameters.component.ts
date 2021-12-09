@@ -74,7 +74,7 @@ export class SgaInputParametersComponent implements OnDestroy {
       'boilerFeedwaterConsumptionPerHour',
       'boilerFeedwaterConsumptionPerYear',
       'temperatureOfFeedtank',
-      'tdsOfFeedwaterInFeedtank',
+      // 'tdsOfFeedwaterInFeedtank', // duplicate
       'areChemicalsAddedDirectlyToFeedtank',
       'pressureOfSteamSupplyingDsi',
       'pressureOfFeedtank',
