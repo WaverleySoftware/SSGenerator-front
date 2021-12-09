@@ -16,6 +16,8 @@ export class SgaPanelComponent implements OnInit, AfterContentInit {
   @Input() showSeparator: boolean = true;
   @Input() disableToggle: boolean;
   @Input() headingRef: TemplateRef<any>;
+  @Input() disabled: boolean;
+  @Input() invalid: boolean;
 
   constructor() { }
 

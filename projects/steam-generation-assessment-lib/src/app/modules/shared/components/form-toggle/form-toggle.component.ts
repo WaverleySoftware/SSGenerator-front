@@ -1,11 +1,11 @@
 import {
-  Component,
-  EventEmitter,
-  forwardRef,
-  Input,
-  Output
+	Component,
+	EventEmitter,
+	forwardRef, Injector,
+	Input, OnChanges, OnInit,
+	Output, SimpleChanges
 } from "@angular/core";
-import { ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
+import { ControlValueAccessor, NG_VALUE_ACCESSOR, NgControl } from "@angular/forms";
 
 @Component({
   selector: 'form-toggle',
@@ -17,7 +17,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
     multi: true,
   }],
 })
-export class FormToggleComponent implements ControlValueAccessor {
+export class FormToggleComponent implements ControlValueAccessor, OnInit, OnChanges {
   @Input() name: string;
   @Input() formControlName: string;
   @Input() label: string;
@@ -26,11 +26,20 @@ export class FormToggleComponent implements ControlValueAccessor {
   @Input() required: boolean;
   @Output() valueChange: EventEmitter<boolean> = new EventEmitter<boolean>();
 
+	private ngControl: NgControl;
   // fake functions
   private onChange = (value: boolean) => {};
   public onTouched = () => { };
 
-  constructor() { }
+  constructor(private inj: Injector) {}
+
+	ngOnInit() {
+		this.ngControl = this.inj.get(NgControl);
+	}
+
+	ngOnChanges(changes: SimpleChanges) {
+		this._setFalseToDisabledControls();
+	}
 
   registerOnChange(fn: any): void {
     this.onChange = fn;
@@ -54,4 +63,10 @@ export class FormToggleComponent implements ControlValueAccessor {
     this.onChange(this.value);
     this.valueChange.emit(this.value);
   }
+
+	private _setFalseToDisabledControls(): void {
+		if (this.ngControl && this.disabled && this.ngControl.control && !this.ngControl.disabled) {
+			this.ngControl.control.patchValue(false);
+		}
+	}
 }

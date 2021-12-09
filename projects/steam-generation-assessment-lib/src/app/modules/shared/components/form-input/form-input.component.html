@@ -8,7 +8,8 @@
       invalid: control?.touched && (error || control?.errors),
       valid: control?.touched && control?.dirty && !error && !control?.errors,
       required: required || control?.errors?.required,
-      focus: focus
+      focus: focus,
+      readonly: readonly
      }">
   <!--  LABEL -->
   <label *ngIf="!!label" class="formField-label">{{label | translate}}</label>
@@ -22,6 +23,7 @@
              [value]="value"
              [name]="group"
              [checked]="disabled === false"
+             [readonly]="readonly"
              #radioInputRef>
     </span>
 
@@ -40,6 +42,8 @@
            (blur)="blurHandle()"
            [ngModel]="value"
            (ngModelChange)="updateValue($event)"
+           [readonly]="readonly"
+           [tabIndex]="(readonly || disabled) && '-1'"
            class="formField-input">
 
     <!--  UNIT -->
@@ -59,6 +63,14 @@
       {{control.errors?.error | translate}}
     </ng-container>
     <ng-container *ngIf="control.errors?.required && control.touched">{{'REQUIRED_FIELD' | translate}}</ng-container>
+    <ng-container *ngIf="control?.errors?.max && control.touched">
+      {{'THE_VALUE_MUST_BE_LESS_THEN_THE_MAXIMUM_VALUE_MESSAGE' | translate}}
+      ({{control?.errors?.max?.max}})
+    </ng-container>
+    <ng-container *ngIf="control?.errors?.min && control.touched">
+      {{'THE_VALUE_IS_BELOW_THE_MINIMUM_ALLOWED_MESSAGE' | translate}}
+      ({{control?.errors?.min?.min}})
+    </ng-container>
     <ng-container *ngIf="control.errors?.message">{{control.errors?.message}}</ng-container>
   </span>
   <ng-template #messageTemplate>

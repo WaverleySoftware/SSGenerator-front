@@ -1,10 +1,10 @@
 import { Component, ElementRef, EventEmitter, Input, OnDestroy, Output } from "@angular/core";
-import { FormGroup } from "@angular/forms";
+import { AbstractControl, FormGroup, Validators } from "@angular/forms";
 import { Subject } from "rxjs";
 import { debounceTime, distinctUntilChanged, filter, takeUntil } from "rxjs/operators";
 import { Preference } from "sizing-shared-lib";
 import {
-  FormFieldTypesInterface,
+  FormFieldTypesInterface, SgaBoilerEfficiencyInterface,
   SteamCalorificRequestInterface,
   SteamGeneratorInputsInterface
 } from "../steam-generation-form.interface";
@@ -19,6 +19,7 @@ export class SgaInputParametersComponent implements OnDestroy {
   @Input() formGroup: FormGroup;
   @Input() moduleGroupId: number;
   @Output() changeFuelType: EventEmitter<SteamCalorificRequestInterface> = new EventEmitter<SteamCalorificRequestInterface>();
+  @Output() calculateEfficiency: EventEmitter<SgaBoilerEfficiencyInterface> = new EventEmitter<SgaBoilerEfficiencyInterface>();
 
   public fuelType: Preference
   public fields: FormFieldTypesInterface;
@@ -27,6 +28,91 @@ export class SgaInputParametersComponent implements OnDestroy {
   public formGroupKey = 'steamGeneratorInputs'; // Form builder child formGroup key
 
   private _ngUnsubscribe = new Subject<void>();
+
+  boilerHouseParameters = {
+    boiler: [
+      // boiler_parameters
+      'isSuperheatedSteam',
+      'isSteamFlowMeasured',
+      'boilerSteamGeneratedPerHour',
+      'boilerSteamGeneratedPerYear',
+      'boilerSteamTemperature',
+      'boilerSteamPressure',
+      'isEconomizerPresent',
+      'boilerEfficiency'
+    ],
+    tdsBlowdown: [
+      // blowdown_equipment
+      'isBlowdownVesselPresent',
+      'isCoolingWaterUsed',
+      'isAutoTdsControlPResent',
+      'isFlashVesselPresent',
+      'isHeatExchangerPresent',
+      'waterTemperatureLeavingHeatExchanger',
+      // tds_blowdown_parameters
+      'tdsOfFeedwaterInFeedtank',
+      'boilerAverageTds',
+      'boilerMaxTds',
+    ],
+    waterTreatment: [
+      // make_up_water
+      'isMakeUpWaterMonitored',
+      'temperatureOfMakeupWater',
+      'makeupWaterAmountPerHour',
+      'makeupWaterAmountPerYear',
+      // water_treatment_parameters
+      'waterTreatmentMethod',
+      'percentageWaterRejection',
+      'tdsOfMakeupWater',
+    ],
+    feedwaterAndCondensate: [
+      // deaerator_type
+      'atmosphericDeaerator',
+      'pressurisedDeaerator',
+      // boiler_feedwater
+      'isFeedWaterMeasured',
+      'boilerFeedwaterConsumptionPerHour',
+      'boilerFeedwaterConsumptionPerYear',
+      'temperatureOfFeedtank',
+      'tdsOfFeedwaterInFeedtank',
+      'areChemicalsAddedDirectlyToFeedtank',
+      'pressureOfSteamSupplyingDsi',
+      'pressureOfFeedtank',
+      // condensate_return
+      'isCondensateReturnKnown',
+      'percentageOfCondensateReturn',
+      'volumeOfCondensateReturn',
+      'temperatureOfCondensateReturn',
+      'tdsOfCondensateReturn'
+    ]
+  };
+  utilityParametersFields = [
+    // Fuel
+    'hoursOfOperation',
+    'inputFuelId',
+    'fuelEnergyPerUnit',
+    'fuelCarbonContent',
+    'costOfFuelPerUnit',
+    'fuelQtyPerYearIsKnown',
+    'costOfFuelPerYear',
+    'fuelConsumptionPerYear',
+    // CO2 Emission
+    'isCo2OrCarbonEmissionsTaxed',
+    'carbonTaxLevyCostPerUnit',
+    'costOfCo2PerUnitMass',
+    // Water
+    'costOfWaterPerUnit',
+    'boilerHouseWaterQtyPerYearIsKnown',
+    'costOfWaterPerYear',
+    'waterConsumptionPerHour',
+    'waterConsumptionPerYear',
+    // Water treatment chemicals
+    'boilerWaterTreatmentChemicalCostsIsKnown',
+    'totalChemicalCostPerYear',
+    'o2ScavengingChemicalsCostSavings',
+    // Water effluent
+    'costOfEffluentPerUnit'
+  ]
 
   constructor(
     private steamGenerationAssessmentService: SteamGenerationAssessmentService,
@@ -59,15 +145,47 @@ export class SgaInputParametersComponent implements OnDestroy {
     this._ngUnsubscribe.complete();
   }
 
-  /**
-   * Clear fields value when user change radio or another variant
-   * **/
-  public clearValues(clearFields: Array<keyof SteamGeneratorInputsInterface>, setVal: any = 0, event?: any) {
-    if (!clearFields.length) return;
+  checkUtilityParametersIsValid(): boolean {
+    let isInvalid: boolean;
 
-    for (let fieldName of clearFields) {
-      this.steamGenerationAssessmentService.setFormValue(fieldName, setVal);
+    for (let utilityParametersField of this.utilityParametersFields) {
+      const inFieldInvalid = this.formGroup.get(`${this.formGroupKey}.${utilityParametersField}`).invalid &&
+      this.formGroup.get(`${this.formGroupKey}.${utilityParametersField}`).touched
+
+      if (inFieldInvalid) {
+        isInvalid = inFieldInvalid;
+        break;
+      }
     }
+
+    return isInvalid;
+  }
+
+  checkBoilerHouseParametersIsValid(): {
+    boiler: boolean;
+    tdsBlowdown: boolean;
+    waterTreatment: boolean;
+    feedwaterAndCondensate: boolean;
+  } {
+    let isInvalid = {
+      boiler: false,
+      tdsBlowdown: false,
+      waterTreatment: false,
+      feedwaterAndCondensate: false,
+    };
+
+    for (let tabName in this.boilerHouseParameters) {
+      for (let fieldName of this.boilerHouseParameters[tabName]) {
+        const inFieldInvalid = this.formGroup.get(`${this.formGroupKey}.${fieldName}`).invalid;
+
+        if (inFieldInvalid) {
+          isInvalid[tabName] = inFieldInvalid;
+          break;
+        }
+      }
+    }
+
+    return isInvalid;
   }
 
   /**
@@ -93,12 +211,14 @@ export class SgaInputParametersComponent implements OnDestroy {
 
   public changeFuelTypeHandle(preference: Preference): void {
     if (this.fuelType && preference) { // Not first init
-      this.changeFuelType.emit({
-        inputFuelId: this.formGroup.get(`${this.formGroupKey}.inputFuelId`).value,
-        inputFuelUnit: this.formGroup.get(`${this.formGroupKey}.inputFuelUnit`).value,
-        energyUnitSelected: null, // From preferences
-        smallWeightUnitSelected: null, // From preferences
-      });
+      const {inputFuelId, inputFuelUnit, isEconomizerPresent} = this._getMultipleControlValues({
+        inputFuelId: 'inputFuelId',
+        inputFuelUnit: 'inputFuelUnit',
+        isEconomizerPresent: 'isEconomizerPresent',
+      }) as {inputFuelId: string, inputFuelUnit: number, isEconomizerPresent: boolean};
+
+      this.changeFuelType.emit({ inputFuelId, inputFuelUnit, energyUnitSelected: null, smallWeightUnitSelected: null });
+      this.calculateEfficiency.emit({ inputFuelId, isEconomizerPresent })
     }
 
     this.fuelType = preference;
@@ -128,7 +248,29 @@ export class SgaInputParametersComponent implements OnDestroy {
     }
   }
 
-  private _changeSteamPressure(value): void {
+  /**
+   * @name isRequired check is field has required validator
+   * @param {string} controlName name of Inputs form field
+   * @returns {boolean} is has Validators.required
+   * */
+  public isRequired(controlName: keyof SteamGeneratorInputsInterface): boolean {
+    const control = this.formGroup.get(`${this.formGroupKey}.${controlName}`);
+    const validator = control && control.validator && control.validator({} as AbstractControl);
+
+    return validator && validator.required;
+  }
+
+  public disableField(fieldName: string | string[]): void {
+    if (Array.isArray(fieldName)) {
+      for (let name of fieldName) {
+        this._disableControl(name);
+      }
+    } else {
+      this._disableControl(fieldName);
+    }
+  }
+
+  private _changeSteamPressure(boilerSteamPressureValue): void {
     const selectedUnits = this.steamGenerationAssessmentService.getSizingPreferenceValues({
       temperatureUnitSelected: 'TemperatureUnit',
       pressureUnitSelected: 'PressureUnit',
@@ -139,10 +281,34 @@ export class SgaInputParametersComponent implements OnDestroy {
       boilerSteamTemperature: 'boilerSteamTemperature',
     }) as { isSuperheatedSteam: boolean; boilerSteamPressure: number; boilerSteamTemperature: number; };
 
-    this.steamGenerationAssessmentService.calculateSaturatedAndTemperature({...selectedUnits, ...inputValues})
+    if (inputValues.isSuperheatedSteam && inputValues.boilerSteamPressure) {
+      this.formGroup.get(`${this.formGroupKey}.boilerSteamTemperature`).clearValidators();
+      this.formGroup.get(`${this.formGroupKey}.boilerSteamTemperature`).updateValueAndValidity()
+    }
+
+    this.steamGenerationAssessmentService.calculateSaturatedAndTemperature({...selectedUnits, ...inputValues, boilerSteamTemperature: null })
       .pipe(takeUntil(this._ngUnsubscribe), filter(res => res && (res.isValid === undefined || res.isValid)))
-      .subscribe(res => {
-        console.log(res, '-----_changeSteamPressure() [RESPONSE]');
+      .subscribe(({ boilerSteamTemperature }) => {
+        const temperature = boilerSteamTemperature && boilerSteamTemperature.boilerSteamTemperature;
+
+        if (temperature) {
+          this.formGroup
+            .get(`${this.formGroupKey}.boilerSteamTemperature`)
+            .setValidators([Validators.required, Validators.min(temperature)]);
+
+          if (
+            !inputValues.isSuperheatedSteam || !inputValues.boilerSteamTemperature ||
+            inputValues.boilerSteamTemperature < boilerSteamTemperature.boilerSteamTemperature
+          ) {
+            this.steamGenerationAssessmentService
+              .changeSgaFieldFilled('boilerSteamTemperature', true);
+            this.steamGenerationAssessmentService
+              .setFormValue('boilerSteamTemperature', temperature);
+            this.formGroup
+              .get(`${this.formGroupKey}.boilerSteamTemperature`)
+              .updateValueAndValidity({ onlySelf: true });
+          }
+        }
       });
   }
 
@@ -184,6 +350,16 @@ export class SgaInputParametersComponent implements OnDestroy {
     if (this.fields[fieldName].filled) {
       this.steamGenerationAssessmentService.changeSgaFieldFilled(fieldName, false);
     }
+  }
+
+  private _disableControl(controlName: string): AbstractControl {
+    const control = this.formGroup.get(`${this.formGroupKey}.${controlName}`);
+
+    if (!control || control.disabled) return null;
+
+    control.disable({ onlySelf: true });
+
+    return control;
   }
 
   private _getMultipleControlValues(obj: { [key: string]: string }): {[key: string]: any} {

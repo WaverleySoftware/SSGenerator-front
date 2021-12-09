@@ -1,11 +1,11 @@
 import {
-  AfterContentInit, AfterViewInit,
+  AfterViewInit,
   Component,
   ElementRef,
   EventEmitter,
   forwardRef,
   Injector,
-  Input, OnInit,
+  Input,
   Output,
   ViewChild
 } from "@angular/core";
@@ -35,7 +35,9 @@ export class FormInputComponent implements ControlValueAccessor, AfterViewInit {
   @Input() message: string;
   @Input() type: 'text' | 'number' | 'email' | 'password' | "radio" | string = 'number';
   @Input() required: boolean;
+  @Input() readonly: boolean;
   @Input() disabled: boolean;
+  @Input() defaultChecked: boolean;
   @Input() filled: boolean;
   @Output() filledChange: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Input() private: any;
@@ -57,6 +59,7 @@ export class FormInputComponent implements ControlValueAccessor, AfterViewInit {
 
   ngAfterViewInit() {
     this.getFormControl();
+    this.initialDisableDefault();
   }
 
   // fake functions
@@ -111,9 +114,6 @@ export class FormInputComponent implements ControlValueAccessor, AfterViewInit {
   blurHandle(): void {
     this.onTouched();
     this.inputBlur.emit({name: this.formControlName, value: this.value});
-    if (!this.group) {
-      this.error = this.required && !this.value && this.value !== 0 ? 'Required' : null;
-    }
   }
 
   private getFormControl(): void {
@@ -140,8 +140,24 @@ export class FormInputComponent implements ControlValueAccessor, AfterViewInit {
         const control = fg.get(groupControl);
 
         control && !control.disabled && control.disable({ onlySelf: true });
-        (control.value || control.value === 0) && control.setValue(null);
+        control && (control.value || control.value === 0) && control.setValue(null);
       }
+    }
+  }
+
+  private initialDisableDefault(): void {
+    if (this.defaultChecked && this.group && this.groupControls && this.groupControls.length) {
+      this.disabled = false;
+
+      for (let groupElement of this.groupControls) {
+        const fg = this.control && this.control.control && this.control.control.parent;
+        const control = fg && fg.get(groupElement);
+
+        control && !control.disabled && control.disable({ onlySelf: true });
+      }
+
+      const existing = this.control && this.control.control;
+      existing && existing.disabled && existing.enable({ onlySelf: true });
     }
   }
 }

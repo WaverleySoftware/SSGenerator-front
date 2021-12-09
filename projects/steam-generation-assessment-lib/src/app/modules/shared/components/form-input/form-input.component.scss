@@ -18,6 +18,7 @@
     text-transform: uppercase;
     margin-bottom: 8px;
     padding-left: 0;
+    word-break: break-all;
   }
 
   &-row {
@@ -212,6 +213,15 @@
         background-size: 30px 25px;
         background-position: left center;
         background-repeat: no-repeat;
+      }
+    }
+  }
+  &.readonly {
+    pointer-events: none;
+    opacity: .6;
+    .formField {
+      &-input {
+        cursor: not-allowed;
       }
     }
   }
