@@ -54,6 +54,11 @@
     align-items: center;
     justify-content: space-between;
     padding: 24px;
+    &.invalid {
+      .panel-title {
+        color: var(--color-alarm-red);
+      }
+    }
   }
 
   &-title {

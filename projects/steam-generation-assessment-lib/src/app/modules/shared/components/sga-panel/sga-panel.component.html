@@ -1,5 +1,5 @@
 <div class="panel ssPanel" [ngStyle]="{ background: background }">
-  <div class="panel-heading">
+  <div class="panel-heading" [ngClass]="{invalid: invalid}">
     <ng-template *ngIf="!!headingRef" [ngTemplateOutlet]="headingRef"></ng-template>
     <div *ngIf="!headingRef">
       <h4 class="panel-title" *ngIf="!!title" [ngStyle]="{fontSize: titleSize }">
@@ -10,6 +10,7 @@
     </div>
     <button class="ssPanel_toggle"
             type="button"
+            [disabled]="disabled"
             *ngIf="!disableToggle"
             [attr.aria-controls]="id"
             [attr.aria-expanded]="!isCollapsed"

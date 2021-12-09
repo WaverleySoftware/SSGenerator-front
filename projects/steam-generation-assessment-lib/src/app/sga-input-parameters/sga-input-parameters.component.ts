@@ -29,6 +29,91 @@ export class SgaInputParametersComponent implements OnDestroy {
 
   private _ngUnsubscribe = new Subject<void>();
 
+  boilerHouseParameters = {
+    boiler: [
+      // boiler_parameters
+      'isSuperheatedSteam',
+      'isSteamFlowMeasured',
+      'boilerSteamGeneratedPerHour',
+      'boilerSteamGeneratedPerYear',
+      'boilerSteamTemperature',
+      'boilerSteamPressure',
+      'isEconomizerPresent',
+      'boilerEfficiency'
+    ],
+    tdsBlowdown: [
+      // blowdown_equipment
+      'isBlowdownVesselPresent',
+      'isCoolingWaterUsed',
+      'isAutoTdsControlPResent',
+      'isFlashVesselPresent',
+      'isHeatExchangerPresent',
+      'waterTemperatureLeavingHeatExchanger',
+      // tds_blowdown_parameters
+      'tdsOfFeedwaterInFeedtank',
+      'boilerAverageTds',
+      'boilerMaxTds',
+    ],
+    waterTreatment: [
+      // make_up_water
+      'isMakeUpWaterMonitored',
+      'temperatureOfMakeupWater',
+      'makeupWaterAmountPerHour',
+      'makeupWaterAmountPerYear',
+      // water_treatment_parameters
+      'waterTreatmentMethod',
+      'percentageWaterRejection',
+      'tdsOfMakeupWater',
+    ],
+    feedwaterAndCondensate: [
+      // deaerator_type
+      'atmosphericDeaerator',
+      'pressurisedDeaerator',
+      // boiler_feedwater
+      'isFeedWaterMeasured',
+      'boilerFeedwaterConsumptionPerHour',
+      'boilerFeedwaterConsumptionPerYear',
+      'temperatureOfFeedtank',
+      'tdsOfFeedwaterInFeedtank',
+      'areChemicalsAddedDirectlyToFeedtank',
+      'pressureOfSteamSupplyingDsi',
+      'pressureOfFeedtank',
+      // condensate_return
+      'isCondensateReturnKnown',
+      'percentageOfCondensateReturn',
+      'volumeOfCondensateReturn',
+      'temperatureOfCondensateReturn',
+      'tdsOfCondensateReturn'
+    ]
+  };
+  utilityParametersFields = [
+    // Fuel
+    'hoursOfOperation',
+    'inputFuelId',
+    'fuelEnergyPerUnit',
+    'fuelCarbonContent',
+    'costOfFuelPerUnit',
+    'fuelQtyPerYearIsKnown',
+    'costOfFuelPerYear',
+    'fuelConsumptionPerYear',
+    // CO2 Emission
+    'isCo2OrCarbonEmissionsTaxed',
+    'carbonTaxLevyCostPerUnit',
+    'costOfCo2PerUnitMass',
+    // Water
+    'costOfWaterPerUnit',
+    'boilerHouseWaterQtyPerYearIsKnown',
+    'costOfWaterPerYear',
+    'waterConsumptionPerHour',
+    'waterConsumptionPerYear',
+    // Water treatment chemicals
+    'boilerWaterTreatmentChemicalCostsIsKnown',
+    'totalChemicalCostPerYear',
+    'o2ScavengingChemicalsCostSavings',
+    // Water effluent
+    'costOfEffluentPerUnit'
+  ]
+
   constructor(
     private steamGenerationAssessmentService: SteamGenerationAssessmentService,
     private elRef: ElementRef,
@@ -60,15 +145,47 @@ export class SgaInputParametersComponent implements OnDestroy {
     this._ngUnsubscribe.complete();
   }
 
-  /**
-   * Clear fields value when user change radio or another variant
-   * **/
-  public clearValues(clearFields: Array<keyof SteamGeneratorInputsInterface>, setVal: any = 0, event?: any) {
-    if (!clearFields.length) return;
+  checkUtilityParametersIsValid(): boolean {
+    let isInvalid: boolean;
 
-    for (let fieldName of clearFields) {
-      this.steamGenerationAssessmentService.setFormValue(fieldName, setVal);
+    for (let utilityParametersField of this.utilityParametersFields) {
+      const inFieldInvalid = this.formGroup.get(`${this.formGroupKey}.${utilityParametersField}`).invalid &&
+      this.formGroup.get(`${this.formGroupKey}.${utilityParametersField}`).touched
+
+      if (inFieldInvalid) {
+        isInvalid = inFieldInvalid;
+        break;
+      }
     }
+
+    return isInvalid;
+  }
+
+  checkBoilerHouseParametersIsValid(): {
+    boiler: boolean;
+    tdsBlowdown: boolean;
+    waterTreatment: boolean;
+    feedwaterAndCondensate: boolean;
+  } {
+    let isInvalid = {
+      boiler: false,
+      tdsBlowdown: false,
+      waterTreatment: false,
+      feedwaterAndCondensate: false,
+    };
+
+    for (let tabName in this.boilerHouseParameters) {
+      for (let fieldName of this.boilerHouseParameters[tabName]) {
+        const inFieldInvalid = this.formGroup.get(`${this.formGroupKey}.${fieldName}`).invalid;
+
+        if (inFieldInvalid) {
+          isInvalid[tabName] = inFieldInvalid;
+          break;
+        }
+      }
+    }
+
+    return isInvalid;
   }
 
   /**

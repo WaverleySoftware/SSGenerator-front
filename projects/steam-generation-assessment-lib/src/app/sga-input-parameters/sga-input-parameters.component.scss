@@ -29,6 +29,11 @@ $md: 992px;
       display: inline-block;
       margin-bottom: 24px;
       &-item {
+        &.disabled {
+          a {
+            color: var(--color-blue);
+          }
+        }
         a {
           font-family: var(--font-proxima-nova);
           font-style: normal;
@@ -43,6 +48,7 @@ $md: 992px;
           a {
             background-color: var(--color-blue);
             border-radius: 50px;
+            color: var(--color-white);
           }
         }
       }

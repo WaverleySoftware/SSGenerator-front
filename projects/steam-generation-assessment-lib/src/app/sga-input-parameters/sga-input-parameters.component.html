@@ -1,6 +1,6 @@
 <sga-panel [isCollapsed]="false"
            id="UtilityParameters"
-           title="Utility parameters"
+           [title]="'UTILITY_PARAMETERS' | translate"
            titleSize="24px">
   <form body class="container-fluid" [formGroup]="formGroup">
     <div class="row mb-5" [formGroupName]="formGroupKey">
@@ -297,7 +297,8 @@
 
                   <form-toggle [formControlName]="fields.isEconomizerPresent.formControlName"
                                [label]="fields.isEconomizerPresent.label"
-                               (valueChange)="calculateEfficiency.emit({isEconomizerPresent: $event, inputFuelId: formGroup.get(formGroupKey+'.inputFuelId').value})"></form-toggle>
+                               (valueChange)="calculateEfficiency.emit({isEconomizerPresent: $event, inputFuelId: formGroup.get(formGroupKey+'.inputFuelId').value})"
+                  ></form-toggle>
 
                   <form-input [formControlName]="fields.boilerEfficiency.formControlName"
                               [label]="fields.boilerEfficiency.label"
@@ -416,7 +417,7 @@
                               [defaultChecked]="true"
                               group="makeupWaterAmount"></form-input>
                   <form-input [formControlName]="fields.makeupWaterAmountPerYear.formControlName"
-                              [label]="'MAKE_UP_WATER_PER_YEAR'"
+                              [label]="fields.makeupWaterAmountPerYear.label"
                               [unit-names]="fields.makeupWaterAmountPerYear.unitNames"
                               [unit-types]="fields.makeupWaterAmountPerYear.unitTypes"
                               [unit-translations]="fields.makeupWaterAmountPerYear.translations"
