@@ -1,11 +1,11 @@
 import {
-  AfterContentInit, AfterViewInit,
+  AfterViewInit,
   Component,
   ElementRef,
   EventEmitter,
   forwardRef,
   Injector,
-  Input, OnInit,
+  Input,
   Output,
   ViewChild
 } from "@angular/core";
@@ -35,6 +35,7 @@ export class FormInputComponent implements ControlValueAccessor, AfterViewInit {
   @Input() message: string;
   @Input() type: 'text' | 'number' | 'email' | 'password' | "radio" | string = 'number';
   @Input() required: boolean;
+  @Input() readonly: boolean;
   @Input() disabled: boolean;
   @Input() defaultChecked: boolean;
   @Input() filled: boolean;
@@ -113,9 +114,6 @@ export class FormInputComponent implements ControlValueAccessor, AfterViewInit {
   blurHandle(): void {
     this.onTouched();
     this.inputBlur.emit({name: this.formControlName, value: this.value});
-    if (!this.group) {
-      this.error = this.required && !this.value && this.value !== 0 ? 'Required' : null;
-    }
   }
 
   private getFormControl(): void {

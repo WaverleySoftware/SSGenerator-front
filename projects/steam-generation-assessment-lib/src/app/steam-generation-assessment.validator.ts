@@ -1,4 +1,4 @@
-import { AbstractControl, AsyncValidatorFn, FormGroup, ValidationErrors } from "@angular/forms";
+import { AbstractControl, AsyncValidatorFn, FormGroup, ValidationErrors, Validators } from "@angular/forms";
 import { Observable, of, timer } from "rxjs";
 import { map, first, switchMap, catchError } from "rxjs/operators";
 import { SteamGenerationAssessmentService } from "./steam-generation-assessment.service";
@@ -19,8 +19,6 @@ export class SgaValidator {
         SgaValidator.toggleFields(costOfFuelPerYear, true);
       } else {
         SgaValidator.toggleFields([costOfFuelPerYear, fuelConsumptionPerYear]);
-        costOfFuelPerYear.value && costOfFuelPerYear.setValue(null, { onlySelf: true });
-        fuelConsumptionPerYear.value && fuelConsumptionPerYear.setValue(null, { onlySelf: true });
       }
     }
 
@@ -38,7 +36,11 @@ export class SgaValidator {
       if (control.value) {
         SgaValidator.toggleFields(costOfWaterPerYear, true);
       } else {
-        SgaValidator.toggleFields([costOfWaterPerYear, waterConsumptionPerHour, waterConsumptionPerYear]);
+        SgaValidator.toggleFields([
+          costOfWaterPerYear,
+          waterConsumptionPerHour,
+          waterConsumptionPerYear
+        ]);
       }
     }
 
@@ -64,7 +66,7 @@ export class SgaValidator {
     if (fg) {
       const boilerSteamTemperature = fg.get('boilerSteamTemperature');
 
-      SgaValidator.toggleFields(boilerSteamTemperature, control.value, false);
+      SgaValidator.toggleFields(boilerSteamTemperature, control.value);
     }
 
     return null;
@@ -122,11 +124,12 @@ export class SgaValidator {
 
     if (fg) {
       const boilerFeedwaterConsumptionPerHour = fg.get('boilerFeedwaterConsumptionPerHour');
-      const boilerFeedwaterConsumptionPerYear = fg.get('boilerFeedwaterConsumptionPerYear');
 
       if (control.value) {
         SgaValidator.toggleFields(boilerFeedwaterConsumptionPerHour, true);
       } else {
+        const boilerFeedwaterConsumptionPerYear = fg.get('boilerFeedwaterConsumptionPerYear');
+
         SgaValidator.toggleFields([boilerFeedwaterConsumptionPerHour, boilerFeedwaterConsumptionPerYear]);
       }
     }
@@ -141,7 +144,7 @@ export class SgaValidator {
       const isFlashVesselPresent = fg.get('isFlashVesselPresent');
 
       if (control.value) {
-        SgaValidator.toggleFields(isFlashVesselPresent, true, false);
+        SgaValidator.toggleFields(isFlashVesselPresent, true);
       } else {
         const isHeatExchangerPresent = fg.get('isHeatExchangerPresent');
         const waterTemperatureLeavingHeatExchanger = fg.get('waterTemperatureLeavingHeatExchanger');
@@ -150,7 +153,7 @@ export class SgaValidator {
           isFlashVesselPresent,
           isHeatExchangerPresent,
           waterTemperatureLeavingHeatExchanger
-        ], false, false)
+        ]);
       }
     }
 
@@ -167,10 +170,7 @@ export class SgaValidator {
       if (control.value) {
         SgaValidator.toggleFields(isHeatExchangerPresent, true);
       } else {
-        SgaValidator.toggleFields([
-          isHeatExchangerPresent,
-          waterTemperatureLeavingHeatExchanger
-        ], false, false);
+        SgaValidator.toggleFields([isHeatExchangerPresent, waterTemperatureLeavingHeatExchanger]);
       }
     }
 
@@ -183,12 +183,82 @@ export class SgaValidator {
     if (fg) {
       const waterTemperatureLeavingHeatExchanger = fg.get('waterTemperatureLeavingHeatExchanger');
 
-      SgaValidator.toggleFields(waterTemperatureLeavingHeatExchanger, control.value, false);
+      SgaValidator.toggleFields(waterTemperatureLeavingHeatExchanger, control.value);
     }
 
     return null;
   }
 
+  static atmosphericDeaerator(control: AbstractControl): ValidationErrors {
+    const fg = control && control.parent;
+
+    if (fg && control.value) {
+      const pressurisedDeaerator = fg.get('pressurisedDeaerator');
+
+      pressurisedDeaerator && pressurisedDeaerator.patchValue(false, { selfOnly: true });
+    }
+
+    return null;
+  }
+
+  static pressurisedDeaerator(control: AbstractControl): ValidationErrors {
+    const fg = control && control.parent;
+
+    if (fg) {
+      const pressureOfFeedtank = fg.get('pressureOfFeedtank');
+      const atmosphericDeaerator = fg.get('atmosphericDeaerator');
+      const isDsiPresent = fg.get('isDsiPresent');
+
+      SgaValidator.toggleFields(pressureOfFeedtank, control.value);
+      SgaValidator.toggleFields(isDsiPresent, !control.value, false);
+      control.value && atmosphericDeaerator && atmosphericDeaerator.patchValue(false, { selfOnly: true});
+
+      if (!control.value) {
+        pressureOfFeedtank.clearValidators();
+      } else {
+        pressureOfFeedtank.setValidators(Validators.required);
+      }
+
+      pressureOfFeedtank.updateValueAndValidity({ onlySelf: true });
+    }
+
+    return null;
+  }
+
+  static isDsiPresent(control: AbstractControl): ValidationErrors {
+    const fg = control && control.parent;
+
+    if (fg) {
+      const pressureOfSteamSupplyingDsi = fg.get('pressureOfSteamSupplyingDsi');
+
+      SgaValidator.toggleFields(pressureOfSteamSupplyingDsi, control.value);
+    }
+
+    return null;
+  }
+
+  static isCondensateReturnKnown(control: AbstractControl): ValidationErrors {
+    const fg = control && control.parent;
+
+    if (fg) {
+      const percentageOfCondensateReturn = fg.get('percentageOfCondensateReturn');
+      const volumeOfCondensateReturn = fg.get('volumeOfCondensateReturn');
+
+      if (control.value) {
+        SgaValidator.toggleFields(percentageOfCondensateReturn, true);
+      } else {
+        SgaValidator.toggleFields([percentageOfCondensateReturn, volumeOfCondensateReturn]);
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * @param service service with request functions
+   * @param {string} [name] keyof SteamGeneratorInputsInterface
+   * @param {boolean} isNullable send validation request if value is "0"
+   * */
   static validateAsyncFn(service: SteamGenerationAssessmentService, name?: keyof SteamGeneratorInputsInterface, isNullable?: boolean): AsyncValidatorFn {
     return function (control): Observable<ValidationErrors> {
       if (control && !SgaValidator.beforeValue[name] && !control.dirty && control.untouched) {
@@ -282,7 +352,7 @@ export class SgaValidator {
     return (value === prevValue);
   }
 
-  private static toggleFields(fields: AbstractControl | AbstractControl[], isEnable: boolean = false, isClearValue: boolean = true): void {
+  private static toggleFields(fields: AbstractControl | AbstractControl[], isEnable: boolean = false, setValue?: any): void {
     if (!fields) return null;
 
     const toggleFn = (control: AbstractControl) => {
@@ -291,8 +361,9 @@ export class SgaValidator {
       } else {
         control && (control.enabled || control.enabled === undefined) && control.disable({ onlySelf: true });
 
-        if (isClearValue && control && control.value) {
-          control.setValue(null, { onlySelf: true });
+        if (setValue !== undefined && control && control.value !== setValue) {
+          console.log('----setValue---', setValue);
+          control.setValue(setValue, { onlySelf: true });
         }
       }
     }

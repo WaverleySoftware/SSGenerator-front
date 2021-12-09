@@ -466,19 +466,19 @@
             <sga-panel id="deaeratorTypePanel" [title]="'DEAERATOR_TYPE' | translate" background="#EDF2F4">
               <div class="row" body>
                 <div class="col-md-4">
-                  <form-radio (valueChange)="clearValues(['pressurisedDeaerator'], false)"
-                              [inputValue]="true"
+                  <form-radio [inputValue]="true"
                               [formControlName]="fields.atmosphericDeaerator.formControlName"
                               [label]="fields.atmosphericDeaerator.label"
+                              [defaultChecked]="formGroup.get(formGroupKey+'.atmosphericDeaerator').value"
                               name="deaeratorType">
                     <img src="/assets/img/steam_generation/deaerator_type_1.png" alt="deaerator_type_1">
                   </form-radio>
                 </div>
                 <div class="col-md-4">
-                  <form-radio (valueChange)="clearValues( ['atmosphericDeaerator'], false)"
-                              [inputValue]="true"
+                  <form-radio [inputValue]="true"
                               [formControlName]="fields.pressurisedDeaerator.formControlName"
                               [label]="fields.pressurisedDeaerator.label"
+                              [defaultChecked]="formGroup.get(formGroupKey+'.pressurisedDeaerator').value"
                               name="deaeratorType">
                     <img src="/assets/img/steam_generation/boiler-scheme/images/PressurisedDAImgCrop.png"
                          alt="deaerator_type_1">
@@ -536,7 +536,8 @@
                               [unit-controls]="fields.tdsOfFeedwaterInFeedtank.controlNames"
                               [required]="isRequired('tdsOfFeedwaterInFeedtank')"
                               [value]="formGroup.get(formGroupKey+'.tdsOfFeedwaterInFeedtank').value"
-                              [(filled)]="fields.tdsOfFeedwaterInFeedtank.filled"></form-input>
+                              [(filled)]="fields.tdsOfFeedwaterInFeedtank.filled"
+                              [readonly]="true"></form-input>
 
                   <form-toggle [formControlName]="fields.areChemicalsAddedDirectlyToFeedtank.formControlName"
                                [label]="fields.areChemicalsAddedDirectlyToFeedtank.label"></form-toggle>
@@ -554,6 +555,16 @@
                                 [required]="isRequired('pressureOfSteamSupplyingDsi')"
                                 [(filled)]="fields.pressureOfSteamSupplyingDsi.filled"></form-input>
                   </form-toggle>
+
+                  <form-input [formControlName]="fields.pressureOfFeedtank.formControlName"
+                              [label]="fields.pressureOfFeedtank.label"
+                              [unit-names]="fields.pressureOfFeedtank.unitNames"
+                              [unit-types]="fields.pressureOfFeedtank.unitTypes"
+                              [unit-translations]="fields.pressureOfFeedtank.translations"
+                              [unit-controls]="fields.pressureOfFeedtank.controlNames"
+                              [required]="isRequired('pressureOfFeedtank')"
+                              [(filled)]="fields.pressureOfFeedtank.filled"
+                  ></form-input>
                 </div>
               </div>
             </sga-panel>

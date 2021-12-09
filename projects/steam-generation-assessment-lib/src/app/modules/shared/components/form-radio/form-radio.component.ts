@@ -13,6 +13,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
 })
 export class FormRadioComponent implements ControlValueAccessor {
   @Input() value: any = true;
+  @Input() defaultChecked: boolean;
   @Input() inputValue: any;
   @Input() name: string;
   @Input() label: string;

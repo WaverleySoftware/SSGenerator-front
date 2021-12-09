@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
-import { Observable, Subject } from "rxjs";
+import { Observable, Subject, of } from "rxjs";
 import {
   FormFieldTypesInterface,
   SgaHttpValidationResponseInterface,
@@ -307,6 +307,14 @@ export class SteamGenerationAssessmentService {
       translations: ['PRESSURE'],
       controlNames: ['pressureOfSteamSupplyingDsiUnit'],
     },
+    pressureOfFeedtank: {
+      formControlName: 'pressureOfFeedtank',
+      label: 'PRESSURE_OF_FEEDTANK',
+      unitNames: ['PressureUnit'],
+      unitTypes: ['PressureUnits'],
+      translations: ['PRESSURE'],
+      controlNames: ['pressureOfFeedtankUnit']
+    },
     isCondensateReturnKnown: {
       formControlName: 'isCondensateReturnKnown',
       label: 'IS_CONDENSATE_RETURN_KNOWN'
@@ -398,35 +406,35 @@ export class SteamGenerationAssessmentService {
       waterTemperatureLeavingHeatExchanger: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'waterTemperatureLeavingHeatExchanger', null)], // WATER_TEMPERATURE_LEAVING_HEAT_EXCHANGER
       waterTreatmentMethod: [null, Validators.required], // WATER_TREATMENT_METHOD
       percentageWaterRejection: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'percentageWaterRejection')], // PERCENTAGE_WATER_REJECTION
-      tdsOfMakeupWater: [0, Validators.required], // TDS_OF_MAKEUP_WATER
-      tdsOfMakeupWaterUnit: [0, Validators.required], // UNIT
+      tdsOfMakeupWater: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'tdsOfMakeupWater')], // TDS_OF_MAKEUP_WATER
+      tdsOfMakeupWaterUnit: [null, Validators.required], // UNIT
       isMakeUpWaterMonitored: [false, SgaValidator.isMakeUpWaterMonitored],
       temperatureOfMakeupWater: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'temperatureOfMakeupWater', true)], // TEMPERATURE_OF_MAKE_UP_WATER : Original TEMPERATURE_OF_MAKEUP_WATER
       temperatureOfMakeupWaterUnit: [null], // UNIT TemperatureUnit
       makeupWaterAmountPerHour: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'makeupWaterAmountPerHour', true)],
       makeupWaterAmountPerYear: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'makeupWaterAmountPerYear', true)],
       makeupWaterAmountUnit: [0, Validators.required], // UNIT BoilerHouseVolumeUnits
-      atmosphericDeaerator: [true], // AUTMOSPHERIC_DEAERATOR (default)
-      pressurisedDeaerator: [false], // PRESSURLSED_DEAERATOR
-      temperatureOfFeedtank: [0, Validators.required], // TEMPERATURE_OF_FEEDTANK
-      temperatureOfFeedtankUnit: [0, Validators.required], // UNIT
+      atmosphericDeaerator: [true, SgaValidator.atmosphericDeaerator], // AUTMOSPHERIC_DEAERATOR (default)
+      pressurisedDeaerator: [false, SgaValidator.pressurisedDeaerator], // PRESSURLSED_DEAERATOR
+      temperatureOfFeedtank: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'temperatureOfFeedtank')], // TEMPERATURE_OF_FEEDTANK
+      temperatureOfFeedtankUnit: [null, Validators.required], // UNIT
       tdsOfFeedwaterInFeedtank: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'tdsOfFeedwaterInFeedtank')], // TDS_OF_FEEDWATER_IN_FEEDTANK
       tdsOfFeedwaterInFeedtankUnit: [0, Validators.required], // UNIT BoilerHouseTDSUnits
-      tdsOfCondensateReturn: [0, Validators.required], // TDS_OF_CONDENSATE_RETURN
-      tdsOfCondensateReturnUnit: [0, Validators.required], // UNIT "BoilerHouseTDSUnits"
-      temperatureOfCondensateReturn: [0, Validators.required], // TEMPERATURE_OF_CONDENSATE_RETURN
-      temperatureOfCondensateReturnUnit: [0, Validators.required], // UNIT TemperatureUnit
+      tdsOfCondensateReturn: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'tdsOfCondensateReturn')], // TDS_OF_CONDENSATE_RETURN
+      tdsOfCondensateReturnUnit: [null, Validators.required], // UNIT "BoilerHouseTDSUnits"
+      temperatureOfCondensateReturn: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'temperatureOfCondensateReturn')], // TEMPERATURE_OF_CONDENSATE_RETURN
+      temperatureOfCondensateReturnUnit: [null, Validators.required], // UNIT TemperatureUnit
       areChemicalsAddedDirectlyToFeedtank: [false], // ARE_CHEMICALS_ADDED_DIRECTLY_TO_FEEDTANK
-      pressureOfFeedtank: [0], // ------------
-      pressureOfFeedtankUnit: [0], // ------------
-      pressureOfSteamSupplyingDsi: [0, Validators.required], // PRESSURE_OF_STEAM_SUPPLYING_DSI
-      pressureOfSteamSupplyingDsiUnit: [0, Validators.required], // UNIT
-      isCondensateReturnKnown: [false], // IS_CONDENSATE_RETURN_KNOWN
-      percentageOfCondensateReturn: [0, Validators.required], // PERCENTAGE_OF_CONDENSATE_RETURN
-      percentageOfCondensateReturnUnit: [0, Validators.required], // UNIT ???????
-      volumeOfCondensateReturn: [0], // VOLUME_OF_CONDENSATE_RETURN
-      volumeOfCondensateReturnUnit: [0], // UNIT "BoilerHouseVolumeUnits"
-      isDsiPresent: [false], // IS_DSI_PRESENT
+      pressureOfFeedtank: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'pressureOfFeedtank')], // PRESSURE_OF_FEEDTANK
+      pressureOfFeedtankUnit: [null], // PRESSURE_OF_FEEDTANK (UNIT) (PressureUnit)
+      pressureOfSteamSupplyingDsi: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'pressureOfSteamSupplyingDsi')], // PRESSURE_OF_STEAM_SUPPLYING_DSI
+      pressureOfSteamSupplyingDsiUnit: [null, Validators.required], // UNIT
+      isCondensateReturnKnown: [false, SgaValidator.isCondensateReturnKnown], // IS_CONDENSATE_RETURN_KNOWN
+      percentageOfCondensateReturn: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'percentageOfCondensateReturn')], // PERCENTAGE_OF_CONDENSATE_RETURN
+      percentageOfCondensateReturnUnit: [null],
+      volumeOfCondensateReturn: [null, null, SgaValidator.validateAsyncFn(this, 'volumeOfCondensateReturn')], // VOLUME_OF_CONDENSATE_RETURN
+      volumeOfCondensateReturnUnit: [null], // UNIT "BoilerHouseVolumeUnits"
+      isDsiPresent: [false, SgaValidator.isDsiPresent], // IS_DSI_PRESENT
       proposalTemperatureUnit: [''],
       proposalTemperatureUnitUnit: [0],
       isBoilerEfficiencySelected: [false],
@@ -481,13 +489,14 @@ export class SteamGenerationAssessmentService {
     this.requestLoading.next(true);
     return this.http.post<any>(`./Api/SteamGenerator/calculate-benchmark`, form)
       .pipe(
-        tap(() => this.requestLoading.next(false)),
+        tap(null, null, () => this.requestLoading.next(false)),
         map((res) => {
           // Get child formGroup
           const fg = this._sizingFormGroup.get('steamGeneratorInputs') as FormGroup;
           // Validate if has errors
           return SgaValidator.validateCalculation(res, fg);
-        }));
+        }),
+      );
   }
 
   validateSgInput(
@@ -502,34 +511,31 @@ export class SteamGenerationAssessmentService {
   ): Observable<{fuelCarbonContent: number; fuelEnergyPerUnit: number;} | HttpErrorResponse> {
     this.requestLoading.next(true);
     return this.http.post<any>('./Api/SteamGenerator/calculate-carbon-and-calorific-value', calorificData)
-      .pipe(tap(() => this.requestLoading.next(false)));
+      .pipe(tap(null, null, () => this.requestLoading.next(false)));
   }
 
   calculateCarbonEmission(data: SteamCarbonEmissionInterface): Observable<{ fuelCarbonContent: number }> {
     this.requestLoading.next(true);
     return this.http.post<any>('./Api/SteamGenerator/calculate-carbon-emission-value', data)
-      .pipe(tap(() => this.requestLoading.next(false)));
+      .pipe(tap(null, null, () => this.requestLoading.next(false)));
   }
 
   calculateSaturatedAndTemperature(data: SgaSaturatedTemperatureBodyInterface): Observable<any> {
     this.requestLoading.next(true);
     return this.http.post<any>('./Api/SteamGenerator/calculate-saturated-and-freezing-temperature', data)
-      .pipe(tap(() => this.requestLoading.next(false)), catchError((e, c) => {
-        this.requestLoading.next(false);
-        return c;
-      }));
+      .pipe(tap(null, null, () => this.requestLoading.next(false)));
   }
 
   calculateBoilerEfficiency(data: {isEconomizerPresent: boolean; inputFuelId: string;}): Observable<{boilerEfficiency: number}> {
     this.requestLoading.next(true);
     return this.http.post<{boilerEfficiency: number}>('./Api/SteamGenerator/calculate-boiler-efficiency', data)
-      .pipe(tap(() => this.requestLoading.next(false)));
+      .pipe(tap(null, null, () => this.requestLoading.next(false)));
   }
 
   calculateWaterTemperature(data: { temperatureUnitSelected: number }): Observable<any> {
     this.requestLoading.next(true);
     return this.http.post('./Api/SteamGenerator/calculate-water-temperature-leaving-heat-exchanger', data)
-      .pipe(tap(() => this.requestLoading.next(false)));
+      .pipe(tap(null, null, () => this.requestLoading.next(false)));
   }
 
   public getSizingFormGroup(): FormGroup {

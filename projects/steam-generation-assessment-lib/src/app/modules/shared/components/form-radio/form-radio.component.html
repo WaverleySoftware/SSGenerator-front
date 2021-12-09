@@ -8,6 +8,7 @@
            [name]="name"
            [value]="value"
            (change)="updateValue($event)"
+           [defaultChecked]="defaultChecked"
            [required]="required"
            [disabled]="disabled">
     <span class="formRadio-label" *ngIf="!!label">{{label | translate}}</span>

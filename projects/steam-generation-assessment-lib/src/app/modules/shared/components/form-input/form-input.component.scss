@@ -216,4 +216,13 @@
       }
     }
   }
+  &.readonly {
+    pointer-events: none;
+    opacity: .6;
+    .formField {
+      &-input {
+        cursor: not-allowed;
+      }
+    }
+  }
 }
