@@ -121,9 +121,69 @@ export class SgaValidator {
     const fg = control && control.parent;
 
     if (fg) {
-      const boilerFeedwaterConsumption = fg.get('boilerFeedwaterConsumption');
-      // TODO: need to create new separate fields for "boilerFeedwaterConsumptionPreHour" && "boilerFeedwaterConsumptionPerYear"
-      SgaValidator.toggleFields(boilerFeedwaterConsumption, control.value);
+      const boilerFeedwaterConsumptionPerHour = fg.get('boilerFeedwaterConsumptionPerHour');
+      const boilerFeedwaterConsumptionPerYear = fg.get('boilerFeedwaterConsumptionPerYear');
+
+      if (control.value) {
+        SgaValidator.toggleFields(boilerFeedwaterConsumptionPerHour, true);
+      } else {
+        SgaValidator.toggleFields([boilerFeedwaterConsumptionPerHour, boilerFeedwaterConsumptionPerYear]);
+      }
+    }
+
+    return null;
+  }
+
+  static isAutoTdsControlPResent(control: AbstractControl): ValidationErrors {
+    const fg = control && control.parent;
+
+    if (fg) {
+      const isFlashVesselPresent = fg.get('isFlashVesselPresent');
+
+      if (control.value) {
+        SgaValidator.toggleFields(isFlashVesselPresent, true, false);
+      } else {
+        const isHeatExchangerPresent = fg.get('isHeatExchangerPresent');
+        const waterTemperatureLeavingHeatExchanger = fg.get('waterTemperatureLeavingHeatExchanger');
+
+        SgaValidator.toggleFields([
+          isFlashVesselPresent,
+          isHeatExchangerPresent,
+          waterTemperatureLeavingHeatExchanger
+        ], false, false)
+      }
+    }
+
+    return null;
+  }
+
+  static isFlashVesselPresent(control: AbstractControl): ValidationErrors {
+    const fg = control && control.parent;
+
+    if (fg) {
+      const isHeatExchangerPresent = fg.get('isHeatExchangerPresent');
+      const waterTemperatureLeavingHeatExchanger = fg.get('waterTemperatureLeavingHeatExchanger');
+
+      if (control.value) {
+        SgaValidator.toggleFields(isHeatExchangerPresent, true);
+      } else {
+        SgaValidator.toggleFields([
+          isHeatExchangerPresent,
+          waterTemperatureLeavingHeatExchanger
+        ], false, false);
+      }
+    }
+
+    return null;
+  }
+
+  static isHeatExchangerPresent(control: AbstractControl): ValidationErrors {
+    const fg = control && control.parent;
+
+    if (fg) {
+      const waterTemperatureLeavingHeatExchanger = fg.get('waterTemperatureLeavingHeatExchanger');
+
+      SgaValidator.toggleFields(waterTemperatureLeavingHeatExchanger, control.value, false);
     }
 
     return null;

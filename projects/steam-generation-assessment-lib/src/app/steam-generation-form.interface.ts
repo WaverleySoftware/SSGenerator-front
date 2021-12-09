@@ -25,22 +25,20 @@ export interface SteamGeneratorSelectedUnitsInterface {
   smallWeightUnitSelected: number;
   emissionUnitSelected: number;
   volumeUnitSelected: number;
+  smallVolumetricFlowUnitSelected: number;
   massFlowUnitSelected: number;
-  massFlowBoilerHouseUnitSelected: number;
+  smallMassFlowUnitSelected: number;
   pressureUnitSelected: number;
   temperatureUnitSelected: number;
   tdsUnitSelected: number;
-  carbonDioxideEmissionsUnitSelected: number;
 }
 
 export interface SteamGeneratorInputsInterface {
   hoursOfOperation: number;
   isSteamFlowMeasured: boolean;
   isAutoTdsControlPResent: boolean;
-  boilerSteamGeneratedPerYear: number;
-  boilerSteamGeneratedPerYearUnit: number;
-  boilerSteamGeneratedPerHour: number;
-  boilerSteamGeneratedPerHourUnit: number;
+  boilerSteamGeneratedPerYear: number;  // --- NEW FIELD
+  boilerSteamGeneratedPerHour: number; // --- NEW FIELD
   inputFuelId: string;
   inputFuelUnit: number;
   costOfFuelPerUnit: number; // 0.02 khW
@@ -72,20 +70,23 @@ export interface SteamGeneratorInputsInterface {
   isEconomizerPresent: boolean;
   boilerAverageTds: number;
   boilerMaxTds: number;
-  boilerFeedwaterConsumption: number;
+  // boilerFeedwaterConsumption: number; // --- REMOVED FIELD
+  boilerFeedwaterConsumptionPerYear: number; // --- NEW FIELD
+  boilerFeedwaterConsumptionPerHour: number; // --- NEW FIELD
   isFlashVesselPresent: boolean;
   isHeatExchangerPresent: boolean;
   waterTemperatureLeavingHeatExchanger: number;
   waterTreatmentMethod: string;
   percentageWaterRejection: number;
-  // percentageWaterRejectionUnit --- PERCENTAGE WATER REJECTION (unit) --- REMOVED FIELD (need to remove unit only percentage %)
   tdsOfMakeupWater: number;
   tdsOfMakeupWaterUnit: number;
   isMakeUpWaterMonitored: boolean; // IS_MAKE_UP_WATER_MONITORED  --- NEW FIELD
   temperatureOfMakeupWater: number;
   temperatureOfMakeupWaterUnit: number;
-  makeupWaterAmount: number;
-  makeupWaterAmountUnit: number;
+  // makeupWaterAmount: number; // MAKEUP_WATER_AMOUNT  --- REMOVED FIELD (replace on two field "per year & per hour")
+  makeupWaterAmountPerHour: number; // MAKE_UP_WATER_PER_HOUR  --- NEW FIELD
+  makeupWaterAmountPerYear: number; // MAKE_UP_WATER_PER_YEAR  --- NEW FIELD
+  makeupWaterAmountUnit: number; // UNIT for MAKE_UP_WATER_PER_HOUR && MAKE_UP_WATER_PER_YEAR
   atmosphericDeaerator: boolean;
   pressurisedDeaerator: boolean;
   temperatureOfFeedtank: number;
@@ -97,8 +98,8 @@ export interface SteamGeneratorInputsInterface {
   temperatureOfCondensateReturn: number;
   temperatureOfCondensateReturnUnit: number;
   areChemicalsAddedDirectlyToFeedtank: boolean;
-  pressureOfFeedtank: number;
-  pressureOfFeedtankUnit: number;
+  pressureOfFeedtank: number; // --- NEED TO ADD ON UI (When we change "DEAERATOR_TYPE" we toggle this field)
+  pressureOfFeedtankUnit: number; // UNIT "PressureUnit"
   pressureOfSteamSupplyingDsi: number;
   pressureOfSteamSupplyingDsiUnit: number;
   isCondensateReturnKnown: boolean;

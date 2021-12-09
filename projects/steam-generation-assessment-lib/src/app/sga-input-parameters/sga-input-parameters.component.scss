@@ -10,6 +10,15 @@ $md: 992px;
       }
     }
   }
+
+  &-l {
+    border-left: 1px solid var(--color-steel-40);
+    @media screen and (min-width: $md) {
+      &-md {
+        border-left: 1px solid var(--color-steel-40);
+      }
+    }
+  }
 }
 
 .sgaTabs {

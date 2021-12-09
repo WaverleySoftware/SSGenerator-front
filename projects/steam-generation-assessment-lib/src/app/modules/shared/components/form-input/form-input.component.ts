@@ -36,6 +36,7 @@ export class FormInputComponent implements ControlValueAccessor, AfterViewInit {
   @Input() type: 'text' | 'number' | 'email' | 'password' | "radio" | string = 'number';
   @Input() required: boolean;
   @Input() disabled: boolean;
+  @Input() defaultChecked: boolean;
   @Input() filled: boolean;
   @Output() filledChange: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Input() private: any;
@@ -57,6 +58,7 @@ export class FormInputComponent implements ControlValueAccessor, AfterViewInit {
 
   ngAfterViewInit() {
     this.getFormControl();
+    this.initialDisableDefault();
   }
 
   // fake functions
@@ -142,6 +144,22 @@ export class FormInputComponent implements ControlValueAccessor, AfterViewInit {
         control && !control.disabled && control.disable({ onlySelf: true });
         control && (control.value || control.value === 0) && control.setValue(null);
       }
+    }
+  }
+
+  private initialDisableDefault(): void {
+    if (this.defaultChecked && this.group && this.groupControls && this.groupControls.length) {
+      this.disabled = false;
+
+      for (let groupElement of this.groupControls) {
+        const fg = this.control && this.control.control && this.control.control.parent;
+        const control = fg && fg.get(groupElement);
+
+        control && !control.disabled && control.disable({ onlySelf: true });
+      }
+
+      const existing = this.control && this.control.control;
+      existing && existing.disabled && existing.enable({ onlySelf: true });
     }
   }
 }

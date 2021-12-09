@@ -143,6 +143,16 @@ export class SgaInputParametersComponent implements OnDestroy {
     return validator && validator.required;
   }
 
+  public disableField(fieldName: string | string[]): void {
+    if (Array.isArray(fieldName)) {
+      for (let name of fieldName) {
+        this._disableControl(name);
+      }
+    } else {
+      this._disableControl(fieldName);
+    }
+  }
+
   private _changeSteamPressure(boilerSteamPressureValue): void {
     const selectedUnits = this.steamGenerationAssessmentService.getSizingPreferenceValues({
       temperatureUnitSelected: 'TemperatureUnit',
@@ -223,6 +233,16 @@ export class SgaInputParametersComponent implements OnDestroy {
     if (this.fields[fieldName].filled) {
       this.steamGenerationAssessmentService.changeSgaFieldFilled(fieldName, false);
     }
+  }
+
+  private _disableControl(controlName: string): AbstractControl {
+    const control = this.formGroup.get(`${this.formGroupKey}.${controlName}`);
+
+    if (!control || control.disabled) return null;
+
+    control.disable({ onlySelf: true });
+
+    return control;
   }
 
   private _getMultipleControlValues(obj: { [key: string]: string }): {[key: string]: any} {

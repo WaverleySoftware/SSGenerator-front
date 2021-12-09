@@ -359,6 +359,7 @@
                               [unit-types]="fields.tdsOfFeedwaterInFeedtank.unitTypes"
                               [unit-translations]="fields.tdsOfFeedwaterInFeedtank.translations"
                               [unit-controls]="fields.tdsOfFeedwaterInFeedtank.controlNames"
+                              [value]="formGroup.get(formGroupKey+'.tdsOfFeedwaterInFeedtank').value"
                               [required]="isRequired('tdsOfFeedwaterInFeedtank')"
                               [(filled)]="fields.tdsOfFeedwaterInFeedtank.filled"></form-input>
                 </div>
@@ -388,7 +389,7 @@
           <tab [heading]="'WATER_TREATMENT' | translate" customClass="sgaTab">
             <sga-panel id="makeUpWaterPanel" [title]="'MAKE_UP_WATER' | translate" background="#EDF2F4">
               <div class="row" body>
-                <div class="col-md-6 border-r-md">
+                <div class="col-md-6">
                   <form-toggle [formControlName]="fields.isMakeUpWaterMonitored.formControlName"
                                [label]="fields.isMakeUpWaterMonitored.label">
                     <form-input yes
@@ -402,28 +403,27 @@
                                 [(filled)]="fields.temperatureOfMakeupWater.filled"></form-input>
                   </form-toggle>
                 </div>
-                <div class="col-md-6">
-                  <form-input [formControlName]="fields.makeupWaterAmount.formControlName"
-                              [label]="fields.makeupWaterAmount.label"
-                              [unit-names]="fields.makeupWaterAmount.unitNames"
-                              [unit-types]="fields.makeupWaterAmount.unitTypes"
-                              [unit-translations]="fields.makeupWaterAmount.translations"
-                              [unit-controls]="fields.makeupWaterAmount.controlNames"
-                              [required]="isRequired('makeupWaterAmount')"
-                              [(filled)]="fields.makeupWaterAmount.filled"
-                              (changeRadio)="clearValues(['makeupWaterAmount'])"
-                              unit="/h"
+                <div class="col-md-6 border-l-md">
+                  <form-input [formControlName]="fields.makeupWaterAmountPerHour.formControlName"
+                              [label]="fields.makeupWaterAmountPerHour.label"
+                              [unit-names]="fields.makeupWaterAmountPerHour.unitNames"
+                              [unit-types]="fields.makeupWaterAmountPerHour.unitTypes"
+                              [unit-translations]="fields.makeupWaterAmountPerHour.translations"
+                              [unit-controls]="fields.makeupWaterAmountPerHour.controlNames"
+                              [required]="isRequired('makeupWaterAmountPerHour')"
+                              [(filled)]="fields.makeupWaterAmountPerHour.filled"
+                              [groupControls]="['makeupWaterAmountPerYear']"
+                              [defaultChecked]="true"
                               group="makeupWaterAmount"></form-input>
-                  <form-input [formControlName]="fields.makeupWaterAmount.formControlName"
+                  <form-input [formControlName]="fields.makeupWaterAmountPerYear.formControlName"
                               [label]="'MAKE_UP_WATER_PER_YEAR'"
-                              [unit-names]="fields.makeupWaterAmount.unitNames"
-                              [unit-types]="fields.makeupWaterAmount.unitTypes"
-                              [unit-translations]="fields.makeupWaterAmount.translations"
-                              [unit-controls]="fields.makeupWaterAmount.controlNames"
-                              [required]="fields.makeupWaterAmount.required"
-                              [(filled)]="fields.makeupWaterAmount.filled"
-                              (changeRadio)="clearValues(['makeupWaterAmount'])"
-                              unit="/y"
+                              [unit-names]="fields.makeupWaterAmountPerYear.unitNames"
+                              [unit-types]="fields.makeupWaterAmountPerYear.unitTypes"
+                              [unit-translations]="fields.makeupWaterAmountPerYear.translations"
+                              [unit-controls]="fields.makeupWaterAmountPerYear.controlNames"
+                              [required]="isRequired('makeupWaterAmountPerYear')"
+                              [(filled)]="fields.makeupWaterAmountPerYear.filled"
+                              [groupControls]="['makeupWaterAmountPerHour']"
                               group="makeupWaterAmount"></form-input>
                 </div>
               </div>
@@ -493,25 +493,26 @@
                   <form-toggle [formControlName]="fields.isFeedWaterMeasured.formControlName"
                                [label]="fields.isFeedWaterMeasured.label">
                     <ng-container yes>
-                      <form-input [formControlName]="fields.boilerFeedwaterConsumption.formControlName"
-                                  [label]="fields.boilerFeedwaterConsumption.label"
-                                  [unit-names]="fields.boilerFeedwaterConsumption.unitNames"
-                                  [unit-types]="fields.boilerFeedwaterConsumption.unitTypes"
-                                  [unit-translations]="fields.boilerFeedwaterConsumption.translations"
-                                  [unit-controls]="fields.boilerFeedwaterConsumption.controlNames"
-                                  [required]="isRequired('boilerFeedwaterConsumption')"
-                                  [(filled)]="fields.boilerFeedwaterConsumption.filled"
-                                  unit="/h"
+                      <form-input [formControlName]="fields.boilerFeedwaterConsumptionPerHour.formControlName"
+                                  [label]="fields.boilerFeedwaterConsumptionPerHour.label"
+                                  [unit-names]="fields.boilerFeedwaterConsumptionPerHour.unitNames"
+                                  [unit-types]="fields.boilerFeedwaterConsumptionPerHour.unitTypes"
+                                  [unit-translations]="fields.boilerFeedwaterConsumptionPerHour.translations"
+                                  [unit-controls]="fields.boilerFeedwaterConsumptionPerHour.controlNames"
+                                  [required]="isRequired('boilerFeedwaterConsumptionPerYear')"
+                                  [(filled)]="fields.boilerFeedwaterConsumptionPerHour.filled"
+                                  [groupControls]="['boilerFeedwaterConsumptionPerYear']"
                                   group="boilerFeedwaterConsumptionGroup"></form-input>
 
-                      <form-input [formControlName]="fields.boilerFeedwaterConsumption.formControlName"
-                                  [label]="'CONSUMPTION_PER_YEAR'"
-                                  [unit-names]="fields.boilerFeedwaterConsumption.unitNames"
-                                  [unit-types]="fields.boilerFeedwaterConsumption.unitTypes"
-                                  [unit-translations]="fields.boilerFeedwaterConsumption.translations"
-                                  [unit-controls]="fields.boilerFeedwaterConsumption.controlNames"
-                                  [required]="isRequired('boilerFeedwaterConsumption')"
-                                  [(filled)]="fields.boilerFeedwaterConsumption.filled"
+                      <form-input [formControlName]="fields.boilerFeedwaterConsumptionPerYear.formControlName"
+                                  [label]="fields.boilerFeedwaterConsumptionPerYear.label"
+                                  [unit-names]="fields.boilerFeedwaterConsumptionPerYear.unitNames"
+                                  [unit-types]="fields.boilerFeedwaterConsumptionPerYear.unitTypes"
+                                  [unit-translations]="fields.boilerFeedwaterConsumptionPerYear.translations"
+                                  [unit-controls]="fields.boilerFeedwaterConsumptionPerYear.controlNames"
+                                  [required]="isRequired('boilerFeedwaterConsumptionPerHour')"
+                                  [(filled)]="fields.boilerFeedwaterConsumptionPerYear.filled"
+                                  [groupControls]="['boilerFeedwaterConsumptionPerHour']"
                                   unit="/y"
                                   group="boilerFeedwaterConsumptionGroup"></form-input>
                     </ng-container>
@@ -534,6 +535,7 @@
                               [unit-translations]="fields.tdsOfFeedwaterInFeedtank.translations"
                               [unit-controls]="fields.tdsOfFeedwaterInFeedtank.controlNames"
                               [required]="isRequired('tdsOfFeedwaterInFeedtank')"
+                              [value]="formGroup.get(formGroupKey+'.tdsOfFeedwaterInFeedtank').value"
                               [(filled)]="fields.tdsOfFeedwaterInFeedtank.filled"></form-input>
 
                   <form-toggle [formControlName]="fields.areChemicalsAddedDirectlyToFeedtank.formControlName"

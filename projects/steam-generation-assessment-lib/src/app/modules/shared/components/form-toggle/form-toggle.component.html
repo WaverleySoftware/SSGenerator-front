@@ -1,4 +1,4 @@
-<div class="formToggle">
+<div class="formToggle" [ngClass]="{disabled: disabled}">
   <p class="formToggle-label" *ngIf="!!label">{{label | translate}}</p>
   <div class="formToggle-row">
     <label>
