@@ -29,11 +29,6 @@ $md: 992px;
       display: inline-block;
       margin-bottom: 24px;
       &-item {
-        &.disabled {
-          a {
-            color: var(--color-blue);
-          }
-        }
         a {
           font-family: var(--font-proxima-nova);
           font-style: normal;
@@ -44,11 +39,25 @@ $md: 992px;
           padding: 14px 20px;
         }
 
+        &.disabled {
+          a {
+            color: var(--color-blue);
+          }
+        }
+
         &.active {
           a {
             background-color: var(--color-blue);
             border-radius: 50px;
             color: var(--color-white);
+          }
+        }
+
+        &.invalid {
+          a {
+            color: var(--color-white);
+            border-radius: 50px;
+            background-color: var(--color-alarm-red);
           }
         }
       }

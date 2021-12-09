@@ -1,5 +1,6 @@
 <sga-panel [isCollapsed]="false"
            id="UtilityParameters"
+           [invalid]="checkUtilityParametersIsValid()"
            [title]="'UTILITY_PARAMETERS' | translate"
            titleSize="24px">
   <form body class="container-fluid" [formGroup]="formGroup">
@@ -230,6 +231,7 @@
 
 <sga-panel [isCollapsed]="true"
            [showSeparator]="false"
+           [invalid]="checkBoilerHouseParametersIsValid().isInvalid"
            [title]="'BOILER_HOUSE_PARAMETERS' | translate"
            id="BoilerHouseParameters"
            titleSize="24px">
@@ -237,7 +239,7 @@
     <div class="row" [formGroupName]="formGroupKey">
       <div class="col-md-12">
         <tabset type="pills" class="sgaTabs">
-          <tab [heading]="'BOILER' | translate" customClass="sgaTab">
+          <tab [heading]="'BOILER' | translate" [ngClass]="{invalid: checkBoilerHouseParametersIsValid().boiler}" [customClass]="checkBoilerHouseParametersIsValid().boiler && ' invalid'">
             <sga-panel id="boilerParametersPanel"
                        [title]="'BOILER_PARAMETERS' | translate"
                        background="#EDF2F4">
@@ -313,7 +315,7 @@
               </div>
             </sga-panel>
           </tab>
-          <tab [heading]="'TDS_BLOWDOWN' | translate" customClass="sgaTab">
+          <tab [heading]="'TDS_BLOWDOWN' | translate" [customClass]="checkBoilerHouseParametersIsValid().tdsBlowdown && ' invalid'">
             <sga-panel id="blowdownEquipmentPanel"
                        [title]="'BLOWDOWN_EQUIPMENT' | translate"
                        background="#EDF2F4">
@@ -387,7 +389,7 @@
               </div>
             </sga-panel>
           </tab>
-          <tab [heading]="'WATER_TREATMENT' | translate" customClass="sgaTab">
+          <tab [heading]="'WATER_TREATMENT' | translate" [customClass]="checkBoilerHouseParametersIsValid().waterTreatment && ' invalid'">
             <sga-panel id="makeUpWaterPanel" [title]="'MAKE_UP_WATER' | translate" background="#EDF2F4">
               <div class="row" body>
                 <div class="col-md-6">
@@ -463,7 +465,7 @@
               </div>
             </sga-panel>
           </tab>
-          <tab [heading]="'FEEDWATER_AND_CONDENSATE' | translate" customClass="sgaTab">
+          <tab [heading]="'FEEDWATER_AND_CONDENSATE' | translate" [customClass]="checkBoilerHouseParametersIsValid().feedwaterAndCondensate && ' invalid'">
             <sga-panel id="deaeratorTypePanel" [title]="'DEAERATOR_TYPE' | translate" background="#EDF2F4">
               <div class="row" body>
                 <div class="col-md-4">

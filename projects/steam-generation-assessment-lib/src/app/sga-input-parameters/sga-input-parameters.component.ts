@@ -112,7 +112,7 @@ export class SgaInputParametersComponent implements OnDestroy {
     'o2ScavengingChemicalsCostSavings',
     // Water effluent
     'costOfEffluentPerUnit'
-  ]
+  ];
 
   constructor(
     private steamGenerationAssessmentService: SteamGenerationAssessmentService,
@@ -145,7 +145,7 @@ export class SgaInputParametersComponent implements OnDestroy {
     this._ngUnsubscribe.complete();
   }
 
-  checkUtilityParametersIsValid(): boolean {
+  public checkUtilityParametersIsValid(): boolean {
     let isInvalid: boolean;
 
     for (let utilityParametersField of this.utilityParametersFields) {
@@ -161,25 +161,29 @@ export class SgaInputParametersComponent implements OnDestroy {
     return isInvalid;
   }
 
-  checkBoilerHouseParametersIsValid(): {
+  public checkBoilerHouseParametersIsValid(): {
     boiler: boolean;
     tdsBlowdown: boolean;
     waterTreatment: boolean;
     feedwaterAndCondensate: boolean;
+    isInvalid: boolean;
   } {
     let isInvalid = {
       boiler: false,
       tdsBlowdown: false,
       waterTreatment: false,
       feedwaterAndCondensate: false,
+      isInvalid: false,
     };
 
     for (let tabName in this.boilerHouseParameters) {
       for (let fieldName of this.boilerHouseParameters[tabName]) {
-        const inFieldInvalid = this.formGroup.get(`${this.formGroupKey}.${fieldName}`).invalid;
+        const control = this.formGroup.get(`${this.formGroupKey}.${fieldName}`);
+        const inFieldInvalid = (control.invalid && control.touched) || (control.touched && control.pending);
 
         if (inFieldInvalid) {
           isInvalid[tabName] = inFieldInvalid;
+          isInvalid.isInvalid = true;
           break;
         }
       }

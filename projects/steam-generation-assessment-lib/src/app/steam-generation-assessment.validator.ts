@@ -152,8 +152,8 @@ export class SgaValidator {
         SgaValidator.toggleFields([
           isFlashVesselPresent,
           isHeatExchangerPresent,
-          waterTemperatureLeavingHeatExchanger
-        ]);
+        ], false, false);
+        SgaValidator.toggleFields(waterTemperatureLeavingHeatExchanger, false, null);
       }
     }
 
@@ -170,7 +170,8 @@ export class SgaValidator {
       if (control.value) {
         SgaValidator.toggleFields(isHeatExchangerPresent, true);
       } else {
-        SgaValidator.toggleFields([isHeatExchangerPresent, waterTemperatureLeavingHeatExchanger]);
+        SgaValidator.toggleFields(isHeatExchangerPresent, false, false);
+        SgaValidator.toggleFields(waterTemperatureLeavingHeatExchanger, false, null);
       }
     }
 
@@ -183,7 +184,7 @@ export class SgaValidator {
     if (fg) {
       const waterTemperatureLeavingHeatExchanger = fg.get('waterTemperatureLeavingHeatExchanger');
 
-      SgaValidator.toggleFields(waterTemperatureLeavingHeatExchanger, control.value);
+      SgaValidator.toggleFields(waterTemperatureLeavingHeatExchanger, control.value, null);
     }
 
     return null;
