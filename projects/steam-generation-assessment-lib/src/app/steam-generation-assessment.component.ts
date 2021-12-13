@@ -2,21 +2,22 @@ import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit } from "@angula
 import {
   BaseSizingModule,
   JobSizing,
+  ModulePreferenceService,
   PreferenceService,
   Project,
-  UnitsService,
+  TranslationService,
   UnitConvert,
-  ModulePreferenceService,
-  TranslationService
+  UnitsService
 } from "sizing-shared-lib";
 import { FormGroup } from "@angular/forms";
 import { SteamGenerationAssessmentService } from "./steam-generation-assessment.service";
 import { ActivatedRoute, Params } from "@angular/router";
 import { Subject } from "rxjs";
-import { takeUntil } from "rxjs/operators";
+import { takeUntil, tap } from "rxjs/operators";
 import {
-  FormFieldTypesInterface, SgaBoilerEfficiencyInterface,
-  SteamCalorificRequestInterface,
+  FormFieldTypesInterface,
+  SgaBoilerEfficiencyInterface,
+  SteamCalorificRequestInterface, SteamCarbonEmissionInterface,
   SteamGeneratorInputsInterface
 } from "./steam-generation-form.interface";
 
@@ -29,13 +30,13 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   readonly moduleGroupId: number = 9;
   readonly moduleName: string = 'steamGenerationAssessment';
   public moduleId = 2;
-  public requestLoading: Subject<boolean> = this.steamGenerationAssessmentService.requestLoading;
+  public requestLoading: Subject<boolean> = this.sgaService.requestLoading;
   public productName = 'Steam Generation Assessment';
-  public sizingModuleForm: FormGroup = this.steamGenerationAssessmentService.getSizingFormGroup();
+  public sizingModuleForm: FormGroup = this.sgaService.getSizingFormGroup();
   private ngUnsubscribe = new Subject<void>();
 
   constructor(
-    private steamGenerationAssessmentService: SteamGenerationAssessmentService,
+    private sgaService: SteamGenerationAssessmentService,
     private preferenceService: PreferenceService,
     private unitsService: UnitsService,
     private elRef: ElementRef,
@@ -50,7 +51,14 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   }
 
   ngAfterViewInit() {
-    this._initializedData(); // Load start module data
+    const converterUnits = this._getDefaultConvertedUnits();
+
+    this._convertUnits(converterUnits);
+    this.sgaService.setSelectedValues();
+    this.calculateBoilerEfficiency();
+    this._calculateWaterTreatment();
+
+
   }
 
   ngOnDestroy(): void {
@@ -60,7 +68,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   }
 
   onCalculateSizing(formGroup: FormGroup): any {
-    this.steamGenerationAssessmentService
+    this.sgaService
       .calculateResults(formGroup.value)
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((response) => {
@@ -106,8 +114,9 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
 
   onUnitsChanged(): any {
     console.log('----- CHANGE_UNITS -----');
-    this.steamGenerationAssessmentService.changeSizingUnits();
-    this._calculateCalorificValue(); // Calculate CALORIFIC VALUE request on unit changed
+    const unitsConverter = this.sgaService.changeSizingUnits();
+    this._convertUnits(unitsConverter);
+
     return true;
   }
 
@@ -117,6 +126,10 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
 
   public changeFuelType(fuelTypeData: SteamCalorificRequestInterface): void {
     this._calculateCalorificValue(fuelTypeData);
+  }
+
+  public changeWaterTreatment({ selectedValue }: { selectedValue: string }): void {
+    selectedValue && this._calculateWaterTreatment(selectedValue);
   }
 
   public calculateBoilerEfficiency(data: SgaBoilerEfficiencyInterface = {inputFuelId: null, isEconomizerPresent: undefined}): void {
@@ -130,34 +143,32 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
 
     if (!data.inputFuelId || data.isEconomizerPresent === undefined) return null;
 
-    this.steamGenerationAssessmentService.calculateBoilerEfficiency(data)
+    this.sgaService.calculateBoilerEfficiency(data)
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(({ boilerEfficiency }) => {
-        this.steamGenerationAssessmentService.changeSgaFieldFilled('boilerEfficiency', true);
-        this.steamGenerationAssessmentService.setFormValue('boilerEfficiency', boilerEfficiency);
+        this.sgaService.changeSgaFieldFilled('boilerEfficiency', true);
+        this.sgaService.setFormValue('boilerEfficiency', boilerEfficiency);
       });
   }
 
-  private _initializedData(): void {
-    // this.loadJob();
-    this._setDefaultValues();
-    this.steamGenerationAssessmentService.setSelectedValues();
+  public calculateCarbonEmission(data: SteamCarbonEmissionInterface): void {
+    this.sgaService.calculateCarbonEmission(data)
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(res => this._setInputFormFields(res));
   }
 
-  private getFuelTypeData(staticData?: SteamCalorificRequestInterface): SteamCalorificRequestInterface {
+  private _getFuelTypeData(staticData?: SteamCalorificRequestInterface): SteamCalorificRequestInterface {
     let energyUnitSelected = staticData && staticData.energyUnitSelected;
     let smallWeightUnitSelected = staticData && staticData.smallWeightUnitSelected ||
       this.sizingModuleForm.get('selectedUnits.smallWeightUnitSelected').value;
 
     if (!energyUnitSelected) {
-      energyUnitSelected = this.steamGenerationAssessmentService
-        .getSizingPreferenceValues({energyUnitSelected: 'BoilerHouseEnergyUnits'})
+      energyUnitSelected = this.sgaService.getSizingPreferenceValues({energyUnitSelected: 'BoilerHouseEnergyUnits'})
         .energyUnitSelected;
     }
 
     if (!smallWeightUnitSelected) {
-      smallWeightUnitSelected = this.steamGenerationAssessmentService
-        .getSizingPreferenceValues({smallWeightUnitSelected: 'WeightUnit'})
+      smallWeightUnitSelected = this.sgaService.getSizingPreferenceValues({smallWeightUnitSelected: 'WeightUnit'})
         .smallWeightUnitSelected;
     }
 
@@ -171,59 +182,74 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     };
   }
 
-  private _calculateCalorificValue(data?: SteamCalorificRequestInterface): void {
-    const fuelTypeData = this.getFuelTypeData(data);
+  private _calculateCalorificValue(data?: SteamCalorificRequestInterface, disableEmissionCalculation?: boolean): void {
+    const fuelTypeData = this._getFuelTypeData(data);
 
-    this.steamGenerationAssessmentService
+    this.sgaService
       .calculateCalorific(fuelTypeData)
       .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe((response) => {
-        if (response && typeof response === "object") {
-          for (let responseKey in response) {
-            this.steamGenerationAssessmentService
-              .changeSgaFieldFilled(responseKey as keyof FormFieldTypesInterface, true);
-            this.steamGenerationAssessmentService
-              .setFormValue(responseKey, response[responseKey]);
+      .subscribe(({ fuelCarbonContent, fuelEnergyPerUnit }) => {
+        if (fuelCarbonContent && fuelEnergyPerUnit) {
+          this._setInputFormFields({ fuelEnergyPerUnit, fuelCarbonContent });
+
+          if (!disableEmissionCalculation) {
+            const { energyUnitSelected, smallWeightUnitSelected } = this.sgaService.getSizingPreferenceValues({
+              energyUnitSelected: 'BoilerHouseEnergyUnits',
+              smallWeightUnitSelected: 'WeightUnit'
+            });
+            const { inputFuelId, inputFuelUnit } = this.sgaService.getMultipleControlValues({
+              inputFuelId: 'inputFuelId',
+              inputFuelUnit: 'inputFuelUnit',
+              fuelCarbonContent: 'inputFuelUnit',
+            });
+
+            this.calculateCarbonEmission({
+              energyUnitSelected,
+              smallWeightUnitSelected,
+              fuelEnergyPerUnit,
+              fuelCarbonContent,
+              inputFuelId,
+              inputFuelUnit
+            });
           }
         }
       });
   }
 
-  private _setDefaultValues(): void {
+  private _getDefaultConvertedUnits(): UnitConvert[] {
     if (!this.modulePreferenceService.allModulePreferences ||
       !this.modulePreferenceService.allModulePreferences.length) return null;
 
     const defPreferences = this.modulePreferenceService.allModulePreferences;
-    const { emissionUnitSelected, volumeUnitSelected } = this.steamGenerationAssessmentService
-      .getSizingPreferenceValues({
-        emissionUnitSelected: 'BoilerHouseEmissionUnits',
-        volumeUnitSelected: 'BoilerHouseVolumeUnits'
-      });
+    const { emissionUnitSelected, volumeUnitSelected } = this.sgaService.getSizingPreferenceValues({
+      emissionUnitSelected: 'BoilerHouseEmissionUnits',
+      volumeUnitSelected: 'BoilerHouseVolumeUnits'
+    });
     const fuelUnitTypeId = this.sizingModuleForm.get('steamGeneratorInputs.inputFuelUnit').value;
     const obj: {[key: string]: UnitConvert} = {
       costOfCo2PerUnitMass: {
-        convertedValue: null,
+        convertedValue: this.sizingModuleForm.get('steamGeneratorInputs.costOfCo2PerUnitMass').value,
         propertyName: 'costOfCo2PerUnitMass',
         initialValue: 0,
         initialUnitId: null,
         targetUnitId: emissionUnitSelected,
       },
       costOfEffluentPerUnit: {
-        convertedValue: null,
+        convertedValue: this.sizingModuleForm.get('steamGeneratorInputs.costOfEffluentPerUnit').value,
         propertyName: 'costOfEffluentPerUnit',
         initialValue: 0,
         initialUnitId: null,
         targetUnitId: volumeUnitSelected,
       },
       costOfFuelPerUnit: {
-        convertedValue: null,
+        convertedValue: this.sizingModuleForm.get('steamGeneratorInputs.costOfFuelPerUnit').value,
         propertyName: 'costOfFuelPerUnit',
         initialValue: 0,
         initialUnitId: null,
         targetUnitId: fuelUnitTypeId,
       },
       costOfWaterPerUnit: {
-        convertedValue: null,
+        convertedValue: this.sizingModuleForm.get('steamGeneratorInputs.costOfWaterPerUnit').value,
         propertyName: 'costOfWaterPerUnit',
         initialValue: 0,
         initialUnitId: null,
@@ -255,11 +281,11 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
         }
         case 'SteamGenerationFuelType': { // inputFuelId
           const fuelTypeId = this._getFuelTypeListItemId(value);
-          this.steamGenerationAssessmentService.setFormValue('inputFuelId', fuelTypeId);
+          this.sgaService.setFormValue('inputFuelId', fuelTypeId);
           break;
         }
         case 'SteamGenerationFuelUnit': { // inputFuelUnit
-          this.steamGenerationAssessmentService.setFormValue('inputFuelUnit', Number(value));
+          this.sgaService.setFormValue('inputFuelUnit', Number(value));
           obj.costOfFuelPerUnit['initialUnitId'] = Number(value);
           break;
         }
@@ -276,40 +302,21 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       }
     }
 
-    const unitsConverterValues: UnitConvert[] = Object.keys(obj)
+    return Object.keys(obj)
       .filter((key) => {
-        const { initialUnitId, targetUnitId, initialValue } = obj[key];
+        const {initialUnitId, targetUnitId, initialValue} = obj[key];
 
         if (!initialUnitId || !targetUnitId) return false;
 
         if (initialUnitId === targetUnitId) {
-          this.steamGenerationAssessmentService.changeSgaFieldFilled(key as keyof SteamGeneratorInputsInterface, true);
-          this.steamGenerationAssessmentService.setFormValue(key, initialValue);
+          this.sgaService.changeSgaFieldFilled(key as keyof SteamGeneratorInputsInterface, true);
+          this.sgaService.setFormValue(key, initialValue);
           return false;
         }
 
         return true;
       })
       .map((key) => obj[key]);
-
-
-    this.unitsService.unitsConverter({unitsConverter: unitsConverterValues})
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe(({ unitsConverter }) => {
-        if (unitsConverter && unitsConverter.length) {
-          const newValues = unitsConverter
-            .reduce((accum, item) => {
-              this.steamGenerationAssessmentService
-                .changeSgaFieldFilled(item.propertyName as keyof SteamGeneratorInputsInterface, true);
-              return {...accum, [item.propertyName]: item.convertedValue};
-            }, {});
-
-          this.steamGenerationAssessmentService.setFormValues(newValues);
-          this._calculateCalorificValue(); // Calculate CALORIFIC VALUE request on init
-        }
-      });
-
-    this.calculateBoilerEfficiency();
   }
 
   private _getFuelTypeListItemId(value: string): string | number {
@@ -324,6 +331,56 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     const item = enumeration.enumerationDefinitions.find((v) => v.value === value);
 
     return item && item.id;
+  }
+
+  private _calculateWaterTreatment(waterTreatmentMethodId?: string, tdsUnitSelected?: number): void {
+    this.sgaService.calculateWaterTreatmentMethod({
+      tdsUnitSelected: tdsUnitSelected || this.sizingModuleForm.get('selectedUnits.tdsUnitSelected').value,
+      waterTreatmentMethodId: waterTreatmentMethodId || this.sizingModuleForm.get('steamGeneratorInputs.waterTreatmentMethod').value,
+    }).pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((res) => {
+        const {percentageWaterRejection, tdsOfMakeupWater} = res;
+
+        this.sgaService.changeSgaFieldFilled('percentageWaterRejection', true);
+        this.sgaService.changeSgaFieldFilled('tdsOfMakeupWater', true);
+        this.sgaService.setFormValue('percentageWaterRejection', percentageWaterRejection);
+        this.sgaService.setFormValue('tdsOfMakeupWater', tdsOfMakeupWater);
+      });
+  }
+
+  private _convertUnits(
+    unitsConverter: UnitConvert[],
+    calculation: {calorific: boolean; emission: boolean;} = {calorific: true, emission: true}
+  ): void {
+    if (unitsConverter && unitsConverter.length) {
+      this.requestLoading.next(true);
+      this.unitsService.unitsConverter({ unitsConverter }).pipe(
+        takeUntil(this.ngUnsubscribe),
+        tap(null, null, () => this.requestLoading.next(false))
+      ).subscribe((response) => {
+        const results = response.unitsConverter;
+
+        if (results && results.length) {
+          const newValues = results.reduce((accum, item) => {
+            this.sgaService.changeSgaFieldFilled(item.propertyName as keyof SteamGeneratorInputsInterface, true);
+
+            return {...accum, [item.propertyName]: item.convertedValue};
+          }, {});
+
+          this.sgaService.setFormValues(newValues);
+          if (calculation.calorific) {
+            this._calculateCalorificValue(null, calculation.emission);
+          }
+        }
+      });
+    }
+  }
+
+  private _setInputFormFields(data: Partial<Record<keyof FormFieldTypesInterface, any>>): void {
+    for (let formKey in data) {
+      this.sgaService.changeSgaFieldFilled(formKey as keyof FormFieldTypesInterface, true);
+      this.sgaService.setFormValue(formKey, data[formKey]);
+    }
   }
 
   // TODO: Function for focus on first invalid field (need to create toggle tabs to first invalid field)
