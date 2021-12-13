@@ -336,7 +336,8 @@
                 </div>
                 <div class="col-md-4">
                   <form-toggle [formControlName]="fields.isHeatExchangerPresent.formControlName"
-                               [label]="fields.isHeatExchangerPresent.label">
+                               [label]="fields.isHeatExchangerPresent.label"
+                               (valueChange)="changeIsHeatExchangerPresent($event)">
                     <form-input yes
                                 [formControlName]="fields.waterTemperatureLeavingHeatExchanger.formControlName"
                                 [label]="fields.waterTemperatureLeavingHeatExchanger.label"
@@ -439,6 +440,7 @@
                 <div class="col-md-4">
                   <form-list formControlName="waterTreatmentMethod"
                              enumeration-name="WaterTreatmentMethodList_BoilerHouseInput"
+                             (on-change)="changeWaterTreatment.emit($event)"
                              label="WATER_TREATMENT_METHOD"></form-list>
                 </div>
                 <div class="col-md-4">
@@ -482,6 +484,7 @@
                               [formControlName]="fields.pressurisedDeaerator.formControlName"
                               [label]="fields.pressurisedDeaerator.label"
                               [defaultChecked]="formGroup.get(formGroupKey+'.pressurisedDeaerator').value"
+                              (valueChange)="setPressureDeaerator($event)"
                               name="deaeratorType">
                     <img src="/assets/img/steam_generation/boiler-scheme/images/PressurisedDAImgCrop.png"
                          alt="deaerator_type_1">

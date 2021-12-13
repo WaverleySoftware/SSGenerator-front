@@ -1,4 +1,5 @@
 import {
+  AfterContentInit,
   AfterViewInit,
   Component,
   ElementRef,
@@ -21,7 +22,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR, NgControl } from "@angular/for
     multi: true,
   }],
 })
-export class FormInputComponent implements ControlValueAccessor, AfterViewInit {
+export class FormInputComponent implements ControlValueAccessor, AfterContentInit {
   @Input('unit-names') setUnits: [string, string?];
   @Input('unit-types') unitTypes: [string, string?];
   @Input('unit-controls') unitControls: [string, string?];
@@ -57,7 +58,7 @@ export class FormInputComponent implements ControlValueAccessor, AfterViewInit {
   constructor(private injector: Injector) {
   }
 
-  ngAfterViewInit() {
+  ngAfterContentInit() {
     this.getFormControl();
     this.initialDisableDefault();
   }
@@ -116,11 +117,16 @@ export class FormInputComponent implements ControlValueAccessor, AfterViewInit {
     this.inputBlur.emit({name: this.formControlName, value: this.value});
   }
 
-  private getFormControl(): void {
+  private getFormControl(): NgControl | null {
     const ngControl: NgControl = this.injector.get(NgControl, null);
+
     if (ngControl && ngControl.control) {
       this.control = ngControl;
+
+      return this.control;
     }
+
+    return null;
   }
 
   private changeFilled(filled: boolean = false): void {
@@ -145,7 +151,7 @@ export class FormInputComponent implements ControlValueAccessor, AfterViewInit {
     }
   }
 
-  private initialDisableDefault(): void {
+  private initialDisableDefault(control?: NgControl): void {
     if (this.defaultChecked && this.group && this.groupControls && this.groupControls.length) {
       this.disabled = false;
 

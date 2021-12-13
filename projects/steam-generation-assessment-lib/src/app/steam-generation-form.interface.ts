@@ -11,6 +11,14 @@ export interface SgaBoilerEfficiencyInterface {
   isEconomizerPresent: boolean
 }
 
+export interface SgaFeedTankTemperatureRequestInterface {
+  isPressureDeaerator: boolean;
+  pressureOfFeedtank: number;
+  pressureUnitSelected: number;
+  temperatureOfFeedtank: number;
+  temperatureUnitSelected: number;
+}
+
 export interface SteamCarbonEmissionInterface {
   energyUnitSelected: number;
   smallWeightUnitSelected: number;
@@ -34,106 +42,92 @@ export interface SteamGeneratorSelectedUnitsInterface {
 }
 
 export interface SteamGeneratorInputsInterface {
-  hoursOfOperation: number;
-  isSteamFlowMeasured: boolean;
-  isAutoTdsControlPResent: boolean;
-  boilerSteamGeneratedPerYear: number;  // --- NEW FIELD
-  boilerSteamGeneratedPerHour: number; // --- NEW FIELD
-  inputFuelId: string;
+  hoursOfOperation?: number; // nullable: true
+  isSteamFlowMeasured:	boolean;
+  isAutoTdsControlPResent:	boolean;
+  boilerSteamGeneratedPerYear?: number; // nullable: true
+  boilerSteamGeneratedPerHour?: number; // nullable: true
+  inputFuelId:	string;
   inputFuelUnit: number;
-  costOfFuelPerUnit: number; // 0.02 khW
-  costOfFuelPerYear: number;
-  fuelQtyPerYearIsKnown: boolean;
-  fuelConsumptionPerYear: number;
-  fuelEnergyPerUnit: number;
-  fuelCarbonContent: number;
+  costOfFuelPerUnit?: number; // nullable: true
+  costOfFuelPerYear?: number; // nullable: true
+  fuelQtyPerYearIsKnown:	boolean;
+  fuelConsumptionPerYear?: number; // nullable: true
+  fuelEnergyPerUnit?: number; // nullable: true
+  fuelCarbonContent?: number; // nullable: true
   costOfWaterPerUnit: number;
-  costOfEffluentPerUnit: number;
-  boilerHouseWaterQtyPerYearIsKnown: boolean;
-  costOfWaterPerYear: number; // COST_OF_WATER_PER_YEAR  --- NEW FIELD
-  waterConsumptionPerHour: number; // WATER_CONSUMPTION_HOUR  --- NEW FIELD
-  waterConsumptionPerYear: number;
-  boilerWaterTreatmentChemicalCostsIsKnown: boolean;
-  totalChemicalCostPerYear: number;
-  costOfChemistsPerUnitOfWater: number;
-  o2ScavengingChemicalsCostSavings: number;
-  isCo2OrCarbonEmissionsTaxed: boolean; // ARE_CO2_OR_CARBON_EMISSIONS_TAXED   --- NEW FIELD
-  carbonTaxLevyCostPerUnit: number;
-  costOfCo2PerUnitMass: number;
-  isBlowdownVesselPresent: boolean;
-  isCoolingWaterUsed: boolean;
-  isSuperheatedSteam: boolean;
-  boilerEfficiency: number;
-  isFeedWaterMeasured: boolean;
-  boilerSteamPressure: number;
-  boilerSteamTemperature: number;
-  isEconomizerPresent: boolean;
-  boilerAverageTds: number;
-  boilerMaxTds: number;
-  // boilerFeedwaterConsumption: number; // --- REMOVED FIELD
-  boilerFeedwaterConsumptionPerYear: number; // --- NEW FIELD
-  boilerFeedwaterConsumptionPerHour: number; // --- NEW FIELD
-  isFlashVesselPresent: boolean;
-  isHeatExchangerPresent: boolean;
-  waterTemperatureLeavingHeatExchanger: number;
-  waterTreatmentMethod: string;
-  percentageWaterRejection: number;
-  tdsOfMakeupWater: number;
-  tdsOfMakeupWaterUnit: number;
-  isMakeUpWaterMonitored: boolean; // IS_MAKE_UP_WATER_MONITORED  --- NEW FIELD
-  temperatureOfMakeupWater: number;
-  temperatureOfMakeupWaterUnit: number;
-  // makeupWaterAmount: number; // MAKEUP_WATER_AMOUNT  --- REMOVED FIELD (replace on two field "per year & per hour")
-  makeupWaterAmountPerHour: number; // MAKE_UP_WATER_PER_HOUR  --- NEW FIELD
-  makeupWaterAmountPerYear: number; // MAKE_UP_WATER_PER_YEAR  --- NEW FIELD
-  makeupWaterAmountUnit: number; // UNIT for MAKE_UP_WATER_PER_HOUR && MAKE_UP_WATER_PER_YEAR
-  atmosphericDeaerator: boolean;
-  pressurisedDeaerator: boolean;
-  temperatureOfFeedtank: number;
-  temperatureOfFeedtankUnit: number;
-  tdsOfFeedwaterInFeedtank: number;
-  tdsOfFeedwaterInFeedtankUnit: number;
-  tdsOfCondensateReturn: number;
-  tdsOfCondensateReturnUnit: number;
-  temperatureOfCondensateReturn: number;
-  temperatureOfCondensateReturnUnit: number;
-  areChemicalsAddedDirectlyToFeedtank: boolean;
-  pressureOfFeedtank: number; // --- NEED TO ADD ON UI (When we change "DEAERATOR_TYPE" we toggle this field)
-  pressureOfFeedtankUnit: number; // UNIT "PressureUnit"
-  pressureOfSteamSupplyingDsi: number;
-  pressureOfSteamSupplyingDsiUnit: number;
-  isCondensateReturnKnown: boolean;
-  percentageOfCondensateReturn: number;
-  percentageOfCondensateReturnUnit: number;
-  volumeOfCondensateReturn: number;
-  volumeOfCondensateReturnUnit: number;
-  isDsiPresent: boolean;
-  proposalTemperatureUnit: string;
+  costOfWaterPerYear?: number; //nullable: true
+  costOfEffluentPerUnit?: number; //nullable: true
+  boilerHouseWaterQtyPerYearIsKnown:	boolean;
+  waterConsumptionPerYear?: number; //nullable: true
+  waterConsumptionPerHour?: number; //nullable: true
+  boilerWaterTreatmentChemicalCostsIsKnown:	boolean;
+  totalChemicalCostPerYear?: number; // nullable: true
+  o2ScavengingChemicalsCostSavings?: number; // nullable: true
+  carbonTaxLevyCostPerUnit?: number; // nullable: true
+  costOfCo2PerUnitMass?: number; // nullable: true
+  isCo2OrCarbonEmissionsTaxed:	boolean;
+  isBlowdownVesselPresent:	boolean;
+  isCoolingWaterUsed:	boolean;
+  isSuperheatedSteam:	boolean;
+  boilerEfficiency?: number; // nullable: true
+  isFeedWaterMeasured:	boolean;
+  boilerSteamPressure?: number; // nullable: true
+  boilerSteamTemperature?: number; // nullable: true
+  isEconomizerPresent?: boolean;
+  boilerAverageTds?: number; // nullable: true
+  boilerMaxTds?: number; // nullable: true
+  boilerFeedwaterConsumptionPerYear?: number; // nullable: true
+  boilerFeedwaterConsumptionPerHour?: number; // nullable: true
+  isFlashVesselPresent:	boolean;
+  isHeatExchangerPresent:	boolean;
+  waterTemperatureLeavingHeatExchanger?: number; // nullable: true
+  waterTreatmentMethod:	string;
+  percentageWaterRejection?: number; // nullable: true
+  tdsOfMakeupWater?: number; // nullable: true
+  temperatureOfMakeupWater?: number; // nullable: true
+  makeupWaterAmountPerHour?: number; // nullable: true
+  makeupWaterAmountPerYear?: number; // nullable: true
+  isMakeUpWaterMonitored:	boolean;
+  atmosphericDeaerator:	boolean;
+  pressurisedDeaerator:	boolean;
+  temperatureOfFeedtank?: number; // nullable: true
+  tdsOfFeedwaterInFeedtank?: number; // nullable: true
+  tdsOfCondensateReturn?: number; // nullable: true
+  temperatureOfCondensateReturn?: number; // nullable: true
+  areChemicalsAddedDirectlyToFeedtank:	boolean;
+  pressureOfFeedtank?: number; // nullable: true
+  pressureOfSteamSupplyingDsi?: number; // nullable: true
+  isCondensateReturnKnown:	boolean;
+  percentageOfCondensateReturn?: number; // nullable: true
+  volumeOfCondensateReturn?: number; // nullable: true
+  isDsiPresent:	boolean;
+  proposalTemperatureUnit?:	string; // nullable: true
   proposalTemperatureUnitUnit: number;
-  isBoilerEfficiencySelected: boolean;
-  isBoilerEfficiencyAvailable: boolean;
+  isBoilerEfficiencySelected:	boolean;
+  isBoilerEfficiencyAvailable:	boolean;
   proposalBoilerEfficiency: number;
-  isIncreasingCondensateReturnSelected: boolean;
-  isIncreasingCondensateReturnAvailable: boolean;
+  isIncreasingCondensateReturnSelected:	boolean;
+  isIncreasingCondensateReturnAvailable:	boolean;
   proposalCondensateReturned: number;
   proposalCondensateReturnedUnit: number;
   proposalCondensateReturnedPercentage: number;
   proposalCondensateTemperature: number;
   proposalCondensateTemperatureUnit: number;
-  changingWaterTreatmentMethodSelected: boolean;
-  changingWaterTreatmentMethodAvailable: boolean;
+  changingWaterTreatmentMethodSelected:	boolean;
+  changingWaterTreatmentMethodAvailable:	boolean;
   proposalMakeUpWaterTds: number;
   proposalMakeUpWaterTdsUnit: number;
   proposalPercentFeedwaterRejected: number;
   proposalPercentFeedwaterRejectedUnit: number;
-  addingAutomaticTdsControlSelected: boolean;
-  addingAutomaticTdsControlAvailable: boolean;
-  addingFlashHeatRecoveryToAutoTdsControlSelected: boolean;
-  addingFlashHeatRecoveryToAutoTdsControlAvailable: boolean;
-  addingHeatExchangerforHeatRecoveryToTdsBlowdownSelected: boolean;
-  addingHeatExchangerforHeatRecoveryToTdsBlowdownAvailable: boolean;
-  effectOfDsiOnHotwellSelected: boolean;
-  effectOfDsiOnHotwellAvailable: boolean;
+  addingAutomaticTdsControlSelected:	boolean;
+  addingAutomaticTdsControlAvailable:	boolean;
+  addingFlashHeatRecoveryToAutoTdsControlSelected:	boolean;
+  addingFlashHeatRecoveryToAutoTdsControlAvailable:	boolean;
+  addingHeatExchangerforHeatRecoveryToTdsBlowdownSelected:	boolean;
+  addingHeatExchangerforHeatRecoveryToTdsBlowdownAvailable:	boolean;
+  effectOfDsiOnHotwellSelected:	boolean;
+  effectOfDsiOnHotwellAvailable:	boolean;
   proposalDesiredHotwellTemperatureUsingDSI: number;
   proposalDesiredHotwellTemperatureUsingDSIUnit: number;
   proposalCostOfSodiumSulphite: number;
@@ -198,19 +192,128 @@ export interface SgaSaturatedAndTemperatureRespInterface {
   meltingPoint: number;
 }
 
-/* REMOVED ITEMS
-FuelEnergyPerUnitUnit
-FuelCarbonContentUnit
-CostOfWaterUnit
-CostOfEffluentUnit
-WaterConsumptionPerYearUnit
-TotalChemicalCostPerYearUnit
-CostOfChemistsPerUnitOfWaterUnit
-O2ScavengingChemicalsCostSavingsUnit
-BoilerSteamPressureUnit
-BoilerSteamTemperatureUnit
-BoilerAverageTdsUnit
-BoilerMaxTdsUnit
-BoilerFeedwaterConsumptionUnit
-WaterTemperatureLeavingHeatExchangerUnit
-* */
+enum BoilerHouseBoilerTabFields {
+  'isSuperheatedSteam',
+  'isSteamFlowMeasured',
+  'boilerSteamGeneratedPerHour',
+  'boilerSteamGeneratedPerYear',
+  'boilerSteamTemperature',
+  'boilerSteamPressure',
+  'isEconomizerPresent',
+  'boilerEfficiency'
+}
+
+enum BoilerHouseTdsBlowdownTabFields {
+  // blowdown_equipment
+  'isBlowdownVesselPresent',
+  'isCoolingWaterUsed',
+  'isAutoTdsControlPResent',
+  'isFlashVesselPresent',
+  'isHeatExchangerPresent',
+  'waterTemperatureLeavingHeatExchanger',
+  // tds_blowdown_parameters
+  'tdsOfFeedwaterInFeedtank',
+  'boilerAverageTds',
+  'boilerMaxTds',
+}
+
+enum BoilerHouseWaterTreatmentTabFields {
+  // make_up_water
+  'isMakeUpWaterMonitored',
+  'temperatureOfMakeupWater',
+  'makeupWaterAmountPerHour',
+  'makeupWaterAmountPerYear',
+  // water_treatment_parameters
+  'waterTreatmentMethod',
+  'percentageWaterRejection',
+  'tdsOfMakeupWater',
+}
+
+enum BoilerHouseFeedwaterAndCondensateTabFields {
+  // deaerator_type
+  'atmosphericDeaerator',
+  'pressurisedDeaerator',
+  // boiler_feedwater
+  'isFeedWaterMeasured',
+  'boilerFeedwaterConsumptionPerHour',
+  'boilerFeedwaterConsumptionPerYear',
+  'temperatureOfFeedtank',
+  // 'tdsOfFeedwaterInFeedtank', // duplicate
+  'areChemicalsAddedDirectlyToFeedtank',
+  'pressureOfSteamSupplyingDsi',
+  'pressureOfFeedtank',
+  // condensate_return
+  'isCondensateReturnKnown',
+  'percentageOfCondensateReturn',
+  'volumeOfCondensateReturn',
+  'temperatureOfCondensateReturn',
+  'tdsOfCondensateReturn'
+}
+
+export interface BoilerHouseParametersFieldsInterface {
+  boiler: Array<keyof typeof BoilerHouseBoilerTabFields>;
+  tdsBlowdown: Array<keyof typeof BoilerHouseTdsBlowdownTabFields>;
+  waterTreatment: Array<keyof typeof BoilerHouseWaterTreatmentTabFields>;
+  feedwaterAndCondensate: Array<keyof typeof BoilerHouseFeedwaterAndCondensateTabFields>;
+}
+
+export enum UtilityParametersFields {
+  // Fuel
+  'hoursOfOperation',
+  'inputFuelId',
+  'fuelEnergyPerUnit',
+  'fuelCarbonContent',
+  'costOfFuelPerUnit',
+  'fuelQtyPerYearIsKnown',
+  'costOfFuelPerYear',
+  'fuelConsumptionPerYear',
+  // CO2 Emission
+  'isCo2OrCarbonEmissionsTaxed',
+  'carbonTaxLevyCostPerUnit',
+  'costOfCo2PerUnitMass',
+  // Water
+  'costOfWaterPerUnit',
+  'boilerHouseWaterQtyPerYearIsKnown',
+  'costOfWaterPerYear',
+  'waterConsumptionPerHour',
+  'waterConsumptionPerYear',
+  // Water treatment chemicals
+  'boilerWaterTreatmentChemicalCostsIsKnown',
+  'totalChemicalCostPerYear',
+  'o2ScavengingChemicalsCostSavings',
+  // Water effluent
+  'costOfEffluentPerUnit'
+}
+
+export enum SgaSelectedUnits {
+  BoilerHouseEnergyUnits = 'energyUnitSelected',
+  WeightUnit = 'smallWeightUnitSelected',
+  BoilerHouseEmissionUnits = 'emissionUnitSelected',
+  BoilerHouseVolumeUnits = 'volumeUnitSelected',
+  BoilerHouseSmallVolumetricFlowUnits = 'smallVolumetricFlowUnitSelected',
+  MassFlowUnit = 'massFlowUnitSelected',
+  BoilerHouseSmallMassFlowUnits = 'smallMassFlowUnitSelected',
+  PressureUnit = 'pressureUnitSelected',
+  TemperatureUnit = 'temperatureUnitSelected',
+  BoilerHouseTDSUnits = 'tdsUnitSelected',
+}
+
+export enum SgaFuelTypes {
+  BoilerHouseLiquidFuelUnits,
+  BoilerHouseElectricalFuelUnits,
+  BoilerHouseGasFuelUnits,
+  BoilerHouseSolidFuelUnits,
+}
+
+
+export interface SgaFieldUnit {
+  name: string;
+  value: any;
+  unit: {
+    value: number;
+    selectedKey: string;
+    preferenceKey: string;
+  };
+  unitNames?: [string?, string?],
+  controlNames?: [string?, string?],
+}

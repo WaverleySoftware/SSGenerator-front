@@ -4,11 +4,13 @@ import { Subject } from "rxjs";
 import { debounceTime, distinctUntilChanged, filter, takeUntil } from "rxjs/operators";
 import { Preference } from "sizing-shared-lib";
 import {
+  BoilerHouseParametersFieldsInterface,
   FormFieldTypesInterface, SgaBoilerEfficiencyInterface,
-  SteamCalorificRequestInterface,
-  SteamGeneratorInputsInterface
+  SteamCalorificRequestInterface, SteamCarbonEmissionInterface,
+  SteamGeneratorInputsInterface, UtilityParametersFields
 } from "../steam-generation-form.interface";
 import { SteamGenerationAssessmentService } from "../steam-generation-assessment.service";
+
 
 @Component({
   selector: 'app-sga-input-parameters',
@@ -20,6 +22,8 @@ export class SgaInputParametersComponent implements OnDestroy {
   @Input() moduleGroupId: number;
   @Output() changeFuelType: EventEmitter<SteamCalorificRequestInterface> = new EventEmitter<SteamCalorificRequestInterface>();
   @Output() calculateEfficiency: EventEmitter<SgaBoilerEfficiencyInterface> = new EventEmitter<SgaBoilerEfficiencyInterface>();
+  @Output() changeWaterTreatment: EventEmitter<any> = new EventEmitter<any>();
+  @Output() changeCarbonEmission: EventEmitter<SteamCarbonEmissionInterface> = new EventEmitter<SteamCarbonEmissionInterface>();
 
   public fuelType: Preference
   public fields: FormFieldTypesInterface;
@@ -29,7 +33,7 @@ export class SgaInputParametersComponent implements OnDestroy {
 
   private _ngUnsubscribe = new Subject<void>();
 
-  boilerHouseParameters = {
+  boilerHouseParameters: BoilerHouseParametersFieldsInterface = {
     boiler: [
       // boiler_parameters
       'isSuperheatedSteam',
@@ -86,7 +90,7 @@ export class SgaInputParametersComponent implements OnDestroy {
       'tdsOfCondensateReturn'
     ]
   };
-  utilityParametersFields = [
+  utilityParametersFields: Array<keyof typeof UtilityParametersFields> = [
     // Fuel
     'hoursOfOperation',
     'inputFuelId',
@@ -149,8 +153,8 @@ export class SgaInputParametersComponent implements OnDestroy {
     let isInvalid: boolean;
 
     for (let utilityParametersField of this.utilityParametersFields) {
-      const inFieldInvalid = this.formGroup.get(`${this.formGroupKey}.${utilityParametersField}`).invalid &&
-      this.formGroup.get(`${this.formGroupKey}.${utilityParametersField}`).touched
+      const control = this.formGroup.get(`${this.formGroupKey}.${utilityParametersField}`);
+      const inFieldInvalid = (control.invalid && control.touched) || (control.touched && control.pending);
 
       if (inFieldInvalid) {
         isInvalid = inFieldInvalid;
@@ -215,11 +219,12 @@ export class SgaInputParametersComponent implements OnDestroy {
 
   public changeFuelTypeHandle(preference: Preference): void {
     if (this.fuelType && preference) { // Not first init
-      const {inputFuelId, inputFuelUnit, isEconomizerPresent} = this._getMultipleControlValues({
-        inputFuelId: 'inputFuelId',
-        inputFuelUnit: 'inputFuelUnit',
-        isEconomizerPresent: 'isEconomizerPresent',
-      }) as {inputFuelId: string, inputFuelUnit: number, isEconomizerPresent: boolean};
+      const {inputFuelId, inputFuelUnit, isEconomizerPresent} = this.steamGenerationAssessmentService
+        .getMultipleControlValues({
+          inputFuelId: 'inputFuelId',
+          inputFuelUnit: 'inputFuelUnit',
+          isEconomizerPresent: 'isEconomizerPresent'
+        });
 
       this.changeFuelType.emit({ inputFuelId, inputFuelUnit, energyUnitSelected: null, smallWeightUnitSelected: null });
       this.calculateEfficiency.emit({ inputFuelId, isEconomizerPresent })
@@ -274,12 +279,54 @@ export class SgaInputParametersComponent implements OnDestroy {
     }
   }
 
+  public changeIsHeatExchangerPresent(isActive: boolean): void {
+    if (isActive) {
+      const temperatureUnitSelected = this.formGroup.get('selectedUnits.temperatureUnitSelected').value;
+
+      if (!temperatureUnitSelected) return null;
+
+      this.steamGenerationAssessmentService.calculateWaterTemperatureLeaving({temperatureUnitSelected})
+        .pipe(takeUntil(this._ngUnsubscribe))
+        .subscribe(({waterTemperatureLeavingHeatExchanger}) => {
+          if (waterTemperatureLeavingHeatExchanger) {
+            this.steamGenerationAssessmentService
+              .changeSgaFieldFilled('waterTemperatureLeavingHeatExchanger', true);
+            this.steamGenerationAssessmentService
+              .setFormValue('waterTemperatureLeavingHeatExchanger', waterTemperatureLeavingHeatExchanger)
+          }
+        })
+    }
+  }
+
+  public setPressureDeaerator(data): void {
+    this.steamGenerationAssessmentService.calculateFeedTankAndPressure({
+      isPressureDeaerator: true,
+      pressureOfFeedtank: this.formGroup.get(`${this.formGroupKey}.pressureOfFeedtank`).value,
+      pressureUnitSelected: this.formGroup.get('selectedUnits.pressureUnitSelected').value,
+      temperatureOfFeedtank: this.formGroup.get(`${this.formGroupKey}.temperatureOfFeedtank`).value,
+      temperatureUnitSelected: this.formGroup.get('selectedUnits.temperatureUnitSelected').value,
+    })
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe((res) => {
+        const {
+          dialogMessage = "",
+          pressureOfFeedtank = 0.2,
+          temperatureOfFeedtank = 105
+        } = res;
+        this.steamGenerationAssessmentService.changeSgaFieldFilled('pressureOfFeedtank', true)
+        this.steamGenerationAssessmentService.changeSgaFieldFilled('temperatureOfFeedtank', true)
+
+        this.steamGenerationAssessmentService.setFormValue('pressureOfFeedtank', pressureOfFeedtank);
+        this.steamGenerationAssessmentService.setFormValue('temperatureOfFeedtank', temperatureOfFeedtank);
+      })
+  }
+
   private _changeSteamPressure(boilerSteamPressureValue): void {
     const selectedUnits = this.steamGenerationAssessmentService.getSizingPreferenceValues({
       temperatureUnitSelected: 'TemperatureUnit',
       pressureUnitSelected: 'PressureUnit',
     }) as { temperatureUnitSelected: number; pressureUnitSelected: number; };
-    const inputValues = this._getMultipleControlValues({
+    const inputValues = this.steamGenerationAssessmentService.getMultipleControlValues({
       isSuperheatedSteam: 'isSuperheatedSteam',
       boilerSteamPressure: 'boilerSteamPressure',
       boilerSteamTemperature: 'boilerSteamTemperature',
@@ -321,33 +368,20 @@ export class SgaInputParametersComponent implements OnDestroy {
         energyUnitSelected: 'BoilerHouseEnergyUnits',
         smallWeightUnitSelected: 'WeightUnit'
       });
-
-    const { inputFuelId, inputFuelUnit, fuelCarbonContent } = this._getMultipleControlValues({
+    const { inputFuelId, inputFuelUnit, fuelCarbonContent } = this.steamGenerationAssessmentService.getMultipleControlValues({
       inputFuelId: 'inputFuelId',
       inputFuelUnit: 'inputFuelUnit',
       fuelCarbonContent: 'inputFuelUnit',
     });
 
-    const req = {
+    this.changeCarbonEmission.emit({
       energyUnitSelected,
       smallWeightUnitSelected,
       inputFuelId,
       inputFuelUnit,
       fuelEnergyPerUnit,
       fuelCarbonContent
-    }
-
-    this.steamGenerationAssessmentService
-      .calculateCarbonEmission(req)
-      .pipe(takeUntil(this._ngUnsubscribe))
-      .subscribe((res) => this._setInputFormFields(res));
-  }
-
-  private _setInputFormFields(data: Partial<Record<keyof FormFieldTypesInterface, any>>): void {
-    for (let formKey in data) {
-      this.steamGenerationAssessmentService.changeSgaFieldFilled(formKey as keyof FormFieldTypesInterface, true);
-      this.steamGenerationAssessmentService.setFormValue(formKey, data[formKey]);
-    }
+    });
   }
 
   private _disableFilled(fieldName: keyof FormFieldTypesInterface): void {
@@ -364,15 +398,5 @@ export class SgaInputParametersComponent implements OnDestroy {
     control.disable({ onlySelf: true });
 
     return control;
-  }
-
-  private _getMultipleControlValues(obj: { [key: string]: string }): {[key: string]: any} {
-    const result = {};
-
-    for (let objKey in obj) {
-      result[objKey] = this.formGroup.get(`${this.formGroupKey}.${obj[objKey]}`).value;
-    }
-
-    return result;
   }
 }
