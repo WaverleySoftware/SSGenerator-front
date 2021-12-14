@@ -103,7 +103,6 @@ export class FormListComponent implements ControlValueAccessor, AfterViewInit {
   }
 
   updateValue(val: any): void {
-    console.log(this.internalValue, '----this.internalValue')
     this.internalValue = val;
     this.onChange(this.internalValue);
     this.onTouched();

@@ -273,7 +273,7 @@ export class SgaValidator {
       if (
         !name || !control || !service ||
         !service.checkSgaFieldIsFilled ||
-        !service.validateSgInput ||
+        !service.validateSgaBenchmarkInput ||
         !control.dirty && control.untouched
       ) return of(null);
 
@@ -289,7 +289,7 @@ export class SgaValidator {
 
           SgaValidator.beforeValue[name] = value;
 
-          return service.validateSgInput(name as keyof SteamGeneratorInputsInterface, root.value).pipe(
+          return service.validateSgaBenchmarkInput(name as keyof SteamGeneratorInputsInterface, root.value).pipe(
             map((errors) => errors && SgaValidator._parseErrors(errors)),
             catchError((errors: HttpErrorResponse) => SgaValidator._parseSpecificErrors(errors)),
           );
@@ -363,7 +363,6 @@ export class SgaValidator {
         control && (control.enabled || control.enabled === undefined) && control.disable({ onlySelf: true });
 
         if (setValue !== undefined && control && control.value !== setValue) {
-          console.log('----setValue---', setValue);
           control.setValue(setValue, { onlySelf: true });
         }
       }

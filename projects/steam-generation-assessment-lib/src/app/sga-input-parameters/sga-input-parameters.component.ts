@@ -4,10 +4,15 @@ import { Subject } from "rxjs";
 import { debounceTime, distinctUntilChanged, filter, takeUntil } from "rxjs/operators";
 import { Preference } from "sizing-shared-lib";
 import {
-  BoilerHouseParametersFieldsInterface,
-  FormFieldTypesInterface, SgaBoilerEfficiencyInterface,
-  SteamCalorificRequestInterface, SteamCarbonEmissionInterface,
-  SteamGeneratorInputsInterface, UtilityParametersFields
+	BoilerHouseBoilerTabFields, BoilerHouseFeedwaterAndCondensateTabFields,
+	BoilerHouseTdsBlowdownTabFields,
+	BoilerHouseWaterTreatmentTabFields,
+	FormFieldTypesInterface,
+	SgaBoilerEfficiencyInterface,
+	SteamCalorificRequestInterface,
+	SteamCarbonEmissionInterface,
+	SteamGeneratorInputsInterface,
+	UtilityParametersFields
 } from "../steam-generation-form.interface";
 import { SteamGenerationAssessmentService } from "../steam-generation-assessment.service";
 
@@ -29,94 +34,15 @@ export class SgaInputParametersComponent implements OnDestroy {
   public fields: FormFieldTypesInterface;
   public carbonEmissionUpdate$ = new Subject<string>();
   public pressureTemperatureUpdate$ = new Subject<string>();
-  public formGroupKey = 'steamGeneratorInputs'; // Form builder child formGroup key
+  public formGroupKey = 'benchmarkInputs'; // Form builder child formGroup key
 
   private _ngUnsubscribe = new Subject<void>();
-
-  boilerHouseParameters: BoilerHouseParametersFieldsInterface = {
-    boiler: [
-      // boiler_parameters
-      'isSuperheatedSteam',
-      'isSteamFlowMeasured',
-      'boilerSteamGeneratedPerHour',
-      'boilerSteamGeneratedPerYear',
-      'boilerSteamTemperature',
-      'boilerSteamPressure',
-      'isEconomizerPresent',
-      'boilerEfficiency'
-    ],
-    tdsBlowdown: [
-      // blowdown_equipment
-      'isBlowdownVesselPresent',
-      'isCoolingWaterUsed',
-      'isAutoTdsControlPResent',
-      'isFlashVesselPresent',
-      'isHeatExchangerPresent',
-      'waterTemperatureLeavingHeatExchanger',
-      // tds_blowdown_parameters
-      'tdsOfFeedwaterInFeedtank',
-      'boilerAverageTds',
-      'boilerMaxTds',
-    ],
-    waterTreatment: [
-      // make_up_water
-      'isMakeUpWaterMonitored',
-      'temperatureOfMakeupWater',
-      'makeupWaterAmountPerHour',
-      'makeupWaterAmountPerYear',
-      // water_treatment_parameters
-      'waterTreatmentMethod',
-      'percentageWaterRejection',
-      'tdsOfMakeupWater',
-    ],
-    feedwaterAndCondensate: [
-      // deaerator_type
-      'atmosphericDeaerator',
-      'pressurisedDeaerator',
-      // boiler_feedwater
-      'isFeedWaterMeasured',
-      'boilerFeedwaterConsumptionPerHour',
-      'boilerFeedwaterConsumptionPerYear',
-      'temperatureOfFeedtank',
-      // 'tdsOfFeedwaterInFeedtank', // duplicate
-      'areChemicalsAddedDirectlyToFeedtank',
-      'pressureOfSteamSupplyingDsi',
-      'pressureOfFeedtank',
-      // condensate_return
-      'isCondensateReturnKnown',
-      'percentageOfCondensateReturn',
-      'volumeOfCondensateReturn',
-      'temperatureOfCondensateReturn',
-      'tdsOfCondensateReturn'
-    ]
-  };
-  utilityParametersFields: Array<keyof typeof UtilityParametersFields> = [
-    // Fuel
-    'hoursOfOperation',
-    'inputFuelId',
-    'fuelEnergyPerUnit',
-    'fuelCarbonContent',
-    'costOfFuelPerUnit',
-    'fuelQtyPerYearIsKnown',
-    'costOfFuelPerYear',
-    'fuelConsumptionPerYear',
-    // CO2 Emission
-    'isCo2OrCarbonEmissionsTaxed',
-    'carbonTaxLevyCostPerUnit',
-    'costOfCo2PerUnitMass',
-    // Water
-    'costOfWaterPerUnit',
-    'boilerHouseWaterQtyPerYearIsKnown',
-    'costOfWaterPerYear',
-    'waterConsumptionPerHour',
-    'waterConsumptionPerYear',
-    // Water treatment chemicals
-    'boilerWaterTreatmentChemicalCostsIsKnown',
-    'totalChemicalCostPerYear',
-    'o2ScavengingChemicalsCostSavings',
-    // Water effluent
-    'costOfEffluentPerUnit'
-  ];
+	private _boilerHouseParametersTabs = {
+		boiler: BoilerHouseBoilerTabFields,
+		tdsBlowdown: BoilerHouseTdsBlowdownTabFields,
+		waterTreatment: BoilerHouseWaterTreatmentTabFields,
+		feedwaterAndCondensate: BoilerHouseFeedwaterAndCondensateTabFields,
+	};
 
   constructor(
     private steamGenerationAssessmentService: SteamGenerationAssessmentService,
@@ -152,14 +78,17 @@ export class SgaInputParametersComponent implements OnDestroy {
   public checkUtilityParametersIsValid(): boolean {
     let isInvalid: boolean;
 
-    for (let utilityParametersField of this.utilityParametersFields) {
+    for (let utilityParametersField of SgaInputParametersComponent._enumToArray(UtilityParametersFields)) {
       const control = this.formGroup.get(`${this.formGroupKey}.${utilityParametersField}`);
-      const inFieldInvalid = (control.invalid && control.touched) || (control.touched && control.pending);
 
-      if (inFieldInvalid) {
-        isInvalid = inFieldInvalid;
-        break;
-      }
+			if (control) {
+				const inFieldInvalid = (control.invalid && control.touched) || (control.touched && control.pending);
+
+				if (inFieldInvalid) {
+					isInvalid = inFieldInvalid;
+					break;
+				}
+			}
     }
 
     return isInvalid;
@@ -180,18 +109,19 @@ export class SgaInputParametersComponent implements OnDestroy {
       isInvalid: false,
     };
 
-    for (let tabName in this.boilerHouseParameters) {
-      for (let fieldName of this.boilerHouseParameters[tabName]) {
-        const control = this.formGroup.get(`${this.formGroupKey}.${fieldName}`);
-        const inFieldInvalid = (control.invalid && control.touched) || (control.touched && control.pending);
+	  for (let listKey in this._boilerHouseParametersTabs) {
 
-        if (inFieldInvalid) {
-          isInvalid[tabName] = inFieldInvalid;
-          isInvalid.isInvalid = true;
-          break;
-        }
-      }
-    }
+		  for (let fieldName of SgaInputParametersComponent._enumToArray(this._boilerHouseParametersTabs[listKey])) {
+			  const control = this.formGroup.get(`${this.formGroupKey}.${fieldName}`);
+			  const inFieldInvalid = control && ((control.invalid && control.touched) || (control.touched && control.pending));
+
+			  if (inFieldInvalid) {
+			    isInvalid[listKey] = inFieldInvalid;
+			    isInvalid.isInvalid = true;
+			    break;
+			  }
+		  }
+	  }
 
     return isInvalid;
   }
@@ -399,4 +329,9 @@ export class SgaInputParametersComponent implements OnDestroy {
 
     return control;
   }
+
+	private static _enumToArray(data: Object): any[] {
+		const keys = Object.keys(data);
+		return keys.slice(keys.length / 2);
+	}
 }
