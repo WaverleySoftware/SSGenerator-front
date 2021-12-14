@@ -164,7 +164,7 @@
                             [unit-controls]="fields.waterConsumptionPerHour.controlNames"
                             [required]="isRequired('waterConsumptionPerHour')"
                             [(filled)]="fields.waterConsumptionPerHour.filled"
-                            [groupControls]="['costOfWaterPerYear', 'waterConsumptionPerYear']"
+                            [groupControls]="['waterConsumptionPerYear']"
                             unit="/h"
                             group="isWaterEnteringBoilerHouseMeasured"></form-input>
 
@@ -176,7 +176,7 @@
                             [unit-controls]="fields.waterConsumptionPerYear.controlNames"
                             [required]="isRequired('waterConsumptionPerYear')"
                             [(filled)]="fields.waterConsumptionPerYear.filled"
-                            [groupControls]="['costOfWaterPerYear', 'waterConsumptionPerHour']"
+                            [groupControls]="['waterConsumptionPerHour']"
                             unit="/y"
                             group="isWaterEnteringBoilerHouseMeasured"></form-input>
               </ng-container>
