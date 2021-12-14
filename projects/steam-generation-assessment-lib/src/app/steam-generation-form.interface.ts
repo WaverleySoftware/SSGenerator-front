@@ -56,7 +56,7 @@ export interface SteamGeneratorInputsInterface {
   fuelEnergyPerUnit?: number; // nullable: true
   fuelCarbonContent?: number; // nullable: true
   costOfWaterPerUnit?: number; // nullable: true
-  costOfWaterPerYear?: number; //nullable: true // TODO: ask about this field
+  // costOfWaterPerYear?: number; //nullable: true // TODO: ask about this field
   costOfEffluentPerUnit?: number; // nullable: true
   boilerHouseWaterQtyPerYearIsKnown:	boolean;
   waterConsumptionPerYear?: number; // nullable: true
@@ -235,7 +235,7 @@ export enum UtilityParametersFields {
   // Water
   'costOfWaterPerUnit',
   'boilerHouseWaterQtyPerYearIsKnown',
-  'costOfWaterPerYear',
+  // 'costOfWaterPerYear',
   'waterConsumptionPerHour',
   'waterConsumptionPerYear',
   // Water treatment chemicals
