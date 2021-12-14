@@ -47,7 +47,7 @@ export interface SteamGeneratorInputsInterface {
   isAutoTdsControlPResent:	boolean;
   boilerSteamGeneratedPerYear?: number; // nullable: true
   boilerSteamGeneratedPerHour?: number; // nullable: true
-  inputFuelId:	string;
+  inputFuelId: string;
   inputFuelUnit: number;
   costOfFuelPerUnit?: number; // nullable: true
   costOfFuelPerYear?: number; // nullable: true
@@ -55,12 +55,12 @@ export interface SteamGeneratorInputsInterface {
   fuelConsumptionPerYear?: number; // nullable: true
   fuelEnergyPerUnit?: number; // nullable: true
   fuelCarbonContent?: number; // nullable: true
-  costOfWaterPerUnit: number;
-  costOfWaterPerYear?: number; //nullable: true
-  costOfEffluentPerUnit?: number; //nullable: true
+  costOfWaterPerUnit?: number; // nullable: true
+  costOfWaterPerYear?: number; //nullable: true // TODO: ask about this field
+  costOfEffluentPerUnit?: number; // nullable: true
   boilerHouseWaterQtyPerYearIsKnown:	boolean;
-  waterConsumptionPerYear?: number; //nullable: true
-  waterConsumptionPerHour?: number; //nullable: true
+  waterConsumptionPerYear?: number; // nullable: true
+  waterConsumptionPerHour?: number; // nullable: true
   boilerWaterTreatmentChemicalCostsIsKnown:	boolean;
   totalChemicalCostPerYear?: number; // nullable: true
   o2ScavengingChemicalsCostSavings?: number; // nullable: true
@@ -74,7 +74,7 @@ export interface SteamGeneratorInputsInterface {
   isFeedWaterMeasured:	boolean;
   boilerSteamPressure?: number; // nullable: true
   boilerSteamTemperature?: number; // nullable: true
-  isEconomizerPresent?: boolean;
+  isEconomizerPresent: boolean;
   boilerAverageTds?: number; // nullable: true
   boilerMaxTds?: number; // nullable: true
   boilerFeedwaterConsumptionPerYear?: number; // nullable: true
@@ -102,43 +102,11 @@ export interface SteamGeneratorInputsInterface {
   percentageOfCondensateReturn?: number; // nullable: true
   volumeOfCondensateReturn?: number; // nullable: true
   isDsiPresent:	boolean;
-  proposalTemperatureUnit?:	string; // nullable: true
-  proposalTemperatureUnitUnit: number;
-  isBoilerEfficiencySelected:	boolean;
-  isBoilerEfficiencyAvailable:	boolean;
-  proposalBoilerEfficiency: number;
-  isIncreasingCondensateReturnSelected:	boolean;
-  isIncreasingCondensateReturnAvailable:	boolean;
-  proposalCondensateReturned: number;
-  proposalCondensateReturnedUnit: number;
-  proposalCondensateReturnedPercentage: number;
-  proposalCondensateTemperature: number;
-  proposalCondensateTemperatureUnit: number;
-  changingWaterTreatmentMethodSelected:	boolean;
-  changingWaterTreatmentMethodAvailable:	boolean;
-  proposalMakeUpWaterTds: number;
-  proposalMakeUpWaterTdsUnit: number;
-  proposalPercentFeedwaterRejected: number;
-  proposalPercentFeedwaterRejectedUnit: number;
-  addingAutomaticTdsControlSelected:	boolean;
-  addingAutomaticTdsControlAvailable:	boolean;
-  addingFlashHeatRecoveryToAutoTdsControlSelected:	boolean;
-  addingFlashHeatRecoveryToAutoTdsControlAvailable:	boolean;
-  addingHeatExchangerforHeatRecoveryToTdsBlowdownSelected:	boolean;
-  addingHeatExchangerforHeatRecoveryToTdsBlowdownAvailable:	boolean;
-  effectOfDsiOnHotwellSelected:	boolean;
-  effectOfDsiOnHotwellAvailable:	boolean;
-  proposalDesiredHotwellTemperatureUsingDSI: number;
-  proposalDesiredHotwellTemperatureUsingDSIUnit: number;
-  proposalCostOfSodiumSulphite: number;
-  proposalCostOfSodiumSulphiteUnit: number;
-  proposalDSIPressure: number;
-  proposalDSIPressureUnit: number;
 }
 
 export interface SgaSizingModuleFormInterface {
   selectedUnits: SteamGeneratorSelectedUnitsInterface,
-  steamGeneratorInputs: SteamGeneratorInputsInterface
+  benchmarkInputs: SteamGeneratorInputsInterface
 }
 
 export type FormFieldTypesInterface = {
@@ -192,7 +160,7 @@ export interface SgaSaturatedAndTemperatureRespInterface {
   meltingPoint: number;
 }
 
-enum BoilerHouseBoilerTabFields {
+export enum BoilerHouseBoilerTabFields {
   'isSuperheatedSteam',
   'isSteamFlowMeasured',
   'boilerSteamGeneratedPerHour',
@@ -203,7 +171,7 @@ enum BoilerHouseBoilerTabFields {
   'boilerEfficiency'
 }
 
-enum BoilerHouseTdsBlowdownTabFields {
+export enum BoilerHouseTdsBlowdownTabFields {
   // blowdown_equipment
   'isBlowdownVesselPresent',
   'isCoolingWaterUsed',
@@ -217,7 +185,7 @@ enum BoilerHouseTdsBlowdownTabFields {
   'boilerMaxTds',
 }
 
-enum BoilerHouseWaterTreatmentTabFields {
+export enum BoilerHouseWaterTreatmentTabFields {
   // make_up_water
   'isMakeUpWaterMonitored',
   'temperatureOfMakeupWater',
@@ -229,7 +197,7 @@ enum BoilerHouseWaterTreatmentTabFields {
   'tdsOfMakeupWater',
 }
 
-enum BoilerHouseFeedwaterAndCondensateTabFields {
+export enum BoilerHouseFeedwaterAndCondensateTabFields {
   // deaerator_type
   'atmosphericDeaerator',
   'pressurisedDeaerator',
@@ -248,13 +216,6 @@ enum BoilerHouseFeedwaterAndCondensateTabFields {
   'volumeOfCondensateReturn',
   'temperatureOfCondensateReturn',
   'tdsOfCondensateReturn'
-}
-
-export interface BoilerHouseParametersFieldsInterface {
-  boiler: Array<keyof typeof BoilerHouseBoilerTabFields>;
-  tdsBlowdown: Array<keyof typeof BoilerHouseTdsBlowdownTabFields>;
-  waterTreatment: Array<keyof typeof BoilerHouseWaterTreatmentTabFields>;
-  feedwaterAndCondensate: Array<keyof typeof BoilerHouseFeedwaterAndCondensateTabFields>;
 }
 
 export enum UtilityParametersFields {
@@ -304,7 +265,6 @@ export enum SgaFuelTypes {
   BoilerHouseGasFuelUnits,
   BoilerHouseSolidFuelUnits,
 }
-
 
 export interface SgaFieldUnit {
   name: string;

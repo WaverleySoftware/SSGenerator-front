@@ -15,7 +15,7 @@ import { PreferenceService, Preference, UnitsService, UnitConvert } from "sizing
 import { SizingUnitPreference } from "../../../sizing-shared-lib/src/lib/shared/preference/sizing-unit-preference.model";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { SgaValidator } from "./steam-generation-assessment.validator";
-import { map, tap } from "rxjs/operators";
+import { catchError, map, tap } from "rxjs/operators";
 
 @Injectable()
 export class SteamGenerationAssessmentService {
@@ -87,12 +87,12 @@ export class SteamGenerationAssessmentService {
       formControlName: 'boilerHouseWaterQtyPerYearIsKnown',
       label: 'IS_WATER_ENTERING_THE_BOILER_HOUSE_MEASURED'
     },
-    costOfWaterPerYear: {
-      formControlName: 'costOfWaterPerYear',
-      label: 'COST_OF_WATER_PER_YEAR',
-      unitNames: ['BHCurrency'],
-      translations: ['CURRENCY']
-    },
+    // costOfWaterPerYear: {
+    //   formControlName: 'costOfWaterPerYear',
+    //   label: 'COST_OF_WATER_PER_YEAR',
+    //   unitNames: ['BHCurrency'],
+    //   translations: ['CURRENCY']
+    // },
     waterConsumptionPerHour: {
       formControlName: 'waterConsumptionPerHour',
       label: 'WATER_CONSUMPTION_HOUR',
@@ -335,10 +335,7 @@ export class SteamGenerationAssessmentService {
       translations: ['TDS'],
     }
   };
-  private readonly _sizingFormGroupControls: {
-    selectedUnits: Record<keyof SteamGeneratorSelectedUnitsInterface, any>;
-    steamGeneratorInputs: Record<keyof SteamGeneratorInputsInterface, any>
-  } = {
+  private readonly _sizingFormGroupControls: { selectedUnits: Record<keyof SteamGeneratorSelectedUnitsInterface, any>; benchmarkInputs: Record<keyof SteamGeneratorInputsInterface, any> } = {
     selectedUnits: {
       energyUnitSelected: [null], // BoilerHouseEnergyUnits
       smallWeightUnitSelected: [null], // WeightUnit
@@ -351,7 +348,7 @@ export class SteamGenerationAssessmentService {
       temperatureUnitSelected: [null], // TemperatureUnit
       tdsUnitSelected: [null], // BoilerHouseTDSUnits
     },
-    steamGeneratorInputs: {
+    benchmarkInputs: {
       hoursOfOperation: [8736, Validators.required, SgaValidator.validateAsyncFn(this, 'hoursOfOperation')], // HOURS_OF_OPERATION
       isSteamFlowMeasured: [false, SgaValidator.isSteamFlowMeasured], // IS_STEAM_FLOW_MEASURED
       isAutoTdsControlPResent: [false, SgaValidator.isAutoTdsControlPResent], // IS_AUTO_TDS_PRESENT
@@ -368,7 +365,7 @@ export class SteamGenerationAssessmentService {
       costOfWaterPerUnit: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'costOfWaterPerUnit')], // COST_OF_WATER_FSLASH_UNIT
       costOfEffluentPerUnit: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'costOfEffluentPerUnit')], // COST_OF_EFFLUENT_FSLASH_UNIT
       boilerHouseWaterQtyPerYearIsKnown: [false, SgaValidator.boilerHouseWaterQtyPerYearIsKnown], // IS_WATER_ENTERING_THE_BOILER_HOUSE_MEASURED : Original IS_BOILER_HOUSE_WATER_MEASURED
-      costOfWaterPerYear: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'costOfWaterPerYear')], // WATER_CONSUMPTION_HOUR : NEW FIELD
+      // costOfWaterPerYear: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'costOfWaterPerYear')], // WATER_CONSUMPTION_HOUR : NEW FIELD
       waterConsumptionPerHour: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'waterConsumptionPerHour')], // WATER_CONSUMPTION_HOUR : NEW FIELD
       waterConsumptionPerYear: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'waterConsumptionPerYear')], // WATER_CONSUMPTION_YEAR : Original WATER_CONSUMPTION_PER_YEAR
       boilerWaterTreatmentChemicalCostsIsKnown: [false, SgaValidator.boilerWaterTreatmentChemicalCostsIsKnown], // ARE_CHEMICAL_COST_KNOWN : Original IS_CHEMICAL_COSTS_PER_YEAR_KNOWN
@@ -412,38 +409,6 @@ export class SteamGenerationAssessmentService {
       percentageOfCondensateReturn: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'percentageOfCondensateReturn')], // PERCENTAGE_OF_CONDENSATE_RETURN
       volumeOfCondensateReturn: [null, null, SgaValidator.validateAsyncFn(this, 'volumeOfCondensateReturn')], // VOLUME_OF_CONDENSATE_RETURN
       isDsiPresent: [false, SgaValidator.isDsiPresent], // IS_DSI_PRESENT
-      proposalTemperatureUnit: [''],
-      proposalTemperatureUnitUnit: [0],
-      isBoilerEfficiencySelected: [false],
-      isBoilerEfficiencyAvailable: [false],
-      proposalBoilerEfficiency: [0],
-      isIncreasingCondensateReturnSelected: [false],
-      isIncreasingCondensateReturnAvailable: [false],
-      proposalCondensateReturned: [0],
-      proposalCondensateReturnedUnit: [0],
-      proposalCondensateReturnedPercentage: [0],
-      proposalCondensateTemperature: [0],
-      proposalCondensateTemperatureUnit: [0],
-      changingWaterTreatmentMethodSelected: [false],
-      changingWaterTreatmentMethodAvailable: [false],
-      proposalMakeUpWaterTds: [0],
-      proposalMakeUpWaterTdsUnit: [0],
-      proposalPercentFeedwaterRejected: [0],
-      proposalPercentFeedwaterRejectedUnit: [0],
-      addingAutomaticTdsControlSelected: [false],
-      addingAutomaticTdsControlAvailable: [false],
-      addingFlashHeatRecoveryToAutoTdsControlSelected: [false],
-      addingFlashHeatRecoveryToAutoTdsControlAvailable: [false],
-      addingHeatExchangerforHeatRecoveryToTdsBlowdownSelected: [false],
-      addingHeatExchangerforHeatRecoveryToTdsBlowdownAvailable: [false],
-      effectOfDsiOnHotwellSelected: [false],
-      effectOfDsiOnHotwellAvailable: [false],
-      proposalDesiredHotwellTemperatureUsingDSI: [0],
-      proposalDesiredHotwellTemperatureUsingDSIUnit: [0],
-      proposalCostOfSodiumSulphite: [0],
-      proposalCostOfSodiumSulphiteUnit: [0],
-      proposalDSIPressure: [0],
-      proposalDSIPressureUnit: [0]
     }
   };
   private readonly _sizingFormGroup: FormGroup;
@@ -459,7 +424,7 @@ export class SteamGenerationAssessmentService {
     // Initialize Sizing form
     this._sizingFormGroup = this.fb.group({
       selectedUnits: this.fb.group(this._sizingFormGroupControls.selectedUnits),
-      steamGeneratorInputs: this.fb.group(this._sizingFormGroupControls.steamGeneratorInputs)
+      benchmarkInputs: this.fb.group(this._sizingFormGroupControls.benchmarkInputs)
     });
   }
 
@@ -470,18 +435,18 @@ export class SteamGenerationAssessmentService {
         tap(null, null, () => this.requestLoading.next(false)),
         map((res) => {
           // Get child formGroup
-          const fg = this._sizingFormGroup.get('steamGeneratorInputs') as FormGroup;
+          const fg = this._sizingFormGroup.get('benchmarkInputs') as FormGroup;
           // Validate if has errors
           return SgaValidator.validateCalculation(res, fg);
         }),
       );
   }
 
-  validateSgInput(
+  validateSgaBenchmarkInput(
     field: keyof SteamGeneratorInputsInterface,
     form: SgaSizingModuleFormInterface
   ): Observable<SgaHttpValidationResponseInterface | null> {
-    return this.http.post<any>(`./Api/SteamGenerator/validate-input/${field}`, form);
+    return this.http.post<any>(`./Api/SteamGenerator/validate-benchmark-input/${field}`, form);
   }
 
   calculateCalorific(
@@ -600,7 +565,7 @@ export class SteamGenerationAssessmentService {
       });
   }
 
-  public getMultipleControlValues<T>(obj: { [key: string]: string }, formGroupKey: keyof SgaSizingModuleFormInterface = 'steamGeneratorInputs'): {[key: string]: any} {
+  public getMultipleControlValues<T>(obj: { [key: string]: string }, formGroupKey: keyof SgaSizingModuleFormInterface = 'benchmarkInputs'): {[key: string]: any} {
     const result = {};
 
     for (let objKey in obj) {
@@ -668,13 +633,13 @@ export class SteamGenerationAssessmentService {
    * Set FormGroup values - Sizing form
    * @param {string} formControlName name of form control field
    * @param {any} value value
-   * @param {string} [formGroupName = 'steamGeneratorInputs'] key-name of parent formGroup
+   * @param {string} [formGroupName = 'benchmarkInputs'] key-name of parent formGroup
    * @param {emitEvent?: true, onlySelf?: false} [opt] form control options
    * */
   public setFormValue(
     formControlName: string,
     value: any,
-    formGroupName: keyof SgaSizingModuleFormInterface = 'steamGeneratorInputs',
+    formGroupName: keyof SgaSizingModuleFormInterface = 'benchmarkInputs',
     opt?: { emitEvent?: boolean, onlySelf?: boolean }
   ): void {
     if (!formControlName) return null;
@@ -693,7 +658,7 @@ export class SteamGenerationAssessmentService {
     }
   }
 
-  public setFormValues(values: {[key: string]: any}, formGroupName: keyof SgaSizingModuleFormInterface = 'steamGeneratorInputs',): void {
+  public setFormValues(values: {[key: string]: any}, formGroupName: keyof SgaSizingModuleFormInterface = 'benchmarkInputs',): void {
     const fg = this._sizingFormGroup.get(formGroupName) as FormGroup;
     fg.patchValue(values);
   }
@@ -728,7 +693,7 @@ export class SteamGenerationAssessmentService {
     }
 
     if (result && Object.keys(result).length) {
-      this._sizingFormGroup.get('steamGeneratorInputs').patchValue(result, { emitEvent: false });
+      this._sizingFormGroup.get('benchmarkInputs').patchValue(result, { emitEvent: false });
     }
   }
 
@@ -747,8 +712,10 @@ export class SteamGenerationAssessmentService {
 
   private _getFieldsWithUnits(): SgaFieldUnit[] {
     return Object.keys(this._sgaFormFields)
-      .filter((key) => !!this._sgaFormFields[key].unitNames &&
-        !!this.getSizingFormGroup().get(`steamGeneratorInputs.${key}`).value)
+      .filter((key) =>
+        !!this._sgaFormFields[key].unitNames &&
+        !!this.getSizingFormGroup().get(`benchmarkInputs.${key}`).value
+      )
       .map((key) => {
         const field = this._sgaFormFields[key];
         const unit = field.unitNames && field.unitNames
@@ -774,7 +741,7 @@ export class SteamGenerationAssessmentService {
                 return {
                   selectedKey: 'FUEL_TYPE',
                   preferenceKey,
-                  value: this._sizingFormGroup.get('steamGeneratorInputs.inputFuelUnit').value,
+                  value: this._sizingFormGroup.get('benchmarkInputs.inputFuelUnit').value,
                 }
               }
             }
@@ -783,7 +750,7 @@ export class SteamGenerationAssessmentService {
 
         return {
           name: key,
-          value: this._sizingFormGroup.get(`steamGeneratorInputs.${key}`).value,
+          value: this._sizingFormGroup.get(`benchmarkInputs.${key}`).value,
           unitNames: field.unitNames,
           controlNames: field.controlNames,
           unit,
@@ -797,16 +764,20 @@ export class SteamGenerationAssessmentService {
     for (let { name, value, unit } of prevUnits) {
       const prevUnit = unit.value;
       const newUnit = unit.selectedKey === 'FUEL_TYPE' ?
-        this._sizingFormGroup.get('steamGeneratorInputs.inputFuelUnit').value :
+        this._sizingFormGroup.get('benchmarkInputs.inputFuelUnit') &&
+        this._sizingFormGroup.get('benchmarkInputs.inputFuelUnit').value :
+        this._sizingFormGroup.get(`selectedUnits.${unit.selectedKey}`) &&
         this._sizingFormGroup.get(`selectedUnits.${unit.selectedKey}`).value;
 
-      prevUnit !== newUnit && unitConverter.push({
-        initialUnitId: prevUnit,
-        convertedValue: null,
-        initialValue: value,
-        targetUnitId: newUnit,
-        propertyName: name,
-      });
+      if (prevUnit && value && newUnit && name && prevUnit !== newUnit) {
+        unitConverter.push({
+          initialUnitId: prevUnit,
+          convertedValue: null,
+          initialValue: value,
+          targetUnitId: newUnit,
+          propertyName: name,
+        });
+      }
     }
 
     return unitConverter;

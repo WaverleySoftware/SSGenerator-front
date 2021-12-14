@@ -57,8 +57,6 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     this.sgaService.setSelectedValues();
     this.calculateBoilerEfficiency();
     this._calculateWaterTreatment();
-
-
   }
 
   ngOnDestroy(): void {
@@ -115,7 +113,8 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   onUnitsChanged(): any {
     console.log('----- CHANGE_UNITS -----');
     const unitsConverter = this.sgaService.changeSizingUnits();
-    this._convertUnits(unitsConverter);
+    console.log(unitsConverter, '----unitsConverter')
+    this._convertUnits(unitsConverter, { calorific: false, emission: false });
 
     return true;
   }
@@ -134,11 +133,11 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
 
   public calculateBoilerEfficiency(data: SgaBoilerEfficiencyInterface = {inputFuelId: null, isEconomizerPresent: undefined}): void {
     if (!data.inputFuelId) {
-      data.inputFuelId = this.sizingModuleForm.get('steamGeneratorInputs.inputFuelId').value;
+      data.inputFuelId = this.sizingModuleForm.get('benchmarkInputs.inputFuelId').value;
     }
 
     if (!data || data.isEconomizerPresent === undefined) {
-      data.isEconomizerPresent = this.sizingModuleForm.get('steamGeneratorInputs.isEconomizerPresent').value;
+      data.isEconomizerPresent = this.sizingModuleForm.get('benchmarkInputs.isEconomizerPresent').value;
     }
 
     if (!data.inputFuelId || data.isEconomizerPresent === undefined) return null;
@@ -176,9 +175,9 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       energyUnitSelected,
       smallWeightUnitSelected,
       inputFuelId: (staticData && staticData.inputFuelId) ||
-        this.sizingModuleForm.get('steamGeneratorInputs.inputFuelId').value,
+        this.sizingModuleForm.get('benchmarkInputs.inputFuelId').value,
       inputFuelUnit: (staticData && staticData.inputFuelUnit) ||
-        this.sizingModuleForm.get('steamGeneratorInputs.inputFuelUnit').value,
+        this.sizingModuleForm.get('benchmarkInputs.inputFuelUnit').value,
     };
   }
 
@@ -225,31 +224,31 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       emissionUnitSelected: 'BoilerHouseEmissionUnits',
       volumeUnitSelected: 'BoilerHouseVolumeUnits'
     });
-    const fuelUnitTypeId = this.sizingModuleForm.get('steamGeneratorInputs.inputFuelUnit').value;
+    const fuelUnitTypeId = this.sizingModuleForm.get('benchmarkInputs.inputFuelUnit').value;
     const obj: {[key: string]: UnitConvert} = {
       costOfCo2PerUnitMass: {
-        convertedValue: this.sizingModuleForm.get('steamGeneratorInputs.costOfCo2PerUnitMass').value,
+        convertedValue: this.sizingModuleForm.get('benchmarkInputs.costOfCo2PerUnitMass').value,
         propertyName: 'costOfCo2PerUnitMass',
         initialValue: 0,
         initialUnitId: null,
         targetUnitId: emissionUnitSelected,
       },
       costOfEffluentPerUnit: {
-        convertedValue: this.sizingModuleForm.get('steamGeneratorInputs.costOfEffluentPerUnit').value,
+        convertedValue: this.sizingModuleForm.get('benchmarkInputs.costOfEffluentPerUnit').value,
         propertyName: 'costOfEffluentPerUnit',
         initialValue: 0,
         initialUnitId: null,
         targetUnitId: volumeUnitSelected,
       },
       costOfFuelPerUnit: {
-        convertedValue: this.sizingModuleForm.get('steamGeneratorInputs.costOfFuelPerUnit').value,
+        convertedValue: this.sizingModuleForm.get('benchmarkInputs.costOfFuelPerUnit').value,
         propertyName: 'costOfFuelPerUnit',
         initialValue: 0,
         initialUnitId: null,
         targetUnitId: fuelUnitTypeId,
       },
       costOfWaterPerUnit: {
-        convertedValue: this.sizingModuleForm.get('steamGeneratorInputs.costOfWaterPerUnit').value,
+        convertedValue: this.sizingModuleForm.get('benchmarkInputs.costOfWaterPerUnit').value,
         propertyName: 'costOfWaterPerUnit',
         initialValue: 0,
         initialUnitId: null,
@@ -336,7 +335,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   private _calculateWaterTreatment(waterTreatmentMethodId?: string, tdsUnitSelected?: number): void {
     this.sgaService.calculateWaterTreatmentMethod({
       tdsUnitSelected: tdsUnitSelected || this.sizingModuleForm.get('selectedUnits.tdsUnitSelected').value,
-      waterTreatmentMethodId: waterTreatmentMethodId || this.sizingModuleForm.get('steamGeneratorInputs.waterTreatmentMethod').value,
+      waterTreatmentMethodId: waterTreatmentMethodId || this.sizingModuleForm.get('benchmarkInputs.waterTreatmentMethod').value,
     }).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((res) => {
         const {percentageWaterRejection, tdsOfMakeupWater} = res;
