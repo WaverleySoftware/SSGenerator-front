@@ -29,15 +29,15 @@ export class SgaValidator {
     const fg = control && control.parent;
 
     if (fg) {
-      // const costOfWaterPerYear = fg.get('costOfWaterPerYear');
+      const costOfWaterPerYear = fg.get('costOfWaterPerYear');
       const waterConsumptionPerHour = fg.get('waterConsumptionPerHour');
       const waterConsumptionPerYear = fg.get('waterConsumptionPerYear');
 
       if (control.value) {
-        SgaValidator.toggleFields(waterConsumptionPerHour, true);
+        SgaValidator.toggleFields(costOfWaterPerYear, true);
       } else {
         SgaValidator.toggleFields([
-          // costOfWaterPerYear,
+          costOfWaterPerYear,
           waterConsumptionPerHour,
           waterConsumptionPerYear
         ]);
