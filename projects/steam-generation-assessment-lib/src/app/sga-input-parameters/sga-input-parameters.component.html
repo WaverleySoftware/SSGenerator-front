@@ -144,17 +144,17 @@
             <form-toggle [formControlName]="fields.boilerHouseWaterQtyPerYearIsKnown.formControlName"
                          [label]="fields.boilerHouseWaterQtyPerYearIsKnown.label">
               <ng-container yes>
-<!--                <form-input [formControlName]="fields.costOfWaterPerYear.formControlName"-->
-<!--                            [label]="fields.costOfWaterPerYear.label"-->
-<!--                            [unit-names]="fields.costOfWaterPerYear.unitNames"-->
-<!--                            [unit-types]="fields.costOfWaterPerYear.unitTypes"-->
-<!--                            [unit-translations]="fields.costOfWaterPerYear.translations"-->
-<!--                            [unit-controls]="fields.costOfWaterPerYear.controlNames"-->
-<!--                            [required]="isRequired('costOfWaterPerYear')"-->
-<!--                            [(filled)]="fields.costOfWaterPerYear.filled"-->
-<!--                            [groupControls]="['waterConsumptionPerHour', 'waterConsumptionPerYear']"-->
-<!--                            unit="/y"-->
-<!--                            group="isWaterEnteringBoilerHouseMeasured"></form-input>-->
+                <form-input [formControlName]="fields.costOfWaterPerYear.formControlName"
+                            [label]="fields.costOfWaterPerYear.label"
+                            [unit-names]="fields.costOfWaterPerYear.unitNames"
+                            [unit-types]="fields.costOfWaterPerYear.unitTypes"
+                            [unit-translations]="fields.costOfWaterPerYear.translations"
+                            [unit-controls]="fields.costOfWaterPerYear.controlNames"
+                            [required]="isRequired('costOfWaterPerYear')"
+                            [(filled)]="fields.costOfWaterPerYear.filled"
+                            [groupControls]="['waterConsumptionPerHour', 'waterConsumptionPerYear']"
+                            unit="/y"
+                            group="isWaterEnteringBoilerHouseMeasured"></form-input>
 
                 <form-input [formControlName]="fields.waterConsumptionPerHour.formControlName"
                             [label]="fields.waterConsumptionPerHour.label"
@@ -164,7 +164,7 @@
                             [unit-controls]="fields.waterConsumptionPerHour.controlNames"
                             [required]="isRequired('waterConsumptionPerHour')"
                             [(filled)]="fields.waterConsumptionPerHour.filled"
-                            [groupControls]="['waterConsumptionPerYear']"
+                            [groupControls]="['costOfWaterPerYear', 'waterConsumptionPerYear']"
                             unit="/h"
                             group="isWaterEnteringBoilerHouseMeasured"></form-input>
 
@@ -176,7 +176,7 @@
                             [unit-controls]="fields.waterConsumptionPerYear.controlNames"
                             [required]="isRequired('waterConsumptionPerYear')"
                             [(filled)]="fields.waterConsumptionPerYear.filled"
-                            [groupControls]="['waterConsumptionPerHour']"
+                            [groupControls]="['costOfWaterPerYear', 'waterConsumptionPerHour']"
                             unit="/y"
                             group="isWaterEnteringBoilerHouseMeasured"></form-input>
               </ng-container>

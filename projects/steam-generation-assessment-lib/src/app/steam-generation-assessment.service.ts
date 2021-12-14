@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { HttpClient, HttpErrorResponse } from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 import { Observable, Subject } from "rxjs";
 import {
   FormFieldTypesInterface, SgaFeedTankTemperatureRequestInterface, SgaFieldUnit, SgaFuelTypes,
@@ -11,11 +11,11 @@ import {
   SteamGeneratorInputsInterface,
   SteamGeneratorSelectedUnitsInterface,
 } from "./steam-generation-form.interface";
-import { PreferenceService, Preference, UnitsService, UnitConvert } from "sizing-shared-lib";
+import { PreferenceService, Preference, UnitConvert } from "sizing-shared-lib";
 import { SizingUnitPreference } from "../../../sizing-shared-lib/src/lib/shared/preference/sizing-unit-preference.model";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { SgaValidator } from "./steam-generation-assessment.validator";
-import { catchError, map, tap } from "rxjs/operators";
+import { map, tap } from "rxjs/operators";
 
 @Injectable()
 export class SteamGenerationAssessmentService {
@@ -87,12 +87,12 @@ export class SteamGenerationAssessmentService {
       formControlName: 'boilerHouseWaterQtyPerYearIsKnown',
       label: 'IS_WATER_ENTERING_THE_BOILER_HOUSE_MEASURED'
     },
-    // costOfWaterPerYear: {
-    //   formControlName: 'costOfWaterPerYear',
-    //   label: 'COST_OF_WATER_PER_YEAR',
-    //   unitNames: ['BHCurrency'],
-    //   translations: ['CURRENCY']
-    // },
+    costOfWaterPerYear: {
+      formControlName: 'costOfWaterPerYear',
+      label: 'COST_OF_WATER_PER_YEAR',
+      unitNames: ['BHCurrency'],
+      translations: ['CURRENCY']
+    },
     waterConsumptionPerHour: {
       formControlName: 'waterConsumptionPerHour',
       label: 'WATER_CONSUMPTION_HOUR',
@@ -365,7 +365,7 @@ export class SteamGenerationAssessmentService {
       costOfWaterPerUnit: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'costOfWaterPerUnit')], // COST_OF_WATER_FSLASH_UNIT
       costOfEffluentPerUnit: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'costOfEffluentPerUnit')], // COST_OF_EFFLUENT_FSLASH_UNIT
       boilerHouseWaterQtyPerYearIsKnown: [false, SgaValidator.boilerHouseWaterQtyPerYearIsKnown], // IS_WATER_ENTERING_THE_BOILER_HOUSE_MEASURED : Original IS_BOILER_HOUSE_WATER_MEASURED
-      // costOfWaterPerYear: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'costOfWaterPerYear')], // WATER_CONSUMPTION_HOUR : NEW FIELD
+      costOfWaterPerYear: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'costOfWaterPerYear')], // WATER_CONSUMPTION_HOUR : NEW FIELD
       waterConsumptionPerHour: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'waterConsumptionPerHour')], // WATER_CONSUMPTION_HOUR : NEW FIELD
       waterConsumptionPerYear: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'waterConsumptionPerYear')], // WATER_CONSUMPTION_YEAR : Original WATER_CONSUMPTION_PER_YEAR
       boilerWaterTreatmentChemicalCostsIsKnown: [false, SgaValidator.boilerWaterTreatmentChemicalCostsIsKnown], // ARE_CHEMICAL_COST_KNOWN : Original IS_CHEMICAL_COSTS_PER_YEAR_KNOWN
@@ -419,7 +419,6 @@ export class SteamGenerationAssessmentService {
     private http: HttpClient,
     private preferenceService: PreferenceService,
     private fb: FormBuilder,
-    private unitsService: UnitsService,
     ) {
     // Initialize Sizing form
     this._sizingFormGroup = this.fb.group({
