@@ -1,8 +1,8 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { Observable, Subject } from "rxjs";
+import { BehaviorSubject, Observable } from "rxjs";
 import {
-  FormFieldTypesInterface, SgaFeedTankTemperatureRequestInterface, SgaFieldUnit, SgaFuelTypes,
+  FormFieldTypesInterface, FuelTypesEnum, SgaFeedTankTemperatureRequestInterface, SgaFieldUnit, SgaFuelTypes,
   SgaHttpValidationResponseInterface,
   SgaSaturatedTemperatureBodyInterface, SgaSelectedUnits,
   SgaSizingModuleFormInterface,
@@ -413,7 +413,7 @@ export class SteamGenerationAssessmentService {
   };
   private readonly _sizingFormGroup: FormGroup;
   private readonly moduleGroupId = 9;
-  public requestLoading: Subject<boolean> = new Subject<boolean>();
+  private _requestLoading$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   constructor(
     private http: HttpClient,
@@ -428,10 +428,10 @@ export class SteamGenerationAssessmentService {
   }
 
   calculateResults(form: SgaSizingModuleFormInterface): Observable<any> {
-    this.requestLoading.next(true);
+    this.toggleLoading(true);
     return this.http.post<any>(`./Api/SteamGenerator/calculate-benchmark`, form)
       .pipe(
-        tap(null, null, () => this.requestLoading.next(false)),
+        tap(null, null, () => this.toggleLoading(false)),
         map((res) => {
           // Get child formGroup
           const fg = this._sizingFormGroup.get('benchmarkInputs') as FormGroup;
@@ -451,45 +451,60 @@ export class SteamGenerationAssessmentService {
   calculateCalorific(
     calorificData: SteamCalorificRequestInterface
   ): Observable<{fuelCarbonContent: number; fuelEnergyPerUnit: number;}> {
-    this.requestLoading.next(true);
+    this.toggleLoading(true);
     return this.http.post<any>('./Api/SteamGenerator/calculate-carbon-and-calorific-value', calorificData)
-      .pipe(tap(null, null, () => this.requestLoading.next(false)));
+      .pipe(tap(null, null, () => this.toggleLoading(false)));
   }
 
   calculateCarbonEmission(data: SteamCarbonEmissionInterface): Observable<{ fuelCarbonContent: number }> {
-    this.requestLoading.next(true);
+    this.toggleLoading(true);
     return this.http.post<any>('./Api/SteamGenerator/calculate-carbon-emission-value', data)
-      .pipe(tap(null, null, () => this.requestLoading.next(false)));
+      .pipe(tap(null, null, () => this.toggleLoading(false)));
   }
 
   calculateSaturatedAndTemperature(data: SgaSaturatedTemperatureBodyInterface): Observable<any> {
-    this.requestLoading.next(true);
+    this.toggleLoading(true);
     return this.http.post<any>('./Api/SteamGenerator/calculate-saturated-and-freezing-temperature', data)
-      .pipe(tap(null, null, () => this.requestLoading.next(false)));
+      .pipe(tap(null, null, () => this.toggleLoading(false)));
   }
 
   calculateBoilerEfficiency(data: {isEconomizerPresent: boolean; inputFuelId: string;}): Observable<{boilerEfficiency: number}> {
-    this.requestLoading.next(true);
+    this.toggleLoading(true);
     return this.http.post<{boilerEfficiency: number}>('./Api/SteamGenerator/calculate-boiler-efficiency', data)
-      .pipe(tap(null, null, () => this.requestLoading.next(false)));
+      .pipe(tap(null, null, () => this.toggleLoading(false)));
   }
 
   calculateWaterTemperatureLeaving(data: { temperatureUnitSelected: number }): Observable<any> {
-    this.requestLoading.next(true);
+    this.toggleLoading(true);
     return this.http.post('./Api/SteamGenerator/calculate-water-temperature-leaving-heat-exchanger', data)
-      .pipe(tap(null, null, () => this.requestLoading.next(false)));
+      .pipe(tap(null, null, () => this.toggleLoading(false)));
   }
 
   calculateWaterTreatmentMethod(data: { waterTreatmentMethodId: string, tdsUnitSelected: number; }): Observable<any> {
-    this.requestLoading.next(true);
+    this.toggleLoading(true);
     return this.http.post('./Api/SteamGenerator/calculate-water-treatment-method-parameters', data)
-      .pipe(tap(null, null, () => this.requestLoading.next(false)));
+      .pipe(tap(null, null, () => this.toggleLoading(false)));
   }
 
   calculateFeedTankAndPressure(data: SgaFeedTankTemperatureRequestInterface): Observable<any> {
-    this.requestLoading.next(true);
+    this.toggleLoading(true);
     return this.http.post('./Api/SteamGenerator/calculate-feedtank-temperature-and-pressure', data)
-      .pipe(tap(null, null, () => this.requestLoading.next(false)));
+      .pipe(tap(null, null, () => this.toggleLoading(false)));
+  }
+
+  public toggleLoading(enable?: boolean): void {
+    const fn = () => {
+      if (this._requestLoading$.value !== enable) {
+        this._requestLoading$.next(!!enable);
+      }
+    }
+
+    // Fix multiple changes in one tik
+    setTimeout(fn, 0);
+  }
+
+  public getLoading(): BehaviorSubject<boolean> {
+    return this._requestLoading$;
   }
 
   public getSizingFormGroup(): FormGroup {
@@ -635,31 +650,24 @@ export class SteamGenerationAssessmentService {
    * @param {string} [formGroupName = 'benchmarkInputs'] key-name of parent formGroup
    * @param {emitEvent?: true, onlySelf?: false} [opt] form control options
    * */
-  public setFormValue(
-    formControlName: string,
-    value: any,
-    formGroupName: keyof SgaSizingModuleFormInterface = 'benchmarkInputs',
-    opt?: { emitEvent?: boolean, onlySelf?: boolean }
-  ): void {
+  public setFormValue(formControlName: string, value: any, formGroupName: keyof SgaSizingModuleFormInterface = 'benchmarkInputs', opt?: { emitEvent?: boolean, onlySelf?: boolean }): void {
     if (!formControlName) return null;
 
     const control = this._sizingFormGroup.get(`${formGroupName}.${formControlName}`);
     const parsedValue = Number.isNaN(Number(value)) ? value : (value && +value);
 
     if (control && (control.value !== parsedValue)) {
-      console.groupCollapsed('%c  %c CHANGE FIELD:' + formControlName, 'background-color:green;margin-right:10px', 'background-color:transparent');
-      console.table({
-        Name: { value: formControlName },
-        Value: { value: parsedValue }
-      });
-      console.groupEnd();
-      control.patchValue(parsedValue, opt);
+      console.log(`%c CHANGE FIELD {name:"${formControlName}", value: ${parsedValue}}`, 'background-color:#edf2f4;color:#002D72;padding:5px;');
+      control.patchValue(typeof parsedValue === 'number' ? (Math.round(parsedValue * 10000) / 10000) : parsedValue, opt);
     }
   }
 
   public setFormValues(values: {[key: string]: any}, formGroupName: keyof SgaSizingModuleFormInterface = 'benchmarkInputs',): void {
-    const fg = this._sizingFormGroup.get(formGroupName) as FormGroup;
-    fg.patchValue(values);
+    if (!values || !Object.keys(values).length) return null;
+
+    for (let fieldName in values) {
+      this.setFormValue(fieldName, values[fieldName], formGroupName);
+    }
   }
 
   private _changeSgaFieldsFromSizingPref(): void {
@@ -718,7 +726,7 @@ export class SteamGenerationAssessmentService {
       .map((key) => {
         const field = this._sgaFormFields[key];
         const unit = field.unitNames && field.unitNames
-          .map(preferenceKey => {
+          .map((preferenceKey) => {
             if (!preferenceKey) return null;
 
             const selectedKey = SgaSelectedUnits[preferenceKey];
@@ -733,7 +741,7 @@ export class SteamGenerationAssessmentService {
                   value,
                 }
               }
-            } else {
+            } else if (SgaFuelTypes[preferenceKey]) {
               const fuelTypeKey = SgaFuelTypes[preferenceKey];
 
               if (fuelTypeKey) {
@@ -743,6 +751,8 @@ export class SteamGenerationAssessmentService {
                   value: this._sizingFormGroup.get('benchmarkInputs.inputFuelUnit').value,
                 }
               }
+            } else {
+              return null
             }
           })
           .filter(item => !!item)[0];
@@ -754,44 +764,39 @@ export class SteamGenerationAssessmentService {
           controlNames: field.controlNames,
           unit,
         };
-      });
+      }).filter((item) => !!item && !!item.unit);
   }
 
   private _filterNewUnitsForConvert(prevUnits: SgaFieldUnit[]): UnitConvert[] {
     const unitConverter: UnitConvert[] = [];
 
     for (let { name, value, unit } of prevUnits) {
-      const prevUnit = unit.value;
-      const newUnit = unit.selectedKey === 'FUEL_TYPE' ?
-        this._sizingFormGroup.get('benchmarkInputs.inputFuelUnit') &&
-        this._sizingFormGroup.get('benchmarkInputs.inputFuelUnit').value :
-        this._sizingFormGroup.get(`selectedUnits.${unit.selectedKey}`) &&
-        this._sizingFormGroup.get(`selectedUnits.${unit.selectedKey}`).value;
+      if (unit && unit.selectedKey && unit.value && value && name) {
+        const prevUnit = unit.value;
+        const newUnit = unit.selectedKey === 'FUEL_TYPE' ?
+          this._sizingFormGroup.get('benchmarkInputs.inputFuelUnit') &&
+          this._sizingFormGroup.get('benchmarkInputs.inputFuelUnit').value :
+          this._sizingFormGroup.get(`selectedUnits.${unit.selectedKey}`) &&
+          this._sizingFormGroup.get(`selectedUnits.${unit.selectedKey}`).value;
 
-      if (prevUnit && value && newUnit && name && prevUnit !== newUnit) {
-        unitConverter.push({
-          initialUnitId: prevUnit,
-          convertedValue: null,
-          initialValue: value,
-          targetUnitId: newUnit,
-          propertyName: name,
-        });
+        if (prevUnit && newUnit && prevUnit !== newUnit) {
+          unitConverter.push({
+            initialUnitId: prevUnit,
+            convertedValue: null,
+            initialValue: value,
+            targetUnitId: newUnit,
+            propertyName: name,
+          });
+        } else {
+          console.log(`%c  CONVERTER (not changed): ${name}`, 'background-color:orange; color: blue;');
+          console.log({name, value, unit});
+        }
+      } else {
+        console.log(`%c  CONVERTER (no units data): ${name}`, 'background-color:orange; color: blue;');
+        console.log({name, value, unit});
       }
     }
 
     return unitConverter;
-  }
-
-  static getFuelTypeName(fuelTypeValue: string): string {
-    // L, E, G, O, S
-    const firstLetter = fuelTypeValue && fuelTypeValue.charAt(0);
-    switch (firstLetter) {
-      case 'L': return 'BoilerHouseLiquidFuelUnits';
-      case 'E': return 'BoilerHouseElectricalFuelUnits';
-      case 'G': return 'BoilerHouseGasFuelUnits';
-      case 'O': return 'BoilerHouseGasFuelUnits';
-      case 'S': return 'BoilerHouseSolidFuelUnits';
-      default: return null;
-    }
   }
 }

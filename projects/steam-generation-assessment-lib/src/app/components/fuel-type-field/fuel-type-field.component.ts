@@ -10,6 +10,7 @@ import {
 import { AbstractControl, ControlContainer, ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
 import { TranslationService, PreferenceService, Enumeration, EnumerationDefinition, Preference } from "sizing-shared-lib";
 import { SteamGenerationAssessmentService } from "../../steam-generation-assessment.service";
+import { FuelTypesEnum } from "../../steam-generation-form.interface";
 
 @Component({
   selector: 'fuel-type-field',
@@ -92,7 +93,7 @@ export class FuelTypeFieldComponent implements ControlValueAccessor, OnInit {
   }
 
   public updateValue(item: EnumerationDefinition): void {
-    this.fuelTypeName = SteamGenerationAssessmentService.getFuelTypeName(item && item.value);
+    this.fuelTypeName = item && item.value && FuelTypesEnum[item.value.charAt(0).toUpperCase()];
     this.setFormValue(item.id, this.preference && this.preference.value);
     this.preference && this.preferenceChange.emit(this.preference);
   }
