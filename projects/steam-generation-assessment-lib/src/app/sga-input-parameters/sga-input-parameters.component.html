@@ -299,7 +299,7 @@
 
                   <form-toggle [formControlName]="fields.isEconomizerPresent.formControlName"
                                [label]="fields.isEconomizerPresent.label"
-                               (valueChange)="calculateEfficiency.emit({isEconomizerPresent: $event, inputFuelId: formGroup.get(formGroupKey+'.inputFuelId').value})"
+                               (valueChange)="calculateEfficiency.emit({isEconomizerPresent: $event || false, inputFuelId: formGroup.get(formGroupKey+'.inputFuelId').value})"
                   ></form-toggle>
 
                   <form-input [formControlName]="fields.boilerEfficiency.formControlName"

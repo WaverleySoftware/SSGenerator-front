@@ -266,6 +266,14 @@ export enum SgaFuelTypes {
   BoilerHouseSolidFuelUnits,
 }
 
+export enum FuelTypesEnum {
+  L = 'BoilerHouseLiquidFuelUnits',
+  E = 'BoilerHouseElectricalFuelUnits',
+  G = 'BoilerHouseGasFuelUnits',
+  O = 'BoilerHouseGasFuelUnits',
+  S = 'BoilerHouseSolidFuelUnits',
+}
+
 export interface SgaFieldUnit {
   name: string;
   value: any;

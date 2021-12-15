@@ -15,7 +15,7 @@ import { ActivatedRoute, Params } from "@angular/router";
 import { Subject } from "rxjs";
 import { takeUntil, tap } from "rxjs/operators";
 import {
-  FormFieldTypesInterface,
+  FormFieldTypesInterface, FuelTypesEnum,
   SgaBoilerEfficiencyInterface, SgaSizingModuleFormInterface,
   SteamCalorificRequestInterface, SteamCarbonEmissionInterface,
   SteamGeneratorInputsInterface
@@ -53,12 +53,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   }
 
   ngAfterViewInit() {
-    const converterUnits = this._getDefaultConvertedUnits();
-
-    this._convertUnits(converterUnits, {calorific: true, emission: true});
-    this.sgaService.setSelectedValues();
-    this.calculateBoilerEfficiency();
-    this._calculateWaterTreatment();
+    this._loadInitialData();
   }
 
   ngOnDestroy(): void {
@@ -100,6 +95,8 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   }
 
   onResetModuleForm(): any {
+    this._resetFuelTypeData();
+    this._loadInitialData();
     return true;
   }
 
@@ -121,6 +118,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   }
 
   repackageSizing(): any {
+    console.log('-----repackageSizing-----')
     return true;
   }
 
@@ -138,7 +136,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       isEconomizerPresent: data && data.isEconomizerPresent || this._getControlValue('isEconomizerPresent'),
     }
 
-    if (!params.inputFuelId || params.isEconomizerPresent === undefined) return null;
+    if (!params.inputFuelId || params.isEconomizerPresent === undefined || params.isEconomizerPresent === null) return null;
 
     this.sgaService.calculateBoilerEfficiency(params)
       .pipe(takeUntil(this.ngUnsubscribe))
@@ -363,6 +361,22 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     return sizingPreference && sizingPreference.preference && parseInt(sizingPreference.preference.value);
   }
 
+  private _resetFuelTypeData(): { inputFuelId: string; inputFuelUnit: number; } {
+    const enums = this.translationService.displayGroup.enumerations
+      .find(({ enumerationName, opCoOverride }) => enumerationName === 'FuelTypeList_BoilerHouseInput' && !opCoOverride);
+    const definition = enums && enums.enumerationDefinitions && enums.enumerationDefinitions[0];
+    const preferenceName = definition && definition.value && FuelTypesEnum[definition.value.charAt(0).toUpperCase()];
+    const sizingPreference = this.preferenceService.sizingUnitPreferences.find(({ unitType }) => unitType === preferenceName);
+    const inputFuelUnit = sizingPreference && sizingPreference.preference && parseInt(sizingPreference.preference.value);
+    const inputFuelId: string = definition && definition.id as string;
+
+    console.log({inputFuelId, inputFuelUnit}, '-----_resetFuelTypeData')
+    this.sgaService.setFormValue('inputFuelId', inputFuelId);
+    this.sgaService.setFormValue('inputFuelUnit', inputFuelUnit);
+
+    return {inputFuelId, inputFuelUnit};
+  }
+
   // TODO: Function for focus on first invalid field (need to create toggle tabs to first invalid field)
   private _focusFirstErrorField(formGroup: FormGroup): void {
     // check all fields
@@ -387,5 +401,14 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
         // TODO: Create projects/jobs functionality
         console.log(`projectId=${projectId}, jobId=${jobId}`);
       });
+  }
+
+  private _loadInitialData(): void {
+    const converterUnits = this._getDefaultConvertedUnits();
+
+    this._convertUnits(converterUnits, {calorific: true, emission: true});
+    this.sgaService.setSelectedValues();
+    this.calculateBoilerEfficiency();
+    this._calculateWaterTreatment();
   }
 }

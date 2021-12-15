@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { BehaviorSubject, Observable } from "rxjs";
 import {
-  FormFieldTypesInterface, SgaFeedTankTemperatureRequestInterface, SgaFieldUnit, SgaFuelTypes,
+  FormFieldTypesInterface, FuelTypesEnum, SgaFeedTankTemperatureRequestInterface, SgaFieldUnit, SgaFuelTypes,
   SgaHttpValidationResponseInterface,
   SgaSaturatedTemperatureBodyInterface, SgaSelectedUnits,
   SgaSizingModuleFormInterface,
@@ -650,25 +650,15 @@ export class SteamGenerationAssessmentService {
    * @param {string} [formGroupName = 'benchmarkInputs'] key-name of parent formGroup
    * @param {emitEvent?: true, onlySelf?: false} [opt] form control options
    * */
-  public setFormValue(
-    formControlName: string,
-    value: any,
-    formGroupName: keyof SgaSizingModuleFormInterface = 'benchmarkInputs',
-    opt?: { emitEvent?: boolean, onlySelf?: boolean }
-  ): void {
+  public setFormValue(formControlName: string, value: any, formGroupName: keyof SgaSizingModuleFormInterface = 'benchmarkInputs', opt?: { emitEvent?: boolean, onlySelf?: boolean }): void {
     if (!formControlName) return null;
 
     const control = this._sizingFormGroup.get(`${formGroupName}.${formControlName}`);
     const parsedValue = Number.isNaN(Number(value)) ? value : (value && +value);
 
     if (control && (control.value !== parsedValue)) {
-      console.groupCollapsed('%c  %c CHANGE FIELD:' + formControlName, 'background-color:green;margin-right:10px', 'background-color:transparent');
-      console.table({
-        Name: { value: formControlName },
-        Value: { value: parsedValue }
-      });
-      console.groupEnd();
-      control.patchValue(typeof parsedValue === 'number' ? (Math.round(parsedValue * 1000) / 1000) : parsedValue, opt);
+      console.log(`%c CHANGE FIELD {name:"${formControlName}", value: ${parsedValue}}`, 'background-color:#edf2f4;color:#002D72;padding:5px;');
+      control.patchValue(typeof parsedValue === 'number' ? (Math.round(parsedValue * 10000) / 10000) : parsedValue, opt);
     }
   }
 
@@ -736,7 +726,7 @@ export class SteamGenerationAssessmentService {
       .map((key) => {
         const field = this._sgaFormFields[key];
         const unit = field.unitNames && field.unitNames
-          .map(preferenceKey => {
+          .map((preferenceKey) => {
             if (!preferenceKey) return null;
 
             const selectedKey = SgaSelectedUnits[preferenceKey];
@@ -751,7 +741,7 @@ export class SteamGenerationAssessmentService {
                   value,
                 }
               }
-            } else {
+            } else if (SgaFuelTypes[preferenceKey]) {
               const fuelTypeKey = SgaFuelTypes[preferenceKey];
 
               if (fuelTypeKey) {
@@ -761,6 +751,8 @@ export class SteamGenerationAssessmentService {
                   value: this._sizingFormGroup.get('benchmarkInputs.inputFuelUnit').value,
                 }
               }
+            } else {
+              return null
             }
           })
           .filter(item => !!item)[0];
@@ -772,7 +764,7 @@ export class SteamGenerationAssessmentService {
           controlNames: field.controlNames,
           unit,
         };
-      });
+      }).filter((item) => !!item && !!item.unit);
   }
 
   private _filterNewUnitsForConvert(prevUnits: SgaFieldUnit[]): UnitConvert[] {
@@ -795,23 +787,16 @@ export class SteamGenerationAssessmentService {
             targetUnitId: newUnit,
             propertyName: name,
           });
+        } else {
+          console.log(`%c  CONVERTER (not changed): ${name}`, 'background-color:orange; color: blue;');
+          console.log({name, value, unit});
         }
+      } else {
+        console.log(`%c  CONVERTER (no units data): ${name}`, 'background-color:orange; color: blue;');
+        console.log({name, value, unit});
       }
     }
 
     return unitConverter;
-  }
-
-  static getFuelTypeName(fuelTypeValue: string): string {
-    // L, E, G, O, S
-    const firstLetter = fuelTypeValue && fuelTypeValue.charAt(0);
-    switch (firstLetter) {
-      case 'L': return 'BoilerHouseLiquidFuelUnits';
-      case 'E': return 'BoilerHouseElectricalFuelUnits';
-      case 'G': return 'BoilerHouseGasFuelUnits';
-      case 'O': return 'BoilerHouseGasFuelUnits';
-      case 'S': return 'BoilerHouseSolidFuelUnits';
-      default: return null;
-    }
   }
 }
