@@ -2,7 +2,7 @@ import { Component, ElementRef, EventEmitter, Input, OnDestroy, Output } from "@
 import { AbstractControl, FormGroup, Validators } from "@angular/forms";
 import { Subject } from "rxjs";
 import { debounceTime, distinctUntilChanged, filter, takeUntil } from "rxjs/operators";
-import { Preference } from "sizing-shared-lib";
+import { EnumerationDefinition } from "sizing-shared-lib";
 import {
 	BoilerHouseBoilerTabFields, BoilerHouseFeedwaterAndCondensateTabFields,
 	BoilerHouseTdsBlowdownTabFields,
@@ -30,12 +30,12 @@ export class SgaInputParametersComponent implements OnDestroy {
   @Output() changeWaterTreatment: EventEmitter<any> = new EventEmitter<any>();
   @Output() changeCarbonEmission: EventEmitter<SteamCarbonEmissionInterface> = new EventEmitter<SteamCarbonEmissionInterface>();
 
-  public fuelType: Preference
   public fields: FormFieldTypesInterface;
   public carbonEmissionUpdate$ = new Subject<string>();
   public pressureTemperatureUpdate$ = new Subject<string>();
   public formGroupKey = 'benchmarkInputs'; // Form builder child formGroup key
 
+  public fuelTypeName: string;
   private _ngUnsubscribe = new Subject<void>();
 	private _boilerHouseParametersTabs = {
 		boiler: BoilerHouseBoilerTabFields,
@@ -133,7 +133,7 @@ export class SgaInputParametersComponent implements OnDestroy {
   public setFuelType(
     fieldName: keyof FormFieldTypesInterface,
     index: 0 | 1 = 1,
-    value: string = this.fuelType && this.fuelType.name,
+    value: string = this.fuelTypeName,
     key: 'unitNames' | 'translations' = 'unitNames'
   ): [string, string?] {
     if (this.fields[fieldName]) {
@@ -147,20 +147,15 @@ export class SgaInputParametersComponent implements OnDestroy {
     return this.fields[fieldName][key];
   }
 
-  public changeFuelTypeHandle(preference: Preference): void {
-    if (this.fuelType && preference) { // Not first init
-      const {inputFuelId, inputFuelUnit, isEconomizerPresent} = this.steamGenerationAssessmentService
-        .getMultipleControlValues({
-          inputFuelId: 'inputFuelId',
-          inputFuelUnit: 'inputFuelUnit',
-          isEconomizerPresent: 'isEconomizerPresent'
-        });
+  public changeFuelTypeHandle(data: EnumerationDefinition): void {
+    const {inputFuelId, inputFuelUnit, isEconomizerPresent} = this.steamGenerationAssessmentService.getMultipleControlValues({
+      inputFuelId: 'inputFuelId',
+      inputFuelUnit: 'inputFuelUnit',
+      isEconomizerPresent: 'isEconomizerPresent'
+    });
 
-      this.changeFuelType.emit({ inputFuelId, inputFuelUnit, energyUnitSelected: null, smallWeightUnitSelected: null });
-      this.calculateEfficiency.emit({ inputFuelId, isEconomizerPresent })
-    }
-
-    this.fuelType = preference;
+    this.changeFuelType.emit({ inputFuelId, inputFuelUnit, energyUnitSelected: null, smallWeightUnitSelected: null });
+    this.calculateEfficiency.emit({ inputFuelId, isEconomizerPresent })
   }
 
   /**

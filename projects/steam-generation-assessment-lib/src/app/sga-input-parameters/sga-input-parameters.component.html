@@ -25,8 +25,12 @@
                    [titleTooltip]="('ALLOWS_YOU_TO_INPUT_FUEL_TYPE_AND_COSTS_HELP' | translate) + ('IF_A_STANDARD_FUEL_IS_USED_THE_CALORIFIC_VALUE_AND_CO2_EMISSIONS_FSLASH_UNIT_OF_FUEL_WILL_BE_AUTOMATICALLY_POPULATED_FROM_LOO_HELP' | translate)"
                    background="#EDF2F4">
           <div body>
-            <fuel-type-field [module-group-id]="moduleGroupId"
-                             (preferenceChange)="changeFuelTypeHandle($event)"></fuel-type-field>
+            <type-of-fuel [formControlName]="fields.inputFuelId.formControlName"
+                          [label]="fields.inputFuelId.label"
+                          [unitFormControlName]="fields.inputFuelId.unitNames[0]"
+                          [(fuelTypeName)]="fuelTypeName"
+                          (ngModelChange)="changeFuelTypeHandle($event)"
+                          [moduleGroupId]="moduleGroupId"></type-of-fuel>
 
             <form-input [formControlName]="fields.fuelEnergyPerUnit.formControlName"
                         [label]="fields.fuelEnergyPerUnit.label"

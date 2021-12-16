@@ -1,16 +1,14 @@
 import {
   AfterContentInit,
-  AfterViewInit,
   Component,
   ElementRef,
   EventEmitter,
-  forwardRef,
-  Injector,
-  Input,
-  Output,
+  forwardRef, Host,
+  Input, Optional,
+  Output, SkipSelf,
   ViewChild
 } from "@angular/core";
-import { ControlValueAccessor, NG_VALUE_ACCESSOR, NgControl } from "@angular/forms";
+import { AbstractControl, ControlContainer, ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
 
 @Component({
   selector: 'form-input',
@@ -53,10 +51,9 @@ export class FormInputComponent implements ControlValueAccessor, AfterContentIni
   @Input() value: any;
   touched: boolean;
   focus: boolean;
-  public control: NgControl;
+  public control: AbstractControl;
 
-  constructor(private injector: Injector) {
-  }
+  constructor(@Optional() @Host() @SkipSelf() private controlContainer: ControlContainer) {}
 
   ngAfterContentInit() {
     this.getFormControl();
@@ -99,8 +96,8 @@ export class FormInputComponent implements ControlValueAccessor, AfterContentIni
   }
 
   changeRadioInput(emitData: { ref: any, group: string }): void {
-    if (this.control && this.control.control && this.control.control.disabled) {
-      this.control.control.enable();
+    if (this.control && this.control.disabled) {
+      this.control.enable();
     }
 
     this.disableNotUsedGroupFields();
@@ -117,11 +114,9 @@ export class FormInputComponent implements ControlValueAccessor, AfterContentIni
     this.inputBlur.emit({name: this.formControlName, value: this.value});
   }
 
-  private getFormControl(): NgControl | null {
-    const ngControl: NgControl = this.injector.get(NgControl, null);
-
-    if (ngControl && ngControl.control) {
-      this.control = ngControl;
+  private getFormControl(): AbstractControl | null {
+    if (this.controlContainer && this.formControlName) {
+      this.control =  this.controlContainer.control.get(this.formControlName);
 
       return this.control;
     }
@@ -135,12 +130,8 @@ export class FormInputComponent implements ControlValueAccessor, AfterContentIni
   }
 
   private disableNotUsedGroupFields(): void {
-    if (
-      this.group && this.control && this.control.control &&
-      this.control.control.parent && this.groupControls &&
-      this.groupControls.length
-    ) {
-      const fg = this.control.control.parent;
+    if (this.group && this.control && this.control.parent && this.groupControls && this.groupControls.length) {
+      const fg = this.control.parent;
 
       for (let groupControl of this.groupControls) {
         const control = fg.get(groupControl);
@@ -151,18 +142,18 @@ export class FormInputComponent implements ControlValueAccessor, AfterContentIni
     }
   }
 
-  private initialDisableDefault(control?: NgControl): void {
+  private initialDisableDefault(control?: AbstractControl): void {
     if (this.defaultChecked && this.group && this.groupControls && this.groupControls.length) {
       this.disabled = false;
 
       for (let groupElement of this.groupControls) {
-        const fg = this.control && this.control.control && this.control.control.parent;
+        const fg = this.control && this.control.parent;
         const control = fg && fg.get(groupElement);
 
         control && !control.disabled && control.disable({ onlySelf: true });
       }
 
-      const existing = this.control && this.control.control;
+      const existing = this.control;
       existing && existing.disabled && existing.enable({ onlySelf: true });
     }
   }

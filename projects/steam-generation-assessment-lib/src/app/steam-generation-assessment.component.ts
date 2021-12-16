@@ -65,7 +65,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
 
   onCalculateSizing(formGroup: FormGroup): any {
     this.sgaService
-      .calculateResults(formGroup.value)
+      .calculateResults(formGroup.getRawValue())
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((response) => {
         console.log(response, '-----response');
@@ -96,7 +96,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
 
   onResetModuleForm(): any {
     this._resetFuelTypeData();
-    this._loadInitialData();
+    // this._loadInitialData();
     return true;
   }
 
@@ -248,11 +248,11 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
         }
         case 'SteamGenerationFuelType': { // inputFuelId
           const fuelTypeId = this._getFuelTypeListItemId(value);
-          this.sgaService.setFormValue('inputFuelId', fuelTypeId);
+          fuelTypeId && this.sgaService.setFormValue('inputFuelId', fuelTypeId);
           break;
         }
         case 'SteamGenerationFuelUnit': { // inputFuelUnit
-          this.sgaService.setFormValue('inputFuelUnit', Number(value));
+          value && this.sgaService.setFormValue('inputFuelUnit', Number(value));
           obj.costOfFuelPerUnit['initialUnitId'] = Number(value);
           break;
         }
@@ -370,7 +370,6 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     const inputFuelUnit = sizingPreference && sizingPreference.preference && parseInt(sizingPreference.preference.value);
     const inputFuelId: string = definition && definition.id as string;
 
-    console.log({inputFuelId, inputFuelUnit}, '-----_resetFuelTypeData')
     this.sgaService.setFormValue('inputFuelId', inputFuelId);
     this.sgaService.setFormValue('inputFuelUnit', inputFuelUnit);
 
@@ -406,9 +405,8 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   private _loadInitialData(): void {
     const converterUnits = this._getDefaultConvertedUnits();
 
-    this._convertUnits(converterUnits, {calorific: true, emission: true});
+    this._convertUnits(converterUnits);
     this.sgaService.setSelectedValues();
-    this.calculateBoilerEfficiency();
     this._calculateWaterTreatment();
   }
 }

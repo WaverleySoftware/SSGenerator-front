@@ -26,12 +26,16 @@ export class SteamGenerationAssessmentService {
       filled: true
     },
     // FUEL
+    inputFuelId: {
+      formControlName: 'inputFuelId',
+      label: 'FUEL_TYPE',
+      unitNames: ['inputFuelUnit']
+    },
     fuelEnergyPerUnit: {
       formControlName: 'fuelEnergyPerUnit',
       label: 'FUEL_CALORIFIC_VALUE',
       unitNames: ['BoilerHouseEnergyUnits', /*inputFuelUnit*/],
       translations: ['ENERGY'],
-      controlNames: [null, 'inputFuelUnit'],
     },
     fuelCarbonContent: {
       formControlName: 'fuelCarbonContent',
