@@ -54,7 +54,10 @@ export class FormToggleComponent implements ControlValueAccessor, OnInit, OnChan
   }
 
   writeValue(val: boolean): void {
-    this.value = val;
+    this.value = !!val;
+    if (val === null) {
+      this.onChange(this.value);
+    }
   }
 
   public updateValue(val: boolean): void {

@@ -2,18 +2,22 @@ import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { BehaviorSubject, Observable } from "rxjs";
 import {
-  FormFieldTypesInterface, FuelTypesEnum, SgaFeedTankTemperatureRequestInterface, SgaFieldUnit, SgaFuelTypes,
+  FormFieldTypesInterface, FuelTypesEnum,
+  SgaFeedTankTemperatureRequestInterface,
+  SgaFieldUnit,
+  SgaFuelTypes,
   SgaHttpValidationResponseInterface,
-  SgaSaturatedTemperatureBodyInterface, SgaSelectedUnits,
+  SgaSaturatedTemperatureBodyInterface,
+  SgaSelectedUnits,
   SgaSizingModuleFormInterface,
   SteamCalorificRequestInterface,
   SteamCarbonEmissionInterface,
   SteamGeneratorInputsInterface,
   SteamGeneratorSelectedUnitsInterface,
 } from "./steam-generation-form.interface";
-import { PreferenceService, Preference, UnitConvert } from "sizing-shared-lib";
+import { Preference, PreferenceService, UnitConvert } from "sizing-shared-lib";
 import { SizingUnitPreference } from "../../../sizing-shared-lib/src/lib/shared/preference/sizing-unit-preference.model";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { FormArray, FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { SgaValidator } from "./steam-generation-assessment.validator";
 import { map, tap } from "rxjs/operators";
 
@@ -29,7 +33,7 @@ export class SteamGenerationAssessmentService {
     inputFuelId: {
       formControlName: 'inputFuelId',
       label: 'FUEL_TYPE',
-      unitNames: ['inputFuelUnit']
+      controlNames: ['inputFuelUnit']
     },
     fuelEnergyPerUnit: {
       formControlName: 'fuelEnergyPerUnit',
@@ -658,7 +662,7 @@ export class SteamGenerationAssessmentService {
     if (!formControlName) return null;
 
     const control = this._sizingFormGroup.get(`${formGroupName}.${formControlName}`);
-    const parsedValue = Number.isNaN(Number(value)) ? value : (value && +value);
+    const parsedValue = Number.isNaN(Number(value)) || typeof value === 'boolean' ? value : (value && +value);
 
     if (control && (control.value !== parsedValue)) {
       console.log(`%c CHANGE FIELD {name:"${formControlName}", value: ${parsedValue}}`, 'background-color:#edf2f4;color:#002D72;padding:5px;');
@@ -672,6 +676,18 @@ export class SteamGenerationAssessmentService {
     for (let fieldName in values) {
       this.setFormValue(fieldName, values[fieldName], formGroupName);
     }
+  }
+
+  public updateTreeValidity(group: FormGroup | FormArray): void {
+    Object.keys(group.controls).forEach((key: string) => {
+      const abstractControl = group.controls[key];
+
+      if (abstractControl instanceof FormGroup || abstractControl instanceof FormArray) {
+        this.updateTreeValidity(abstractControl);
+      } else {
+        abstractControl.updateValueAndValidity();
+      }
+    });
   }
 
   private _changeSgaFieldsFromSizingPref(): void {

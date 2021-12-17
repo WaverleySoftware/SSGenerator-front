@@ -27,9 +27,9 @@
           <div body>
             <type-of-fuel [formControlName]="fields.inputFuelId.formControlName"
                           [label]="fields.inputFuelId.label"
-                          [unitFormControlName]="fields.inputFuelId.unitNames[0]"
+                          [unitFormControlName]="fields.inputFuelId.controlNames[0]"
                           [(fuelTypeName)]="fuelTypeName"
-                          (ngModelChange)="changeFuelTypeHandle($event)"
+                          (changeUnit)="changeFuelTypeHandle()"
                           [moduleGroupId]="moduleGroupId"></type-of-fuel>
 
             <form-input [formControlName]="fields.fuelEnergyPerUnit.formControlName"

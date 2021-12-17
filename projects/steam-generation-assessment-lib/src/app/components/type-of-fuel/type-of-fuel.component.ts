@@ -33,6 +33,7 @@ export class TypeOfFuelComponent implements ControlValueAccessor, AfterViewInit,
   @Input() moduleGroupId: number;
   @Input() fuelTypeName: string;
   @Output() fuelTypeNameChange: EventEmitter<string> = new EventEmitter<string>();
+  @Output() changeUnit: EventEmitter<{name: string; value: number;}> = new EventEmitter<{name: string; value: number;}>();
 
   list: EnumerationDefinition[];
   value: EnumerationDefinition;
@@ -53,11 +54,11 @@ export class TypeOfFuelComponent implements ControlValueAccessor, AfterViewInit,
 
     this._updateSizing$ = this.preferenceService.sizingUnitPreferencesUpdate
       .pipe(filter(({updated: { unitType, preference: { value }}}) => {
-        return SgaFuelTypes[unitType] !== undefined && this.value &&
+        return !!SgaFuelTypes[unitType] && this.value &&
           (!this._unitValue || parseInt(value) !== this._unitValue) &&
           unitType === FuelTypesEnum[this.value.value.charAt(0).toUpperCase()]
       }))
-      .subscribe(({updated: { preference: { value, name } }}) => this._setUnitControlValue(parseInt(value)));
+      .subscribe(({updated: { preference: { value, name } }}) => this._setUnitControlValue(parseInt(value), name));
   }
 
   ngAfterViewInit() {
@@ -95,17 +96,16 @@ export class TypeOfFuelComponent implements ControlValueAccessor, AfterViewInit,
     this._updateFuelUnit();
   }
 
-  private _setUnitControlValue(value: number): void {
+  private _setUnitControlValue(value: number, name?: string): void {
     if (this._unitControl && value && this._unitControl.value !== value) {
       this._unitValue = value;
       this._unitControl.setValue(this._unitValue);
+      this.changeUnit.emit({name: name, value: this._unitValue});
     }
   }
 
   private _setSizingPreferences(): any {
-    const keys = Object.keys(SgaFuelTypes);
-
-    for (let key of keys.slice(keys.length / 2)) {
+    for (let key of Object.keys(SgaFuelTypes)) {
       if (!this.preferenceService.sizingUnitPreferences.find(p => p && p.unitType === key)) {
         const preference = this.preferenceService.allPreferences.find(({ name }) => name === key);
 
@@ -127,12 +127,11 @@ export class TypeOfFuelComponent implements ControlValueAccessor, AfterViewInit,
     const preferenceName = FuelTypesEnum[this.value.value.charAt(0).toUpperCase()];
     const sizing = this.preferenceService.sizingUnitPreferences.find(({unitType}) => unitType === preferenceName);
 
-
     if (sizing) {
       const newUnitValue = sizing && sizing.preference && sizing.preference.value && parseInt(sizing.preference.value);
 
       this._emitUnitTypeName(sizing);
-      this._setUnitControlValue(newUnitValue);
+      this._setUnitControlValue(newUnitValue, preferenceName);
     }
   }
 

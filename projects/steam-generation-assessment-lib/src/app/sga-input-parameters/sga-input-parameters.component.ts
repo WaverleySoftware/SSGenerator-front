@@ -2,7 +2,6 @@ import { Component, ElementRef, EventEmitter, Input, OnDestroy, Output } from "@
 import { AbstractControl, FormGroup, Validators } from "@angular/forms";
 import { Subject } from "rxjs";
 import { debounceTime, distinctUntilChanged, filter, takeUntil } from "rxjs/operators";
-import { EnumerationDefinition } from "sizing-shared-lib";
 import {
 	BoilerHouseBoilerTabFields, BoilerHouseFeedwaterAndCondensateTabFields,
 	BoilerHouseTdsBlowdownTabFields,
@@ -147,7 +146,7 @@ export class SgaInputParametersComponent implements OnDestroy {
     return this.fields[fieldName][key];
   }
 
-  public changeFuelTypeHandle(data: EnumerationDefinition): void {
+  public changeFuelTypeHandle(): void {
     const {inputFuelId, inputFuelUnit, isEconomizerPresent} = this.steamGenerationAssessmentService.getMultipleControlValues({
       inputFuelId: 'inputFuelId',
       inputFuelUnit: 'inputFuelUnit',

@@ -260,10 +260,10 @@ export enum SgaSelectedUnits {
 }
 
 export enum SgaFuelTypes {
-  BoilerHouseLiquidFuelUnits,
-  BoilerHouseElectricalFuelUnits,
-  BoilerHouseGasFuelUnits,
-  BoilerHouseSolidFuelUnits,
+  BoilerHouseLiquidFuelUnits = 'BoilerHouseLiquidFuelUnits',
+  BoilerHouseElectricalFuelUnits = 'BoilerHouseElectricalFuelUnits',
+  BoilerHouseGasFuelUnits = 'BoilerHouseGasFuelUnits',
+  BoilerHouseSolidFuelUnits = 'BoilerHouseSolidFuelUnits',
 }
 
 export enum FuelTypesEnum {
