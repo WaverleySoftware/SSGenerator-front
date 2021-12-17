@@ -9,14 +9,14 @@ import {
   UnitConvert,
   UnitsService
 } from "sizing-shared-lib";
-import { FormGroup } from "@angular/forms";
+import { FormArray, FormGroup } from "@angular/forms";
 import { SteamGenerationAssessmentService } from "./steam-generation-assessment.service";
 import { ActivatedRoute, Params } from "@angular/router";
 import { Subject } from "rxjs";
 import { takeUntil, tap } from "rxjs/operators";
 import {
   FormFieldTypesInterface, FuelTypesEnum,
-  SgaBoilerEfficiencyInterface, SgaSizingModuleFormInterface,
+  SgaBoilerEfficiencyInterface, SgaFuelTypes, SgaSizingModuleFormInterface,
   SteamCalorificRequestInterface, SteamCarbonEmissionInterface,
   SteamGeneratorInputsInterface
 } from "./steam-generation-form.interface";
@@ -53,7 +53,11 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   }
 
   ngAfterViewInit() {
-    this._loadInitialData();
+    const converterUnits = this._getDefaultConvertedUnits();
+
+    this._convertUnits(converterUnits);
+    this.sgaService.setSelectedValues();
+    this._calculateWaterTreatment();
   }
 
   ngOnDestroy(): void {
@@ -65,7 +69,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
 
   onCalculateSizing(formGroup: FormGroup): any {
     this.sgaService
-      .calculateResults(formGroup.value)
+      .calculateResults(formGroup.getRawValue())
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((response) => {
         console.log(response, '-----response');
@@ -95,8 +99,17 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   }
 
   onResetModuleForm(): any {
-    this._resetFuelTypeData();
-    this._loadInitialData();
+    setTimeout(() => {
+      this._resetFuelTypeData();
+      this._convertUnits(this._getDefaultConvertedUnits());
+
+      this.sgaService.setSelectedValues()
+      this.sgaService.setFormValues({ atmosphericDeaerator: true, hoursOfOperation: 8736 });
+      this.sgaService.updateTreeValidity(this.sizingModuleForm);
+
+      this._calculateWaterTreatment();
+    },0)
+
     return true;
   }
 
@@ -113,7 +126,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   onUnitsChanged(): any {
     const unitsConverter = this.sgaService.changeSizingUnits();
     this._convertUnits(unitsConverter);
-    console.log('----- CHANGE_UNITS -----', {unitsConverter, calculation: {emission: true, calorific: false}});
+    console.log('!!!----- CHANGE_UNITS -----', {unitsConverter});
     return true;
   }
 
@@ -158,6 +171,11 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       fuelEnergyPerUnit: data && data.fuelEnergyPerUnit || this._getControlValue('fuelEnergyPerUnit'),
     }
 
+    if (
+      !params.inputFuelId || !params.inputFuelUnit || !params.fuelEnergyPerUnit || !params.fuelCarbonContent ||
+      !params.energyUnitSelected || !params.smallWeightUnitSelected
+    ) return null;
+
     this.sgaService.calculateCarbonEmission(params)
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(res => this._setInputFormFields(res));
@@ -170,6 +188,10 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       inputFuelId: data && data.inputFuelId || this._getControlValue('inputFuelId'),
       inputFuelUnit: data && data.inputFuelUnit || this._getControlValue('inputFuelUnit')
     };
+
+    if (!prams.inputFuelId || !prams.inputFuelUnit || !prams.energyUnitSelected || !prams.smallWeightUnitSelected) {
+      return null;
+    }
 
     this.sgaService
       .calculateCalorific(prams)
@@ -192,7 +214,8 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       emissionUnitSelected: 'BoilerHouseEmissionUnits',
       volumeUnitSelected: 'BoilerHouseVolumeUnits'
     });
-    const fuelUnitTypeId = this._getControlValue('inputFuelUnit');
+    const fuelUnitTypeId = this._getControlValue('inputFuelUnit') || parseInt(this.preferenceService.allPreferences
+      .find(({ name }) => name === SgaFuelTypes.BoilerHouseGasFuelUnits).value);
     const obj: {[key: string]: UnitConvert} = {
       costOfCo2PerUnitMass: {
         convertedValue: this._getControlValue('costOfCo2PerUnitMass'),
@@ -248,11 +271,11 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
         }
         case 'SteamGenerationFuelType': { // inputFuelId
           const fuelTypeId = this._getFuelTypeListItemId(value);
-          this.sgaService.setFormValue('inputFuelId', fuelTypeId);
+          fuelTypeId && this.sgaService.setFormValue('inputFuelId', fuelTypeId);
           break;
         }
         case 'SteamGenerationFuelUnit': { // inputFuelUnit
-          this.sgaService.setFormValue('inputFuelUnit', Number(value));
+          value && this.sgaService.setFormValue('inputFuelUnit', Number(value));
           obj.costOfFuelPerUnit['initialUnitId'] = Number(value);
           break;
         }
@@ -329,15 +352,6 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       }, {});
 
       this.sgaService.setFormValues(newValues);
-
-      if (calculation) {
-        if (calculation.calorific && !newValues['fuelEnergyPerUnit']) {
-          this._calculateCalorificValue(null, calculation.emission);
-        }
-        if (calculation.emission && newValues['fuelEnergyPerUnit'] && !newValues['fuelCarbonContent']) {
-          this.calculateCarbonEmission({ fuelEnergyPerUnit: newValues['fuelEnergyPerUnit'] })
-        }
-      }
     });
   }
 
@@ -370,7 +384,6 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     const inputFuelUnit = sizingPreference && sizingPreference.preference && parseInt(sizingPreference.preference.value);
     const inputFuelId: string = definition && definition.id as string;
 
-    console.log({inputFuelId, inputFuelUnit}, '-----_resetFuelTypeData')
     this.sgaService.setFormValue('inputFuelId', inputFuelId);
     this.sgaService.setFormValue('inputFuelUnit', inputFuelUnit);
 
@@ -401,14 +414,5 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
         // TODO: Create projects/jobs functionality
         console.log(`projectId=${projectId}, jobId=${jobId}`);
       });
-  }
-
-  private _loadInitialData(): void {
-    const converterUnits = this._getDefaultConvertedUnits();
-
-    this._convertUnits(converterUnits, {calorific: true, emission: true});
-    this.sgaService.setSelectedValues();
-    this.calculateBoilerEfficiency();
-    this._calculateWaterTreatment();
   }
 }

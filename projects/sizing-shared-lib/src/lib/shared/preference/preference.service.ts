@@ -20,6 +20,7 @@ export class PreferenceService {
   // Exposed field and private subject for when a new preference and unit type
   // is added for unit selection during a sizing process.
   sizingUnitPreferences: SizingUnitPreference[] = [];
+	public sizingUnitPreferencesUpdate: Subject<{list: SizingUnitPreference[], updated: SizingUnitPreference}> = new Subject<{list: SizingUnitPreference[]; updated: SizingUnitPreference}>();
   private sizingUnitPreferenceChange: Subject<SizingUnitPreference> = new Subject<SizingUnitPreference>();
 
   constructor(private http: HttpClient) {
@@ -52,6 +53,7 @@ export class PreferenceService {
       }
 
       // Add the new preference
+	    this.sizingUnitPreferencesUpdate.next({list: this.sizingUnitPreferences, updated: sizingUnitPreference});
       this.sizingUnitPreferences.push(sizingUnitPreference);
       console.log("New preference added " + sizingUnitPreference.unitType);
     });

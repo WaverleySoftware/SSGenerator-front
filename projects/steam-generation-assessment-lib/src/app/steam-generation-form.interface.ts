@@ -260,18 +260,18 @@ export enum SgaSelectedUnits {
 }
 
 export enum SgaFuelTypes {
-  BoilerHouseLiquidFuelUnits,
-  BoilerHouseElectricalFuelUnits,
-  BoilerHouseGasFuelUnits,
-  BoilerHouseSolidFuelUnits,
+  BoilerHouseLiquidFuelUnits = 'BoilerHouseLiquidFuelUnits',
+  BoilerHouseElectricalFuelUnits = 'BoilerHouseElectricalFuelUnits',
+  BoilerHouseGasFuelUnits = 'BoilerHouseGasFuelUnits',
+  BoilerHouseSolidFuelUnits = 'BoilerHouseSolidFuelUnits',
 }
 
 export enum FuelTypesEnum {
-  L = 'BoilerHouseLiquidFuelUnits',
-  E = 'BoilerHouseElectricalFuelUnits',
-  G = 'BoilerHouseGasFuelUnits',
-  O = 'BoilerHouseGasFuelUnits',
-  S = 'BoilerHouseSolidFuelUnits',
+  L = 'BoilerHouseLiquidFuelUnits', // BoilerHouseLiquidFuelUnits
+  E = 'BoilerHouseElectricalFuelUnits', // BoilerHouseElectricalFuelUnits
+  G = 'BoilerHouseGasFuelUnits', // BoilerHouseGasFuelUnits
+  O = 'BoilerHouseGasFuelUnits', // BoilerHouseGasFuelUnits
+  S = 'BoilerHouseSolidFuelUnits', // BoilerHouseSolidFuelUnits
 }
 
 export interface SgaFieldUnit {
