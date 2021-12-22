@@ -29,12 +29,13 @@
                           [label]="fields.inputFuelId.label"
                           [unitFormControlName]="'fuelUnitSelected'"
                           [(fuelTypeName)]="fuelTypeName"
-                          (changeUnit)="changeFuelTypeHandle()"
+                          (changeUnit)="updateFuelUnit($event)"
+                          (ngModelChange)="changeFuelTypeHandle($event)"
                           [moduleGroupId]="moduleGroupId"></type-of-fuel>
 
             <form-input [formControlName]="fields.fuelEnergyPerUnit.formControlName"
                         [label]="fields.fuelEnergyPerUnit.label"
-                        [unit-names]="setFuelType('fuelEnergyPerUnit')"
+                        [unit-names]="fields.fuelEnergyPerUnit.unitNames"
                         [unit-types]="fields.fuelEnergyPerUnit.unitTypes"
                         [unit-translations]="fields.fuelEnergyPerUnit?.translations"
                         [unit-controls]="fields.fuelEnergyPerUnit?.controlNames"
@@ -45,7 +46,7 @@
 
             <form-input [formControlName]="fields.fuelCarbonContent.formControlName"
                         [label]="fields.fuelCarbonContent.label"
-                        [unit-names]="setFuelType('fuelCarbonContent')"
+                        [unit-names]="fields.fuelCarbonContent.unitNames"
                         [unit-types]="fields.fuelCarbonContent.unitTypes"
                         [unit-translations]="fields.fuelCarbonContent.translations"
                         [unit-controls]="fields.fuelCarbonContent.controlNames"
@@ -56,7 +57,7 @@
 
             <form-input [formControlName]="fields.costOfFuelPerUnit.formControlName"
                         [label]="fields.costOfFuelPerUnit.label"
-                        [unit-names]="setFuelType('costOfFuelPerUnit')"
+                        [unit-names]="fields.costOfFuelPerUnit.unitNames"
                         [unit-types]="fields.costOfFuelPerUnit?.unitTypes"
                         [unit-translations]="fields.costOfFuelPerUnit?.translations"
                         [unit-controls]="fields.costOfFuelPerUnit?.controlNames"
@@ -81,7 +82,7 @@
                             unit="/y"></form-input>
                 <form-input [formControlName]="fields.fuelConsumptionPerYear.formControlName"
                             [label]="fields.fuelConsumptionPerYear.label"
-                            [unit-names]="setFuelType('fuelConsumptionPerYear', 0)"
+                            [unit-names]="fields.fuelConsumptionPerYear.unitNames"
                             [unit-types]="fields.fuelConsumptionPerYear.unitTypes"
                             [unit-translations]="fields.fuelConsumptionPerYear.translations"
                             [unit-controls]="fields.fuelConsumptionPerYear.controlNames"

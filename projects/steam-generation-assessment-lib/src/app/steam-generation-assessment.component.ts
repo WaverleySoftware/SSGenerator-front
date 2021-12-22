@@ -139,6 +139,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
         this._convertUnits(unitsConverterAfter);
       }
     });
+    this._calculateCalorificValue();
 
     return true;
   }
@@ -149,7 +150,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   }
 
   public changeFuelType(fuelTypeData: SteamCalorificRequestInterface): void {
-    this._calculateCalorificValue(fuelTypeData, true);
+    this._calculateCalorificValue(fuelTypeData);
   }
 
   public changeWaterTreatment({ selectedValue }: { selectedValue: string }): void {
@@ -174,12 +175,10 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
 
   public calculateCarbonEmission(data?: Partial<SteamCarbonEmissionInterface>): void {
     const params: SteamCarbonEmissionInterface = {
-      energyUnitSelected: data && data.energyUnitSelected ||
-        this._getControlValue('energyUnitSelected', this.unitsGroupName),
-      smallWeightUnitSelected: data && data.smallWeightUnitSelected ||
-        this._getControlValue('smallWeightUnitSelected', this.unitsGroupName),
+      energyUnitSelected: data && data.energyUnitSelected || this._getControlValue('energyUnitSelected', this.unitsGroupName),
+      smallWeightUnitSelected: data && data.smallWeightUnitSelected || this._getControlValue('smallWeightUnitSelected', this.unitsGroupName),
       inputFuelId: data && data.inputFuelId || this._getControlValue('inputFuelId'),
-      fuelUnitSelected: data && data.fuelUnitSelected || this._getControlValue('fuelUnitSelected', 'selectedUnits'),
+      fuelUnitSelected: data && data.fuelUnitSelected || this._getControlValue('fuelUnitSelected', this.unitsGroupName),
       fuelCarbonContent: data && data.fuelCarbonContent || this._getControlValue('fuelCarbonContent'),
       fuelEnergyPerUnit: data && data.fuelEnergyPerUnit || this._getControlValue('fuelEnergyPerUnit'),
     }
@@ -210,11 +209,9 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       .calculateCalorific(prams)
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(({ fuelCarbonContent, fuelEnergyPerUnit }) => {
-        if (fuelCarbonContent && fuelEnergyPerUnit) {
-          this._setInputFormFields({ fuelEnergyPerUnit, fuelCarbonContent });
+        this._setInputFormFields({ fuelEnergyPerUnit, fuelCarbonContent });
 
-          !isCalculateEmission && this.calculateCarbonEmission({fuelEnergyPerUnit, fuelCarbonContent});
-        }
+        isCalculateEmission && this.calculateCarbonEmission({fuelEnergyPerUnit, fuelCarbonContent});
       });
   }
 
