@@ -12,7 +12,7 @@ import {
 import { EnumerationDefinition, PreferenceService, TranslationService, DisplayGroup } from "sizing-shared-lib";
 import { AbstractControl, ControlContainer, ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
 import { FuelTypesEnum, SgaFuelTypes } from "../../steam-generation-form.interface";
-import { filter } from "rxjs/operators";
+import { filter, map } from "rxjs/operators";
 import { Subscription } from "rxjs";
 import { SizingUnitPreference } from "sizing-shared-lib/lib/shared/preference/sizing-unit-preference.model";
 
@@ -53,18 +53,22 @@ export class TypeOfFuelComponent implements ControlValueAccessor, AfterViewInit,
     this.list = TypeOfFuelComponent._getList(translationService.displayGroup);
 
     this._updateSizing$ = this.preferenceService.sizingUnitPreferencesUpdate
-      .pipe(filter(({updated: { unitType, preference: { value }}}) => {
-        return !!SgaFuelTypes[unitType] && this.value &&
-          (!this._unitValue || parseInt(value) !== this._unitValue) &&
-          unitType === FuelTypesEnum[this.value.value.charAt(0).toUpperCase()]
-      }))
-      .subscribe(({updated: { preference: { value, name } }}) => this._setUnitControlValue(parseInt(value), name));
+      .pipe(
+				filter((data) => {
+					return data && data.updated && data.updated.unitType && data.updated.preference &&
+						this.value && SgaFuelTypes[data.updated.unitType] &&
+						SgaFuelTypes[data.updated.unitType] === FuelTypesEnum[this.value.value.charAt(0).toUpperCase()] &&
+						this._unitValue !== parseInt(data.updated.preference.value);
+	      }),
+	      map(({ updated }) => updated)
+      )
+      .subscribe(({ unitType, preference: { value } }: SizingUnitPreference) => this._setUnitControlValue(parseInt(value), unitType));
   }
 
   ngAfterViewInit() {
     this._setSizingPreferences();
-    if (this.controlContainer && this.unitFormControlName) {
-      this._unitControl = this.controlContainer.control.get(this.unitFormControlName);
+    if (this.controlContainer) {
+      this._unitControl = this.controlContainer.control.root.get(`selectedUnits.${this.unitFormControlName}`);
     }
   }
 
@@ -130,8 +134,8 @@ export class TypeOfFuelComponent implements ControlValueAccessor, AfterViewInit,
     if (sizing) {
       const newUnitValue = sizing && sizing.preference && sizing.preference.value && parseInt(sizing.preference.value);
 
+	    this._setUnitControlValue(newUnitValue, preferenceName);
       this._emitUnitTypeName(sizing);
-      this._setUnitControlValue(newUnitValue, preferenceName);
     }
   }
 

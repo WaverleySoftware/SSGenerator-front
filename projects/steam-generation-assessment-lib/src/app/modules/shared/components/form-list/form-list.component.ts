@@ -99,7 +99,12 @@ export class FormListComponent implements ControlValueAccessor, AfterViewInit {
   }
 
   writeValue(val: any): void {
-    this.internalValue = val && val.value || val;
+    if (val === null) {
+      this.internalValue = this.list && this.list[0] && this.list[0].id;
+      this.onChange(this.internalValue);
+    } else {
+      this.internalValue = val && val.value || val;
+    }
   }
 
   updateValue(val: any): void {

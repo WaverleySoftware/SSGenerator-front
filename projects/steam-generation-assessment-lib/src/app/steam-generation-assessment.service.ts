@@ -2,27 +2,33 @@ import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { BehaviorSubject, Observable } from "rxjs";
 import {
-  FormFieldTypesInterface, FuelTypesEnum,
+  FormFieldTypesInterface, FuelTypesEnum, SelectedUnitsList,
   SgaFeedTankTemperatureRequestInterface,
-  SgaFieldUnit,
   SgaFuelTypes,
   SgaHttpValidationResponseInterface,
   SgaSaturatedTemperatureBodyInterface,
-  SgaSelectedUnits,
   SgaSizingModuleFormInterface,
   SteamCalorificRequestInterface,
   SteamCarbonEmissionInterface,
   SteamGeneratorInputsInterface,
   SteamGeneratorSelectedUnitsInterface,
 } from "./steam-generation-form.interface";
-import { Preference, PreferenceService, UnitConvert } from "sizing-shared-lib";
+import {
+  DisplayGroup,
+  EnumerationDefinition,
+  Preference,
+  PreferenceService,
+  TranslationService,
+  UnitConvert
+} from "sizing-shared-lib";
 import { SizingUnitPreference } from "../../../sizing-shared-lib/src/lib/shared/preference/sizing-unit-preference.model";
 import { FormArray, FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { SgaValidator } from "./steam-generation-assessment.validator";
-import { map, tap } from "rxjs/operators";
+import { map, tap, pairwise, startWith } from "rxjs/operators";
 
 @Injectable()
 export class SteamGenerationAssessmentService {
+  public sgaSelectedUnits = Object.assign(SelectedUnitsList, {});
   private _sgaFormFields: FormFieldTypesInterface =  {
     hoursOfOperation: {
       formControlName: 'hoursOfOperation',
@@ -33,12 +39,11 @@ export class SteamGenerationAssessmentService {
     inputFuelId: {
       formControlName: 'inputFuelId',
       label: 'FUEL_TYPE',
-      controlNames: ['inputFuelUnit']
     },
     fuelEnergyPerUnit: {
       formControlName: 'fuelEnergyPerUnit',
       label: 'FUEL_CALORIFIC_VALUE',
-      unitNames: ['BoilerHouseEnergyUnits', /*inputFuelUnit*/],
+      unitNames: ['BoilerHouseEnergyUnits', /*FUEL_TYPE*/],
       translations: ['ENERGY'],
     },
     fuelCarbonContent: {
@@ -350,11 +355,12 @@ export class SteamGenerationAssessmentService {
       emissionUnitSelected: [null], // BoilerHouseEmissionUnits
       volumeUnitSelected: [null], // BoilerHouseVolumeUnits
       smallVolumetricFlowUnitSelected: [null], // BoilerHouseSmallVolumetricFlowUnits
-      massFlowUnitSelected: [null], // MassFlowUnit
+      massFlowUnitSelected: [null], // BoilerHouseMassFlowUnits
       smallMassFlowUnitSelected: [null], // BoilerHouseSmallMassFlowUnits
       pressureUnitSelected: [null], // PressureUnit
       temperatureUnitSelected: [null], // TemperatureUnit
-      tdsUnitSelected: [null], // BoilerHouseTDSUnits
+      tdsUnitSelected: [null], // BoilerHouseTDSUnits,
+      fuelUnitSelected: [null] // FUEL_TYPE 'LiquidFuelUnits' / 'GaseousFuelUnits' / 'SolidFuelUnits'
     },
     benchmarkInputs: {
       hoursOfOperation: [8736, Validators.required, SgaValidator.validateAsyncFn(this, 'hoursOfOperation')], // HOURS_OF_OPERATION
@@ -363,7 +369,6 @@ export class SteamGenerationAssessmentService {
       boilerSteamGeneratedPerYear: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'boilerSteamGeneratedPerYear', true)], // STEAM_GENERATION_PER_YEAR
       boilerSteamGeneratedPerHour: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'boilerSteamGeneratedPerHour', true)],  // STEAM_GENERATION_PER_HOUR
       inputFuelId: [null, Validators.required], // FUEL_TYPE
-      inputFuelUnit: [null, Validators.required], // UNIT 'LiquidFuelUnits' / 'GaseousFuelUnits' / 'SolidFuelUnits'
       costOfFuelPerUnit: [null, Validators.required, SgaValidator.validateAsyncFn(this,'costOfFuelPerUnit', true)], // COST_OF_FUEL_PER_UNIT
       fuelQtyPerYearIsKnown: [false, SgaValidator.fuelQtyPerYearIsKnown], // IS_FUEL_CONSUMPTION_MEASURED
       costOfFuelPerYear: [null, Validators.required, SgaValidator.validateAsyncFn(this,'costOfFuelPerYear', true)], // FUEL_COSTS_PER_YEAR : Original "Fuel Costs per Year"
@@ -422,10 +427,12 @@ export class SteamGenerationAssessmentService {
   private readonly _sizingFormGroup: FormGroup;
   private readonly moduleGroupId = 9;
   private _requestLoading$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  private _prevFuelTypeUnit;
 
   constructor(
     private http: HttpClient,
     private preferenceService: PreferenceService,
+    protected translationService: TranslationService,
     private fb: FormBuilder,
     ) {
     // Initialize Sizing form
@@ -433,6 +440,12 @@ export class SteamGenerationAssessmentService {
       selectedUnits: this.fb.group(this._sizingFormGroupControls.selectedUnits),
       benchmarkInputs: this.fb.group(this._sizingFormGroupControls.benchmarkInputs)
     });
+
+    this._sizingFormGroup.get('selectedUnits.fuelUnitSelected').valueChanges
+      .pipe(startWith(null), pairwise())
+      .subscribe(([prev, next]) => {
+        this._prevFuelTypeUnit = prev;
+      });
   }
 
   calculateResults(form: SgaSizingModuleFormInterface): Observable<any> {
@@ -538,15 +551,49 @@ export class SteamGenerationAssessmentService {
     return this._sgaFormFields[fieldName] && this._sgaFormFields[fieldName].filled;
   }
 
-  public changeSizingUnits(): UnitConvert[] {
-    /* Do not change the order !!! */
-    // 1. Get previous units
-    const prevUnits = this._getFieldsWithUnits();
-    // 2. Set new units
+  public changeSizingUnits(): { unitsConverter: UnitConvert[], unitsConverterAfter: UnitConvert[] } {
     this._changeSgaFieldsFromSizingPref();
-    this.setSelectedValues();
-    // 3.get converter for new units
-    return this._filterNewUnitsForConvert(prevUnits);
+    const changedSelectedUnits = this.setSelectedValues();
+    const convertedUnitsArr = this._getConverterUnits(changedSelectedUnits);
+
+    return { unitsConverter: convertedUnitsArr[0], unitsConverterAfter: convertedUnitsArr[1] };
+  }
+
+  private _getConverterUnits(data: {unitKey: any;preferenceKey: any;next: number;prev: number;}[]): [UnitConvert[], UnitConvert[]] {
+    let result: [UnitConvert[], UnitConvert[]] = [[],[]];
+
+    if (!data || !data.length) return result;
+
+    const isFuelChanged = data.find(({unitKey}) => unitKey == 'fuelUnitSelected');
+
+    for (let {prev, next, preferenceKey} of data) {
+      const fields = Object.keys(this._sgaFormFields)
+        .filter(v =>
+          this._sgaFormFields[v].filled &&
+          this._sgaFormFields[v].unitNames &&
+          this._sgaFormFields[v].unitNames.includes(preferenceKey) &&
+          (!isFuelChanged || (v !== 'fuelEnergyPerUnit' && v !== 'fuelCarbonContent'))
+        );
+
+      if (fields && fields.length) {
+        for (let inputControlName of fields) {
+          const control = this._sizingFormGroup.get(`benchmarkInputs.${inputControlName}`);
+
+          if (control && control.value) {
+            const isExist = result[0].find(({propertyName}) => inputControlName === propertyName);
+
+            result[isExist ? 1 : 0].push({
+              initialUnitId: prev,
+              targetUnitId: next,
+              initialValue: control && control.value,
+              propertyName: inputControlName
+            });
+          }
+        }
+      }
+    }
+
+    return result;
   }
 
   /**
@@ -591,7 +638,8 @@ export class SteamGenerationAssessmentService {
     const result = {};
 
     for (let objKey in obj) {
-      result[objKey] = this._sizingFormGroup.get(`${formGroupKey}.${obj[objKey]}`).value;
+      const control = this._sizingFormGroup.get(`${formGroupKey}.${obj[objKey]}`);
+      result[objKey] = control && control.value;
     }
 
     return result;
@@ -599,43 +647,32 @@ export class SteamGenerationAssessmentService {
 
   /**
    * Set selected form values from sizing preferences
-   @listens: {
-    energyUnitSelected: BoilerHouseEnergyUnits
-    smallWeightUnitSelected: WeightUnit
-    emissionUnitSelected: BoilerHouseEmissionUnits
-    volumeUnitSelected: BoilerHouseVolumeUnits
-    smallVolumetricFlowUnitSelected: BoilerHouseSmallVolumetricFlowUnits
-    massFlowUnitSelected: MassFlowUnit
-    smallMassFlowUnitSelected: BoilerHouseSmallMassFlowUnits
-    pressureUnitSelected: PressureUnit
-    temperatureUnitSelected: TemperatureUnit
-    tdsUnitSelected: BoilerHouseTDSUnits
-   }
   **/
-  public setSelectedValues(): void {
+  public setSelectedValues(): {unitKey: any;preferenceKey: any;next: number;prev: number;}[] {
     const sizingPreferences = this.preferenceService.sizingUnitPreferences;
+    const changedSelectedUnits: {unitKey: any; preferenceKey: any; next: number; prev: number;}[] = [];
 
     if (!sizingPreferences || !sizingPreferences.length) return null;
 
-    const selectedUnitsByPreferences = {
-      energyUnitSelected: 'BoilerHouseEnergyUnits',
-      smallWeightUnitSelected: 'WeightUnit',
-      emissionUnitSelected: 'BoilerHouseEmissionUnits',
-      volumeUnitSelected: 'BoilerHouseVolumeUnits',
-      smallVolumetricFlowUnitSelected: 'BoilerHouseSmallVolumetricFlowUnits',
-      massFlowUnitSelected: 'MassFlowUnit',
-      smallMassFlowUnitSelected: 'BoilerHouseSmallMassFlowUnits',
-      pressureUnitSelected: 'PressureUnit',
-      temperatureUnitSelected: 'TemperatureUnit',
-      tdsUnitSelected: 'BoilerHouseTDSUnits',
-    };
+    const selectedUnitsByPreferences = Object.assign(SelectedUnitsList) as {[p: string]: string};
 
     const selectedUnits = this.getSizingPreferenceValues(selectedUnitsByPreferences);
 
     for (let key in selectedUnitsByPreferences) {
       let unit = selectedUnits[key];
+      let prevValue = this._sizingFormGroup.get(`selectedUnits.${key}`) && this._sizingFormGroup.get(`selectedUnits.${key}`).value;
+      let preferenceKey = selectedUnitsByPreferences[key];
 
-      if (unit === undefined) {
+      if (selectedUnitsByPreferences[key] === 'FUEL_TYPE') {
+        const item = SteamGenerationAssessmentService._getFuelTypesList(this.translationService.displayGroup)
+          .find(({ id }) => id === this._sizingFormGroup.get('benchmarkInputs.inputFuelId').value);
+        const { preference } = this.preferenceService.sizingUnitPreferences
+          .find(({ unitType }) => unitType === FuelTypesEnum[item.value.charAt(0)]);
+
+        preferenceKey = preference.name;
+        unit = parseInt(preference.value);
+        prevValue = this._prevFuelTypeUnit;
+      } else if (unit === undefined) {
         const preferenceName = selectedUnitsByPreferences[key];
 
         const preference = this._getPreferenceByName(preferenceName);
@@ -647,8 +684,16 @@ export class SteamGenerationAssessmentService {
         }
       }
 
-      this.setFormValue(key, unit, 'selectedUnits', { emitEvent: false });
+      if (prevValue !== unit) {
+        changedSelectedUnits.push({unitKey: key, preferenceKey, next: unit, prev: prevValue});
+        this.setFormValue(key, unit, 'selectedUnits', { emitEvent: false });
+        if (preferenceKey === SgaFuelTypes[preferenceKey]) {
+          this._prevFuelTypeUnit = unit;
+        }
+      }
     }
+
+    return changedSelectedUnits;
   }
 
   /**
@@ -737,86 +782,12 @@ export class SteamGenerationAssessmentService {
     return this.preferenceService.sizingUnitPreferences.find(({ preference: { name }}) => name === preference.name);
   }
 
-  private _getFieldsWithUnits(): SgaFieldUnit[] {
-    return Object.keys(this._sgaFormFields)
-      .filter((key) =>
-        !!this._sgaFormFields[key].unitNames &&
-        !!this.getSizingFormGroup().get(`benchmarkInputs.${key}`).value
-      )
-      .map((key) => {
-        const field = this._sgaFormFields[key];
-        const unit = field.unitNames && field.unitNames
-          .map((preferenceKey) => {
-            if (!preferenceKey) return null;
+  private static _getFuelTypesList({enumerations}: DisplayGroup): EnumerationDefinition[] {
+    if (!enumerations) return null;
 
-            const selectedKey = SgaSelectedUnits[preferenceKey];
-
-            if (selectedKey) {
-              const { value } = this._sizingFormGroup.get(`selectedUnits.${selectedKey}`);
-
-              if (value) {
-                return {
-                  selectedKey,
-                  preferenceKey,
-                  value,
-                }
-              }
-            } else if (SgaFuelTypes[preferenceKey]) {
-              const fuelTypeKey = SgaFuelTypes[preferenceKey];
-
-              if (fuelTypeKey) {
-                return {
-                  selectedKey: 'FUEL_TYPE',
-                  preferenceKey,
-                  value: this._sizingFormGroup.get('benchmarkInputs.inputFuelUnit').value,
-                }
-              }
-            } else {
-              return null
-            }
-          })
-          .filter(item => !!item)[0];
-
-        return {
-          name: key,
-          value: this._sizingFormGroup.get(`benchmarkInputs.${key}`).value,
-          unitNames: field.unitNames,
-          controlNames: field.controlNames,
-          unit,
-        };
-      }).filter((item) => !!item && !!item.unit);
-  }
-
-  private _filterNewUnitsForConvert(prevUnits: SgaFieldUnit[]): UnitConvert[] {
-    const unitConverter: UnitConvert[] = [];
-
-    for (let { name, value, unit } of prevUnits) {
-      if (unit && unit.selectedKey && unit.value && value && name) {
-        const prevUnit = unit.value;
-        const newUnit = unit.selectedKey === 'FUEL_TYPE' ?
-          this._sizingFormGroup.get('benchmarkInputs.inputFuelUnit') &&
-          this._sizingFormGroup.get('benchmarkInputs.inputFuelUnit').value :
-          this._sizingFormGroup.get(`selectedUnits.${unit.selectedKey}`) &&
-          this._sizingFormGroup.get(`selectedUnits.${unit.selectedKey}`).value;
-
-        if (prevUnit && newUnit && prevUnit !== newUnit) {
-          unitConverter.push({
-            initialUnitId: prevUnit,
-            convertedValue: null,
-            initialValue: value,
-            targetUnitId: newUnit,
-            propertyName: name,
-          });
-        } else {
-          console.log(`%c  CONVERTER (not changed): ${name}`, 'background-color:orange; color: blue;');
-          console.log({name, value, unit});
-        }
-      } else {
-        console.log(`%c  CONVERTER (no units data): ${name}`, 'background-color:orange; color: blue;');
-        console.log({name, value, unit});
-      }
-    }
-
-    return unitConverter;
+    const {enumerationDefinitions} = enumerations
+      .find(({ enumerationName, opCoOverride }) => enumerationName === 'FuelTypeList_BoilerHouseInput' && !opCoOverride);
+    return enumerationDefinitions
+      .sort(({sequence}, b) => sequence > b.sequence ? 1 : sequence < b.sequence ? -1 : 0);
   }
 }
