@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit } from "@angular/core";
 import {
+  AdminService,
   BaseSizingModule,
   JobSizing,
   ModulePreferenceService,
@@ -9,13 +10,13 @@ import {
   UnitConvert,
   UnitsService
 } from "sizing-shared-lib";
-import { FormArray, FormGroup } from "@angular/forms";
+import { FormGroup } from "@angular/forms";
 import { SteamGenerationAssessmentService } from "./steam-generation-assessment.service";
 import { ActivatedRoute, Params } from "@angular/router";
 import { Subject } from "rxjs";
 import { takeUntil, tap } from "rxjs/operators";
 import {
-  FormFieldTypesInterface, FuelTypesEnum,
+  FormFieldTypesInterface,
   SgaBoilerEfficiencyInterface, SgaFuelTypes, SgaSizingModuleFormInterface,
   SteamCalorificRequestInterface, SteamCarbonEmissionInterface,
   SteamGeneratorInputsInterface
@@ -45,6 +46,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     private activatedRoute: ActivatedRoute,
     private modulePreferenceService: ModulePreferenceService,
     protected translationService: TranslationService,
+    private adminService: AdminService,
   ) {
     super();
   }
@@ -100,15 +102,17 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
 
   onResetModuleForm(): any {
     setTimeout(() => {
-      this._resetFuelTypeData();
       this._convertUnits(this._getDefaultConvertedUnits());
 
       this.sgaService.setSelectedValues()
       this.sgaService.setFormValues({ atmosphericDeaerator: true, hoursOfOperation: 8736 });
       this.sgaService.updateTreeValidity(this.sizingModuleForm);
 
+      this._calculateCalorificValue();
       this._calculateWaterTreatment();
     },0)
+
+    this._resetCurrencies();
 
     return true;
   }
@@ -124,9 +128,18 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   }
 
   onUnitsChanged(): any {
-    const unitsConverter = this.sgaService.changeSizingUnits();
-    this._convertUnits(unitsConverter);
-    console.log('!!!----- CHANGE_UNITS -----', {unitsConverter});
+    const {unitsConverter, unitsConverterAfter} = this.sgaService.changeSizingUnits();
+
+    this._convertUnits(unitsConverter, (results) => {
+      if (unitsConverterAfter.length) {
+        for (let unitConvert of unitsConverterAfter) {
+          unitConvert.initialValue = results.find(({propertyName}) => unitConvert.propertyName === propertyName).convertedValue;
+        }
+
+        this._convertUnits(unitsConverterAfter);
+      }
+    });
+
     return true;
   }
 
@@ -166,13 +179,13 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       smallWeightUnitSelected: data && data.smallWeightUnitSelected ||
         this._getControlValue('smallWeightUnitSelected', this.unitsGroupName),
       inputFuelId: data && data.inputFuelId || this._getControlValue('inputFuelId'),
-      inputFuelUnit: data && data.inputFuelUnit || this._getControlValue('inputFuelUnit'),
+      fuelUnitSelected: data && data.fuelUnitSelected || this._getControlValue('fuelUnitSelected', 'selectedUnits'),
       fuelCarbonContent: data && data.fuelCarbonContent || this._getControlValue('fuelCarbonContent'),
       fuelEnergyPerUnit: data && data.fuelEnergyPerUnit || this._getControlValue('fuelEnergyPerUnit'),
     }
 
     if (
-      !params.inputFuelId || !params.inputFuelUnit || !params.fuelEnergyPerUnit || !params.fuelCarbonContent ||
+      !params.inputFuelId || !params.fuelUnitSelected || !params.fuelEnergyPerUnit || !params.fuelCarbonContent ||
       !params.energyUnitSelected || !params.smallWeightUnitSelected
     ) return null;
 
@@ -186,10 +199,10 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       energyUnitSelected: data && data.energyUnitSelected || this._getSizingValue('BoilerHouseEnergyUnits'),
       smallWeightUnitSelected: data && data.smallWeightUnitSelected || this._getSizingValue('WeightUnit'),
       inputFuelId: data && data.inputFuelId || this._getControlValue('inputFuelId'),
-      inputFuelUnit: data && data.inputFuelUnit || this._getControlValue('inputFuelUnit')
+      fuelUnitSelected: data && data.fuelUnitSelected || this._getControlValue('fuelUnitSelected', 'selectedUnits')
     };
 
-    if (!prams.inputFuelId || !prams.inputFuelUnit || !prams.energyUnitSelected || !prams.smallWeightUnitSelected) {
+    if (!prams.inputFuelId || !prams.fuelUnitSelected || !prams.energyUnitSelected || !prams.smallWeightUnitSelected) {
       return null;
     }
 
@@ -214,7 +227,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       emissionUnitSelected: 'BoilerHouseEmissionUnits',
       volumeUnitSelected: 'BoilerHouseVolumeUnits'
     });
-    const fuelUnitTypeId = this._getControlValue('inputFuelUnit') || parseInt(this.preferenceService.allPreferences
+    const fuelUnitTypeId = this._getControlValue('fuelUnitSelected', 'selectedUnits') || parseInt(this.preferenceService.allPreferences
       .find(({ name }) => name === SgaFuelTypes.BoilerHouseGasFuelUnits).value);
     const obj: {[key: string]: UnitConvert} = {
       costOfCo2PerUnitMass: {
@@ -274,8 +287,8 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
           fuelTypeId && this.sgaService.setFormValue('inputFuelId', fuelTypeId);
           break;
         }
-        case 'SteamGenerationFuelUnit': { // inputFuelUnit
-          value && this.sgaService.setFormValue('inputFuelUnit', Number(value));
+        case 'SteamGenerationFuelUnit': { // fuelUnitSelected
+          value && this.sgaService.setFormValue('fuelUnitSelected', Number(value), 'selectedUnits');
           obj.costOfFuelPerUnit['initialUnitId'] = Number(value);
           break;
         }
@@ -336,7 +349,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       .subscribe((res) => this._setInputFormFields(res));
   }
 
-  private _convertUnits(data: UnitConvert[], calculation?: Partial<{calorific: boolean; emission: boolean;}>): void {
+  private _convertUnits(data: UnitConvert[], callback?: (data: UnitConvert[]) => void): void {
     if (!data || !data.length) return null;
     this.sgaService.toggleLoading(true);
     this.unitsService.unitsConverter({ unitsConverter: data }).pipe(
@@ -344,6 +357,8 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       tap(null, null, () => this.sgaService.toggleLoading(false))
     ).subscribe(({ unitsConverter}) => {
       if (!unitsConverter || !unitsConverter.length) return null;
+
+      if (callback && typeof callback === "function") callback(unitsConverter);
 
       const newValues = unitsConverter.reduce((accum, item) => {
         this.sgaService.changeSgaFieldFilled(item.propertyName as keyof SteamGeneratorInputsInterface, true);
@@ -375,19 +390,18 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     return sizingPreference && sizingPreference.preference && parseInt(sizingPreference.preference.value);
   }
 
-  private _resetFuelTypeData(): { inputFuelId: string; inputFuelUnit: number; } {
-    const enums = this.translationService.displayGroup.enumerations
-      .find(({ enumerationName, opCoOverride }) => enumerationName === 'FuelTypeList_BoilerHouseInput' && !opCoOverride);
-    const definition = enums && enums.enumerationDefinitions && enums.enumerationDefinitions[0];
-    const preferenceName = definition && definition.value && FuelTypesEnum[definition.value.charAt(0).toUpperCase()];
-    const sizingPreference = this.preferenceService.sizingUnitPreferences.find(({ unitType }) => unitType === preferenceName);
-    const inputFuelUnit = sizingPreference && sizingPreference.preference && parseInt(sizingPreference.preference.value);
-    const inputFuelId: string = definition && definition.id as string;
-
-    this.sgaService.setFormValue('inputFuelId', inputFuelId);
-    this.sgaService.setFormValue('inputFuelUnit', inputFuelUnit);
-
-    return {inputFuelId, inputFuelUnit};
+  private _resetCurrencies(): void {
+    const preference = this.preferenceService.sizingUnitPreferences.find(({ unitType }) => unitType === 'BHCurrencys');
+    this.adminService.getCurrencyData().subscribe((currencies) => {
+      this.preferenceService.addSizingUnitPreference(
+        preference.preference,
+        preference.unitType,
+        'CURRENCY',
+        this.moduleGroupId,
+        undefined,
+        currencies
+      );
+    });
   }
 
   // TODO: Function for focus on first invalid field (need to create toggle tabs to first invalid field)

@@ -27,7 +27,7 @@
           <div body>
             <type-of-fuel [formControlName]="fields.inputFuelId.formControlName"
                           [label]="fields.inputFuelId.label"
-                          [unitFormControlName]="fields.inputFuelId.controlNames[0]"
+                          [unitFormControlName]="'fuelUnitSelected'"
                           [(fuelTypeName)]="fuelTypeName"
                           (changeUnit)="changeFuelTypeHandle()"
                           [moduleGroupId]="moduleGroupId"></type-of-fuel>

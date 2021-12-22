@@ -1,9 +1,10 @@
+import { UnitConvert } from "sizing-shared-lib";
 
 export interface SteamCalorificRequestInterface {
   energyUnitSelected: number
   smallWeightUnitSelected: number;
   inputFuelId: string;
-  inputFuelUnit: number;
+  fuelUnitSelected: number;
 }
 
 export interface SgaBoilerEfficiencyInterface {
@@ -23,7 +24,7 @@ export interface SteamCarbonEmissionInterface {
   energyUnitSelected: number;
   smallWeightUnitSelected: number;
   inputFuelId: string;
-  inputFuelUnit: number;
+  fuelUnitSelected: number;
   fuelEnergyPerUnit: number;
   fuelCarbonContent: number;
 }
@@ -39,6 +40,7 @@ export interface SteamGeneratorSelectedUnitsInterface {
   pressureUnitSelected: number;
   temperatureUnitSelected: number;
   tdsUnitSelected: number;
+  fuelUnitSelected: number;
 }
 
 export interface SteamGeneratorInputsInterface {
@@ -48,7 +50,6 @@ export interface SteamGeneratorInputsInterface {
   boilerSteamGeneratedPerYear?: number; // nullable: true
   boilerSteamGeneratedPerHour?: number; // nullable: true
   inputFuelId: string;
-  inputFuelUnit: number;
   costOfFuelPerUnit?: number; // nullable: true
   costOfFuelPerYear?: number; // nullable: true
   fuelQtyPerYearIsKnown:	boolean;
@@ -252,11 +253,25 @@ export enum SgaSelectedUnits {
   BoilerHouseEmissionUnits = 'emissionUnitSelected',
   BoilerHouseVolumeUnits = 'volumeUnitSelected',
   BoilerHouseSmallVolumetricFlowUnits = 'smallVolumetricFlowUnitSelected',
-  MassFlowUnit = 'massFlowUnitSelected',
+  BoilerHouseMassFlowUnits = 'massFlowUnitSelected',
   BoilerHouseSmallMassFlowUnits = 'smallMassFlowUnitSelected',
   PressureUnit = 'pressureUnitSelected',
   TemperatureUnit = 'temperatureUnitSelected',
-  BoilerHouseTDSUnits = 'tdsUnitSelected',
+  BoilerHouseTDSUnits = 'tdsUnitSelected'
+}
+
+export enum SelectedUnitsList {
+  energyUnitSelected = 'BoilerHouseEnergyUnits',
+  smallWeightUnitSelected = 'WeightUnit',
+  emissionUnitSelected = 'BoilerHouseEmissionUnits',
+  volumeUnitSelected = 'BoilerHouseVolumeUnits',
+  smallVolumetricFlowUnitSelected = 'BoilerHouseSmallVolumetricFlowUnits',
+  massFlowUnitSelected = 'BoilerHouseMassFlowUnits',
+  smallMassFlowUnitSelected = 'BoilerHouseSmallMassFlowUnits',
+  pressureUnitSelected = 'PressureUnit',
+  temperatureUnitSelected = 'TemperatureUnit',
+  tdsUnitSelected = 'BoilerHouseTDSUnits',
+  fuelUnitSelected = 'FUEL_TYPE'
 }
 
 export enum SgaFuelTypes {
@@ -274,14 +289,6 @@ export enum FuelTypesEnum {
   S = 'BoilerHouseSolidFuelUnits', // BoilerHouseSolidFuelUnits
 }
 
-export interface SgaFieldUnit {
-  name: string;
-  value: any;
-  unit: {
-    value: number;
-    selectedKey: string;
-    preferenceKey: string;
-  };
-  unitNames?: [string?, string?],
-  controlNames?: [string?, string?],
+export interface CustomUnitConvert extends UnitConvert {
+  targetUnitKey: string;
 }

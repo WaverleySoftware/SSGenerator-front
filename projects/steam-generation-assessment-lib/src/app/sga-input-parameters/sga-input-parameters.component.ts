@@ -147,13 +147,17 @@ export class SgaInputParametersComponent implements OnDestroy {
   }
 
   public changeFuelTypeHandle(): void {
-    const {inputFuelId, inputFuelUnit, isEconomizerPresent} = this.steamGenerationAssessmentService.getMultipleControlValues({
+    const {inputFuelId, isEconomizerPresent} = this.steamGenerationAssessmentService.getMultipleControlValues({
       inputFuelId: 'inputFuelId',
-      inputFuelUnit: 'inputFuelUnit',
       isEconomizerPresent: 'isEconomizerPresent'
     });
+    const {energyUnitSelected, smallWeightUnitSelected, fuelUnitSelected} = this.steamGenerationAssessmentService.getMultipleControlValues({
+      energyUnitSelected: 'energyUnitSelected',
+      smallWeightUnitSelected: 'smallWeightUnitSelected',
+      fuelUnitSelected: 'fuelUnitSelected'
+    }, 'selectedUnits');
 
-    this.changeFuelType.emit({ inputFuelId, inputFuelUnit, energyUnitSelected: null, smallWeightUnitSelected: null });
+    this.changeFuelType.emit({inputFuelId, fuelUnitSelected, energyUnitSelected, smallWeightUnitSelected});
     this.calculateEfficiency.emit({ inputFuelId, isEconomizerPresent })
   }
 
@@ -288,21 +292,20 @@ export class SgaInputParametersComponent implements OnDestroy {
   }
 
   private _changeCarbonEmission(fuelEnergyPerUnit): void {
-    const { energyUnitSelected, smallWeightUnitSelected } = this.steamGenerationAssessmentService.getSizingPreferenceValues({
+    const { energyUnitSelected, smallWeightUnitSelected, fuelUnitSelected } = this.steamGenerationAssessmentService.getSizingPreferenceValues({
         energyUnitSelected: 'BoilerHouseEnergyUnits',
         smallWeightUnitSelected: 'WeightUnit'
       });
-    const { inputFuelId, inputFuelUnit, fuelCarbonContent } = this.steamGenerationAssessmentService.getMultipleControlValues({
+    const { inputFuelId, fuelCarbonContent } = this.steamGenerationAssessmentService.getMultipleControlValues({
       inputFuelId: 'inputFuelId',
-      inputFuelUnit: 'inputFuelUnit',
-      fuelCarbonContent: 'inputFuelUnit',
+      fuelCarbonContent: 'fuelCarbonContent'
     });
 
     this.changeCarbonEmission.emit({
       energyUnitSelected,
       smallWeightUnitSelected,
       inputFuelId,
-      inputFuelUnit,
+      fuelUnitSelected,
       fuelEnergyPerUnit,
       fuelCarbonContent
     });
