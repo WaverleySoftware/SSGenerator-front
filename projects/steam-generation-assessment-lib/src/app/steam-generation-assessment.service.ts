@@ -28,7 +28,6 @@ import { map, tap, pairwise, startWith } from "rxjs/operators";
 
 @Injectable()
 export class SteamGenerationAssessmentService {
-  public sgaSelectedUnits = Object.assign(SelectedUnitsList, {});
   private _sgaFormFields: FormFieldTypesInterface =  {
     hoursOfOperation: {
       formControlName: 'hoursOfOperation',
@@ -49,13 +48,13 @@ export class SteamGenerationAssessmentService {
     fuelCarbonContent: {
       formControlName: 'fuelCarbonContent',
       label: 'CO2_EMISSIONS_PER_UNIT_FUEL',
-      unitNames: ['WeightUnit'],
+      unitNames: ['WeightUnit', /*FUEL_TYPE*/],
       translations: ['SMALL_WEIGHT'],
     },
     costOfFuelPerUnit: {
       formControlName: 'costOfFuelPerUnit',
       label: 'COST_OF_FUEL_PER_UNIT',
-      unitNames: ['BHCurrency'],
+      unitNames: ['BHCurrency', /*FUEL_TYPE*/],
       translations: ['CURRENCY'],
     },
     fuelQtyPerYearIsKnown: {
@@ -71,6 +70,7 @@ export class SteamGenerationAssessmentService {
     fuelConsumptionPerYear: {
       formControlName: 'fuelConsumptionPerYear',
       label: 'FUEL_CONSUMPTION_PER_YEAR',
+      unitNames: [/*FUEL_TYPE*/null]
     },
     // CO2 EMISSION
     isCo2OrCarbonEmissionsTaxed: {
@@ -511,6 +511,21 @@ export class SteamGenerationAssessmentService {
     this.toggleLoading(true);
     return this.http.post('./Api/SteamGenerator/calculate-feedtank-temperature-and-pressure', data)
       .pipe(tap(null, null, () => this.toggleLoading(false)));
+  }
+
+  public setFuelTypeForFields(fuelType: SgaFuelTypes): void {
+    if (this._sgaFormFields.fuelEnergyPerUnit.unitNames[1] !== fuelType) {
+      this._sgaFormFields.fuelEnergyPerUnit.unitNames = ['BoilerHouseEnergyUnits', fuelType];
+    }
+    if (this._sgaFormFields.fuelCarbonContent.unitNames[1] !== fuelType) {
+      this._sgaFormFields.fuelCarbonContent.unitNames = ['WeightUnit', fuelType];
+    }
+    if (this._sgaFormFields.costOfFuelPerUnit.unitNames[1] !== fuelType) {
+      this._sgaFormFields.costOfFuelPerUnit.unitNames = ['BHCurrency', fuelType];
+    }
+    if (this._sgaFormFields.fuelConsumptionPerYear.unitNames[0] !== fuelType) {
+      this._sgaFormFields.fuelConsumptionPerYear.unitNames = [fuelType];
+    }
   }
 
   public toggleLoading(enable?: boolean): void {

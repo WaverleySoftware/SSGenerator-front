@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Input, OnDestroy, Output } from "@angular/core";
+import { Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output } from "@angular/core";
 import { AbstractControl, FormGroup, Validators } from "@angular/forms";
 import { Subject } from "rxjs";
 import { debounceTime, distinctUntilChanged, filter, takeUntil } from "rxjs/operators";
@@ -7,13 +7,14 @@ import {
 	BoilerHouseTdsBlowdownTabFields,
 	BoilerHouseWaterTreatmentTabFields,
 	FormFieldTypesInterface,
-	SgaBoilerEfficiencyInterface,
+	SgaBoilerEfficiencyInterface, SgaFuelTypes,
 	SteamCalorificRequestInterface,
 	SteamCarbonEmissionInterface,
 	SteamGeneratorInputsInterface,
 	UtilityParametersFields
 } from "../steam-generation-form.interface";
 import { SteamGenerationAssessmentService } from "../steam-generation-assessment.service";
+import { EnumerationDefinition } from "sizing-shared-lib";
 
 
 @Component({
@@ -125,28 +126,27 @@ export class SgaInputParametersComponent implements OnDestroy {
     return isInvalid;
   }
 
-  /**
-   * by default - Set unit names to FormFieldTypesInterface
-   * but you can change parameters and set another data to FormFieldTypesInterface
-   * **/
-  public setFuelType(
-    fieldName: keyof FormFieldTypesInterface,
-    index: 0 | 1 = 1,
-    value: string = this.fuelTypeName,
-    key: 'unitNames' | 'translations' = 'unitNames'
-  ): [string, string?] {
-    if (this.fields[fieldName]) {
-      if (!this.fields[fieldName][key]) {
-        this.fields[fieldName][key] = [null, null];
-      }
+	public updateFuelUnit({item, name, value}: {name: string; value: number; item: EnumerationDefinition}) {
+		if (!item || !item.value || !name || !value) return;
 
-      this.fields[fieldName][key][index] = value;
-    }
+		if (item.value.charAt(0).toUpperCase() === 'O') {
+			this.fields.fuelCarbonContent.unitNames = ['BoilerHouseEmissionUnits'];
+		} else {
+			this.steamGenerationAssessmentService.setFuelTypeForFields(SgaFuelTypes[name]);
+		}
 
-    return this.fields[fieldName][key];
-  }
+		// Check selected energy and fuel units
+		const fuelEnergyPerUnit = this.formGroup.get(`${this.formGroupKey}.fuelEnergyPerUnit`);
+		const energyUnitSelected = this.formGroup.get('selectedUnits.energyUnitSelected');
 
-  public changeFuelTypeHandle(): void {
+		if (energyUnitSelected.value === value) {
+			fuelEnergyPerUnit.enabled && fuelEnergyPerUnit.disable();
+		} else if (fuelEnergyPerUnit.disabled) {
+			fuelEnergyPerUnit.enable()
+		}
+	}
+
+  public changeFuelTypeHandle(fuelTypeId: string): void {
     const {inputFuelId, isEconomizerPresent} = this.steamGenerationAssessmentService.getMultipleControlValues({
       inputFuelId: 'inputFuelId',
       isEconomizerPresent: 'isEconomizerPresent'

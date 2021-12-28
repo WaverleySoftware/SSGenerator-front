@@ -33,7 +33,8 @@ export class TypeOfFuelComponent implements ControlValueAccessor, AfterViewInit,
   @Input() moduleGroupId: number;
   @Input() fuelTypeName: string;
   @Output() fuelTypeNameChange: EventEmitter<string> = new EventEmitter<string>();
-  @Output() changeUnit: EventEmitter<{name: string; value: number;}> = new EventEmitter<{name: string; value: number;}>();
+  @Output() changeUnit: EventEmitter<{name: string; value: number; item: EnumerationDefinition}> = new EventEmitter<{name: string; value: number; item: EnumerationDefinition}>();
+  @Output() changeType: EventEmitter<EnumerationDefinition> = new EventEmitter<EnumerationDefinition>();
 
   list: EnumerationDefinition[];
   value: EnumerationDefinition;
@@ -95,17 +96,19 @@ export class TypeOfFuelComponent implements ControlValueAccessor, AfterViewInit,
 
   updateValue(insideValue: EnumerationDefinition) {
     this.value = insideValue;
+    this._updateFuelUnit();
     this.onChange(insideValue.id);
     this.onTouched();
-    this._updateFuelUnit();
+    this.changeType.emit(this.value);
   }
 
   private _setUnitControlValue(value: number, name?: string): void {
     if (this._unitControl && value && this._unitControl.value !== value) {
       this._unitValue = value;
       this._unitControl.setValue(this._unitValue);
-      this.changeUnit.emit({name: name, value: this._unitValue});
     }
+
+    this.changeUnit.emit({name: name, value: this._unitValue, item: this.value});
   }
 
   private _setSizingPreferences(): any {
