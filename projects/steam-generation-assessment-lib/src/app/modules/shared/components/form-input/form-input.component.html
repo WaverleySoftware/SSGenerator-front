@@ -44,6 +44,7 @@
            (ngModelChange)="updateValue($event)"
            [readonly]="readonly"
            [tabIndex]="(readonly || disabled) && '-1'"
+           [attr.data-form-name]="!readonly && !disabled && formControlName"
            class="formField-input">
 
     <!--  UNIT -->

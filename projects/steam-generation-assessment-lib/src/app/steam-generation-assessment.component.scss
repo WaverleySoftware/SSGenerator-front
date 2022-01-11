@@ -169,6 +169,18 @@ $active-border-color: #002D72;
             color: var(--color-white);
             background-color: $active-border-color;
           }
+
+          &.disabled {
+            color: rgba($border-color, .4);
+            border-color: rgba($border-color, .4);
+            &:before {
+              opacity: .4;
+            }
+
+            &:hover {
+              cursor: not-allowed;
+            }
+          }
         }
       }
     }

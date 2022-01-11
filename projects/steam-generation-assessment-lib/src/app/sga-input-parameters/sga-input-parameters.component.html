@@ -1,4 +1,5 @@
-<sga-panel [isCollapsed]="false"
+
+<sga-panel [(expanded)]="fieldsTree.utility_parameters.status"
            id="UtilityParameters"
            [invalid]="checkUtilityParametersIsValid()"
            [title]="'UTILITY_PARAMETERS' | translate"
@@ -21,6 +22,7 @@
     <div class="row" [formGroupName]="formGroupKey">
       <div class="col-md-6">
         <sga-panel id="FuelPanel"
+                   [(expanded)]="fieldsTree.utility_parameters.panels.fuel.status"
                    [title]="'FUEL' | translate"
                    [titleTooltip]="('ALLOWS_YOU_TO_INPUT_FUEL_TYPE_AND_COSTS_HELP' | translate) + ('IF_A_STANDARD_FUEL_IS_USED_THE_CALORIFIC_VALUE_AND_CO2_EMISSIONS_FSLASH_UNIT_OF_FUEL_WILL_BE_AUTOMATICALLY_POPULATED_FROM_LOO_HELP' | translate)"
                    background="#EDF2F4">
@@ -98,6 +100,7 @@
         </sga-panel>
 
         <sga-panel id="CO2EmissionPanel"
+                   [(expanded)]="fieldsTree.utility_parameters.panels.co2_emission.status"
                    title="CO2 Emission"
                    titleTooltip="Tooltip"
                    background="#EDF2F4">
@@ -135,7 +138,11 @@
       </div>
 
       <div class="col-md-6">
-        <sga-panel id="WaterPanel" title="Water" titleTooltip="Tooltip" background="#EDF2F4">
+        <sga-panel [(expanded)]="fieldsTree.utility_parameters.panels.water.status"
+                   id="WaterPanel"
+                   title="Water"
+                   titleTooltip="Tooltip"
+                   background="#EDF2F4">
           <div body>
             <form-input [formControlName]="fields.costOfWaterPerUnit.formControlName"
                         [label]="fields.costOfWaterPerUnit.label"
@@ -189,7 +196,11 @@
           </div>
         </sga-panel>
 
-        <sga-panel id="waterTreatmentChemicalsPanel" title="Water treatment chemicals" titleTooltip="Tooltip" background="#EDF2F4">
+        <sga-panel [(expanded)]="fieldsTree.utility_parameters.panels.water_treatment_chemicals.status"
+                   id="waterTreatmentChemicalsPanel"
+                   title="Water treatment chemicals"
+                   titleTooltip="Tooltip"
+                   background="#EDF2F4">
           <div body>
             <form-toggle [formControlName]="fields.boilerWaterTreatmentChemicalCostsIsKnown.formControlName"
                          [label]="fields.boilerWaterTreatmentChemicalCostsIsKnown.label">
@@ -217,7 +228,11 @@
           </div>
         </sga-panel>
 
-        <sga-panel id="waterEffluentPanel" title="Water effluent" titleTooltip="Tooltip" background="#EDF2F4">
+        <sga-panel [(expanded)]="fieldsTree.utility_parameters.panels.water_effluent.status"
+                   id="waterEffluentPanel"
+                   title="Water effluent"
+                   titleTooltip="Tooltip"
+                   background="#EDF2F4">
           <div body>
             <form-input [formControlName]="fields.costOfEffluentPerUnit.formControlName"
                         [label]="fields.costOfEffluentPerUnit.label"
@@ -234,7 +249,7 @@
   </form>
 </sga-panel>
 
-<sga-panel [isCollapsed]="true"
+<sga-panel [(expanded)]="fieldsTree.boiler_house_parameters.status"
            [showSeparator]="false"
            [invalid]="checkBoilerHouseParametersIsValid().isInvalid"
            [title]="'BOILER_HOUSE_PARAMETERS' | translate"
@@ -244,8 +259,12 @@
     <div class="row" [formGroupName]="formGroupKey">
       <div class="col-md-12">
         <tabset type="pills" class="sgaTabs">
-          <tab [heading]="'BOILER' | translate" [ngClass]="{invalid: checkBoilerHouseParametersIsValid().boiler}" [customClass]="checkBoilerHouseParametersIsValid().boiler && ' invalid'">
+          <tab [heading]="'BOILER' | translate"
+               [active]="fieldsTree.boiler_house_parameters.panels.boiler.status"
+               [ngClass]="{invalid: checkBoilerHouseParametersIsValid().boiler}"
+               [customClass]="checkBoilerHouseParametersIsValid().boiler && ' invalid'">
             <sga-panel id="boilerParametersPanel"
+                       [(expanded)]="fieldsTree.boiler_house_parameters.panels.boiler.panels.boiler_parameters.status"
                        [title]="'BOILER_PARAMETERS' | translate"
                        background="#EDF2F4">
               <div body class="row">
@@ -320,8 +339,11 @@
               </div>
             </sga-panel>
           </tab>
-          <tab [heading]="'TDS_BLOWDOWN' | translate" [customClass]="checkBoilerHouseParametersIsValid().tdsBlowdown && ' invalid'">
+          <tab [heading]="'TDS_BLOWDOWN' | translate"
+               [active]="fieldsTree.boiler_house_parameters.panels.tds_blowdown.status"
+               [customClass]="checkBoilerHouseParametersIsValid().tdsBlowdown && ' invalid'">
             <sga-panel id="blowdownEquipmentPanel"
+                       [(expanded)]="fieldsTree.boiler_house_parameters.panels.tds_blowdown.panels.blowdown_equipment.status"
                        [title]="'BLOWDOWN_EQUIPMENT' | translate"
                        background="#EDF2F4">
               <div class="row" body>
@@ -358,6 +380,7 @@
             </sga-panel>
 
             <sga-panel id="tdsBlowdownParametersPanel"
+                       [(expanded)]="fieldsTree.boiler_house_parameters.panels.tds_blowdown.panels.tds_blowdown_parameters.status"
                        [title]="'TDS_BLOWDOWN_PARAMETERS' | translate"
                        background="#EDF2F4">
               <div class="row" body>
@@ -395,8 +418,13 @@
               </div>
             </sga-panel>
           </tab>
-          <tab [heading]="'WATER_TREATMENT' | translate" [customClass]="checkBoilerHouseParametersIsValid().waterTreatment && ' invalid'">
-            <sga-panel id="makeUpWaterPanel" [title]="'MAKE_UP_WATER' | translate" background="#EDF2F4">
+          <tab [heading]="'WATER_TREATMENT' | translate"
+               [active]="fieldsTree.boiler_house_parameters.panels.water_treatment.status"
+               [customClass]="checkBoilerHouseParametersIsValid().waterTreatment && ' invalid'">
+            <sga-panel id="makeUpWaterPanel"
+                       [(expanded)]="fieldsTree.boiler_house_parameters.panels.water_treatment.panels.make_up_water.status"
+                       [title]="'MAKE_UP_WATER' | translate"
+                       background="#EDF2F4">
               <div class="row" body>
                 <div class="col-md-6">
                   <form-toggle [formControlName]="fields.isMakeUpWaterMonitored.formControlName"
@@ -439,6 +467,7 @@
             </sga-panel>
 
             <sga-panel id="waterTreatmentParametersPanel"
+                       [(expanded)]="fieldsTree.boiler_house_parameters.panels.water_treatment.panels.water_treatment_parameters.status"
                        [title]="'WATER_TREATMENT_PARAMETERS' | translate"
                        background="#EDF2F4">
               <div class="row" body>
@@ -472,8 +501,12 @@
               </div>
             </sga-panel>
           </tab>
-          <tab [heading]="'FEEDWATER_AND_CONDENSATE' | translate" [customClass]="checkBoilerHouseParametersIsValid().feedwaterAndCondensate && ' invalid'">
-            <sga-panel id="deaeratorTypePanel" [title]="'DEAERATOR_TYPE' | translate" background="#EDF2F4">
+          <tab [heading]="'FEEDWATER_AND_CONDENSATE' | translate"
+               [active]="fieldsTree.boiler_house_parameters.panels.feedwater_and_condensate.status"
+               [customClass]="checkBoilerHouseParametersIsValid().feedwaterAndCondensate && ' invalid'">
+            <sga-panel id="deaeratorTypePanel"
+                       [(expanded)]="fieldsTree.boiler_house_parameters.panels.feedwater_and_condensate.panels.deaerator_type.status"
+                       [title]="'DEAERATOR_TYPE' | translate" background="#EDF2F4">
               <div class="row" body>
                 <div class="col-md-4">
                   <form-radio [inputValue]="true"
@@ -498,7 +531,10 @@
               </div>
             </sga-panel>
 
-            <sga-panel id="boilerFeedwaterPanel" [title]="'BOILER_FEEDWATER' | translate" background="#EDF2F4">
+            <sga-panel id="boilerFeedwaterPanel"
+                       [(expanded)]="fieldsTree.boiler_house_parameters.panels.feedwater_and_condensate.panels.boiler_feedwater.status"
+                       [title]="'BOILER_FEEDWATER' | translate"
+                       background="#EDF2F4">
               <div class="row" body>
                 <div class="col-md-4 border-r-md">
                   <form-toggle [formControlName]="fields.isFeedWaterMeasured.formControlName"
@@ -580,7 +616,10 @@
               </div>
             </sga-panel>
 
-            <sga-panel id="condensateReturnPanel" [title]="'CONDENSATE_RETURN' | translate" background="#EDF2F4">
+            <sga-panel id="condensateReturnPanel"
+                       [(expanded)]="fieldsTree.boiler_house_parameters.panels.feedwater_and_condensate.panels.condensate_return.status"
+                       [title]="'CONDENSATE_RETURN' | translate"
+                       background="#EDF2F4">
               <div class="row" body>
                 <div class="col-md-6 border-r-md">
                   <form-toggle [formControlName]="fields.isCondensateReturnKnown.formControlName"
@@ -594,6 +633,7 @@
                                   [unit-controls]="fields.percentageOfCondensateReturn.controlNames"
                                   [required]="isRequired('percentageOfCondensateReturn')"
                                   [(filled)]="fields.percentageOfCondensateReturn.filled"
+                                  [groupControls]="['volumeOfCondensateReturn']"
                                   unit="%"
                                   group="isCondensateReturnKnown"></form-input>
 
@@ -603,8 +643,9 @@
                                   [unit-types]="fields.volumeOfCondensateReturn.unitTypes"
                                   [unit-translations]="fields.volumeOfCondensateReturn.translations"
                                   [unit-controls]="fields.volumeOfCondensateReturn.controlNames"
-                                  [required]="fields.volumeOfCondensateReturn.required"
+                                  [required]="isRequired('volumeOfCondensateReturn')"
                                   [(filled)]="fields.volumeOfCondensateReturn.filled"
+                                  [groupControls]="['percentageOfCondensateReturn']"
                                   unit="/y"
                                   group="isCondensateReturnKnown"></form-input>
                     </ng-container>
