@@ -19,11 +19,11 @@
               </li>
               <li>
                 <span>{{'FUEL_ENERGY' | translate}}</span>
-                <span>{{data.radiationLosses | number}} {{units[data?.radiationLossesUnit]}}/yr</span>
+                <span>{{data.radiationLosses | number}} {{units[data.radiationLossesUnit]}}/{{'YR' | translate}}</span>
               </li>
               <li class="text-bold">
                 <span>{{'COST_FSLASH_YR' | translate}}</span>
-                <span>{{data.costOfRadiationLosses | number}} £/yr</span>
+                <span>{{data.costOfRadiationLosses | number}} {{currency}}/{{'YR' | translate}}</span>
               </li>
             </ul>
           </div>
@@ -33,15 +33,15 @@
             <ul class="sgaBenchmark_block__list">
               <li>
                 <span>{{'COST_FSLASH_UNIT_MASS' | translate}}</span>
-                <span>???? £/{{units[data.mCondyCO2Unit]}}</span>
+                <span>{{data.costOfCO2PerTonne | number}} {{currency}}/{{units[data.costOfCO2PerTonneUnit]}}</span>
               </li>
               <li>
                 <span>{{'MASS_EMITTED' | translate}}</span>
-                <span>???? {{units[data.mCondyCO2Unit]}}/yr</span>
+                <span>{{data.tonnesOfCO2 | number}} {{units[data.tonnesOfCO2Unit]}}/{{'YR' | translate}}</span>
               </li>
               <li class="text-bold">
                 <span>{{'COST_FSLASH_YR' | translate}}</span>
-                <span>???? £/yr</span>
+                <span>{{data.costOfCO2PerYear | number}} {{currency}}/{{'YR' | translate}}</span>
               </li>
             </ul>
           </div>
@@ -54,15 +54,15 @@
               <ul class="sgaBenchmark_block__list">
                 <li>
                   <span>{{'COST_FSLASH_UNIT' | translate}}</span>
-                  <span>????  £/{{units[data.fuelConsumptionUnitId]}}</span>
+                  <span>{{data.costOfFuelPerUnit | number}} {{currency}}/{{units[data.fuelConsumptionUnitId]}}</span>
                 </li>
                 <li>
                   <span>{{'QUANTITY' | translate}}</span>
-                  <span>???? {{units[data.fuelConsumptionUnitId]}}/yr</span>
+                  <span>{{data.fuelConsumptionPerYear | number}} {{units[data.fuelConsumptionPerYearUnit]}}/{{'YR' | translate}}</span>
                 </li>
                 <li class="text-bold">
                   <span>{{'COST_OF_FUEL_PER_YEAR' | translate}}</span>
-                  <span>{{data.costOfFuelPerYear | number}} £/yr</span>
+                  <span>{{data.costOfFuelPerYear | number}} {{currency}}/{{'YR' | translate}}</span>
                 </li>
               </ul>
             </div>
@@ -72,15 +72,15 @@
               <ul class="sgaBenchmark_block__list">
                 <li>
                   <span>{{'COST_OF_WATER_UNIT_VOLUME' | translate}}</span>
-                  <span>{{data.waterCostPerUnit | number}} £/{{units[data.waterCostPerUnitUnit]}}</span>
+                  <span>{{data.waterCostPerUnit | number}} {{currency}}/{{units[data.waterCostPerUnitUnit]}}</span>
                 </li>
                 <li>
                   <span>{{'QUANTITY' | translate}}</span>
-                  <span>???? {{units[data.waterCostPerUnitUnit]}}/yr</span>
+                  <span>{{data.boilerHouseWaterFlowTotal | number}} {{units[data.boilerHouseWaterFlowTotalUnit]}}/{{'YR' | translate}}</span>
                 </li>
                 <li class="text-bold">
                   <span>{{'COST_OF_BOILER_WATER_YEAR' | translate}}</span>
-                  <span>{{data.waterAndChemicalsCostTotalPerYear | number}} £</span>
+                  <span>{{data.boilerHouseWaterCost | number}} {{currency}}</span>
                 </li>
               </ul>
             </div>
@@ -90,15 +90,15 @@
               <ul class="sgaBenchmark_block__list">
                 <li>
                   <span>{{'COST_OF_CHEMICALS_PER_UNIT' | translate}}</span>
-                  <span>???? £/{{units[data.waterTreatmentEffluentUnit]}}</span>
+                  <span>{{data.costChemM3 | number}} {{currency}}/m³</span>
                 </li>
                 <li>
                   <span>{{'CHEMICALS_PER_YR' | translate}}</span>
-                  <span>???? £/yr</span>
+                  <span>{{data.chemCostTotalPerYear | number}} {{currency}}/{{'YR' | translate}}</span>
                 </li>
                 <li class="text-bold">
                   <span>{{'COST_OF_CHEMICALS_PER_YEAR' | translate}}</span>
-                  <span>{{data.waterAndChemicalsCostTotalPerYear | number}} £/yr</span>
+                  <span>{{data.waterAndChemicalsCostTotalPerYear | number}} {{currency}}/{{'YR' | translate}}</span>
                 </li>
               </ul>
             </div>
@@ -126,7 +126,7 @@
               <ul class="sgaBenchmark_block__list">
                 <li>
                   <span>{{'COST_FSLASH_UNIT_MASS' | translate}}</span>
-                  <span>???? £/tonne</span>
+                  <span>{{data.totalCostOfSteamPerTonne | number}} {{currency}}/{{units[data.totalCostOfSteamPerTonneUnit]}}</span>
                 </li>
                 <li>
                   <span>{{'MASS_FLOW_FSLASH_YR' | translate}}</span>
@@ -134,11 +134,11 @@
                 </li>
                 <li>
                   <span>{{'MASS_FLOW' | translate}}</span>
-                  <span>{{data.mBoilerKgPerHour | number}} {{units[data.mBoilerKgPerHourUnit]}}</span>
+                  <span>{{data.steamGeneratedkgPerHourUnit | number}} {{units[data.steamGeneratedkgPerHourUnit]}}</span>
                 </li>
                 <li class="text-bold">
                   <span>{{'COST_FSLASH_YR' | translate}}</span>
-                  <span>???? £/tonne</span>
+                  <span>{{data.totalCostOfSteamPerkWhOfFuel | number}} {{currency}}/{{'YR' | translate}}</span>
                 </li>
               </ul>
             </div>
@@ -161,15 +161,15 @@
             <ul class="sgaBenchmark_block__list">
               <li>
                 <span>{{'COST_FSLASH_UNIT' | translate}}</span>
-                <span>{{data.costOfBoilerHouseEffluent}} £/m3</span>
+                <span>{{data.costOfEffm3 | number}} {{currency}}/m³</span>
               </li>
               <li>
                 <span>{{'QUANTITY' | translate}}</span>
-                <span>{{data.propEffluentQuantitySavings | number}} m3/yr</span>
+                <span>{{data.boilerHouseTotalVolumeOfWaterEffluent | number}} {{units[data.boilerHouseTotalVolumeOfWaterEffluentUnit]}}/{{'YR' | translate}}</span>
               </li>
               <li class="text-bold">
                 <span>{{'COST_FSLASH_YR' | translate}}</span>
-                <span>{{data.condyCostEffluent}} £/yr</span>
+                <span>{{data.costOfBoilerHouseEffluent | number}} {{currency}}/{{'YR' | translate}}</span>
               </li>
             </ul>
           </div>

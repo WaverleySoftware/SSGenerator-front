@@ -163,6 +163,86 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     super();
   }
 
+  submitTest() {
+    this.sizingModuleForm.setValue({
+      "selectedUnits": {
+        "energyUnitSelected": 108,
+        "smallWeightUnitSelected": 26,
+        "emissionUnitSelected": 27,
+        "volumeUnitSelected": 16,
+        "smallVolumetricFlowUnitSelected": 76,
+        "massFlowUnitSelected": 229,
+        "smallMassFlowUnitSelected": 84,
+        "pressureUnitSelected": 50,
+        "temperatureUnitSelected": 146,
+        "tdsUnitSelected": 228,
+        "fuelUnitSelected": 108
+      },
+      "benchmarkInputs": {
+        "hoursOfOperation": 8736,
+        "isSteamFlowMeasured": true,
+        "isAutoTdsControlPResent": true,
+        "boilerSteamGeneratedPerYear": 63800,
+        "boilerSteamGeneratedPerHour": null,
+        "inputFuelId": "8c24c468-e50a-45ac-bc4c-8ebd60470c99",
+        "costOfFuelPerUnit": 100,
+        "fuelQtyPerYearIsKnown": true,
+        "costOfFuelPerYear": 1340,
+        "fuelConsumptionPerYear": null,
+        "fuelEnergyPerUnit": 1,
+        "fuelCarbonContent": 0.185,
+        "costOfWaterPerUnit": 0.95,
+        "costOfEffluentPerUnit": 1.1,
+        "boilerHouseWaterQtyPerYearIsKnown": false,
+        "costOfWaterPerYear": null,
+        "waterConsumptionPerHour": null,
+        "waterConsumptionPerYear": null,
+        "boilerWaterTreatmentChemicalCostsIsKnown": true,
+        "totalChemicalCostPerYear": 10500,
+        "o2ScavengingChemicalsCostSavings": 10000,
+        "isCo2OrCarbonEmissionsTaxed": true,
+        "carbonTaxLevyCostPerUnit": null,
+        "costOfCo2PerUnitMass": 8,
+        "isBlowdownVesselPresent": true,
+        "isCoolingWaterUsed": true,
+        "isSuperheatedSteam": false,
+        "boilerEfficiency": 80,
+        "isFeedWaterMeasured": false,
+        "boilerSteamPressure": 10,
+        "boilerSteamTemperature": 184.1153,
+        "isEconomizerPresent": false,
+        "boilerAverageTds": 2800,
+        "boilerMaxTds": 3500,
+        "boilerFeedwaterConsumptionPerHour": null,
+        "boilerFeedwaterConsumptionPerYear": null,
+        "isFlashVesselPresent": true,
+        "isHeatExchangerPresent": true,
+        "waterTemperatureLeavingHeatExchanger": 35,
+        "waterTreatmentMethod": "aa5642a0-88a5-43e1-ba9d-367db3bb9df5",
+        "percentageWaterRejection": 4,
+        "tdsOfMakeupWater": 155,
+        "isMakeUpWaterMonitored": true,
+        "temperatureOfMakeupWater": 10,
+        "makeupWaterAmountPerHour": null,
+        "makeupWaterAmountPerYear": 123,
+        "atmosphericDeaerator": true,
+        "pressurisedDeaerator": false,
+        "temperatureOfFeedtank": 80,
+        "tdsOfFeedwaterInFeedtank": 75,
+        "tdsOfCondensateReturn": 10,
+        "temperatureOfCondensateReturn": 90,
+        "areChemicalsAddedDirectlyToFeedtank": false,
+        "pressureOfFeedtank": null,
+        "pressureOfSteamSupplyingDsi": null,
+        "isCondensateReturnKnown": true,
+        "percentageOfCondensateReturn": null,
+        "volumeOfCondensateReturn": 100,
+        "isDsiPresent": false
+      }
+    });
+    this.onCalculateSizing(this.sizingModuleForm);
+  }
+
   ngOnInit() {
     this.sizingModuleForm.valueChanges.pipe(takeUntil(this.ngUnsubscribe)).subscribe(() => {
       if (this.benchmarkData) {
@@ -542,7 +622,6 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
 
   private focusOnField() {
     const fg = this.sizingModuleForm.get('benchmarkInputs') as FormGroup;
-    console.log(this.fieldsTree, '---this.fieldsTree')
     SteamGenerationAssessmentService.focusFirstErrorField(fg, this.elRef, this.fieldsTree);
   }
 }
