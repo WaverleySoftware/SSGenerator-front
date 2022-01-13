@@ -1,11 +1,20 @@
 
 <div *ngFor="let unitPreference of selectableUnitPreferences" class="form-group">
-  <div class="col-xs-offset-2 col-xs-3 text-right">
+  <div class="col-lg-6 col-xs-12 text-center">
     {{unitPreference.masterTextKey | translate}}
   </div>
-  <div class="col-lg-4 col-xs-12">
-    <select class="form-control" (ngModelChange)="onChange($event, unitPreference)" [ngModel]="unitPreference.preference.value">
-      <option *ngFor="let unit of unitPreference.units" [value]="unit.id">{{unit.masterTextKey | translate}}</option>
+  <div class="col-lg-6 col-xs-12">
+    <select class="form-control"
+            (ngModelChange)="onChange($event, unitPreference)"
+            [ngModel]="unitPreference.preference.value">
+      <ng-container *ngIf="unitPreference?.currencies?.length; else defaultTemplate;">
+        <option *ngFor="let unit of unitPreference.currencies" [value]="unit.currencyCode">
+          {{unit.currencyCode}} - {{unit.symbol}}
+        </option>
+      </ng-container>
+      <ng-template #defaultTemplate>
+        <option *ngFor="let unit of unitPreference.units" [value]="unit.id">{{unit.masterTextKey | translate}}</option>
+      </ng-template>
     </select>
   </div>
 </div>

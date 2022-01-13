@@ -7,6 +7,7 @@ import { SizingUnitPreference } from "./sizing-unit-preference.model";
 import { Observable, Subject } from "rxjs/Rx";
 import "rxjs/add/operator/map";
 import "rxjs/add/operator/catch";
+import { Unit } from "../units/unit.model";
 
 @Injectable({
   providedIn:'root'
@@ -19,6 +20,7 @@ export class PreferenceService {
   // Exposed field and private subject for when a new preference and unit type
   // is added for unit selection during a sizing process.
   sizingUnitPreferences: SizingUnitPreference[] = [];
+	public sizingUnitPreferencesUpdate: Subject<{list: SizingUnitPreference[], updated: SizingUnitPreference}> = new Subject<{list: SizingUnitPreference[]; updated: SizingUnitPreference}>();
   private sizingUnitPreferenceChange: Subject<SizingUnitPreference> = new Subject<SizingUnitPreference>();
 
   constructor(private http: HttpClient) {
@@ -51,6 +53,7 @@ export class PreferenceService {
       }
 
       // Add the new preference
+	    this.sizingUnitPreferencesUpdate.next({list: this.sizingUnitPreferences, updated: sizingUnitPreference});
       this.sizingUnitPreferences.push(sizingUnitPreference);
       console.log("New preference added " + sizingUnitPreference.unitType);
     });
@@ -134,15 +137,27 @@ export class PreferenceService {
   /**
    * Adds the specified preference name and unit type to a subject so that it can be interrogated later.
    * @param preference The preference.
-   * @param unitType The unit type.
+   * @param unitType {String} The unit type.
+   * @param masterTextKey {String} The modal label translation.
+   * @param moduleGroupId {Number} The module group ID.
+   * @param units The list of units.
+   * @param currencies The list of units.
    */
-  addSizingUnitPreference(preference: Preference, unitType: string, masterTextKey: string, moduleGroupId: number) {
+  addSizingUnitPreference(
+    preference: Preference,
+    unitType: string,
+    masterTextKey: string,
+    moduleGroupId: number,
+    units?: any[],
+    currencies?: any[]
+  ) {
     const sizingUnitPreference = new SizingUnitPreference();
 
     sizingUnitPreference.preference = preference;
     sizingUnitPreference.unitType = unitType;
     sizingUnitPreference.masterTextKey = masterTextKey;
-
+    sizingUnitPreference.units = units;
+    sizingUnitPreference.currencies = currencies;
     sizingUnitPreference.moduleGroupId = moduleGroupId;
 
     this.sizingUnitPreferenceChange.next(sizingUnitPreference);

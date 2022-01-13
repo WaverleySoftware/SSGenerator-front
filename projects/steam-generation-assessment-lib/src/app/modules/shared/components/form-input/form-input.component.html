@@ -1,0 +1,80 @@
+<div class="formField"
+     [ngClass]="{
+      filled: filled !== undefined && filled !== false,
+      touched: touched,
+      disabled: disabled,
+      radio: !!group || !!radioWrapper?.innerHTML?.trim(),
+      pending: control?.pending,
+      invalid: control?.touched && (error || control?.errors),
+      valid: control?.touched && control?.dirty && !error && !control?.errors,
+      required: required || control?.errors?.required,
+      focus: focus,
+      readonly: readonly
+     }">
+  <!--  LABEL -->
+  <label *ngIf="!!label" class="formField-label">{{label | translate}}</label>
+
+  <div class="formField-row">
+    <!--  RADIO CHECK -->
+    <span class="formField-radio">
+      <span #radioWrapper><ng-content select="[radio]"></ng-content></span>
+      <input [type]="!group ? 'hidden' : 'radio'"
+             (change)="changeRadioInput({ref: radioInputRef, group: group})"
+             [value]="value"
+             [name]="group"
+             [checked]="disabled === false"
+             [readonly]="readonly"
+             #radioInputRef>
+    </span>
+
+    <!--  BASE INPUT -->
+    <input #ref="preference-units"
+           [set-units]="setUnits"
+           [unit-types]="unitTypes"
+           [unit-controls]="unitControls"
+           [masterText-Keys]="masterTextKeys"
+           [moduleGroupId]="moduleGroupId"
+           #inputRef
+           [type]="type"
+           [disabled]="disabled"
+           (focusin)="focus = true"
+           (focusout)="touched = true; focus = false;"
+           (blur)="blurHandle()"
+           [ngModel]="value"
+           (ngModelChange)="updateValue($event)"
+           [readonly]="readonly"
+           [tabIndex]="(readonly || disabled) && '-1'"
+           [attr.data-form-name]="!readonly && !disabled && formControlName"
+           class="formField-input">
+
+    <!--  UNIT -->
+    <span class="formField-addon" *ngIf="ref?.preferences || unit">
+      <span class="unitBefore"><ng-content select="[unitBefore]"></ng-content></span>
+      <span *ngFor="let preference of ref?.preferences; let i = index;">
+        {{i > 0 ? '/' : ''}}{{preference?.unitName}}
+      </span>
+      {{unit}}
+      <span class="unitAfter"><ng-content select="[unitAfter]"></ng-content></span>
+    </span>
+  </div>
+
+  <!--  ERROR/MESSAGE -->
+  <span class="formField-message error" *ngIf="control?.errors; else messageTemplate">
+    <ng-container *ngIf="control.errors?.error">
+      {{control.errors?.error | translate}}
+    </ng-container>
+    <ng-container *ngIf="control.errors?.required && control.touched">{{'REQUIRED_FIELD' | translate}}</ng-container>
+    <ng-container *ngIf="control?.errors?.max && control.touched">
+      {{'THE_VALUE_MUST_BE_LESS_THEN_THE_MAXIMUM_VALUE_MESSAGE' | translate}}
+      ({{control?.errors?.max?.max}})
+    </ng-container>
+    <ng-container *ngIf="control?.errors?.min && control.touched">
+      {{'THE_VALUE_IS_BELOW_THE_MINIMUM_ALLOWED_MESSAGE' | translate}}
+      ({{control?.errors?.min?.min}})
+    </ng-container>
+    <ng-container *ngIf="control.errors?.message">{{control.errors?.message}}</ng-container>
+  </span>
+  <ng-template #messageTemplate>
+    <span class="formField-message" [ngClass]="{error: error}">{{error || message}}</span>
+  </ng-template>
+</div>

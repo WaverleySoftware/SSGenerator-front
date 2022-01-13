@@ -10,6 +10,15 @@ $md: 992px;
       }
     }
   }
+
+  &-l {
+    border-left: 1px solid var(--color-steel-40);
+    @media screen and (min-width: $md) {
+      &-md {
+        border-left: 1px solid var(--color-steel-40);
+      }
+    }
+  }
 }
 
 .sgaTabs {
@@ -30,10 +39,25 @@ $md: 992px;
           padding: 14px 20px;
         }
 
+        &.disabled {
+          a {
+            color: var(--color-blue);
+          }
+        }
+
         &.active {
           a {
             background-color: var(--color-blue);
             border-radius: 50px;
+            color: var(--color-white);
+          }
+        }
+
+        &.invalid {
+          a {
+            color: var(--color-white);
+            border-radius: 50px;
+            background-color: var(--color-alarm-red);
           }
         }
       }

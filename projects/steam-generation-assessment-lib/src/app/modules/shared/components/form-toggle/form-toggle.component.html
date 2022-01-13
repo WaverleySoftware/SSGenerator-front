@@ -1,0 +1,31 @@
+<div class="formToggle" [ngClass]="{disabled: disabled}">
+  <p class="formToggle-label" *ngIf="!!label">{{label | translate}}</p>
+  <div class="formToggle-row">
+    <label>
+      <input type="radio"
+             [value]="true"
+             [name]="name || formControlName"
+             [ngModel]="value"
+             (ngModelChange)="updateValue($event)"
+             (blur)="onTouched()"
+             [disabled]="disabled"
+             [required]="required">
+      <span>{{'YES' | translate}}</span>
+    </label>
+    <label>
+      <input type="radio"
+             [value]="false"
+             [name]="name || formControlName"
+             [ngModel]="value"
+             (ngModelChange)="updateValue($event)"
+             (blur)="onTouched()"
+             [disabled]="disabled"
+             [required]="required">
+      <span>{{'NO' | translate}}</span>
+    </label>
+  </div>
+</div>
+
+<!--  Selection content -->
+<ng-content *ngIf="value === true" select="[yes]"></ng-content>
+<ng-content *ngIf="value === false" select="[no]"></ng-content>

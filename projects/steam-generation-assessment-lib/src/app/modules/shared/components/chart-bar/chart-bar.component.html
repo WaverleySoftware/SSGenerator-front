@@ -1,5 +1,5 @@
 <ng-container *ngIf="data.length">
-  <ul *ngIf="!!legend" class="sgaChartLegend">
+  <ul *ngIf="!!legend && chartRef?.chart?.legend?.legendItems" class="sgaChartLegend">
     <li *ngFor="let item of chartRef?.chart?.legend?.legendItems" [ngClass]="{unselected: item.hidden}" (click)="legendClick(item)">
       <span [ngStyle]="{'background-color': item.fillStyle}"></span>
       {{item.text}}

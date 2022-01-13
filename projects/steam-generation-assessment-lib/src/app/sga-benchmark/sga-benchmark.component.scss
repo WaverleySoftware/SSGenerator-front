@@ -121,6 +121,8 @@
         &>span {
           &:first-child {
             margin-right: 15px;
+            text-overflow: ellipsis;
+            overflow: hidden;
           }
         }
       }

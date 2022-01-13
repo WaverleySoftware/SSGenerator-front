@@ -49,11 +49,11 @@ export class UnitsModalComponent implements OnInit {
         selectableUnitPreference.unitType = sizingUnitPreference.unitType;
         selectableUnitPreference.masterTextKey = sizingUnitPreference.masterTextKey;
         selectableUnitPreference.moduleGroupId = this.moduleGroupId;
+        selectableUnitPreference.currencies = sizingUnitPreference.currencies;
+
         // Get the relevant units
-
-        const matchedUnits = units.filter(u => u.unitType === sizingUnitPreference.unitType);
-
-        selectableUnitPreference.units = matchedUnits;
+        selectableUnitPreference.units = sizingUnitPreference.units
+          || units.filter(u => u.unitType === sizingUnitPreference.unitType);
 
         // Add the new item to the array.
         this.selectableUnitPreferences.push(selectableUnitPreference);
@@ -68,7 +68,14 @@ export class UnitsModalComponent implements OnInit {
     // This is the OK event, so commit the changes
     for (var selectedUnitPreference of this.selectableUnitPreferences) {
       // Publish the new changes.
-      this.preferenceService.addSizingUnitPreference(selectedUnitPreference.preference, selectedUnitPreference.unitType, selectedUnitPreference.masterTextKey, selectedUnitPreference.moduleGroupId);
+      this.preferenceService.addSizingUnitPreference(
+        selectedUnitPreference.preference,
+        selectedUnitPreference.unitType,
+        selectedUnitPreference.masterTextKey,
+        selectedUnitPreference.moduleGroupId,
+        selectedUnitPreference.units,
+        selectedUnitPreference.currencies,
+      );
     }
   }
 
@@ -87,11 +94,17 @@ export class UnitsModalComponent implements OnInit {
       const matchedPreference = this.selectableUnitPreferences[index];
 
       // Get the new unit
-      const unit = matchedPreference.units.find(u => u.id === parseInt(newValue));
+      let unit;
+      if (matchedPreference.currencies) {
+        unit = matchedPreference.currencies.find(({currencyCode}) => currencyCode === newValue);
+        matchedPreference.preference.unitName = unit.symbol;
+      } else {
+        unit = matchedPreference.units.find(({id}) => id === parseInt(newValue));
+        matchedPreference.preference.unitName = unit.units;
+      }
 
       // Update the object
       matchedPreference.preference.value = newValue;
-      matchedPreference.preference.unitName = unit.units;
       matchedPreference.preference.masterTextKey = unit.masterTextKey;
 
       this.selectableUnitPreferences[index] = matchedPreference;

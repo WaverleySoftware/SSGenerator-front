@@ -1,141 +1,247 @@
-<sga-panel id="UtilityParameters" title="Utility parameters" titleSize="24px">
-  <form body class="container-fluid" [formGroup]="utilityParamsForm">
-    <div class="row mb-5">
+
+<sga-panel [(expanded)]="fieldsTree.utility_parameters.status"
+           id="UtilityParameters"
+           [invalid]="checkUtilityParametersIsValid()"
+           [title]="'UTILITY_PARAMETERS' | translate"
+           titleSize="24px">
+  <form body class="container-fluid" [formGroup]="formGroup">
+    <div class="row mb-5" [formGroupName]="formGroupKey">
       <div class="col-md-5">
-        <app-form-field formControlName="HOURS_OF_OPERATION"
-                        name="HOURS_OF_OPERATION"
-                        [label]="'HOURS_OF_OPERATION' | translate"
-                        [required]="true"></app-form-field>
+        <form-input [formControlName]="fields.hoursOfOperation.formControlName"
+                    [label]="fields.hoursOfOperation.label"
+                    [unit-names]="fields.hoursOfOperation.controlNames"
+                    [unit-types]="fields.hoursOfOperation.unitTypes"
+                    [unit-translations]="fields.hoursOfOperation.translations"
+                    [unit-controls]="fields.hoursOfOperation.controlNames"
+                    [required]="isRequired('hoursOfOperation')"
+                    [(filled)]="fields.hoursOfOperation.filled"
+                    [module-group-id]="moduleGroupId"></form-input>
       </div>
     </div>
 
-    <div class="row">
+    <div class="row" [formGroupName]="formGroupKey">
       <div class="col-md-6">
         <sga-panel id="FuelPanel"
+                   [(expanded)]="fieldsTree.utility_parameters.panels.fuel.status"
                    [title]="'FUEL' | translate"
-                   titleTooltip="Fuel info tooltip"
+                   [titleTooltip]="('ALLOWS_YOU_TO_INPUT_FUEL_TYPE_AND_COSTS_HELP' | translate) + ('IF_A_STANDARD_FUEL_IS_USED_THE_CALORIFIC_VALUE_AND_CO2_EMISSIONS_FSLASH_UNIT_OF_FUEL_WILL_BE_AUTOMATICALLY_POPULATED_FROM_LOO_HELP' | translate)"
                    background="#EDF2F4">
           <div body>
-            <app-form-field [options]="['Natural Gas', 'some 2', 'some 3']"
-                            #fuelType
-                            formControlName="FUEL_TYPE"
-                            name="FUEL_TYPE"
-                            type="select"
-                            [label]="'FUEL_TYPE' | translate"></app-form-field>
-            <app-form-field formControlName="FUEL_CALORIFIC_VALUE"
-                            name="FUEL_CALORIFIC_VALUE"
-                            type="number"
-                            unit="kWh/kWh"
-                            [required]="true"
-                            [label]="'FUEL_CALORIFIC_VALUE' | translate"></app-form-field>
-            <ng-container *ngIf="fuelType.model === 'Natural Gas'">
-              <app-form-field formControlName="cO2EmissionsUnitFuel"
-                              [filled]="true"
-                              type="number"
-                              unit="kg/kWh"
-                              label="CO2 emissions / unit fuel"></app-form-field>
-              <app-form-field formControlName="costOfFuelUnit"
-                              [filled]="true"
-                              type="number"
-                              unit="£/kWh"
-                              label="Cost of Fuel / unit"></app-form-field>
-            </ng-container>
-            <app-form-field formControlName="isFuelComsumptionMeasured"
-                            type="yesNo"
-                            name="isFuelComsumptionMeasured"
-                            label="Is Fuel Comsumption Measured?">
+            <type-of-fuel [formControlName]="fields.inputFuelId.formControlName"
+                          [label]="fields.inputFuelId.label"
+                          [unitFormControlName]="'fuelUnitSelected'"
+                          [(fuelTypeName)]="fuelTypeName"
+                          (changeUnit)="updateFuelUnit($event)"
+                          (ngModelChange)="changeFuelTypeHandle($event)"
+                          [moduleGroupId]="moduleGroupId"></type-of-fuel>
+
+            <form-input [formControlName]="fields.fuelEnergyPerUnit.formControlName"
+                        [label]="fields.fuelEnergyPerUnit.label"
+                        [unit-names]="fields.fuelEnergyPerUnit.unitNames"
+                        [unit-types]="fields.fuelEnergyPerUnit.unitTypes"
+                        [unit-translations]="fields.fuelEnergyPerUnit?.translations"
+                        [unit-controls]="fields.fuelEnergyPerUnit?.controlNames"
+                        [required]="isRequired('fuelEnergyPerUnit')"
+                        [(filled)]="fields.fuelEnergyPerUnit.filled"
+                        [module-group-id]="moduleGroupId"
+                        (inputChange)="inputChangeHandle($event)"> </form-input>
+
+            <form-input [formControlName]="fields.fuelCarbonContent.formControlName"
+                        [label]="fields.fuelCarbonContent.label"
+                        [unit-names]="fields.fuelCarbonContent.unitNames"
+                        [unit-types]="fields.fuelCarbonContent.unitTypes"
+                        [unit-translations]="fields.fuelCarbonContent.translations"
+                        [unit-controls]="fields.fuelCarbonContent.controlNames"
+                        [module-group-id]="moduleGroupId"
+                        [(filled)]="fields.fuelCarbonContent.filled"
+                        [required]="isRequired('fuelCarbonContent')"
+                        (inputChange)="inputChangeHandle($event)"></form-input>
+
+            <form-input [formControlName]="fields.costOfFuelPerUnit.formControlName"
+                        [label]="fields.costOfFuelPerUnit.label"
+                        [unit-names]="fields.costOfFuelPerUnit.unitNames"
+                        [unit-types]="fields.costOfFuelPerUnit?.unitTypes"
+                        [unit-translations]="fields.costOfFuelPerUnit?.translations"
+                        [unit-controls]="fields.costOfFuelPerUnit?.controlNames"
+                        [module-group-id]="moduleGroupId"
+                        [(filled)]="fields.costOfFuelPerUnit.filled"
+                        [required]="isRequired('costOfFuelPerUnit')"></form-input>
+
+            <form-toggle [formControlName]="fields.fuelQtyPerYearIsKnown.formControlName"
+                         [label]="fields.fuelQtyPerYearIsKnown.label">
               <ng-container yes>
-                <app-form-field formControlName="costOfFuelYear"
-                                type="radioInput"
-                                group="costOfFuelYear"
-                                unit="£/y"
-                                [required]="true"
-                                label="Cost of fuel / year"></app-form-field>
-                <app-form-field formControlName="fuelConsumptionYear"
-                                type="radioInput"
-                                group="costOfFuelYear"
-                                unit="m3/y"
-                                [required]="true"
-                                label="Fuel Consumption / year"></app-form-field>
+                <form-input [formControlName]="fields.costOfFuelPerYear.formControlName"
+                            [label]="fields.costOfFuelPerYear.label"
+                            [unit-names]="fields.costOfFuelPerYear?.unitNames"
+                            [unit-types]="fields.costOfFuelPerYear?.unitTypes"
+                            [unit-controls]="fields.costOfFuelPerYear?.controlNames"
+                            [unit-translations]="fields.costOfFuelPerYear?.translations"
+                            [module-group-id]="moduleGroupId"
+                            [required]="isRequired('costOfFuelPerYear')"
+                            [(filled)]="fields.costOfFuelPerYear.filled"
+                            [groupControls]="['fuelConsumptionPerYear']"
+                            group="fuelQtyPerYearIsKnownGroup"
+                            unit="/y"></form-input>
+                <form-input [formControlName]="fields.fuelConsumptionPerYear.formControlName"
+                            [label]="fields.fuelConsumptionPerYear.label"
+                            [unit-names]="fields.fuelConsumptionPerYear.unitNames"
+                            [unit-types]="fields.fuelConsumptionPerYear.unitTypes"
+                            [unit-translations]="fields.fuelConsumptionPerYear.translations"
+                            [unit-controls]="fields.fuelConsumptionPerYear.controlNames"
+                            [required]="isRequired('fuelConsumptionPerYear')"
+                            [(filled)]="fields.fuelConsumptionPerYear.filled"
+                            [groupControls]="['costOfFuelPerYear']"
+                            [module-group-id]="moduleGroupId"
+                            group="fuelQtyPerYearIsKnownGroup"
+                            unit="/yr"></form-input>
               </ng-container>
-            </app-form-field>
+            </form-toggle>
           </div>
         </sga-panel>
 
-        <sga-panel id="CO2EmissionPanel" title="CO2 Emission" titleTooltip="Tooltip" background="#EDF2F4">
+        <sga-panel id="CO2EmissionPanel"
+                   [(expanded)]="fieldsTree.utility_parameters.panels.co2_emission.status"
+                   title="CO2 Emission"
+                   titleTooltip="Tooltip"
+                   background="#EDF2F4">
           <div body>
-            <app-form-field formControlName="areCO2OrCarbonEmissionsTaxed"
-                            name="areCO2OrCarbonEmissionsTaxed"
-                            type="yesNo"
-                            label="Are CO2 or carbon emissions taxed?">
+            <form-toggle [formControlName]="fields.isCo2OrCarbonEmissionsTaxed.formControlName"
+                         [label]="fields.isCo2OrCarbonEmissionsTaxed.label">
               <ng-container yes>
-                <app-form-field formControlName="carbonLeviTaxUnit"
-                                type="radioInput"
-                                unit="???"
-                                group="areCO2OrCarbonEmissionsTaxed"
-                                [required]="true"
-                                label="Carbon levi tax / unit"></app-form-field>
-                <app-form-field formControlName="costOfCo2UnitMax"
-                                type="radioInput"
-                                unit="???"
-                                group="areCO2OrCarbonEmissionsTaxed"
-                                [required]="true"
-                                label="cost of co2 / unit max"></app-form-field>
+                <form-input [formControlName]="fields.carbonTaxLevyCostPerUnit.formControlName"
+                            [label]="fields.carbonTaxLevyCostPerUnit.label"
+                            [unit-names]="fields.carbonTaxLevyCostPerUnit.unitNames"
+                            [unit-types]="fields.carbonTaxLevyCostPerUnit.unitTypes"
+                            [unit-translations]="fields.carbonTaxLevyCostPerUnit.translations"
+                            [unit-controls]="fields.carbonTaxLevyCostPerUnit.controlNames"
+                            [module-group-id]="moduleGroupId"
+                            [(filled)]="fields.carbonTaxLevyCostPerUnit.filled"
+                            [required]="isRequired('carbonTaxLevyCostPerUnit')"
+                            [groupControls]="['costOfCo2PerUnitMass']"
+                            group="emissions-taxed"></form-input>
+
+                <form-input [formControlName]="fields.costOfCo2PerUnitMass.formControlName"
+                            [label]="fields.costOfCo2PerUnitMass.label"
+                            [unit-names]="fields.costOfCo2PerUnitMass.unitNames"
+                            [unit-types]="fields.costOfCo2PerUnitMass.unitTypes"
+                            [unit-translations]="fields.costOfCo2PerUnitMass.translations"
+                            [unit-controls]="fields.costOfCo2PerUnitMass.controlNames"
+                            [module-group-id]="moduleGroupId"
+                            [(filled)]="fields.costOfCo2PerUnitMass.filled"
+                            [required]="isRequired('costOfCo2PerUnitMass')"
+                            [groupControls]="['carbonTaxLevyCostPerUnit']"
+                            group="emissions-taxed"></form-input>
               </ng-container>
-            </app-form-field>
+            </form-toggle>
           </div>
         </sga-panel>
       </div>
 
       <div class="col-md-6">
-        <sga-panel id="WaterPanel" title="Water" titleTooltip="Tooltip" background="#EDF2F4">
+        <sga-panel [(expanded)]="fieldsTree.utility_parameters.panels.water.status"
+                   id="WaterPanel"
+                   title="Water"
+                   titleTooltip="Tooltip"
+                   background="#EDF2F4">
           <div body>
-            <app-form-field formControlName="costOfWaterUnt"
-                            label="Cost of Water / Unt"
-                            unit="£/m3"
-                            [required]="true"></app-form-field>
-            <app-form-field formControlName="isWaterEnteringBoilerHouseMeasured"
-                            name="isWaterEnteringBoilerHouseMeasured"
-                            label="Is water entering the boiler house measured?"
-                            type="yesNo">
+            <form-input [formControlName]="fields.costOfWaterPerUnit.formControlName"
+                        [label]="fields.costOfWaterPerUnit.label"
+                        [unit-names]="fields.costOfWaterPerUnit.unitNames"
+                        [unit-types]="fields.costOfWaterPerUnit.unitTypes"
+                        [unit-translations]="fields.costOfWaterPerUnit.translations"
+                        [unit-controls]="fields.costOfWaterPerUnit.controlNames"
+                        [required]="isRequired('costOfWaterPerUnit')"
+                        [(filled)]="fields.costOfWaterPerUnit.filled"></form-input>
+
+            <form-toggle [formControlName]="fields.boilerHouseWaterQtyPerYearIsKnown.formControlName"
+                         [label]="fields.boilerHouseWaterQtyPerYearIsKnown.label">
               <ng-container yes>
-                <app-form-field formControlName="costOfWaterYear"
-                                label="Cost of Water / year"
-                                unit="£/y"
-                                type="radioInput"
-                                group="isWaterEnteringBoilerHouseMeasured"
-                                [required]="true"></app-form-field>
-                <app-form-field formControlName="waterConsumptionHour"
-                                label="Water Consumption / hour"
-                                unit="m3/h"
-                                type="radioInput"
-                                group="isWaterEnteringBoilerHouseMeasured"
-                                [required]="true"></app-form-field>
-                <app-form-field formControlName="waterConsumptionYear"
-                                label="Water Consumption / year"
-                                unit="m3/y"
-                                type="radioInput"
-                                group="isWaterEnteringBoilerHouseMeasured"
-                                [required]="true"></app-form-field>
+                <form-input [formControlName]="fields.costOfWaterPerYear.formControlName"
+                            [label]="fields.costOfWaterPerYear.label"
+                            [unit-names]="fields.costOfWaterPerYear.unitNames"
+                            [unit-types]="fields.costOfWaterPerYear.unitTypes"
+                            [unit-translations]="fields.costOfWaterPerYear.translations"
+                            [unit-controls]="fields.costOfWaterPerYear.controlNames"
+                            [required]="isRequired('costOfWaterPerYear')"
+                            [(filled)]="fields.costOfWaterPerYear.filled"
+                            [groupControls]="['waterConsumptionPerHour', 'waterConsumptionPerYear']"
+                            unit="/y"
+                            group="isWaterEnteringBoilerHouseMeasured"></form-input>
+
+                <form-input [formControlName]="fields.waterConsumptionPerHour.formControlName"
+                            [label]="fields.waterConsumptionPerHour.label"
+                            [unit-names]="fields.waterConsumptionPerHour.unitNames"
+                            [unit-types]="fields.waterConsumptionPerHour.unitTypes"
+                            [unit-translations]="fields.waterConsumptionPerHour.translations"
+                            [unit-controls]="fields.waterConsumptionPerHour.controlNames"
+                            [required]="isRequired('waterConsumptionPerHour')"
+                            [(filled)]="fields.waterConsumptionPerHour.filled"
+                            [groupControls]="['costOfWaterPerYear', 'waterConsumptionPerYear']"
+                            unit="/h"
+                            group="isWaterEnteringBoilerHouseMeasured"></form-input>
+
+                <form-input [formControlName]="fields.waterConsumptionPerYear.formControlName"
+                            [label]="fields.waterConsumptionPerYear.label"
+                            [unit-names]="fields.waterConsumptionPerYear.unitNames"
+                            [unit-types]="fields.waterConsumptionPerYear.unitTypes"
+                            [unit-translations]="fields.waterConsumptionPerYear.translations"
+                            [unit-controls]="fields.waterConsumptionPerYear.controlNames"
+                            [required]="isRequired('waterConsumptionPerYear')"
+                            [(filled)]="fields.waterConsumptionPerYear.filled"
+                            [groupControls]="['costOfWaterPerYear', 'waterConsumptionPerHour']"
+                            unit="/y"
+                            group="isWaterEnteringBoilerHouseMeasured"></form-input>
               </ng-container>
-            </app-form-field>
+            </form-toggle>
           </div>
         </sga-panel>
 
-        <sga-panel id="waterTreatmentChemicalsPanel" title="Water treatment chemicals" titleTooltip="Tooltip" background="#EDF2F4">
+        <sga-panel [(expanded)]="fieldsTree.utility_parameters.panels.water_treatment_chemicals.status"
+                   id="waterTreatmentChemicalsPanel"
+                   title="Water treatment chemicals"
+                   titleTooltip="Tooltip"
+                   background="#EDF2F4">
           <div body>
-            <app-form-field type="yesNo" name="areChemicalCostKnown" label="Are chemical cost known?">
+            <form-toggle [formControlName]="fields.boilerWaterTreatmentChemicalCostsIsKnown.formControlName"
+                         [label]="fields.boilerWaterTreatmentChemicalCostsIsKnown.label">
               <ng-container yes>
-                <app-form-field [required]="true" type="number" label="Total chemical costs / year" unit="£/y"></app-form-field>
-                <app-form-field type="number" label="O2 scavenging chemical costs / year" unit="£/y"></app-form-field>
+                <form-input [formControlName]="fields.totalChemicalCostPerYear.formControlName"
+                            [label]="fields.totalChemicalCostPerYear.label"
+                            [unit-names]="fields.totalChemicalCostPerYear.unitNames"
+                            [unit-types]="fields.totalChemicalCostPerYear.unitTypes"
+                            [unit-translations]="fields.totalChemicalCostPerYear.translations"
+                            [unit-controls]="fields.totalChemicalCostPerYear.controlNames"
+                            [required]="isRequired('totalChemicalCostPerYear')"
+                            [(filled)]="fields.totalChemicalCostPerYear.filled"
+                            unit="/y"></form-input>
+                <form-input [formControlName]="fields.o2ScavengingChemicalsCostSavings.formControlName"
+                            [label]="fields.o2ScavengingChemicalsCostSavings.label"
+                            [unit-names]="fields.o2ScavengingChemicalsCostSavings.unitNames"
+                            [unit-types]="fields.o2ScavengingChemicalsCostSavings.unitTypes"
+                            [unit-translations]="fields.o2ScavengingChemicalsCostSavings.translations"
+                            [unit-controls]="fields.o2ScavengingChemicalsCostSavings.controlNames"
+                            [required]="fields.o2ScavengingChemicalsCostSavings.required"
+                            [(filled)]="fields.o2ScavengingChemicalsCostSavings.filled"
+                            unit="/y"></form-input>
               </ng-container>
-            </app-form-field>
+            </form-toggle>
           </div>
         </sga-panel>
 
-        <sga-panel id="waterEffluentPanel" title="Water effluent" titleTooltip="Tooltip" background="#EDF2F4">
+        <sga-panel [(expanded)]="fieldsTree.utility_parameters.panels.water_effluent.status"
+                   id="waterEffluentPanel"
+                   title="Water effluent"
+                   titleTooltip="Tooltip"
+                   background="#EDF2F4">
           <div body>
-            <app-form-field [required]="true" type="number" label="Cost of effluent / unit" unit="£/m3"></app-form-field>
+            <form-input [formControlName]="fields.costOfEffluentPerUnit.formControlName"
+                        [label]="fields.costOfEffluentPerUnit.label"
+                        [unit-names]="fields.costOfEffluentPerUnit.unitNames"
+                        [unit-types]="fields.costOfEffluentPerUnit.unitTypes"
+                        [unit-translations]="fields.costOfEffluentPerUnit.translations"
+                        [unit-controls]="fields.costOfEffluentPerUnit.controlNames"
+                        [required]="isRequired('costOfEffluentPerUnit')"
+                        [(filled)]="fields.costOfEffluentPerUnit.filled"></form-input>
           </div>
         </sga-panel>
       </div>
@@ -143,263 +249,426 @@
   </form>
 </sga-panel>
 
-<sga-panel [isCollapsed]="true" [showSeparator]="false" id="BoilerHouseParameters" title="Boiler house parameters" titleSize="24px">
-  <div body class="container-fluid">
-    <div class="row">
+<sga-panel [(expanded)]="fieldsTree.boiler_house_parameters.status"
+           [showSeparator]="false"
+           [invalid]="checkBoilerHouseParametersIsValid().isInvalid"
+           [title]="'BOILER_HOUSE_PARAMETERS' | translate"
+           id="BoilerHouseParameters"
+           titleSize="24px">
+  <form body class="container-fluid" [formGroup]="formGroup">
+    <div class="row" [formGroupName]="formGroupKey">
       <div class="col-md-12">
         <tabset type="pills" class="sgaTabs">
-          <tab heading="Boiler" customClass="sgaTab">
-            <sga-panel id="boilerParametersPanel" title="Boiler parameters" background="#EDF2F4">
-              <form body [formGroup]="boilerParamsForm" class="row">
+          <tab [heading]="'BOILER' | translate"
+               [active]="fieldsTree.boiler_house_parameters.panels.boiler.status"
+               [ngClass]="{invalid: checkBoilerHouseParametersIsValid().boiler}"
+               [customClass]="checkBoilerHouseParametersIsValid().boiler && ' invalid'">
+            <sga-panel id="boilerParametersPanel"
+                       [(expanded)]="fieldsTree.boiler_house_parameters.panels.boiler.panels.boiler_parameters.status"
+                       [title]="'BOILER_PARAMETERS' | translate"
+                       background="#EDF2F4">
+              <div body class="row">
                 <div class="col-md-6 border-r-md">
-                  <app-form-field type="yesNo" name="isSteamSuperheated" label="Is Steam Superheated?"></app-form-field>
-                  <app-form-field type="yesNo" name="isSteamFlowMeasured" label="Is steam flow measured?">
+                  <form-toggle [formControlName]="fields.isSuperheatedSteam.formControlName"
+                               (valueChange)="focusOnField('boilerSteamTemperature', $event);"
+                               [label]="fields.isSuperheatedSteam.label"></form-toggle>
+
+                  <form-toggle [formControlName]="fields.isSteamFlowMeasured.formControlName"
+                               [label]="fields.isSteamFlowMeasured.label">
                     <ng-container yes>
-                      <app-form-field type="radioInput"
-                                      [required]="true"
-                                      group="isSteamFlowMeasured"
-                                      name="steamGenerationHour"
-                                      unit="kg/h"
-                                      label="Steam generation / hour"></app-form-field>
-                      <app-form-field type="radioInput"
-                                      [required]="true"
-                                      group="isSteamFlowMeasured"
-                                      name="steamGenerationYear"
-                                      unit="tonnes/y"
-                                      label="Steam generation / year"></app-form-field>
+                      <form-input [formControlName]="fields.boilerSteamGeneratedPerHour.formControlName"
+                                  [label]="fields.boilerSteamGeneratedPerHour.label"
+                                  [unit-names]="fields.boilerSteamGeneratedPerHour.unitNames"
+                                  [unit-types]="fields.boilerSteamGeneratedPerHour.unitTypes"
+                                  [unit-translations]="fields.boilerSteamGeneratedPerHour.translations"
+                                  [unit-controls]="fields.boilerSteamGeneratedPerHour.controlNames"
+                                  [required]="isRequired('boilerSteamGeneratedPerHour')"
+                                  [(filled)]="fields.boilerSteamGeneratedPerHour.filled"
+                                  [groupControls]="['boilerSteamGeneratedPerYear']"
+                                  group="boilerSteamGeneratedTime"></form-input>
+
+                      <form-input [formControlName]="fields.boilerSteamGeneratedPerYear.formControlName"
+                                  [label]="fields.boilerSteamGeneratedPerYear.label"
+                                  [unit-names]="fields.boilerSteamGeneratedPerYear.unitNames"
+                                  [unit-types]="fields.boilerSteamGeneratedPerYear.unitTypes"
+                                  [unit-translations]="fields.boilerSteamGeneratedPerYear.translations"
+                                  [unit-controls]="fields.boilerSteamGeneratedPerYear.controlNames"
+                                  [required]="isRequired('boilerSteamGeneratedPerHour')"
+                                  [(filled)]="fields.boilerSteamGeneratedPerYear.filled"
+                                  [groupControls]="['boilerSteamGeneratedPerHour']"
+                                  group="boilerSteamGeneratedTime"></form-input>
                     </ng-container>
-                  </app-form-field>
+                  </form-toggle>
                 </div>
                 <div class="col-md-6">
-                  <app-form-field name="steamTemperature" unit="°C" label="Steam Temperature"></app-form-field>
-                  <app-form-field [required]="true"
-                                  name="steamPressure"
-                                  unit="bar gauge"
-                                  label="Steam Pressure"></app-form-field>
-                  <app-form-field type="yesNo" name="isEconomiserPresent" label="Is Economiser Present?"></app-form-field>
-                  <app-form-field [filled]="true"
-                                  [required]="true"
-                                  type="number"
-                                  formControlName="boilerEfficiency"
-                                  name="boilerEfficiency"
-                                  label="Boiler Efficiency"
-                                  unit="%"></app-form-field>
-                </div>
-              </form>
-            </sga-panel>
-          </tab>
-          <tab heading="TDS BLOWDOwn" customClass="sgaTab">
-            <sga-panel id="blowdownEquipmentPanel" title="Blowdown equipment" background="#EDF2F4">
-              <div class="row" body>
-                <div class="col-md-4 border-r-md">
-                  <app-form-field type="yesNo"
-                                  name="isBlowdownVesselPresent"
-                                  label="is blowdown vessel present?"></app-form-field>
-                  <app-form-field type="yesNo"
-                                  name="isCoolingWaterUsed"
-                                  label="is cooling water used?"></app-form-field>
-                </div>
-                <div class="col-md-4 border-r-md">
-                  <app-form-field type="yesNo"
-                                  name="isAutoTdsPresent"
-                                  label="Is auto tds present?"></app-form-field>
-                  <app-form-field type="yesNo"
-                                  name="isFlashVesselPresent"
-                                  label="Is flash vessel present?"></app-form-field>
-                </div>
-                <div class="col-md-4">
-                  <app-form-field type="yesNo"
-                                  name="isHeatExchangerPresent"
-                                  label="Is heat exchanger present?"></app-form-field>
-                  <app-form-field [filled]="true"
-                                  name="waterTemperatureLeavingHeatExchange"
-                                  unit="°C"
-                                  label="water temperature leaving heat exchange"></app-form-field>
-                </div>
-              </div>
-            </sga-panel>
-            <sga-panel id="tdsBlowdownParametersPanel" title="tds Blowdown parameters" background="#EDF2F4">
-              <div class="row" body>
-                <div class="col-md-4 border-r-md">
-                  <app-form-field [required]="true"
-                                  name="tDSOfFeedwater"
-                                  unit="ppm"
-                                  label="TDS of feedwater"></app-form-field>
-                </div>
-                <div class="col-md-4 border-r-md">
-                  <app-form-field [required]="true"
-                                  name="averageBoilerTds"
-                                  unit="ppm"
-                                  label="Average boiler tds"></app-form-field>
-                </div>
-                <div class="col-md-4">
-                  <app-form-field [required]="true"
-                                  name="maximumAllowableBoilerTDS"
-                                  unit="ppm"
-                                  label="maximum allowable boiler TDS"></app-form-field>
+                  <form-input [formControlName]="fields.boilerSteamTemperature.formControlName"
+                              [label]="fields.boilerSteamTemperature.label"
+                              [unit-names]="fields.boilerSteamTemperature.unitNames"
+                              [unit-types]="fields.boilerSteamTemperature.unitTypes"
+                              [unit-translations]="fields.boilerSteamTemperature.translations"
+                              [unit-controls]="fields.boilerSteamTemperature.controlNames"
+                              [required]="isRequired('boilerSteamTemperature')"
+                              (inputChange)="inputChangeHandle($event)"
+                              [(filled)]="fields.boilerSteamTemperature.filled"></form-input>
+
+                  <form-input [formControlName]="fields.boilerSteamPressure.formControlName"
+                              (inputChange)="inputChangeHandle($event)"
+                              [label]="fields.boilerSteamPressure.label"
+                              [unit-names]="fields.boilerSteamPressure.unitNames"
+                              [unit-types]="fields.boilerSteamPressure.unitTypes"
+                              [unit-translations]="fields.boilerSteamPressure.translations"
+                              [unit-controls]="fields.boilerSteamPressure.controlNames"
+                              [required]="isRequired('boilerSteamPressure')"
+                              [(filled)]="fields.boilerSteamPressure.filled"></form-input>
+
+                  <form-toggle [formControlName]="fields.isEconomizerPresent.formControlName"
+                               [label]="fields.isEconomizerPresent.label"
+                               (valueChange)="calculateEfficiency.emit({isEconomizerPresent: $event || false, inputFuelId: formGroup.get(formGroupKey+'.inputFuelId').value})"
+                  ></form-toggle>
+
+                  <form-input [formControlName]="fields.boilerEfficiency.formControlName"
+                              [label]="fields.boilerEfficiency.label"
+                              [unit-names]="fields.boilerEfficiency.unitNames"
+                              [unit-types]="fields.boilerEfficiency.unitTypes"
+                              [unit-translations]="fields.boilerEfficiency.translations"
+                              [unit-controls]="fields.boilerEfficiency.controlNames"
+                              [required]="isRequired('boilerEfficiency')"
+                              [(filled)]="fields.boilerEfficiency.filled"
+                              unit="%"></form-input>
                 </div>
               </div>
             </sga-panel>
           </tab>
-          <tab heading="Water Treatment" customClass="sgaTab">
-            <sga-panel id="makeUpWaterPanel" title="Make-up water" background="#EDF2F4">
+          <tab [heading]="'TDS_BLOWDOWN' | translate"
+               [active]="fieldsTree.boiler_house_parameters.panels.tds_blowdown.status"
+               [customClass]="checkBoilerHouseParametersIsValid().tdsBlowdown && ' invalid'">
+            <sga-panel id="blowdownEquipmentPanel"
+                       [(expanded)]="fieldsTree.boiler_house_parameters.panels.tds_blowdown.panels.blowdown_equipment.status"
+                       [title]="'BLOWDOWN_EQUIPMENT' | translate"
+                       background="#EDF2F4">
               <div class="row" body>
-                <div class="col-md-6 border-r-md">
-                  <app-form-field type="yesNo"
-                                  name="isMakeUpWaterMonitored"
-                                  label="Is make-up water monitored?">
-                    <ng-container yes>
-                      <app-form-field [required]="true"
-                                      name="temperatureOfMakeUpWater"
-                                      unit="°C"
-                                      label="Temperature of make-up water"></app-form-field>
-                    </ng-container>
-                  </app-form-field>
+                <div class="col-md-4 border-r-md">
+                  <form-toggle [formControlName]="fields.isBlowdownVesselPresent.formControlName"
+                               [label]="fields.isBlowdownVesselPresent.label"></form-toggle>
+
+                  <form-toggle [formControlName]="fields.isCoolingWaterUsed.formControlName"
+                               [label]="fields.isCoolingWaterUsed.label"></form-toggle>
                 </div>
-                <div class="col-md-6">
-                  <app-form-field [required]="true"
-                                  type="radioInput"
-                                  group="makeUpWater"
-                                  name="makeUpWaterHour"
-                                  unit="m3/h"
-                                  label="make-up water/hour"></app-form-field>
-                  <app-form-field [required]="true"
-                                  type="radioInput"
-                                  group="makeUpWater"
-                                  name="makeUpWaterYear"
-                                  unit="m3/h"
-                                  label="make-up water/year"></app-form-field>
+                <div class="col-md-4 border-r-md">
+                  <form-toggle [formControlName]="fields.isAutoTdsControlPResent.formControlName"
+                               [label]="fields.isAutoTdsControlPResent.label"></form-toggle>
+
+                  <form-toggle [formControlName]="fields.isFlashVesselPresent.formControlName"
+                               [label]="fields.isFlashVesselPresent.label"></form-toggle>
+                </div>
+                <div class="col-md-4">
+                  <form-toggle [formControlName]="fields.isHeatExchangerPresent.formControlName"
+                               [label]="fields.isHeatExchangerPresent.label"
+                               (valueChange)="changeIsHeatExchangerPresent($event)">
+                    <form-input yes
+                                [formControlName]="fields.waterTemperatureLeavingHeatExchanger.formControlName"
+                                [label]="fields.waterTemperatureLeavingHeatExchanger.label"
+                                [unit-names]="fields.waterTemperatureLeavingHeatExchanger.unitNames"
+                                [unit-types]="fields.waterTemperatureLeavingHeatExchanger.unitTypes"
+                                [unit-translations]="fields.waterTemperatureLeavingHeatExchanger.translations"
+                                [unit-controls]="fields.waterTemperatureLeavingHeatExchanger.controlNames"
+                                [required]="isRequired('waterTemperatureLeavingHeatExchanger')"
+                                [(filled)]="fields.waterTemperatureLeavingHeatExchanger.filled"></form-input>
+                  </form-toggle>
                 </div>
               </div>
             </sga-panel>
-            <sga-panel id="waterTreatmentParametersPanel" title="water treatment parameters" background="#EDF2F4">
+
+            <sga-panel id="tdsBlowdownParametersPanel"
+                       [(expanded)]="fieldsTree.boiler_house_parameters.panels.tds_blowdown.panels.tds_blowdown_parameters.status"
+                       [title]="'TDS_BLOWDOWN_PARAMETERS' | translate"
+                       background="#EDF2F4">
               <div class="row" body>
-                <div class="col-md-4">
-                  <app-form-field name="waterTreatmentMethod"
-                                  type="select"
-                                  [options]="['Base Exchange', '2', '3']"
-                                  label="water treatment method"></app-form-field>
+                <div class="col-md-4 border-r-md">
+                  <form-input [formControlName]="fields.tdsOfFeedwaterInFeedtank.formControlName"
+                              [label]="fields.tdsOfFeedwaterInFeedtank.label"
+                              [unit-names]="fields.tdsOfFeedwaterInFeedtank.unitNames"
+                              [unit-types]="fields.tdsOfFeedwaterInFeedtank.unitTypes"
+                              [unit-translations]="fields.tdsOfFeedwaterInFeedtank.translations"
+                              [unit-controls]="fields.tdsOfFeedwaterInFeedtank.controlNames"
+                              [value]="formGroup.get(formGroupKey+'.tdsOfFeedwaterInFeedtank').value"
+                              [required]="isRequired('tdsOfFeedwaterInFeedtank')"
+                              [(filled)]="fields.tdsOfFeedwaterInFeedtank.filled"></form-input>
+                </div>
+                <div class="col-md-4 border-r-md">
+                  <form-input [formControlName]="fields.boilerAverageTds.formControlName"
+                              [label]="fields.boilerAverageTds.label"
+                              [unit-names]="fields.boilerAverageTds.unitNames"
+                              [unit-types]="fields.boilerAverageTds.unitTypes"
+                              [unit-translations]="fields.boilerAverageTds.translations"
+                              [unit-controls]="fields.boilerAverageTds.controlNames"
+                              [required]="isRequired('boilerAverageTds')"
+                              [(filled)]="fields.boilerAverageTds.filled"></form-input>
                 </div>
                 <div class="col-md-4">
-                  <app-form-field [required]="true"
+                  <form-input [formControlName]="fields.boilerMaxTds.formControlName"
+                              [label]="fields.boilerMaxTds.label"
+                              [unit-names]="fields.boilerMaxTds.unitNames"
+                              [unit-types]="fields.boilerMaxTds.unitTypes"
+                              [unit-translations]="fields.boilerMaxTds.translations"
+                              [unit-controls]="fields.boilerMaxTds.controlNames"
+                              [required]="isRequired('boilerMaxTds')"
+                              [(filled)]="fields.boilerMaxTds.filled"></form-input>
+                </div>
+              </div>
+            </sga-panel>
+          </tab>
+          <tab [heading]="'WATER_TREATMENT' | translate"
+               [active]="fieldsTree.boiler_house_parameters.panels.water_treatment.status"
+               [customClass]="checkBoilerHouseParametersIsValid().waterTreatment && ' invalid'">
+            <sga-panel id="makeUpWaterPanel"
+                       [(expanded)]="fieldsTree.boiler_house_parameters.panels.water_treatment.panels.make_up_water.status"
+                       [title]="'MAKE_UP_WATER' | translate"
+                       background="#EDF2F4">
+              <div class="row" body>
+                <div class="col-md-6">
+                  <form-toggle [formControlName]="fields.isMakeUpWaterMonitored.formControlName"
+                               [label]="fields.isMakeUpWaterMonitored.label">
+                    <form-input yes
+                                [formControlName]="fields.temperatureOfMakeupWater.formControlName"
+                                [label]="fields.temperatureOfMakeupWater.label"
+                                [unit-names]="fields.temperatureOfMakeupWater.unitNames"
+                                [unit-types]="fields.temperatureOfMakeupWater.unitTypes"
+                                [unit-translations]="fields.temperatureOfMakeupWater.translations"
+                                [unit-controls]="fields.temperatureOfMakeupWater.controlNames"
+                                [required]="fields.temperatureOfMakeupWater.required"
+                                [(filled)]="fields.temperatureOfMakeupWater.filled"></form-input>
+                  </form-toggle>
+                </div>
+                <div class="col-md-6 border-l-md">
+                  <form-input [formControlName]="fields.makeupWaterAmountPerHour.formControlName"
+                              [label]="fields.makeupWaterAmountPerHour.label"
+                              [unit-names]="fields.makeupWaterAmountPerHour.unitNames"
+                              [unit-types]="fields.makeupWaterAmountPerHour.unitTypes"
+                              [unit-translations]="fields.makeupWaterAmountPerHour.translations"
+                              [unit-controls]="fields.makeupWaterAmountPerHour.controlNames"
+                              [required]="isRequired('makeupWaterAmountPerHour')"
+                              [(filled)]="fields.makeupWaterAmountPerHour.filled"
+                              [groupControls]="['makeupWaterAmountPerYear']"
+                              [defaultChecked]="true"
+                              group="makeupWaterAmount"></form-input>
+                  <form-input [formControlName]="fields.makeupWaterAmountPerYear.formControlName"
+                              [label]="fields.makeupWaterAmountPerYear.label"
+                              [unit-names]="fields.makeupWaterAmountPerYear.unitNames"
+                              [unit-types]="fields.makeupWaterAmountPerYear.unitTypes"
+                              [unit-translations]="fields.makeupWaterAmountPerYear.translations"
+                              [unit-controls]="fields.makeupWaterAmountPerYear.controlNames"
+                              [required]="isRequired('makeupWaterAmountPerYear')"
+                              [(filled)]="fields.makeupWaterAmountPerYear.filled"
+                              [groupControls]="['makeupWaterAmountPerHour']"
+                              group="makeupWaterAmount"></form-input>
+                </div>
+              </div>
+            </sga-panel>
+
+            <sga-panel id="waterTreatmentParametersPanel"
+                       [(expanded)]="fieldsTree.boiler_house_parameters.panels.water_treatment.panels.water_treatment_parameters.status"
+                       [title]="'WATER_TREATMENT_PARAMETERS' | translate"
+                       background="#EDF2F4">
+              <div class="row" body>
+                <div class="col-md-4">
+                  <form-list formControlName="waterTreatmentMethod"
+                             enumeration-name="WaterTreatmentMethodList_BoilerHouseInput"
+                             (on-change)="changeWaterTreatment.emit($event)"
+                             label="WATER_TREATMENT_METHOD"></form-list>
+                </div>
+                <div class="col-md-4">
+                  <form-input [formControlName]="fields.percentageWaterRejection.formControlName"
+                              [label]="fields.percentageWaterRejection.label"
+                              [unit-names]="fields.percentageWaterRejection.unitNames"
+                              [unit-types]="fields.percentageWaterRejection.unitTypes"
+                              [unit-translations]="fields.percentageWaterRejection.translations"
+                              [unit-controls]="fields.percentageWaterRejection.controlNames"
+                              [required]="isRequired('percentageWaterRejection')"
+                              [(filled)]="fields.percentageWaterRejection.filled"
+                              unit="%"></form-input>
+                </div>
+                <div class="col-md-4">
+                  <form-input [formControlName]="fields.tdsOfMakeupWater.formControlName"
+                              [label]="fields.tdsOfMakeupWater.label"
+                              [unit-names]="fields.tdsOfMakeupWater.unitNames"
+                              [unit-types]="fields.tdsOfMakeupWater.unitTypes"
+                              [unit-translations]="fields.tdsOfMakeupWater.translations"
+                              [unit-controls]="fields.tdsOfMakeupWater.controlNames"
+                              [required]="isRequired('tdsOfMakeupWater')"
+                              [(filled)]="fields.tdsOfMakeupWater.filled"></form-input>
+                </div>
+              </div>
+            </sga-panel>
+          </tab>
+          <tab [heading]="'FEEDWATER_AND_CONDENSATE' | translate"
+               [active]="fieldsTree.boiler_house_parameters.panels.feedwater_and_condensate.status"
+               [customClass]="checkBoilerHouseParametersIsValid().feedwaterAndCondensate && ' invalid'">
+            <sga-panel id="deaeratorTypePanel"
+                       [(expanded)]="fieldsTree.boiler_house_parameters.panels.feedwater_and_condensate.panels.deaerator_type.status"
+                       [title]="'DEAERATOR_TYPE' | translate" background="#EDF2F4">
+              <div class="row" body>
+                <div class="col-md-4">
+                  <form-radio [inputValue]="true"
+                              [formControlName]="fields.atmosphericDeaerator.formControlName"
+                              [label]="fields.atmosphericDeaerator.label"
+                              [defaultChecked]="formGroup.get(formGroupKey+'.atmosphericDeaerator').value"
+                              name="deaeratorType">
+                    <img src="/assets/img/steam_generation/deaerator_type_1.png" alt="deaerator_type_1">
+                  </form-radio>
+                </div>
+                <div class="col-md-4">
+                  <form-radio [inputValue]="true"
+                              [formControlName]="fields.pressurisedDeaerator.formControlName"
+                              [label]="fields.pressurisedDeaerator.label"
+                              [defaultChecked]="formGroup.get(formGroupKey+'.pressurisedDeaerator').value"
+                              (valueChange)="setPressureDeaerator($event)"
+                              name="deaeratorType">
+                    <img src="/assets/img/steam_generation/boiler-scheme/images/PressurisedDAImgCrop.png"
+                         alt="deaerator_type_1">
+                  </form-radio>
+                </div>
+              </div>
+            </sga-panel>
+
+            <sga-panel id="boilerFeedwaterPanel"
+                       [(expanded)]="fieldsTree.boiler_house_parameters.panels.feedwater_and_condensate.panels.boiler_feedwater.status"
+                       [title]="'BOILER_FEEDWATER' | translate"
+                       background="#EDF2F4">
+              <div class="row" body>
+                <div class="col-md-4 border-r-md">
+                  <form-toggle [formControlName]="fields.isFeedWaterMeasured.formControlName"
+                               [label]="fields.isFeedWaterMeasured.label">
+                    <ng-container yes>
+                      <form-input [formControlName]="fields.boilerFeedwaterConsumptionPerHour.formControlName"
+                                  [label]="fields.boilerFeedwaterConsumptionPerHour.label"
+                                  [unit-names]="fields.boilerFeedwaterConsumptionPerHour.unitNames"
+                                  [unit-types]="fields.boilerFeedwaterConsumptionPerHour.unitTypes"
+                                  [unit-translations]="fields.boilerFeedwaterConsumptionPerHour.translations"
+                                  [unit-controls]="fields.boilerFeedwaterConsumptionPerHour.controlNames"
+                                  [required]="isRequired('boilerFeedwaterConsumptionPerYear')"
+                                  [(filled)]="fields.boilerFeedwaterConsumptionPerHour.filled"
+                                  [groupControls]="['boilerFeedwaterConsumptionPerYear']"
+                                  group="boilerFeedwaterConsumptionGroup"></form-input>
+
+                      <form-input [formControlName]="fields.boilerFeedwaterConsumptionPerYear.formControlName"
+                                  [label]="fields.boilerFeedwaterConsumptionPerYear.label"
+                                  [unit-names]="fields.boilerFeedwaterConsumptionPerYear.unitNames"
+                                  [unit-types]="fields.boilerFeedwaterConsumptionPerYear.unitTypes"
+                                  [unit-translations]="fields.boilerFeedwaterConsumptionPerYear.translations"
+                                  [unit-controls]="fields.boilerFeedwaterConsumptionPerYear.controlNames"
+                                  [required]="isRequired('boilerFeedwaterConsumptionPerHour')"
+                                  [(filled)]="fields.boilerFeedwaterConsumptionPerYear.filled"
+                                  [groupControls]="['boilerFeedwaterConsumptionPerHour']"
+                                  unit="/y"
+                                  group="boilerFeedwaterConsumptionGroup"></form-input>
+                    </ng-container>
+                  </form-toggle>
+                </div>
+                <div class="col-md-4 border-r-md">
+                  <form-input [formControlName]="fields.temperatureOfFeedtank.formControlName"
+                              [label]="fields.temperatureOfFeedtank.label"
+                              [unit-names]="fields.temperatureOfFeedtank.unitNames"
+                              [unit-types]="fields.temperatureOfFeedtank.unitTypes"
+                              [unit-translations]="fields.temperatureOfFeedtank.translations"
+                              [unit-controls]="fields.temperatureOfFeedtank.controlNames"
+                              [required]="isRequired('temperatureOfFeedtank')"
+                              [(filled)]="fields.temperatureOfFeedtank.filled"></form-input>
+
+                  <form-input [formControlName]="fields.tdsOfFeedwaterInFeedtank.formControlName"
+                              [label]="fields.tdsOfFeedwaterInFeedtank.label"
+                              [unit-names]="fields.tdsOfFeedwaterInFeedtank.unitNames"
+                              [unit-types]="fields.tdsOfFeedwaterInFeedtank.unitTypes"
+                              [unit-translations]="fields.tdsOfFeedwaterInFeedtank.translations"
+                              [unit-controls]="fields.tdsOfFeedwaterInFeedtank.controlNames"
+                              [required]="isRequired('tdsOfFeedwaterInFeedtank')"
+                              [value]="formGroup.get(formGroupKey+'.tdsOfFeedwaterInFeedtank').value"
+                              [(filled)]="fields.tdsOfFeedwaterInFeedtank.filled"
+                              [readonly]="true"></form-input>
+
+                  <form-toggle [formControlName]="fields.areChemicalsAddedDirectlyToFeedtank.formControlName"
+                               [label]="fields.areChemicalsAddedDirectlyToFeedtank.label"></form-toggle>
+                </div>
+                <div class="col-md-4">
+                  <form-toggle [formControlName]="fields.isDsiPresent.formControlName"
+                               [label]="fields.isDsiPresent.label">
+                    <form-input yes
+                                [formControlName]="fields.pressureOfSteamSupplyingDsi.formControlName"
+                                [label]="fields.pressureOfSteamSupplyingDsi.label"
+                                [unit-names]="fields.pressureOfSteamSupplyingDsi.unitNames"
+                                [unit-types]="fields.pressureOfSteamSupplyingDsi.unitTypes"
+                                [unit-translations]="fields.pressureOfSteamSupplyingDsi.translations"
+                                [unit-controls]="fields.pressureOfSteamSupplyingDsi.controlNames"
+                                [required]="isRequired('pressureOfSteamSupplyingDsi')"
+                                [(filled)]="fields.pressureOfSteamSupplyingDsi.filled"></form-input>
+                  </form-toggle>
+
+                  <form-input [formControlName]="fields.pressureOfFeedtank.formControlName"
+                              [label]="fields.pressureOfFeedtank.label"
+                              [unit-names]="fields.pressureOfFeedtank.unitNames"
+                              [unit-types]="fields.pressureOfFeedtank.unitTypes"
+                              [unit-translations]="fields.pressureOfFeedtank.translations"
+                              [unit-controls]="fields.pressureOfFeedtank.controlNames"
+                              [required]="isRequired('pressureOfFeedtank')"
+                              [(filled)]="fields.pressureOfFeedtank.filled"
+                  ></form-input>
+                </div>
+              </div>
+            </sga-panel>
+
+            <sga-panel id="condensateReturnPanel"
+                       [(expanded)]="fieldsTree.boiler_house_parameters.panels.feedwater_and_condensate.panels.condensate_return.status"
+                       [title]="'CONDENSATE_RETURN' | translate"
+                       background="#EDF2F4">
+              <div class="row" body>
+                <div class="col-md-6 border-r-md">
+                  <form-toggle [formControlName]="fields.isCondensateReturnKnown.formControlName"
+                               [label]="fields.isCondensateReturnKnown.label">
+                    <ng-container yes>
+                      <form-input [formControlName]="fields.percentageOfCondensateReturn.formControlName"
+                                  [label]="fields.percentageOfCondensateReturn.label"
+                                  [unit-names]="fields.percentageOfCondensateReturn.unitNames"
+                                  [unit-types]="fields.percentageOfCondensateReturn.unitTypes"
+                                  [unit-translations]="fields.percentageOfCondensateReturn.translations"
+                                  [unit-controls]="fields.percentageOfCondensateReturn.controlNames"
+                                  [required]="isRequired('percentageOfCondensateReturn')"
+                                  [(filled)]="fields.percentageOfCondensateReturn.filled"
+                                  [groupControls]="['volumeOfCondensateReturn']"
                                   unit="%"
-                                  label="Percentage water rejection"
-                                  name="percentageWaterRejection"></app-form-field>
-                </div>
-                <div class="col-md-4">
-                  <app-form-field [required]="true"
-                                  unit="ppm"
-                                  label="tds of makeup water"
-                                  name="tdsOfMakeupWater"></app-form-field>
-                </div>
-              </div>
-            </sga-panel>
-          </tab>
-          <tab heading="Feedwater & Condensate" customClass="sgaTab">
-            <sga-panel id="deaeratorTypePanel" title="Deaerator type" background="#EDF2F4">
-              <div class="row" body>
-                <div class="col-md-4">
-                  <app-form-field type="radio"
-                                  [(model)]="deaeratorType"
-                                  value="autmosphericDeaerator"
-                                  id="autmosphericDeaeratorId"
-                                  name="deaeratorType"
-                                  label="Autmospheric Deaerator">
-                    <img before
-                         class="checkImage"
-                         src="/assets/img/steam_generation/deaerator_type_1.png"
-                         alt="deaerator_type_1">
-                  </app-form-field>
-                </div>
-                <div class="col-md-4">
-                  <app-form-field type="radio"
-                                  [(model)]="deaeratorType"
-                                  value="pressurlsedDeaerator"
-                                  id="pressurlsedDeaeratorId"
-                                  name="deaeratorType"
-                                  label="Pressurlsed Deaerator">
-                    <img before
-                         class="checkImage"
-                         src="/assets/img/steam_generation/boiler-scheme/images/PressurisedDAImgCrop.png"
-                         alt="deaerator_type_1">
-                  </app-form-field>
-                </div>
-              </div>
-            </sga-panel>
-            <sga-panel id="boilerFeedwaterPanel" title="Boiler feedwater" background="#EDF2F4">
-              <div class="row" body>
-                <div class="col-md-4 border-r-md">
-                  <app-form-field type="yesNo" name="isFeedwaterFlowrateMeasured" label="Is feedwater flowrate measured?">
-                    <ng-container yes>
-                      <app-form-field [required]="true"
-                                      type="radioInput"
-                                      group="isFeedwaterFlowrateMeasured"
-                                      name="consumptionHr"
-                                      label="Consumption/hr"
-                                      unit="m3/h"></app-form-field>
-                      <app-form-field [required]="true"
-                                      type="radioInput"
-                                      group="isFeedwaterFlowrateMeasured"
-                                      name="consumptionHr"
-                                      label="Consumption/year"
-                                      unit="m3/y"></app-form-field>
+                                  group="isCondensateReturnKnown"></form-input>
+
+                      <form-input [formControlName]="fields.volumeOfCondensateReturn.formControlName"
+                                  [label]="fields.volumeOfCondensateReturn.label"
+                                  [unit-names]="fields.volumeOfCondensateReturn.unitNames"
+                                  [unit-types]="fields.volumeOfCondensateReturn.unitTypes"
+                                  [unit-translations]="fields.volumeOfCondensateReturn.translations"
+                                  [unit-controls]="fields.volumeOfCondensateReturn.controlNames"
+                                  [required]="isRequired('volumeOfCondensateReturn')"
+                                  [(filled)]="fields.volumeOfCondensateReturn.filled"
+                                  [groupControls]="['percentageOfCondensateReturn']"
+                                  unit="/y"
+                                  group="isCondensateReturnKnown"></form-input>
                     </ng-container>
-                  </app-form-field>
-                </div>
-                <div class="col-md-4 border-r-md">
-                  <app-form-field [required]="true"
-                                  name="temperatureOfFeedtank"
-                                  unit="°C"
-                                  label="temperature of feedtank"></app-form-field>
-                  <app-form-field [required]="true"
-                                  name="TDSOfFeedwaterInFeedtank"
-                                  unit="ppm"
-                                  label="TDS of feedwater in feedtank"></app-form-field>
-                  <app-form-field type="yesNo"
-                                  name="areChemicalsAddedDirectlyToTheFeedtank"
-                                  label="Are chemicals added directly to the feedtank?"></app-form-field>
-                </div>
-                <div class="col-md-4">
-                  <app-form-field type="yesNo" name="isDsiPresent" label="Is dsi present">
-                    <ng-container yes>
-                      <app-form-field [required]="true"
-                                      name="pressureOfSteamSupplyingDSI"
-                                      unit="barg"
-                                      label="Pressure of steam supplying DSI"></app-form-field>
-                    </ng-container>
-                  </app-form-field>
-                </div>
-              </div>
-            </sga-panel>
-            <sga-panel id="condensateReturnPanel" title="CONDENSATE RETURN" background="#EDF2F4">
-              <div class="row" body>
-                <div class="col-md-6 border-r-md">
-                  <app-form-field type="yesNo" name="isCondensateReturnKnown" label="is condensate return known?">
-                    <ng-container yes>
-                      <app-form-field type="radioInput"
-                                      [required]="true"
-                                      group="isCondensateReturnKnown"
-                                      name="percentageOfCondensateReturned"
-                                      unit="%"
-                                      label="Percentage of condensate returned"></app-form-field>
-                      <app-form-field type="radioInput"
-                                      [required]="true"
-                                      group="isCondensateReturnKnown"
-                                      name="volumeOfCondensateReturned"
-                                      unit="m3/y"
-                                      label="Volume of condensate returned"></app-form-field>
-                    </ng-container>
-                  </app-form-field>
+                  </form-toggle>
                 </div>
                 <div class="col-md-6">
-                  <app-form-field [required]="true"
-                                  name="temperatureOfCondensateReturned"
-                                  unit="°C"
-                                  label="temperature of CONDENSATE RETURNED"></app-form-field>
-                  <app-form-field [required]="true"
-                                  name="tdsOfCondensateReturned"
-                                  unit="ppm"
-                                  label="TDS of CONDENSATE RETURNED"></app-form-field>
+                  <form-input [formControlName]="fields.temperatureOfCondensateReturn.formControlName"
+                              [label]="fields.temperatureOfCondensateReturn.label"
+                              [unit-names]="fields.temperatureOfCondensateReturn.unitNames"
+                              [unit-types]="fields.temperatureOfCondensateReturn.unitTypes"
+                              [unit-translations]="fields.temperatureOfCondensateReturn.translations"
+                              [unit-controls]="fields.temperatureOfCondensateReturn.controlNames"
+                              [required]="isRequired('temperatureOfCondensateReturn')"
+                              [(filled)]="fields.temperatureOfCondensateReturn.filled"></form-input>
+
+                  <form-input [formControlName]="fields.tdsOfCondensateReturn.formControlName"
+                              [label]="fields.tdsOfCondensateReturn.label"
+                              [unit-names]="fields.tdsOfCondensateReturn.unitNames"
+                              [unit-types]="fields.tdsOfCondensateReturn.unitTypes"
+                              [unit-translations]="fields.tdsOfCondensateReturn.translations"
+                              [unit-controls]="fields.tdsOfCondensateReturn.controlNames"
+                              [required]="isRequired('tdsOfCondensateReturn')"
+                              [(filled)]="fields.tdsOfCondensateReturn.filled"></form-input>
                 </div>
               </div>
             </sga-panel>
@@ -409,8 +678,8 @@
 
       <div class="col-md-2"></div>
       <div class="col-md-8">
-        <app-boiler-scheme [feedWater]="deaeratorType === 'autmosphericDeaerator' ? 'main' : 'main_PRESSURE'"></app-boiler-scheme>
+        <app-boiler-scheme></app-boiler-scheme>
       </div>
     </div>
-  </div>
+  </form>
 </sga-panel>
