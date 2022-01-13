@@ -292,3 +292,237 @@ export enum FuelTypesEnum {
 export interface CustomUnitConvert extends UnitConvert {
   targetUnitKey: string;
 }
+
+export interface BenchmarkDataInterface {
+  "assessmentName": string,
+  "o2ScavengingChemicalCostPerYear": number,
+  "bdvCoolingWater": number,
+  "bdvCoolingWaterUnit": number,
+  "boilerEfficiency": number,
+  "boilerFeedWaterFlow": number,
+  "boilerFeedWaterFlowUnit": number,
+  "boilerHouseWaterCost": number,
+  "boilerHouseWaterCostUnit": 0,
+  "boilerHouseWaterFlowTotal": number,
+  "boilerHouseWaterFlowTotalUnit": number,
+  "condensateReturnedPercentage": number,
+  "condyCO2CostSaved": number,
+  "condyWaterAndChemicalCostSaved": number,
+  "totalCostSavedCondensateReturn": number,
+  "condyFuelCost": number,
+  "condyFuelAmount": number,
+  "condyFuelAmountUnit": number,
+  "costOfBoilerHouseEffluent": number,
+  "condyCostEffluent": number,
+  "costChemM3": number,
+  "chemCostTotalPerYear": number,
+  "costOfCO2PerkWh": number,
+  "costOfCO2PerTonne": number,
+  "costOfCO2PerTonneUnit": number,
+  "costOfCO2PerYear": number,
+  "costOfEffm3": number,
+  "costOfTdsEffluent": number,
+  "costOfFuelPerkWh": number,
+  "costOfFuelPerUnit": number,
+  "costOfFuelPerYear": number,
+  "costTdsCo2": number,
+  "costTdsFuel": number,
+  "costTdsWater": number,
+  "waterCostPerUnit": number,
+  "waterCostPerUnitUnit": number,
+  "energyInTdsBlowdown": number,
+  "energyInTdsBlowdownUnit": number,
+  "energyToGenerateUnitofSteam": number,
+  "energyToGenerateUnitofSteamUnit": number,
+  "feedTankPressureBarGauge": number,
+  "feedTankPressureBarGaugeUnit": number,
+  "flashVesselPressureTdsPaAbs": number,
+  "flashVesselPressureTdsPaAbsUnit": number,
+  "fuelCarbonContent": number,
+  "fuelConsumptionPerYear": number,
+  "fuelConsumptionPerYearUnit": number,
+  "fuelConsumptionUnitId": number,
+  "fuelCostPerYearIsKnown": boolean,
+  "fuelEnergyInFlash": number,
+  "fuelEnergyInFlashUnit": number,
+  "fuelEnergyInHtx": number,
+  "fuelEnergyInHtxUnit": number,
+  "fuelEnergyInTds": number,
+  "fuelEnergyInTdsUnit": number,
+  "fuelEnergyPerUnit": number,
+  "fuelEnergyPerUnitUnit": number,
+  "fuelId": string,
+  "fuelQtyPerYearIsKnown": boolean,
+  "fuelUnitId": number,
+  "fuelConsumptionPerYearM3": number,
+  "fuelConsumptionPerYearM3Unit": number,
+  "hfboiler": number,
+  "hgDSI": number,
+  "makeUpWaterDegC": number,
+  "makeUpWaterDegCUnit": number,
+  "makeUpWaterFlow": number,
+  "makeUpWaterFlowUnit": number,
+  "massFlowFlashSteam": number,
+  "massFlowFlashSteamUnit": number,
+  "mBoiler": number,
+  "mBoilerUnit": number,
+  "mBoilerKgPerHour": number,
+  "mBoilerKgPerHourUnit": number,
+  "mCondy": number,
+  "mCondyUnit": number,
+  "mCondyCO2": number,
+  "mCondyCO2Unit": number,
+  "mCondyWater": number,
+  "mCondyWaterUnit": number,
+  "mFlashTDS": number,
+  "mFlashTDSUnit": number,
+  "mTdsNet": number,
+  "mTdsNetUnit": number,
+  "mTdsWater": number,
+  "mTdsWaterUnit": number,
+  "mdsi": number,
+  "mdsiUnit": number,
+  "mtds": number,
+  "mtdsUnit": number,
+  "percentTdsBlowdown": number,
+  "qFlashTds": number,
+  "qFlashTdsUnit": number,
+  "qfuel": number,
+  "qfuelUnit": number,
+  "qHtxTds": number,
+  "qHtxTdsUnit": number,
+  "qkWhtonne": number,
+  "qkWhtonneUnit": number,
+  "radiationLosses": number,
+  "radiationLossesUnit": number,
+  "costOfRadiationLosses": number,
+  "costOfRadiationLossesUnit": number,
+  "steamGeneratedkgPerHour": number,
+  "steamGeneratedkgPerHourUnit": number,
+  "tCondy": number,
+  "tCondyUnit": number,
+  "tfwDegC": number,
+  "tfwDegCUnit": number,
+  "thPerY": number,
+  "thPerYUnit": number,
+  "tonnesOfCO2": number,
+  "tonnesOfCO2Unit": number,
+  "tonnesOfCO2fromTds": number,
+  "tonnesOfCO2fromTdsUnit": number,
+  "totalCostOfSteamPerkWhOfFuel": number,
+  "totalCostOfSteamPerTonne": number,
+  "totalCostOfSteamPerTonneUnit": number,
+  "totalCostOfSteamPerYear": number,
+  "totCostTdsBlowdown": number,
+  "volTdsAndBdv": number,
+  "volTdsAndBdvUnit": number,
+  "waterAndChemicalsCostTotalPerYear": number,
+  "waterTreatmentEffluent": number,
+  "waterTreatmentEffluentUnit": number,
+  "waterTreatmentCostEffluent": number,
+  "boilerHouseTotalVolumeOfWaterEffluent": number,
+  "boilerHouseTotalVolumeOfWaterEffluentUnit": number,
+  "proposalName": string,
+  "selected": boolean,
+  "available": boolean,
+  "proposalType": string,
+  "averageFeedWaterTDS": number,
+  "averageFeedWaterTDSUnit": number,
+  "averageBoilerTDS": number,
+  "averageBoilerTDSUnit": number,
+  "propFuelEnergySavings": number,
+  "propFuelQuantitySavings": number,
+  "propFuelValueSavings": number,
+  "propCo2EmmissionsReducedQuantitySavings": number,
+  "propCo2EmmissionsReducedValueSavings": number,
+  "propWaterAndChemicalQuantitySavings": number,
+  "propWaterAndChemicalValueSavings": number,
+  "propEffluentQuantitySavings": number,
+  "propEffluentValueSavings": number,
+  "propTotalSavingsForProposal": number
+}
+
+export interface SgFormStructureInterface {
+  utility_parameters: {
+    status: boolean,
+    panels: {
+      fuel: {
+        status: boolean,
+        fields: string[]
+      },
+      co2_emission: {
+        status: boolean,
+        fields: string[]
+      },
+      water: {
+        status: boolean,
+        fields: string[]
+      },
+      water_treatment_chemicals: {
+        status: boolean,
+        fields: string[]
+      },
+      water_effluent: {
+        status: boolean,
+        fields: string[]
+      }
+    },
+    fields: string[]
+  },
+  boiler_house_parameters: {
+    status: boolean,
+    panels: {
+      boiler: {
+        status: boolean,
+        panels: {
+          boiler_parameters: {
+            status: boolean,
+            fields: string[]
+          }
+        }
+      },
+      tds_blowdown: {
+        status: boolean,
+        panels: {
+          blowdown_equipment: {
+            status: boolean,
+            fields: string[]
+          },
+          tds_blowdown_parameters: {
+            status: boolean,
+            fields: string[]
+          }
+        }
+      },
+      water_treatment: {
+        status: boolean,
+        panels: {
+          make_up_water: {
+            status: boolean,
+            fields: string[]
+          },
+          water_treatment_parameters: {
+            status: boolean,
+            fields: string[]
+          }
+        }
+      },
+      feedwater_and_condensate: {
+        status: boolean,
+        panels: {
+          deaerator_type: {
+            status: boolean,
+          },
+          boiler_feedwater: {
+            status: boolean,
+            fields: string[]
+          },
+          condensate_return: {
+            status: boolean,
+            fields: string[]
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,17 +1,17 @@
-import { Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output } from "@angular/core";
+import { Component, ElementRef, EventEmitter, Input, OnDestroy, Output } from "@angular/core";
 import { AbstractControl, FormGroup, Validators } from "@angular/forms";
 import { Subject } from "rxjs";
 import { debounceTime, distinctUntilChanged, filter, takeUntil } from "rxjs/operators";
 import {
-	BoilerHouseBoilerTabFields, BoilerHouseFeedwaterAndCondensateTabFields,
-	BoilerHouseTdsBlowdownTabFields,
-	BoilerHouseWaterTreatmentTabFields,
-	FormFieldTypesInterface,
-	SgaBoilerEfficiencyInterface, SgaFuelTypes,
-	SteamCalorificRequestInterface,
-	SteamCarbonEmissionInterface,
-	SteamGeneratorInputsInterface,
-	UtilityParametersFields
+  BoilerHouseBoilerTabFields, BoilerHouseFeedwaterAndCondensateTabFields,
+  BoilerHouseTdsBlowdownTabFields,
+  BoilerHouseWaterTreatmentTabFields,
+  FormFieldTypesInterface,
+  SgaBoilerEfficiencyInterface, SgaFuelTypes, SgFormStructureInterface,
+  SteamCalorificRequestInterface,
+  SteamCarbonEmissionInterface,
+  SteamGeneratorInputsInterface,
+  UtilityParametersFields
 } from "../steam-generation-form.interface";
 import { SteamGenerationAssessmentService } from "../steam-generation-assessment.service";
 import { EnumerationDefinition } from "sizing-shared-lib";
@@ -25,6 +25,7 @@ import { EnumerationDefinition } from "sizing-shared-lib";
 export class SgaInputParametersComponent implements OnDestroy {
   @Input() formGroup: FormGroup;
   @Input() moduleGroupId: number;
+  @Input() fieldsTree: SgFormStructureInterface;
   @Output() changeFuelType: EventEmitter<SteamCalorificRequestInterface> = new EventEmitter<SteamCalorificRequestInterface>();
   @Output() calculateEfficiency: EventEmitter<SgaBoilerEfficiencyInterface> = new EventEmitter<SgaBoilerEfficiencyInterface>();
   @Output() changeWaterTreatment: EventEmitter<any> = new EventEmitter<any>();
@@ -34,7 +35,6 @@ export class SgaInputParametersComponent implements OnDestroy {
   public carbonEmissionUpdate$ = new Subject<string>();
   public pressureTemperatureUpdate$ = new Subject<string>();
   public formGroupKey = 'benchmarkInputs'; // Form builder child formGroup key
-
   public fuelTypeName: string;
   private _ngUnsubscribe = new Subject<void>();
 	private _boilerHouseParametersTabs = {

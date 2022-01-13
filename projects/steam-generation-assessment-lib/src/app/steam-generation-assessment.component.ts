@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit } from "@angular/core";
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from "@angular/core";
 import {
   AdminService,
   BaseSizingModule,
@@ -17,10 +17,11 @@ import { Subject } from "rxjs";
 import { takeUntil, tap } from "rxjs/operators";
 import {
   FormFieldTypesInterface,
-  SgaBoilerEfficiencyInterface, SgaFuelTypes, SgaSizingModuleFormInterface,
+  SgaBoilerEfficiencyInterface, SgaFuelTypes, SgaSizingModuleFormInterface, SgFormStructureInterface,
   SteamCalorificRequestInterface, SteamCarbonEmissionInterface,
   SteamGeneratorInputsInterface
 } from "./steam-generation-form.interface";
+import { TabsetComponent } from "ngx-bootstrap";
 
 @Component({
   selector: 'app-steam-generation-assessment',
@@ -36,7 +37,118 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   public readonly requestLoading$ = this.sgaService.getLoading();
   public productName = 'Steam Generation Assessment';
   public sizingModuleForm: FormGroup = this.sgaService.getSizingFormGroup();
+  public benchmarkData: any;
   private ngUnsubscribe = new Subject<void>();
+  public fieldsTree: SgFormStructureInterface = {
+    utility_parameters: {
+      status: true,
+      panels: {
+        fuel: {
+          status: true,
+          fields: ['fuelEnergyPerUnit', 'fuelCarbonContent', 'costOfFuelPerUnit', 'costOfFuelPerYear', 'fuelConsumptionPerYear']
+        },
+        co2_emission: {
+          status: true,
+          fields: ['carbonTaxLevyCostPerUnit', 'costOfCo2PerUnitMass']
+        },
+        water: {
+          status: true,
+          fields: ['costOfWaterPerUnit', 'costOfWaterPerYear', 'waterConsumptionPerHour', 'waterConsumptionPerYear']
+        },
+        water_treatment_chemicals: {
+          status: true,
+          fields: ['totalChemicalCostPerYear', 'o2ScavengingChemicalsCostSavings']
+        },
+        water_effluent: {
+          status: true,
+          fields: ['costOfEffluentPerUnit']
+        }
+      },
+      fields: ['hoursOfOperation']
+    },
+    boiler_house_parameters: {
+      status: false,
+      panels: {
+        boiler: {
+          status: true,
+          panels: {
+            boiler_parameters: {
+              status: true,
+              fields: [
+                'boilerSteamGeneratedPerHour',
+                'boilerSteamGeneratedPerYear',
+                'boilerSteamPressure',
+                'boilerSteamTemperature',
+                'boilerEfficiency'
+              ]
+            }
+          }
+        },
+        tds_blowdown: {
+          status: false,
+          panels: {
+            blowdown_equipment: {
+              status: true,
+              fields: ['waterTemperatureLeavingHeatExchanger']
+            },
+            tds_blowdown_parameters: {
+              status: true,
+              fields: ['tdsOfFeedwaterInFeedtank', 'boilerAverageTds', 'boilerMaxTds']
+            }
+          }
+        },
+        water_treatment: {
+          status: false,
+          panels: {
+            make_up_water: {
+              status: true,
+              fields: [
+                'temperatureOfMakeupWater',
+                'makeupWaterAmountPerHour',
+                'makeupWaterAmountPerYear'
+              ]
+            },
+            water_treatment_parameters: {
+              status: true,
+              fields: [
+                'percentageWaterRejection',
+                'tdsOfMakeupWater'
+              ]
+            }
+          }
+        },
+        feedwater_and_condensate: {
+          status: false,
+          panels: {
+            deaerator_type: {
+              status: true,
+            },
+            boiler_feedwater: {
+              status: true,
+              fields: [
+                'boilerFeedwaterConsumptionPerHour',
+                'boilerFeedwaterConsumptionPerYear',
+                'temperatureOfFeedtank',
+                'pressureOfSteamSupplyingDsi',
+                'pressureOfFeedtank'
+              ]
+            },
+            condensate_return: {
+              status: true,
+              fields: [
+                'percentageOfCondensateReturn',
+                'volumeOfCondensateReturn',
+                'temperatureOfCondensateReturn',
+                'tdsOfCondensateReturn'
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+
+  @ViewChild('tabsRef', {static: true}) tabsRef: TabsetComponent;
 
   constructor(
     private sgaService: SteamGenerationAssessmentService,
@@ -51,7 +163,92 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     super();
   }
 
+  submitTest() {
+    this.sizingModuleForm.setValue({
+      "selectedUnits": {
+        "energyUnitSelected": 108,
+        "smallWeightUnitSelected": 26,
+        "emissionUnitSelected": 27,
+        "volumeUnitSelected": 16,
+        "smallVolumetricFlowUnitSelected": 76,
+        "massFlowUnitSelected": 229,
+        "smallMassFlowUnitSelected": 84,
+        "pressureUnitSelected": 50,
+        "temperatureUnitSelected": 146,
+        "tdsUnitSelected": 228,
+        "fuelUnitSelected": 108
+      },
+      "benchmarkInputs": {
+        "hoursOfOperation": 8736,
+        "isSteamFlowMeasured": true,
+        "isAutoTdsControlPResent": true,
+        "boilerSteamGeneratedPerYear": 63800,
+        "boilerSteamGeneratedPerHour": null,
+        "inputFuelId": "8c24c468-e50a-45ac-bc4c-8ebd60470c99",
+        "costOfFuelPerUnit": 100,
+        "fuelQtyPerYearIsKnown": true,
+        "costOfFuelPerYear": 1340,
+        "fuelConsumptionPerYear": null,
+        "fuelEnergyPerUnit": 1,
+        "fuelCarbonContent": 0.185,
+        "costOfWaterPerUnit": 0.95,
+        "costOfEffluentPerUnit": 1.1,
+        "boilerHouseWaterQtyPerYearIsKnown": false,
+        "costOfWaterPerYear": null,
+        "waterConsumptionPerHour": null,
+        "waterConsumptionPerYear": null,
+        "boilerWaterTreatmentChemicalCostsIsKnown": true,
+        "totalChemicalCostPerYear": 10500,
+        "o2ScavengingChemicalsCostSavings": 10000,
+        "isCo2OrCarbonEmissionsTaxed": true,
+        "carbonTaxLevyCostPerUnit": null,
+        "costOfCo2PerUnitMass": 8,
+        "isBlowdownVesselPresent": true,
+        "isCoolingWaterUsed": true,
+        "isSuperheatedSteam": false,
+        "boilerEfficiency": 80,
+        "isFeedWaterMeasured": false,
+        "boilerSteamPressure": 10,
+        "boilerSteamTemperature": 184.1153,
+        "isEconomizerPresent": false,
+        "boilerAverageTds": 2800,
+        "boilerMaxTds": 3500,
+        "boilerFeedwaterConsumptionPerHour": null,
+        "boilerFeedwaterConsumptionPerYear": null,
+        "isFlashVesselPresent": true,
+        "isHeatExchangerPresent": true,
+        "waterTemperatureLeavingHeatExchanger": 35,
+        "waterTreatmentMethod": "aa5642a0-88a5-43e1-ba9d-367db3bb9df5",
+        "percentageWaterRejection": 4,
+        "tdsOfMakeupWater": 155,
+        "isMakeUpWaterMonitored": true,
+        "temperatureOfMakeupWater": 10,
+        "makeupWaterAmountPerHour": null,
+        "makeupWaterAmountPerYear": 123,
+        "atmosphericDeaerator": true,
+        "pressurisedDeaerator": false,
+        "temperatureOfFeedtank": 80,
+        "tdsOfFeedwaterInFeedtank": 75,
+        "tdsOfCondensateReturn": 10,
+        "temperatureOfCondensateReturn": 90,
+        "areChemicalsAddedDirectlyToFeedtank": false,
+        "pressureOfFeedtank": null,
+        "pressureOfSteamSupplyingDsi": null,
+        "isCondensateReturnKnown": true,
+        "percentageOfCondensateReturn": null,
+        "volumeOfCondensateReturn": 100,
+        "isDsiPresent": false
+      }
+    });
+    this.onCalculateSizing(this.sizingModuleForm);
+  }
+
   ngOnInit() {
+    this.sizingModuleForm.valueChanges.pipe(takeUntil(this.ngUnsubscribe)).subscribe(() => {
+      if (this.benchmarkData) {
+        this.benchmarkData = null;
+      }
+    });
   }
 
   ngAfterViewInit() {
@@ -73,8 +270,14 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     this.sgaService
       .calculateResults(formGroup.getRawValue())
       .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe((response) => {
-        console.log(response, '-----response');
+      .subscribe((res) => {
+        if (res && res.benchmark) {
+          this.benchmarkData = res.benchmark;
+          setTimeout(() => this.setActiveTab(1));
+        } else {
+          // focus on first errored field
+          this.focusOnField();
+        }
       });
     return true;
   }
@@ -147,6 +350,12 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   repackageSizing(): any {
     console.log('-----repackageSizing-----')
     return true;
+  }
+
+  public setActiveTab(tabIndex: number): void {
+    if (this.tabsRef && this.tabsRef.tabs && this.tabsRef.tabs[tabIndex] && !this.tabsRef.tabs[tabIndex].active) {
+      this.tabsRef.tabs[tabIndex].active = true;
+    }
   }
 
   public changeFuelType(fuelTypeData: SteamCalorificRequestInterface): void {
@@ -401,22 +610,6 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     });
   }
 
-  // TODO: Function for focus on first invalid field (need to create toggle tabs to first invalid field)
-  private _focusFirstErrorField(formGroup: FormGroup): void {
-    // check all fields
-    for (const key of Object.keys(formGroup.controls)) {
-      // get first invalid control
-      if (formGroup.controls[key].invalid) {
-        // get field by formcontrolname === name
-        const field = this.elRef.nativeElement.querySelector(`[formcontrolname="${key}"] input[ng-reflect-model]`);
-        // Focus on field
-        field && field.focus();
-        // loop stop
-        break;
-      }
-    }
-  }
-
   private _loadJob(): void {
     this.activatedRoute.params
       .pipe(takeUntil(this.ngUnsubscribe))
@@ -425,5 +618,10 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
         // TODO: Create projects/jobs functionality
         console.log(`projectId=${projectId}, jobId=${jobId}`);
       });
+  }
+
+  private focusOnField() {
+    const fg = this.sizingModuleForm.get('benchmarkInputs') as FormGroup;
+    SteamGenerationAssessmentService.focusFirstErrorField(fg, this.elRef, this.fieldsTree);
   }
 }

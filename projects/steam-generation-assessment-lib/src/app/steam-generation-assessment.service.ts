@@ -1,13 +1,15 @@
-import { Injectable } from "@angular/core";
+import { ElementRef, Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { BehaviorSubject, Observable } from "rxjs";
 import {
-  FormFieldTypesInterface, FuelTypesEnum, SelectedUnitsList,
+  FormFieldTypesInterface,
+  FuelTypesEnum,
+  SelectedUnitsList,
   SgaFeedTankTemperatureRequestInterface,
   SgaFuelTypes,
   SgaHttpValidationResponseInterface,
   SgaSaturatedTemperatureBodyInterface,
-  SgaSizingModuleFormInterface,
+  SgaSizingModuleFormInterface, SgFormStructureInterface,
   SteamCalorificRequestInterface,
   SteamCarbonEmissionInterface,
   SteamGeneratorInputsInterface,
@@ -24,7 +26,7 @@ import {
 import { SizingUnitPreference } from "../../../sizing-shared-lib/src/lib/shared/preference/sizing-unit-preference.model";
 import { FormArray, FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { SgaValidator } from "./steam-generation-assessment.validator";
-import { map, tap, pairwise, startWith } from "rxjs/operators";
+import { map, pairwise, startWith, tap } from "rxjs/operators";
 
 @Injectable()
 export class SteamGenerationAssessmentService {
@@ -412,7 +414,7 @@ export class SteamGenerationAssessmentService {
       atmosphericDeaerator: [true, SgaValidator.atmosphericDeaerator], // AUTMOSPHERIC_DEAERATOR (default)
       pressurisedDeaerator: [false, SgaValidator.pressurisedDeaerator], // PRESSURLSED_DEAERATOR
       temperatureOfFeedtank: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'temperatureOfFeedtank')], // TEMPERATURE_OF_FEEDTANK
-      tdsOfFeedwaterInFeedtank: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'tdsOfFeedwaterInFeedtank')], // TDS_OF_FEEDWATER_IN_FEEDTANK
+      tdsOfFeedwaterInFeedtank: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'tdsOfFeedwaterInFeedtank', true)], // TDS_OF_FEEDWATER_IN_FEEDTANK
       tdsOfCondensateReturn: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'tdsOfCondensateReturn')], // TDS_OF_CONDENSATE_RETURN
       temperatureOfCondensateReturn: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'temperatureOfCondensateReturn')], // TEMPERATURE_OF_CONDENSATE_RETURN
       areChemicalsAddedDirectlyToFeedtank: [false], // ARE_CHEMICALS_ADDED_DIRECTLY_TO_FEEDTANK
@@ -804,5 +806,72 @@ export class SteamGenerationAssessmentService {
       .find(({ enumerationName, opCoOverride }) => enumerationName === 'FuelTypeList_BoilerHouseInput' && !opCoOverride);
     return enumerationDefinitions
       .sort(({sequence}, b) => sequence > b.sequence ? 1 : sequence < b.sequence ? -1 : 0);
+  }
+
+  private static _checkIsHaveField(obj, key: string): boolean {
+    if (obj && typeof obj === 'object') {
+      if (obj.fields && obj.fields.length && obj.fields.indexOf(key) !== -1) {
+        return true
+      } else {
+        let isHasKey = false;
+
+        for (let objKey in obj) {
+          if (this._checkIsHaveField(obj[objKey], key)) {
+            isHasKey = true;
+            break;
+          }
+        }
+
+        return isHasKey;
+      }
+    }
+
+    return false;
+  }
+
+  private static _expandFormPanels(fieldsTree: any, fieldName: string) {
+    if (fieldsTree && typeof fieldsTree === 'object') {
+      for (let key in fieldsTree) {
+        const item = fieldsTree[key];
+        const hasField = this._checkIsHaveField(item, fieldName);
+
+        // Close all panels without first errored
+        if (item.hasOwnProperty('status') && item.status) {
+          item.status = false;
+        }
+
+        // If field has error open panel
+        if (hasField) {
+          if (item.hasOwnProperty('status') && item.status === false) {
+            setTimeout(() => item.status = true);
+          }
+          this._expandFormPanels(item, fieldName);
+
+          break;
+        }
+      }
+    }
+  }
+
+  static focusFirstErrorField(formGroup: FormGroup, elementRef: ElementRef, settingObj: SgFormStructureInterface): any {
+    // Set all field touched
+    formGroup.markAllAsTouched();
+    // check all fields
+    for (const key of Object.keys(formGroup.controls)) {
+      // get first invalid control
+      if (formGroup.controls[key].status === 'INVALID') {
+        // get field by data-form-name === name
+        const field = elementRef.nativeElement.querySelector(`[data-form-name="${key}"]`);
+
+        if (field && field.focus && typeof field.focus === 'function') {
+          // Open panel wit with invalid field
+          this._expandFormPanels(settingObj, key);
+          // Focus on field
+          setTimeout(() => field.focus(), 200);
+          // loop stop
+          return { field, key, control: formGroup.controls[key] }
+        }
+      }
+    }
   }
 }
