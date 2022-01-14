@@ -6,8 +6,6 @@ import { SgaHttpValidationResponseInterface, SteamGeneratorInputsInterface } fro
 import { HttpErrorResponse } from "@angular/common/http";
 
 export class SgaValidator {
-  static beforeValue = {};
-
   static fuelQtyPerYearIsKnown(control: AbstractControl): ValidationErrors {
     const fg = control && control.parent;
 
@@ -262,10 +260,6 @@ export class SgaValidator {
    * */
   static validateAsyncFn(service: SteamGenerationAssessmentService, name?: keyof SteamGeneratorInputsInterface, isNullable?: boolean): AsyncValidatorFn {
     return function (control): Observable<ValidationErrors> {
-      if (control && !SgaValidator.beforeValue[name] && !control.dirty && control.untouched) {
-        SgaValidator.beforeValue[name] = control && control.value;
-      }
-
       if (!name) {
         name = SgaValidator._getControlName(control);
       }
@@ -277,17 +271,14 @@ export class SgaValidator {
         !control.dirty && control.untouched
       ) return of(null);
 
-      return timer(500).pipe(
+      return timer(600).pipe(
         switchMap(() => {
           const { root, value } = control;
           const validator = control && control.validator && control.validator({} as AbstractControl);
           const isFilled = service.checkSgaFieldIsFilled(name);
-          const isTheSameValue = SgaValidator._checkSameValues(value, SgaValidator.beforeValue[name]);
 
-          if (isFilled || !root || !root.value || isTheSameValue || control.disabled) return of(null);
+          if (isFilled || !root || !root.value || control.disabled) return of(null);
           if (!value && !isNullable && validator && validator.required) return of({ required: true });
-
-          SgaValidator.beforeValue[name] = value;
 
           return service.validateSgaBenchmarkInput(name as keyof SteamGeneratorInputsInterface, root.value).pipe(
             map((errors) => errors && SgaValidator._parseErrors(errors)),
@@ -347,11 +338,6 @@ export class SgaValidator {
     }
 
     return of({ message: error && error.errorMessage || 'ERROR'});
-  }
-
-  private static _checkSameValues(value: any, prevValue: any): boolean {
-    if (!prevValue) return false;
-    return (value === prevValue);
   }
 
   private static toggleFields(fields: AbstractControl | AbstractControl[], isEnable: boolean = false, setValue?: any): void {
