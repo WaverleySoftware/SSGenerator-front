@@ -6,7 +6,7 @@ import {
   forwardRef, Host,
   Input, Optional,
   Output, SkipSelf,
-  ViewChild
+  ViewChild,
 } from "@angular/core";
 import { AbstractControl, ControlContainer, ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
 
