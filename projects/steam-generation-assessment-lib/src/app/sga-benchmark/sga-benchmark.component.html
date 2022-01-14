@@ -90,7 +90,7 @@
               <ul class="sgaBenchmark_block__list">
                 <li>
                   <span>{{'COST_OF_CHEMICALS_PER_UNIT' | translate}}</span>
-                  <span>{{data.costChemM3 | number}} {{currency}}/m³</span>
+                  <span>{{data.costChemM3 | number}} {{currency}}/{{units[data.waterCostPerUnitUnit]}}</span>
                 </li>
                 <li>
                   <span>{{'CHEMICALS_PER_YR' | translate}}</span>
@@ -161,7 +161,7 @@
             <ul class="sgaBenchmark_block__list">
               <li>
                 <span>{{'COST_FSLASH_UNIT' | translate}}</span>
-                <span>{{data.costOfEffm3 | number}} {{currency}}/m³</span>
+                <span>{{data.costOfEffm3 | number}} {{currency}}/{{units[data.boilerHouseTotalVolumeOfWaterEffluentUnit]}}</span>
               </li>
               <li>
                 <span>{{'QUANTITY' | translate}}</span>

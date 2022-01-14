@@ -6,7 +6,7 @@ import {
   forwardRef, Host,
   Input, Optional,
   Output, SkipSelf,
-  ViewChild
+  ViewChild,
 } from "@angular/core";
 import { AbstractControl, ControlContainer, ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
 
@@ -52,6 +52,7 @@ export class FormInputComponent implements ControlValueAccessor, AfterContentIni
   touched: boolean;
   focus: boolean;
   public control: AbstractControl;
+  public modelVal: any;
 
   constructor(@Optional() @Host() @SkipSelf() private controlContainer: ControlContainer) {}
 
@@ -80,14 +81,19 @@ export class FormInputComponent implements ControlValueAccessor, AfterContentIni
     if (outsideValue && typeof outsideValue === "object") {
       if ('disabled' in outsideValue) this.disabled = outsideValue.disabled;
       if ('required' in outsideValue) this.required = outsideValue.required;
-      if ('value' in outsideValue) this.value = outsideValue.value;
+      if ('value' in outsideValue) {
+        this.value = outsideValue.value;
+        this.modelVal = outsideValue.value;
+      }
     } else {
       this.value = outsideValue;
+      this.modelVal = outsideValue;
     }
   }
 
   updateValue(insideValue: any) {
     this.error = null;
+    this.modelVal = insideValue;
     this.value = insideValue === "" ? null : Number.isNaN(Number(insideValue)) ? insideValue : (insideValue && +insideValue);
     this.inputChange.emit({ name: this.formControlName, value: this.value});
     this.onChange(this.value);
