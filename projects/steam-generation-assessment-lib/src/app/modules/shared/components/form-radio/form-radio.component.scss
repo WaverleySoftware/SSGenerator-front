@@ -67,7 +67,7 @@
     line-height: 105%;
     text-transform: uppercase;
     color: var(--color-blue);
-    word-break: break-all;
+    word-break: break-word;
     &:hover {
       cursor: pointer;
     }

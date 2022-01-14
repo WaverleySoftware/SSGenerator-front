@@ -40,11 +40,12 @@
            (focusin)="focus = true"
            (focusout)="touched = true; focus = false;"
            (blur)="blurHandle()"
-           [ngModel]="value"
+           [ngModel]="modelVal"
            (ngModelChange)="updateValue($event)"
            [readonly]="readonly"
            [tabIndex]="(readonly || disabled) && '-1'"
            [attr.data-form-name]="!readonly && !disabled && formControlName"
+           inputLimitTo="20"
            class="formField-input">
 
     <!--  UNIT -->
