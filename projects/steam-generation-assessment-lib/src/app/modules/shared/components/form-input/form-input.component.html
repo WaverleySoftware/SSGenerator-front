@@ -40,7 +40,7 @@
            (focusin)="focus = true"
            (focusout)="touched = true; focus = false;"
            (blur)="blurHandle()"
-           [ngModel]="value"
+           [ngModel]="modelVal"
            (ngModelChange)="updateValue($event)"
            [readonly]="readonly"
            [tabIndex]="(readonly || disabled) && '-1'"
