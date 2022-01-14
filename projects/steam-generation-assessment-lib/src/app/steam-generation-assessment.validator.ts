@@ -305,7 +305,8 @@ export class SgaValidator {
 
     for (let error of errors) {
       if (error.propertyName && error.errorMessage) {
-        const formControlName = error.propertyName.charAt(0).toLowerCase() + error.propertyName.slice(1);
+        const fieldName = error.propertyName.split('.')[1];
+        const formControlName = fieldName.charAt(0).toLowerCase()+fieldName.slice(1);
         const control: AbstractControl = formGroup.get(formControlName);
 
         control && control.setErrors &&
