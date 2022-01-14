@@ -680,11 +680,11 @@ export class SteamGenerationAssessmentService {
       let prevValue = this._sizingFormGroup.get(`selectedUnits.${key}`) && this._sizingFormGroup.get(`selectedUnits.${key}`).value;
       let preferenceKey = selectedUnitsByPreferences[key];
 
-      if (selectedUnitsByPreferences[key] === 'FUEL_TYPE') {
+      if (selectedUnitsByPreferences[key] === 'FUEL_TYPE' && this.translationService.displayGroup) {
         const item = SteamGenerationAssessmentService._getFuelTypesList(this.translationService.displayGroup)
           .find(({ id }) => id === this._sizingFormGroup.get('benchmarkInputs.inputFuelId').value);
         const { preference } = this.preferenceService.sizingUnitPreferences
-          .find(({ unitType }) => unitType === FuelTypesEnum[item.value.charAt(0)]);
+          .find(({ unitType }) => item && item.value && unitType === FuelTypesEnum[item.value.charAt(0)]);
 
         preferenceKey = preference.name;
         unit = parseInt(preference.value);
