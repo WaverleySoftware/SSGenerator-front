@@ -582,6 +582,46 @@ export class SteamGenerationAssessmentService {
     if (!data || !data.length) return result;
 
     const isFuelChanged = data.find(({unitKey}) => unitKey == 'fuelUnitSelected');
+    const formattedFields = Object.values(this._sgaFormFields).reduce((obj, item) => ({
+      ...obj,
+      ...item.unitNames && item.unitNames.reduce((names, name) => ({
+        [name]: [...obj[name] || [], item.formControlName]
+      }), {})
+    }), {});
+
+    for (let {prev, next, preferenceKey} of data) {
+      if (formattedFields[preferenceKey] && formattedFields[preferenceKey].length) {
+        for (let key of formattedFields[preferenceKey]) {
+          if (
+            this._sgaFormFields[key].filled &&
+            this._sgaFormFields[key].unitNames &&
+            this._sgaFormFields[key].unitNames.includes(preferenceKey) &&
+            (!isFuelChanged || (key !== 'fuelEnergyPerUnit' && key !== 'fuelCarbonContent'))
+          ) {
+            const control = this._sizingFormGroup.get(`benchmarkInputs.${key}`);
+
+            if (control && control.value) {
+              const isExist = result[0].find(({propertyName}) => key === propertyName);
+
+              result[isExist ? 1 : 0].push({
+                initialUnitId: prev,
+                targetUnitId: next,
+                initialValue: control && control.value,
+                propertyName: key
+              });
+            }
+          }
+        }
+      }
+    }
+
+    return result;
+
+    /*let result: [UnitConvert[], UnitConvert[]] = [[],[]];
+
+    if (!data || !data.length) return result;
+
+    const isFuelChanged = data.find(({unitKey}) => unitKey == 'fuelUnitSelected');
 
     for (let {prev, next, preferenceKey} of data) {
       const fields = Object.keys(this._sgaFormFields)
@@ -594,6 +634,7 @@ export class SteamGenerationAssessmentService {
 
       if (fields && fields.length) {
         for (let inputControlName of fields) {
+          console.log('-----LOOP-----')
           const control = this._sizingFormGroup.get(`benchmarkInputs.${inputControlName}`);
 
           if (control && control.value) {
@@ -610,7 +651,7 @@ export class SteamGenerationAssessmentService {
       }
     }
 
-    return result;
+    return result;*/
   }
 
   /**
@@ -669,11 +710,14 @@ export class SteamGenerationAssessmentService {
     const sizingPreferences = this.preferenceService.sizingUnitPreferences;
     const changedSelectedUnits: {unitKey: any; preferenceKey: any; next: number; prev: number;}[] = [];
 
+    console.log(sizingPreferences, '-----sizingPreferences');
     if (!sizingPreferences || !sizingPreferences.length) return null;
 
     const selectedUnitsByPreferences = Object.assign(SelectedUnitsList) as {[p: string]: string};
 
     const selectedUnits = this.getSizingPreferenceValues(selectedUnitsByPreferences);
+
+    console.log({selectedUnits, selectedUnitsByPreferences}, '----selectedUnits')
 
     for (let key in selectedUnitsByPreferences) {
       let unit = selectedUnits[key];
@@ -710,6 +754,8 @@ export class SteamGenerationAssessmentService {
         }
       }
     }
+
+    console.log(changedSelectedUnits, '----changedSelectedUnits');
 
     return changedSelectedUnits;
   }
