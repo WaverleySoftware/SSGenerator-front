@@ -15,6 +15,7 @@ import { FormToggleComponent } from './components/form-toggle/form-toggle.compon
 import { FormRadioComponent } from './components/form-radio/form-radio.component';
 import { SetUnitsDirective } from './directives/set-units.directive';
 import { InputLimitToDirective } from "./directives/limit-length.directive";
+import { FormModalComponent } from './components/form-modal/form-modal.component';
 
 
 @NgModule({
@@ -29,6 +30,7 @@ import { InputLimitToDirective } from "./directives/limit-length.directive";
     FormRadioComponent,
     SetUnitsDirective,
     InputLimitToDirective,
+    FormModalComponent,
   ],
   imports: [
     CommonModule,
@@ -48,7 +50,8 @@ import { InputLimitToDirective } from "./directives/limit-length.directive";
 		FormListComponent,
 		FormToggleComponent,
 		FormRadioComponent,
-		SetUnitsDirective
+		SetUnitsDirective,
+		FormModalComponent
 	],
 })
 export class SharedModule { }
