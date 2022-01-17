@@ -616,42 +616,6 @@ export class SteamGenerationAssessmentService {
     }
 
     return result;
-
-    /*let result: [UnitConvert[], UnitConvert[]] = [[],[]];
-
-    if (!data || !data.length) return result;
-
-    const isFuelChanged = data.find(({unitKey}) => unitKey == 'fuelUnitSelected');
-
-    for (let {prev, next, preferenceKey} of data) {
-      const fields = Object.keys(this._sgaFormFields)
-        .filter(v =>
-          this._sgaFormFields[v].filled &&
-          this._sgaFormFields[v].unitNames &&
-          this._sgaFormFields[v].unitNames.includes(preferenceKey) &&
-          (!isFuelChanged || (v !== 'fuelEnergyPerUnit' && v !== 'fuelCarbonContent'))
-        );
-
-      if (fields && fields.length) {
-        for (let inputControlName of fields) {
-          console.log('-----LOOP-----')
-          const control = this._sizingFormGroup.get(`benchmarkInputs.${inputControlName}`);
-
-          if (control && control.value) {
-            const isExist = result[0].find(({propertyName}) => inputControlName === propertyName);
-
-            result[isExist ? 1 : 0].push({
-              initialUnitId: prev,
-              targetUnitId: next,
-              initialValue: control && control.value,
-              propertyName: inputControlName
-            });
-          }
-        }
-      }
-    }
-
-    return result;*/
   }
 
   /**
@@ -710,14 +674,11 @@ export class SteamGenerationAssessmentService {
     const sizingPreferences = this.preferenceService.sizingUnitPreferences;
     const changedSelectedUnits: {unitKey: any; preferenceKey: any; next: number; prev: number;}[] = [];
 
-    console.log(sizingPreferences, '-----sizingPreferences');
     if (!sizingPreferences || !sizingPreferences.length) return null;
 
     const selectedUnitsByPreferences = Object.assign(SelectedUnitsList) as {[p: string]: string};
 
     const selectedUnits = this.getSizingPreferenceValues(selectedUnitsByPreferences);
-
-    console.log({selectedUnits, selectedUnitsByPreferences}, '----selectedUnits')
 
     for (let key in selectedUnitsByPreferences) {
       let unit = selectedUnits[key];
@@ -754,8 +715,6 @@ export class SteamGenerationAssessmentService {
         }
       }
     }
-
-    console.log(changedSelectedUnits, '----changedSelectedUnits');
 
     return changedSelectedUnits;
   }

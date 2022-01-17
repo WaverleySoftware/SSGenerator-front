@@ -64,13 +64,19 @@ export class TypeOfFuelComponent implements ControlValueAccessor, AfterViewInit,
 	      map(({ updated }) => updated)
       )
       .subscribe(({ unitType, preference: { value } }: SizingUnitPreference) => this._setUnitControlValue(parseInt(value), unitType));
+
+    if (this.preferenceService.allPreferences && this.preferenceService.allPreferences.length) {
+      this._setSizingPreferences();
+    }
+  }
+
+  ngOnInit() {
+    this._setSizingPreferences();
+    this._getUnitControl();
   }
 
   ngAfterViewInit() {
-    this._setSizingPreferences();
-    if (this.controlContainer) {
-      this._unitControl = this.controlContainer.control.root.get(`selectedUnits.${this.unitFormControlName}`);
-    }
+    this._getUnitControl();
   }
 
   ngOnDestroy() {
@@ -104,6 +110,7 @@ export class TypeOfFuelComponent implements ControlValueAccessor, AfterViewInit,
 
   private _setUnitControlValue(value: number, name?: string): void {
     if (this._unitControl && value && this._unitControl.value !== value) {
+      console.log(this._unitControl, value, '======_setUnitControlValue =======');
       this._unitValue = value;
       this._unitControl.setValue(this._unitValue);
     }
@@ -147,6 +154,14 @@ export class TypeOfFuelComponent implements ControlValueAccessor, AfterViewInit,
 
     this.fuelTypeName = data.unitType;
     this.fuelTypeNameChange.emit(this.fuelTypeName);
+  }
+
+  private _getUnitControl(): AbstractControl | undefined {
+    if (!this.controlContainer) return null;
+
+    this._unitControl = this.controlContainer.control.root.get(`selectedUnits.${this.unitFormControlName}`);
+
+    return this._unitControl
   }
 
   private static _getList({enumerations}: DisplayGroup): EnumerationDefinition[] {
