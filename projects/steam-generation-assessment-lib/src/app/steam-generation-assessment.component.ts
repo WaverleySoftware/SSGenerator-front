@@ -10,15 +10,20 @@ import {
   UnitConvert,
   UnitsService
 } from "sizing-shared-lib";
-import { FormGroup } from "@angular/forms";
+import { FormGroup, Validators } from "@angular/forms";
 import { SteamGenerationAssessmentService } from "./steam-generation-assessment.service";
 import { ActivatedRoute, Params } from "@angular/router";
 import { Subject } from "rxjs";
-import { takeUntil, tap } from "rxjs/operators";
+import { filter, takeUntil, tap } from "rxjs/operators";
 import {
   FormFieldTypesInterface,
-  SgaBoilerEfficiencyInterface, SgaFuelTypes, SgaSizingModuleFormInterface, SgFormStructureInterface,
-  SteamCalorificRequestInterface, SteamCarbonEmissionInterface,
+  SgaBoilerEfficiencyInterface,
+  SgaFuelTypes,
+  SgaSaturatedTemperatureBodyInterface,
+  SgaSizingModuleFormInterface,
+  SgFormStructureInterface,
+  SteamCalorificRequestInterface,
+  SteamCarbonEmissionInterface,
   SteamGeneratorInputsInterface
 } from "./steam-generation-form.interface";
 import { TabsetComponent } from "ngx-bootstrap";
@@ -263,6 +268,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       }
     });
     this._calculateCalorificValue();
+    this.calculateSaturatedAndFreezingTemperature();
 
     return true;
   }
@@ -286,6 +292,64 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     selectedValue && this._calculateWaterTreatment(selectedValue);
   }
 
+  /** Request: 'calculate-saturated-and-freezing-temperature' */
+  public calculateSaturatedAndFreezingTemperature(data?: SgaSaturatedTemperatureBodyInterface) {
+    const params: SgaSaturatedTemperatureBodyInterface = {
+      temperatureUnitSelected: data && data.temperatureUnitSelected,
+      pressureUnitSelected: data && data.pressureUnitSelected,
+      isSuperheatedSteam: data && data.isSuperheatedSteam,
+      boilerSteamPressure: data && data.boilerSteamPressure,
+      boilerSteamTemperature: data && data.boilerSteamTemperature,
+    }
+
+    if (!params.temperatureUnitSelected || !params.pressureUnitSelected) {
+      const selectedUnits = this.sgaService.getSizingPreferenceValues({
+        temperatureUnitSelected: 'TemperatureUnit',
+        pressureUnitSelected: 'PressureUnit',
+      });
+
+      params.temperatureUnitSelected = selectedUnits.temperatureUnitSelected;
+      params.pressureUnitSelected = selectedUnits.pressureUnitSelected;
+    }
+
+    if (!params.isSuperheatedSteam || !params.boilerSteamTemperature) {
+      const inputValues = this.sgaService.getMultipleControlValues({
+        isSuperheatedSteam: 'isSuperheatedSteam',
+        boilerSteamPressure: 'boilerSteamPressure',
+        boilerSteamTemperature: 'boilerSteamTemperature',
+      });
+
+      params.isSuperheatedSteam = inputValues.isSuperheatedSteam;
+      params.boilerSteamPressure = inputValues.boilerSteamPressure;
+      params.boilerSteamTemperature = null;
+    }
+
+    if (!params.temperatureUnitSelected || !params.pressureUnitSelected || !params.boilerSteamPressure) {
+      console.error('ERROR: calculateSaturatedAndFreezingTemperature(): "Some required data not found""');
+      return null;
+    }
+
+    this.sgaService.calculateSaturatedAndTemperature(params)
+      .pipe(takeUntil(this.ngUnsubscribe), filter(res => res && (res.isValid === undefined || res.isValid)))
+      .subscribe(({ boilerSteamTemperature }) => {
+        const temperature = boilerSteamTemperature && boilerSteamTemperature.boilerSteamTemperature;
+
+        if (temperature) {
+          const control = this.sizingModuleForm.get(`${this.fieldsGroupName}.boilerSteamTemperature`);
+
+          control.setValidators([Validators.required, Validators.min(temperature)]);
+
+          if (control.value < boilerSteamTemperature.boilerSteamTemperature) {
+            this.sgaService.changeSgaFieldFilled('boilerSteamTemperature', true);
+            this.sgaService.setFormValue('boilerSteamTemperature', temperature);
+          }
+
+          control.updateValueAndValidity({ onlySelf: true });
+        }
+      });
+  }
+
+  /** Request: 'calculate-boiler-efficiency' */
   public calculateBoilerEfficiency(data?: Partial<SgaBoilerEfficiencyInterface>): void {
     const params: SgaBoilerEfficiencyInterface = {
       inputFuelId: data && data.inputFuelId || this._getControlValue('inputFuelId'),
@@ -302,6 +366,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       });
   }
 
+  /** Request: 'calculate-carbon-emission-value' */
   public calculateCarbonEmission(data?: Partial<SteamCarbonEmissionInterface>): void {
     const params: SteamCarbonEmissionInterface = {
       energyUnitSelected: data && data.energyUnitSelected || this._getControlValue('energyUnitSelected', this.unitsGroupName),
@@ -322,6 +387,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       .subscribe(res => this._setInputFormFields(res));
   }
 
+  /** Request: 'calculate-carbon-and-calorific-value' */
   private _calculateCalorificValue(data?: Partial<SteamCalorificRequestInterface>, isCalculateEmission?: boolean): void {
     const prams: SteamCalorificRequestInterface = {
       energyUnitSelected: data && data.energyUnitSelected || this._getSizingValue('BoilerHouseEnergyUnits'),
@@ -342,6 +408,20 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
 
         isCalculateEmission && this.calculateCarbonEmission({fuelEnergyPerUnit, fuelCarbonContent});
       });
+  }
+
+  /** Request: 'calculate-water-treatment-method-parameters' */
+  private _calculateWaterTreatment(waterTreatmentMethodId?: string, tdsUnitSelected?: number): void {
+    const params = {
+      tdsUnitSelected: tdsUnitSelected || this._getControlValue('tdsUnitSelected', this.unitsGroupName),
+      waterTreatmentMethodId: waterTreatmentMethodId || this._getControlValue('waterTreatmentMethod'),
+    };
+
+    if (!params.waterTreatmentMethodId || !params.tdsUnitSelected) return null;
+
+    this.sgaService.calculateWaterTreatmentMethod(params)
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((res) => this._setInputFormFields(res));
   }
 
   private _getDefaultConvertedUnits(): UnitConvert[] {
@@ -460,19 +540,6 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     const item = enumeration.enumerationDefinitions.find((v) => v.value === value);
 
     return item && item.id;
-  }
-
-  private _calculateWaterTreatment(waterTreatmentMethodId?: string, tdsUnitSelected?: number): void {
-    const params = {
-      tdsUnitSelected: tdsUnitSelected || this._getControlValue('tdsUnitSelected', this.unitsGroupName),
-      waterTreatmentMethodId: waterTreatmentMethodId || this._getControlValue('waterTreatmentMethod'),
-    };
-
-    if (!params.waterTreatmentMethodId || !params.tdsUnitSelected) return null;
-
-    this.sgaService.calculateWaterTreatmentMethod(params)
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe((res) => this._setInputFormFields(res));
   }
 
   private _convertUnits(data: UnitConvert[], callback?: (data: UnitConvert[]) => void): void {

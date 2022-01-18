@@ -15,6 +15,7 @@
                                 (calculateEfficiency)="calculateBoilerEfficiency($event)"
                                 (changeWaterTreatment)="changeWaterTreatment($event)"
                                 (changeCarbonEmission)="calculateCarbonEmission($event)"
+                                (changeSteamPressure)="calculateSaturatedAndFreezingTemperature($event)"
                                 [fieldsTree]="fieldsTree"
                                 [formGroup]="sizingModuleForm"></app-sga-input-parameters>
     </tab>
