@@ -50,10 +50,14 @@ export class ChartBarComponent implements AfterViewInit {
       }
     },
     tooltips: {
-      enabled: false
-    },
-    hover: {
-      mode: null
+      callbacks: {
+        title: (tooltipItem, data) => {
+          const index = tooltipItem && tooltipItem[0] && tooltipItem[0].datasetIndex;
+
+          return data && data.datasets && data.datasets[index] && data.datasets[index].label || '';
+        },
+        label: tooltipItem => tooltipItem && tooltipItem.value && Math.round(Number(tooltipItem.value) * 100) / 100
+      }
     },
     layout: {
       padding: {

@@ -138,7 +138,7 @@
                 </li>
                 <li class="text-bold">
                   <span>{{'COST_FSLASH_YR' | translate}}</span>
-                  <span>{{data.totalCostOfSteamPerkWhOfFuel | number}} {{currency}}/{{'YR' | translate}}</span>
+                  <span>{{data.totalCostOfSteamPerYear | number}} {{currency}}/{{'YR' | translate}}</span>
                 </li>
               </ul>
             </div>
@@ -204,47 +204,47 @@
             <tbody>
             <tr>
               <td>{{'FUEL_QUANTITY' | translate}}</td>
-              <td>53,500,000 kWh</td>
-              <td>1,335,500 £/yr</td>
+              <td>{{data.fuelConsumptionPerYear | number : '0.0-2'}} {{units[data.fuelConsumptionPerYearUnit]}}</td>
+              <td>{{data.costOfFuelPerYear | number : '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
             </tr>
             <tr>
               <td>{{'FUEL_ENERGY' | translate}}</td>
-              <td>53,500,000 kWh</td>
-              <td>1,335,500 £/yr</td>
+              <td>{{data.qfuel | number : '0.0-2'}} {{units[data.qfuelUnit]}}</td>
+              <td>-</td>
             </tr>
             <tr>
               <td>{{'BOILER_HOUSE_WATER_AND_CHEMICALS' | translate}}</td>
-              <td>53,500,000 kWh</td>
-              <td>1,335,500 £/yr</td>
+              <td>{{data.boilerHouseWaterFlowTotal | number : '0.0-2'}} {{units[data.boilerHouseWaterFlowTotalUnit]}}</td>
+              <td>{{data.waterAndChemicalsCostTotalPerYear | number : '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
             </tr>
             <tr>
               <td>{{'CO2_EMISSIONS' | translate}}</td>
-              <td>53,500,000 kWh</td>
-              <td>1,335,500 £/yr</td>
+              <td>{{data.tonnesOfCO2 | number : '0.0-2'}} {{units[data.tonnesOfCO2Unit]}}</td>
+              <td>{{data.costOfCO2PerYear | number : '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
             </tr>
             <tr>
               <td>{{'STEAM_GENERATION_EFFLUENT' | translate}}</td>
-              <td>53,500,000 kWh</td>
-              <td>1,335,500 £/yr</td>
+              <td>{{data.boilerHouseTotalVolumeOfWaterEffluent | number : '0.0-2'}} {{units[data.boilerHouseTotalVolumeOfWaterEffluentUnit]}}</td>
+              <td>{{data.costOfBoilerHouseEffluent | number : '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
             </tr>
             <tr class="filled">
               <td>{{'TOTAL_STEAM_GENERATED' | translate}}</td>
-              <td>53,500,000 kWh</td>
-              <td>-</td>
+              <td>{{data.mBoiler | number : '0.0-2'}} {{units[data.mBoilerUnit]}}</td>
+              <td>{{data.totalCostOfSteamPerYear | number : '0.0-2'}}</td>
             </tr>
             <tr>
-              <td>Total Cost of Steam / Unit Mass</td>
+              <td>{{'TOTAL_COST_OF_STEAM_PER_UNIT_MASS' | translate}}</td>
               <td>-</td>
-              <td>1,335,500 £/yr</td>
+              <td>{{data.totalCostOfSteamPerTonne | number : '0.0-2'}} {{units[data.totalCostOfSteamPerTonneUnit]}}</td>
             </tr>
             <tr>
-              <td>Total Cost of Steam / Unit Energy</td>
+              <td>{{'TOTAL_COST_OF_STEAM_PER_UNIT_ENERGY' | translate}}</td>
               <td>-</td>
-              <td>1,335,500 £/yr</td>
+              <td>{{data.totalCostOfSteamPerkWhOfFuel | number : '0.0-2'}} {{units[data.fuelUnitId]}}</td>
             </tr>
             <tr class="filled">
               <td>{{'OVERALL_STEAM_GENERATION_EFFICIENCY' | translate}}</td>
-              <td>53,500,000 kWh</td>
+              <td>{{data.energyToGenerateUnitofSteam | number : '0.0-2'}} {{units[data.energyToGenerateUnitofSteamUnit]}}</td>
               <td>-</td>
             </tr>
             </tbody>

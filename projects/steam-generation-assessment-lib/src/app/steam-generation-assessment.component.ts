@@ -16,6 +16,7 @@ import { ActivatedRoute, Params } from "@angular/router";
 import { Subject } from "rxjs";
 import { filter, takeUntil, tap } from "rxjs/operators";
 import {
+  BenchmarkDataInterface,
   FormFieldTypesInterface,
   SgaBoilerEfficiencyInterface,
   SgaFuelTypes,
@@ -27,6 +28,7 @@ import {
   SteamGeneratorInputsInterface
 } from "./steam-generation-form.interface";
 import { TabsetComponent } from "ngx-bootstrap";
+import { ChartBarDataInterface } from "./modules/shared/interfaces/chart-bar.interface";
 
 @Component({
   selector: 'app-steam-generation-assessment',
@@ -42,7 +44,8 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   public readonly requestLoading$ = this.sgaService.getLoading();
   public productName = 'Steam Generation Assessment';
   public sizingModuleForm: FormGroup = this.sgaService.getSizingFormGroup();
-  public benchmarkData: any;
+  public benchmarkData: BenchmarkDataInterface;
+  public benchmarkChartData: ChartBarDataInterface[];
   private ngUnsubscribe = new Subject<void>();
   public fieldsTree: SgFormStructureInterface = {
     utility_parameters: {
@@ -198,6 +201,12 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       .subscribe((res) => {
         if (res && res.benchmark) {
           this.benchmarkData = res.benchmark;
+          this.benchmarkChartData = [
+            { data: [this.benchmarkData.costOfFuelPerYear], label: 'Fuel' },
+            { data: [this.benchmarkData.waterAndChemicalsCostTotalPerYear], label: 'Water and chemicals' },
+            { data: [this.benchmarkData.boilerHouseTotalVolumeOfWaterEffluent], label: 'Effluent' },
+            { data: [this.benchmarkData.tonnesOfCO2], label: 'Carbon Tax' },
+          ];
           setTimeout(() => this.setActiveTab(1));
         } else {
           // focus on first errored field

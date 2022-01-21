@@ -20,7 +20,7 @@
                                 [formGroup]="sizingModuleForm"></app-sga-input-parameters>
     </tab>
     <tab heading="Benchmark" [disabled]="!benchmarkData">
-      <app-sga-benchmark [formGroup]="sizingModuleForm" [data]="benchmarkData"></app-sga-benchmark>
+      <app-sga-benchmark [formGroup]="sizingModuleForm" [data]="benchmarkData" [chartData]="benchmarkChartData"></app-sga-benchmark>
     </tab>
     <tab heading="Proposed Setup" [disabled]="true">
       <app-sga-proposed-setup *ngIf="tabsRef?.tabs[2]?.active"></app-sga-proposed-setup>
