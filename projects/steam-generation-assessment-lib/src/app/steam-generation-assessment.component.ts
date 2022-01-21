@@ -200,13 +200,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((res) => {
         if (res && res.benchmark) {
-          this.benchmarkData = res.benchmark;
-          this.benchmarkChartData = [
-            { data: [this.benchmarkData.costOfFuelPerYear], label: 'Fuel' },
-            { data: [this.benchmarkData.waterAndChemicalsCostTotalPerYear], label: 'Water and chemicals' },
-            { data: [this.benchmarkData.boilerHouseTotalVolumeOfWaterEffluent], label: 'Effluent' },
-            { data: [this.benchmarkData.tonnesOfCO2], label: 'Carbon Tax' },
-          ];
+          this.setBenchmarkData(res.benchmark)
           setTimeout(() => this.setActiveTab(1));
         } else {
           // focus on first errored field
@@ -619,5 +613,27 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   private focusOnField() {
     const fg = this.sizingModuleForm.get('benchmarkInputs') as FormGroup;
     SteamGenerationAssessmentService.focusFirstErrorField(fg, this.elRef, this.fieldsTree);
+  }
+
+  private setBenchmarkData(data: any) {
+    if (!data) return null;
+
+    this.benchmarkData = data;
+
+    const {
+      costOfFuelPerYear = 0,
+      waterAndChemicalsCostTotalPerYear = 0,
+      costOfBoilerHouseEffluent = 0,
+      costOfCO2PerYear = 0
+    } = this.benchmarkData;
+
+    this.benchmarkChartData = [
+      { data: [costOfFuelPerYear], label: 'Fuel' },
+      { data: [waterAndChemicalsCostTotalPerYear], label: 'Water and chemicals' },
+      { data: [costOfBoilerHouseEffluent], label: 'Effluent' },
+      { data: [costOfCO2PerYear], label: 'Carbon Tax' },
+    ];
+
+    return this.benchmarkData;
   }
 }

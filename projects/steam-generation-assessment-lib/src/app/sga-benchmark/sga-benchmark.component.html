@@ -261,78 +261,119 @@
       </ng-template>
 
       <div class="row BreakdownEstimatedCost">
-        <div class="col-md-6">
+        <div class="col-lg-6">
           <div class="sgaBenchmark_block orange">
             <p class="sgaBenchmark_block__title">
               <span>{{'TOTAL_STEAM_GENERATION_COSTS' | translate}}</span>
               <i class="fa fa-info-circle ssPanel_tooltip"></i>
             </p>
             <ul class="sgaBenchmark_block__list">
-              <li><span>{{'MASS_FLOW_FSLASH_YR' | translate}}</span><span>63,800 tonnes/yr</span></li>
-              <li><span>{{'MASS_FLOW_PER_H' | translate}}</span><span>7,303 kg/h</span></li>
-              <li><span>{{'COST_FSLASH_UNIT_MASS' | translate}}</span><span>25,19 £/tonne</span></li>
-              <li><span>{{'COST_FSLASH_UNIT_ENERGY' | translate}}</span><span>7,303 £/kWh</span></li>
-              <li><span>{{'ENERGY_FSLASH_UNIT_MASS' | translate}}</span><span>7,303 kWh/tonne</span></li>
+              <li>
+                <span>{{'MASS_FLOW_FSLASH_YR' | translate}}</span><span>{{data.mBoiler | number : '0.0-2'}} {{units[data.mBoilerUnit]}}</span>
+              </li>
+              <li>
+                <span>{{'MASS_FLOW_PER_H' | translate}}</span><span>{{data.steamGeneratedkgPerHour | number : '0.0-2'}} {{units[data.steamGeneratedkgPerHourUnit]}}</span>
+              </li>
+              <li>
+                <span>{{'COST_FSLASH_UNIT_MASS' | translate}}</span><span>{{data.totalCostOfSteamPerTonne | number : '0.0-2'}} {{currency}}/{{units[data.totalCostOfSteamPerTonneUnit]}}</span>
+              </li>
+              <li>
+                <span>{{'COST_FSLASH_UNIT_ENERGY' | translate}}</span><span>{{data.totalCostOfSteamPerkWhOfFuel | number : '0.0-2'}} {{currency}}/{{units[data.fuelUnitId]}}</span>
+              </li>
+              <li>
+                <span>{{'ENERGY_FSLASH_UNIT_MASS' | translate}}</span><span>{{data.totalCostOfSteamPerTonne | number : '0.0-2'}} {{units[data.fuelUnitId]}}/{{units[data.totalCostOfSteamPerTonneUnit]}}</span>
+              </li>
               <li class="text-bold">
-                <span>{{'COST_FSLASH_YR' | translate}}</span>
-                <span>1,607,026 £/tonne</span>
+                <span>{{'COST_FSLASH_YR' | translate}}</span><span>{{data.totalCostOfSteamPerYear | number : '0.0-2'}} {{currency}}/{{'YR' | translate}}</span>
               </li>
             </ul>
           </div>
           <div class="sgaBenchmark_block">
-            <p class="sgaBenchmark_block__title">
-              <span>{{'TOTAL_STEAM_GENERATION_COSTS' | translate}}</span>
-              <i class="fa fa-info-circle ssPanel_tooltip"></i>
-            </p>
+            <p class="sgaBenchmark_block__title"><span>{{'BREAKDOWN_OF_STEAM_GENERATION_COSTS' | translate}}</span><i class="fa fa-info-circle ssPanel_tooltip"></i></p>
             <ul class="sgaBenchmark_block__list">
               <li class="listTitle">{{'FUEL' | translate}}</li>
-              <li><span>{{'MASS_FLOW_FSLASH_YR' | translate}}</span><span>63,800 tonnes/yr</span></li>
-              <li><span>{{'MASS_FLOW_PER_H'}}</span><span>7,303 kg/h</span></li>
-              <li><span>{{'COST_FSLASH_UNIT_MASS' | translate}}</span><span>25,19 £/tonne</span></li>
-              <li><span>{{'COST_FSLASH_UNIT_ENERGY' | translate}}</span><span>7,303 £/kWh</span></li>
-              <li><span>{{'ENERGY_FSLASH_UNIT_MASS' | translate}}</span><span>7,303 kWh/tonne</span></li>
+              <li>
+                <span>{{'QUANTITY' | translate}}</span>
+                <span>{{data.fuelConsumptionPerYear | number : '0.0-2'}} {{units[data.fuelConsumptionPerYearUnit]}}/{{'YR' | translate}}</span>
+              </li>
+              <li>
+                <span>{{'COST_PER_UNIT_FUEL' | translate}}</span>
+                <span>{{data.costOfFuelPerUnit | number : '0.0-2'}} {{currency}}/{{units[data.fuelConsumptionUnitId]}}</span>
+              </li>
+              <li>
+                <span>{{'ENERGY' | translate}}</span>
+                <span>{{data.qfuel | number : '0.0-2'}} {{units[data.qfuelUnit]}}/{{'YR' | translate}}</span>
+              </li>
+              <li>
+                <span>{{'COST_FSLASH_UNIT_ENERGY' | translate}}</span>
+                <span>{{data.costOfFuelPerkWh | number : '0.0-2'}} {{currency}}/{{units[data.fuelUnitId]}}</span>
+              </li>
               <li class="text-bold">
-                <span>{{'COST_FSLASH_YR' | translate}}</span>
-                <span>1,607,026 £/tonne</span>
+                <span>{{'COST_OF_FUEL_PER_YR' | translate}}</span>
+                <span>{{data.costOfFuelPerYear | number : '0.0-2'}} {{currency}}/{{'YR' | translate}}</span>
               </li>
             </ul>
             <ul class="sgaBenchmark_block__list">
               <li class="listTitle">{{'CO2_EMISSIONS' | translate}}</li>
-              <li><span>{{'COST_FSLASH_UNIT_ENERGY' | translate}}</span><span>7,303 £/kWh</span></li>
-              <li><span>{{'ENERGY_FSLASH_UNIT_MASS' | translate}}</span><span>7,303 kWh/tonne</span></li>
+
+              <li>
+                <span>{{'MASS_EMITTED' | translate}}</span>
+                <span>{{data.tonnesOfCO2 | number : '0.0-2'}} {{currency}}/{{units[data.tonnesOfCO2Unit]}}</span>
+              </li>
+              <li>
+                <span>{{'COST_FSLASH_UNIT_MASS' | translate}}</span>
+                <span>{{data.costOfCO2PerTonne | number : '0.0-2'}} {{currency}}/{{units[data.costOfCO2PerTonneUnit]}}</span>
+              </li>
               <li class="text-bold">
-                <span>{{'COST_FSLASH_YR' | translate}}</span>
-                <span>1,607,026 £/tonne</span></li>
+                <span>{{'COST_OF_CO2_EMISSINS_PER_YEAR' | translate}}</span>
+                <span>{{data.costOfCO2PerYear | number : '0.0-2'}} {{currency}}</span>
+              </li>
             </ul>
             <ul class="sgaBenchmark_block__list">
               <li class="listTitle">{{'WATER' | translate}}</li>
-              <li><span>{{'MASS_FLOW_FSLASH_YR' | translate}}</span><span>63,800 tonnes/yr</span></li>
-              <li><span>{{'MASS_FLOW_PER_H' | translate}}</span><span>7,303 kg/h</span></li>
+              <li>
+                <span>{{'QUANTITY' | translate}}</span>
+                <span>{{data.boilerHouseWaterFlowTotal | number : '0.0-2'}} {{units[data.boilerHouseWaterFlowTotalUnit]}}/{{'YR' | translate}}</span>
+              </li>
+              <li>
+                <span>{{'COST_OF_WATER_UNIT_VOLUME' | translate}}</span>
+                <span>{{data.waterCostPerUnit | number : '0.0-2'}} {{currency}}/{{units[data.waterCostPerUnitUnit]}}</span>
+              </li>
               <li class="text-bold">
-                <span>{{'COST_FSLASH_YR' | translate}}</span>
-                <span>1,607,026 £/tonne</span>
+                <span>{{'COST_OF_BOILER_WATER_YEAR' | translate}}</span>
+                <span>{{data.boilerHouseWaterCost | number : '0.0-2'}} {{currency}}</span>
               </li>
             </ul>
             <ul class="sgaBenchmark_block__list">
               <li class="listTitle">{{'WATER_TREATMENT' | translate}}</li>
-              <li><span>{{'ENERGY_FSLASH_UNIT_MASS' | translate}}</span><span>7,303 kWh/tonne</span></li>
+              <li>
+                <span>{{'COST_OF_CHEMICALS_FSLASH_UNIT_OF_WATER' | translate}}</span>
+                <span>{{data.costChemM3 | number : '0.0-2'}} {{currency}}/{{units[formGroup.get('selectedUnits.volumeUnitSelected').value]}}</span>
+              </li>
               <li class="text-bold">
-                <span>{{'COST_FSLASH_YR' | translate}}</span>
-                <span>1,607,026 £/tonne</span>
+                <span>{{'COST_OF_CHEMICALS_PER_YEAR' | translate}}</span>
+                <span>{{data.chemCostTotalPerYear | number : '0.0-2'}} {{currency}}/{{'YR' | translate}}</span>
               </li>
             </ul>
             <ul class="sgaBenchmark_block__list">
               <li class="listTitle">{{'EFFLUENT' | translate}}</li>
-              <li><span>{{'MASS_FLOW_FSLASH_YR' | translate}}</span><span>63,800 tonnes/yr</span></li>
-              <li><span>{{'ENERGY_FSLASH_UNIT_MASS'}}</span><span>7,303 kWh/tonne</span></li>
+
+              <li>
+                <span>{{'QUANTITY' | translate}}</span>
+                <span>{{data.boilerHouseTotalVolumeOfWaterEffluent | number : '0.0-2'}} {{data.boilerHouseTotalVolumeOfWaterEffluentUnit}}/{{'YR' | translate}}</span>
+              </li>
+              <li>
+                <span>{{'COST_FSLASH_UNIT' | translate}}</span>
+                <span>{{data.costOfEffm3 | number : '0.0-2'}} {{currency}}/{{units[formGroup.get('selectedUnits.volumeUnitSelected').value]}}</span>
+              </li>
               <li class="text-bold">
-                <span>{{'COST_FSLASH_YR' | translate}}</span>
-                <span>1,607,026 £/tonne</span>
+                <span>{{'COST_OF_EFFLUENT_PER_YEAR' | translate}}</span>
+                <span>{{data.costOfBoilerHouseEffluent | number : '0.0-2'}} {{currency}}/{{'YR' | translate}}</span>
               </li>
             </ul>
           </div>
         </div>
-        <div class="col-md-6">
+        <div class="col-lg-6">
           <div class="sgaBenchmark_block pink">
             <p class="sgaBenchmark_block__title">
               <span>{{'OPPORTUNITIES_FOR_BOILER_HOUSE_SAVINGS' | translate}}</span>
@@ -340,38 +381,62 @@
             </p>
             <ul class="sgaBenchmark_block__list">
               <li class="listTitle">{{'STACK_AND_RADIATION_LOSSES' | translate}}</li>
-              <li><span>{{'PERCENT_OF_LOST_FUEL_ENERGY' | translate}}</span><span>16%</span></li>
-              <li><span>{{'FUEL_ENERGY' | translate}}</span><span>8,560,000 kWh/yr</span></li>
+              <li>
+                <span>{{'PERCENT_OF_LOST_FUEL_ENERGY' | translate}}</span>
+                <span>{{100 - data.boilerEfficiency | number}}%</span>
+              </li>
+              <li>
+                <span>{{'FUEL_ENERGY' | translate}}</span>
+                <span>{{data.radiationLosses | number : '0.0-2'}} {{units[data.radiationLossesUnit]}}/{{'YR' | translate}}</span>
+              </li>
               <li class="text-bold">
                 <span>{{'COST_FSLASH_YR' | translate}}</span>
-                <span>245,667 £/yr</span>
+                <span>{{data.costOfRadiationLosses | number : '0.0-2'}} {{currency}}/{{'YR' | translate}}</span>
               </li>
             </ul>
             <ul class="sgaBenchmark_block__list">
               <li class="listTitle">{{'TOTAL_COST_OF_BLOWDOWN' | translate}}</li>
-              <li><span>{{'PERCENT_BLOWDOWN' | translate}}</span><span>16%</span></li>
-              <li><span>{{'EFFLUENT' | translate}}</span><span>8,560,000 kWh/yr</span></li>
-              <li><span>{{'REPLACEMENT_WATER_FSLASH_CHEMICALS' | translate}}</span><span>11,995 m3/yr</span></li>
-              <li><span>{{'FUEL_ENERGY' | translate}}</span><span>963,550 kWh/yr</span></li>
-              <li><span>{{'CO2_EMISSIONS' | translate}}</span><span>178.23 tonne/yr</span></li>
+              <li>
+                <span>{{'PERCENT_BLOWDOWN' | translate}}</span>
+                <span>{{data.percentTdsBlowdown | number : '0.0-2'}}%</span>
+              </li>
+              <li>
+                <span>{{'EFFLUENT' | translate}}</span>
+                <span>{{data.mTdsWater | number : '0.0-2'}} {{units[formGroup.get('selectedUnits.volumeUnitSelected').value]}}/{{'YR' | translate}}</span>
+              </li>
+              <li>
+                <span>{{'REPLACEMENT_WATER_FSLASH_CHEMICALS' | translate}}</span>
+                <span>{{data.volTdsAndBdv | number : '0.0-2'}} {{units[formGroup.get('selectedUnits.volumeUnitSelected').value]}}/{{'YR' | translate}}</span>
+              </li>
+              <li>
+                <span>{{'FUEL_ENERGY' | translate}}</span>
+                <span>{{data.fuelEnergyInTds | number : '0.0-2'}} {{units[data.fuelEnergyInTdsUnit]}}/{{'YR' | translate}}</span>
+              </li>
+              <li>
+                <span>{{'CO2_EMISSIONS' | translate}}</span>
+                <span>{{data.tonnesOfCO2fromTds | number : '0.0-2'}} {{units[data.tonnesOfCO2fromTdsUnit]}}/{{'YR' | translate}}</span>
+              </li>
               <li class="text-bold">
                 <span>{{'COST_FSLASH_YR' | translate}}</span>
-                <span>58,531 £/yr</span>
+                <span>{{data.totCostTdsBlowdown | number : '0.0-2'}} {{currency}}/{{'YR' | translate}}</span>
               </li>
             </ul>
             <ul class="sgaBenchmark_block__list">
               <li class="listTitle">{{'Effluent From water treatment' | translate}}</li>
-              <li><span>{{'VOLUME' | translate}}</span><span>1,148 m3/yr</span></li>
+              <li>
+                <span>{{'VOLUME' | translate}}</span>
+                <span>{{data.waterTreatmentEffluent | number: '0.0-2'}} {{units[data.waterTreatmentEffluentUnit]}}/{{'YR' | translate}}</span>
+              </li>
               <li class="text-bold">
                 <span>{{'COST_FSLASH_YR' | translate}}</span>
-                <span>1,493 £/tonne</span>
+                <span>{{data.waterTreatmentCostEffluent | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</span>
               </li>
             </ul>
             <ul class="sgaBenchmark_block__list">
               <li class="listTitle">{{'O2_SCAVENGING_CHEMICALS_COST_SAVINGS' | translate}}</li>
               <li class="text-bold">
                 <span>{{'COST_FSLASH_YR' | translate}}</span>
-                <span>6,000 £/tonne</span>
+                <span>?????????? £/tonne</span>
               </li>
             </ul>
           </div>
@@ -382,12 +447,30 @@
             </p>
             <ul class="sgaBenchmark_block__list">
               <li class="listTitle">{{'TOTAL_SAVINGS_FROM_CONDENSATE_RETURNED' | translate}}</li>
-              <li><span>{{'PERCENT_RETURNED' | translate}}</span><span>65%</span></li>
-              <li><span>{{'WATER_AND_CHEMICALS_SAVED' | translate}}</span><span>45,365 m3/yr</span></li>
-              <li><span>{{'EFFLUENT_REDUCED' | translate}}</span><span>45,365 m3/yt</span></li>
-              <li><span>{{'FUEL_SAVED' | translate}}</span><span>4,223,974 kWh/yr</span></li>
-              <li><span>{{'CO2_EMISSION_REDUCED' | translate}}</span><span>781 tonne/yr</span></li>
-              <li class="text-bold"><span>{{'TOTAL_VALUE_SAVED' | translate}}</span><span>230,100 £/yr</span></li>
+              <li>
+                <span>{{'PERCENT_RETURNED' | translate}}</span>
+                <span>{{data.condensateReturnedPercentage | number : '0.0-2'}}%</span>
+              </li>
+              <li>
+                <span>{{'WATER_AND_CHEMICALS_SAVED' | translate}}</span>
+                <span>{{data.mCondyWater | number : '0.0-2'}} {{units[data.mCondyWaterUnit]}}/{{'YR' | translate}}</span>
+              </li>
+              <li>
+                <span>{{'EFFLUENT_REDUCED' | translate}}</span>
+                <span>{{data.mCondyWater | number : '0.0-2'}} {{units[data.mCondyWaterUnit]}}/{{'YR' | translate}}</span>
+              </li>
+              <li>
+                <span>{{'FUEL_SAVED' | translate}}</span>
+                <span>{{data.condyFuelAmount | number : '0.0-2'}} {{units[data.condyFuelAmountUnit]}}/{{'YR' | translate}}</span>
+              </li>
+              <li>
+                <span>{{'CO2_EMISSION_REDUCED' | translate}}</span>
+                <span>{{data.mCondyCO2 | number : '0.0-2'}} {{units[data.mCondyCO2Unit]}}/{{'YR' | translate}}</span>
+              </li>
+              <li class="text-bold">
+                <span>{{'TOTAL_VALUE_SAVED' | translate}}</span>
+                <span>{{data.totalCostSavedCondensateReturn | number : '0.0-2'}} {{currency}}/{{'YR' | translate}}</span>
+              </li>
             </ul>
           </div>
         </div>
