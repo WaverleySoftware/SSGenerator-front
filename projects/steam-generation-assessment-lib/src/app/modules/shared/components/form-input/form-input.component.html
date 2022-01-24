@@ -40,12 +40,13 @@
            (focusin)="focus = true"
            (focusout)="touched = true; focus = false;"
            (blur)="blurHandle()"
-           [ngModel]="modelVal"
-           (ngModelChange)="updateValue($event)"
+           [value]="value | number : '0.'+decimalPlaces+'-'+decimalPlaces"
+           (change)="updateValue($event?.target?.value)"
            [readonly]="readonly"
            [tabIndex]="(readonly || disabled) && '-1'"
            [attr.data-form-name]="!readonly && !disabled && formControlName"
-           inputLimitTo="20"
+           OnlyNumber="true"
+           maxlength="20"
            class="formField-input">
 
     <!--  UNIT -->

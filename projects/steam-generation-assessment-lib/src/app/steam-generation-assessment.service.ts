@@ -734,7 +734,7 @@ export class SteamGenerationAssessmentService {
 
     if (control && (control.value !== parsedValue)) {
       console.log(`%c CHANGE FIELD {name:"${formControlName}", value: ${parsedValue}}`, 'background-color:#edf2f4;color:#002D72;padding:5px;');
-      control.patchValue(typeof parsedValue === 'number' ? (Math.round(parsedValue * 10000) / 10000) : parsedValue, opt);
+      control.patchValue(parsedValue, opt);
     }
   }
 

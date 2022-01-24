@@ -340,7 +340,9 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
         if (temperature) {
           const control = this.sizingModuleForm.get(`${this.fieldsGroupName}.boilerSteamTemperature`);
 
-          control.setValidators([Validators.required, Validators.min(temperature)]);
+          const parsedErrorValue = Math.floor(temperature * 100) / 100;
+
+          control.setValidators([Validators.required, Validators.min(parsedErrorValue || temperature)]);
 
           if (control.value < boilerSteamTemperature.boilerSteamTemperature) {
             this.sgaService.changeSgaFieldFilled('boilerSteamTemperature', true);
