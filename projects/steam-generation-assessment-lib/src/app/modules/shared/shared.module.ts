@@ -17,6 +17,7 @@ import { SetUnitsDirective } from './directives/set-units.directive';
 import { InputLimitToDirective } from "./directives/limit-length.directive";
 import { FormModalComponent } from './components/form-modal/form-modal.component';
 import { OnlyNumberDirective } from "./directives/only-number.directive";
+import { NoCommaPipe } from "./pipes/no-comma.pipe";
 
 
 @NgModule({
@@ -32,7 +33,8 @@ import { OnlyNumberDirective } from "./directives/only-number.directive";
     SetUnitsDirective,
     InputLimitToDirective,
     FormModalComponent,
-    OnlyNumberDirective
+    OnlyNumberDirective,
+    NoCommaPipe
   ],
   imports: [
     CommonModule,
@@ -54,7 +56,8 @@ import { OnlyNumberDirective } from "./directives/only-number.directive";
 		FormRadioComponent,
 		SetUnitsDirective,
 		FormModalComponent,
-    OnlyNumberDirective
+    OnlyNumberDirective,
+    NoCommaPipe
 	],
 })
 export class SharedModule { }

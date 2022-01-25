@@ -29,6 +29,7 @@ import {
 } from "./steam-generation-form.interface";
 import { TabsetComponent } from "ngx-bootstrap";
 import { ChartBarDataInterface } from "./modules/shared/interfaces/chart-bar.interface";
+import { TabDirective } from "ngx-bootstrap/tabs/tab.directive";
 
 @Component({
   selector: 'app-steam-generation-assessment',
@@ -155,6 +156,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       }
     }
   }
+  public nextTab: TabDirective;
 
   @ViewChild('tabsRef', {static: true}) tabsRef: TabsetComponent;
 
@@ -281,9 +283,118 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     return true;
   }
 
-  public setActiveTab(tabIndex: number): void {
-    if (this.tabsRef && this.tabsRef.tabs && this.tabsRef.tabs[tabIndex] && !this.tabsRef.tabs[tabIndex].active) {
-      this.tabsRef.tabs[tabIndex].active = true;
+  testCalculate() {
+    this.sizingModuleForm.setValue({
+      "selectedUnits": {
+        "energyUnitSelected": 108,
+        "smallWeightUnitSelected": 26,
+        "emissionUnitSelected": 27,
+        "volumeUnitSelected": 16,
+        "smallVolumetricFlowUnitSelected": 76,
+        "massFlowUnitSelected": 230,
+        "smallMassFlowUnitSelected": 84,
+        "pressureUnitSelected": 50,
+        "temperatureUnitSelected": 146,
+        "tdsUnitSelected": 228,
+        "fuelUnitSelected": 18
+      },
+      "benchmarkInputs": {
+        "hoursOfOperation": 8736,
+        "isSteamFlowMeasured": true,
+        "isAutoTdsControlPResent": false,
+        "boilerSteamGeneratedPerYear": null,
+        "boilerSteamGeneratedPerHour": 10,
+        "inputFuelId": "8c24c468-e50a-45ac-bc4c-8ebd60470c99",
+        "costOfFuelPerUnit": 3,
+        "fuelQtyPerYearIsKnown": false,
+        "costOfFuelPerYear": null,
+        "fuelConsumptionPerYear": null,
+        "fuelEnergyPerUnit": 0.315165984,
+        "fuelCarbonContent": 0.058297197558432,
+        "costOfWaterPerUnit": 0.326775872,
+        "costOfEffluentPerUnit": 0.2973264,
+        "boilerHouseWaterQtyPerYearIsKnown": false,
+        "costOfWaterPerYear": null,
+        "waterConsumptionPerHour": null,
+        "waterConsumptionPerYear": null,
+        "boilerWaterTreatmentChemicalCostsIsKnown": false,
+        "totalChemicalCostPerYear": null,
+        "o2ScavengingChemicalsCostSavings": null,
+        "isCo2OrCarbonEmissionsTaxed": false,
+        "carbonTaxLevyCostPerUnit": null,
+        "costOfCo2PerUnitMass": 0,
+        "isBlowdownVesselPresent": false,
+        "isCoolingWaterUsed": false,
+        "isSuperheatedSteam": false,
+        "boilerEfficiency": 80,
+        "isFeedWaterMeasured": false,
+        "boilerSteamPressure": 10,
+        "boilerSteamTemperature": 184.115270845302,
+        "isEconomizerPresent": false,
+        "boilerAverageTds": 2800,
+        "boilerMaxTds": 3500,
+        "boilerFeedwaterConsumptionPerHour": null,
+        "boilerFeedwaterConsumptionPerYear": null,
+        "isFlashVesselPresent": false,
+        "isHeatExchangerPresent": false,
+        "waterTemperatureLeavingHeatExchanger": null,
+        "waterTreatmentMethod": "aa5642a0-88a5-43e1-ba9d-367db3bb9df5",
+        "percentageWaterRejection": 4,
+        "tdsOfMakeupWater": 155,
+        "isMakeUpWaterMonitored": false,
+        "temperatureOfMakeupWater": null,
+        "makeupWaterAmountPerHour": 10,
+        "makeupWaterAmountPerYear": null,
+        "atmosphericDeaerator": true,
+        "pressurisedDeaerator": false,
+        "temperatureOfFeedtank": 90,
+        "tdsOfFeedwaterInFeedtank": 75,
+        "tdsOfCondensateReturn": 10,
+        "temperatureOfCondensateReturn": 80,
+        "areChemicalsAddedDirectlyToFeedtank": false,
+        "pressureOfFeedtank": null,
+        "pressureOfSteamSupplyingDsi": null,
+        "isCondensateReturnKnown": false,
+        "percentageOfCondensateReturn": null,
+        "volumeOfCondensateReturn": null,
+        "isDsiPresent": false
+      }
+    });
+    this.onCalculateSizing(this.sizingModuleForm);
+  }
+
+  public nextTabHandle(tabsRef?: TabsetComponent): void {
+    if (tabsRef && tabsRef.tabs) {
+      for (let i = 0; i <= tabsRef.tabs.length; i++) {
+        const tab = tabsRef.tabs[i];
+        const nextTab = tabsRef.tabs[i+1];
+
+        if (tab && tab.active && nextTab && !nextTab.disabled) {
+          this.setActiveTab(i+1);
+          break;
+        }
+      }
+    }
+  }
+
+  public setActiveTab(tab: number | TabDirective): void {
+    if (tab instanceof TabDirective) {
+      const tabIndex = this.tabsRef.tabs.indexOf(tab);
+
+      if (tabIndex !== -1 && this.tabsRef.tabs[tabIndex + 1]) {
+        this.nextTab = this.tabsRef.tabs[tabIndex + 1];
+      }
+      return;
+    }
+
+    if (
+      typeof tab === 'number' &&
+      this.tabsRef && this.tabsRef.tabs &&
+      this.tabsRef.tabs[tab] &&
+      !this.tabsRef.tabs[tab].active
+    ) {
+      this.tabsRef.tabs[tab].active = true;
+      this.nextTab = this.tabsRef.tabs[tab + 1];
     }
   }
 

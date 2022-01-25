@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { ChartBarDataInterface, ChartBarOptionsInterface } from "../modules/shared/interfaces/chart-bar.interface";
+import { FormBuilder, FormGroup } from "@angular/forms";
 
 @Component({
   selector: 'app-sga-proposed-setup',
@@ -56,9 +57,31 @@ export class SgaProposedSetupComponent implements OnInit {
       }]
     }
   }
-  constructor() { }
+  public form: FormGroup = this.fb.group({
+    PERCENT_CONDENSATE_RETURNED_l: [0],
+    PERCENT_CONDENSATE_RETURNED_r: [0],
+    CONDENSATE_RETURNED_l: [0],
+    CONDENSATE_RETURNED_r: [0],
+    TEMPERATURE_OF_CONDENSATE_RETURN_l: [0],
+    TEMPERATURE_OF_CONDENSATE_RETURN_r: [0],
+    WATER_REJECTION_RATE_l: [0],
+    WATER_REJECTION_RATE_r: [0],
+    BOILER_EFFICIENCY_l: [0],
+    BOILER_EFFICIENCY_r: [0],
+    ECONOMISER_REQUIRED: [false],
+    TEMPERATURE_OF_FEEDTANK_l: [0],
+    TEMPERATURE_OF_FEEDTANK_r: [0],
+    TEMPERATURE_OF_FEEDTANK_2_l: [0],
+    TEMPERATURE_OF_FEEDTANK_2_r: [0],
+  });
+
+  constructor(private fb: FormBuilder) {}
 
   ngOnInit() {
+  }
+
+  onSubmit() {
+    console.log('----Submit----');
   }
 
 }

@@ -2,7 +2,7 @@
   <ng-container body>
     <div class="sgaProposedSetup">
       <sga-panel title="Setup parameters" titleTooltip="Some tooltip" id="SetupParametersPanel" background="#EDF2F4">
-        <div body class="setupParameters">
+        <form body class="setupParameters" [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
           <div class="row">
             <div class="col-md-4"></div>
             <div class="col-md-4"><h5>{{'CURRENT_SITUATION' | translate}}</h5></div>
@@ -10,46 +10,46 @@
           </div>
           <div class="row">
             <div class="col-md-4"><p>{{'PERCENT_CONDENSATE_RETURNED' | translate}}</p></div>
-            <div class="col-md-4"><form-input unit="%" filled></form-input></div>
-            <div class="col-md-4"><form-input unit="%" required></form-input></div>
+            <div class="col-md-4"><form-input formControlName="PERCENT_CONDENSATE_RETURNED_l" unit="%" filled></form-input></div>
+            <div class="col-md-4"><form-input formControlName="PERCENT_CONDENSATE_RETURNED_r" unit="%" required></form-input></div>
           </div>
           <div class="row">
             <div class="col-md-4"><p>{{'CONDENSATE_RETURNED' | translate}}</p></div>
-            <div class="col-md-4"><form-input unit="m3" filled></form-input></div>
-            <div class="col-md-4"><form-input unit="m3" required></form-input></div>
+            <div class="col-md-4"><form-input formControlName="CONDENSATE_RETURNED_l" unit="m3" filled></form-input></div>
+            <div class="col-md-4"><form-input formControlName="CONDENSATE_RETURNED_r" unit="m3" required></form-input></div>
           </div>
           <div class="row">
             <div class="col-md-4"><p>{{'TEMPERATURE_OF_CONDENSATE_RETURN' | translate}}</p></div>
-            <div class="col-md-4"><form-input unit="°C" filled></form-input></div>
-            <div class="col-md-4"><form-input unit="°C" required></form-input></div>
+            <div class="col-md-4"><form-input formControlName="TEMPERATURE_OF_CONDENSATE_RETURN_l" unit="°C" filled></form-input></div>
+            <div class="col-md-4"><form-input formControlName="TEMPERATURE_OF_CONDENSATE_RETURN_r" unit="°C" required></form-input></div>
           </div>
           <div class="row">
             <div class="col-md-4"><p>{{'WATER_REJECTION_RATE' | translate}}</p></div>
-            <div class="col-md-4"><form-input unit="%" filled></form-input></div>
-            <div class="col-md-4"><form-input unit="%" required></form-input></div>
+            <div class="col-md-4"><form-input formControlName="WATER_REJECTION_RATE_l" unit="%" filled></form-input></div>
+            <div class="col-md-4"><form-input formControlName="WATER_REJECTION_RATE_r" unit="%" required></form-input></div>
           </div>
           <div class="row">
             <div class="col-md-4"><p>{{'BOILER_EFFICIENCY' | translate}}</p></div>
-            <div class="col-md-4"><form-input unit="%" filled></form-input></div>
-            <div class="col-md-4"><form-input unit="%" required></form-input></div>
+            <div class="col-md-4"><form-input formControlName="BOILER_EFFICIENCY_l" unit="%" filled></form-input></div>
+            <div class="col-md-4"><form-input formControlName="BOILER_EFFICIENCY_r" unit="%" required></form-input></div>
           </div>
           <div class="row">
             <div class="col-md-4"><p>{{'ECONOMISER_REQUIRED' | translate}}</p></div>
             <div class="col-md-8">
-              <form-toggle name="economiserRequired"></form-toggle>
+              <form-toggle name="economiserRequired" formControlName="ECONOMISER_REQUIRED"></form-toggle>
             </div>
           </div>
           <div class="row">
             <div class="col-md-4"><p>{{'TEMPERATURE_OF_FEEDTANK' | translate}}</p></div>
-            <div class="col-md-4"><form-input unit="°C" filled></form-input></div>
-            <div class="col-md-4"><form-input unit="°C" required></form-input></div>
+            <div class="col-md-4"><form-input formControlName="TEMPERATURE_OF_FEEDTANK_l" unit="°C" filled></form-input></div>
+            <div class="col-md-4"><form-input formControlName="TEMPERATURE_OF_FEEDTANK_r" unit="°C" required></form-input></div>
           </div>
           <div class="row">
             <div class="col-md-4"><p>{{'TEMPERATURE_OF_FEEDTANK' | translate}}</p></div>
-            <div class="col-md-4"><form-input unit="bar gauge" filled></form-input></div>
-            <div class="col-md-4"><form-input unit="bar gauge" required></form-input></div>
+            <div class="col-md-4"><form-input formControlName="TEMPERATURE_OF_FEEDTANK_2_l" unit="bar gauge" filled></form-input></div>
+            <div class="col-md-4"><form-input formControlName="TEMPERATURE_OF_FEEDTANK_2_r" unit="bar gauge" required></form-input></div>
           </div>
-        </div>
+        </form>
       </sga-panel>
 
       <p class="sgaProposedSetup_title">{{'POTENTIAL_BOILER_HOUSE_SAVINGS_BY_PROJECT' | translate}}</p>

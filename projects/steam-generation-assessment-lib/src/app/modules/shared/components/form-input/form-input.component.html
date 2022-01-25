@@ -40,7 +40,7 @@
            (focusin)="focus = true"
            (focusout)="touched = true; focus = false;"
            (blur)="blurHandle()"
-           [value]="value | number : '0.'+decimalPlaces+'-'+decimalPlaces"
+           [value]="value | number : '.'+decimalPlaces+'-'+decimalPlaces | noComma"
            (change)="updateValue($event?.target?.value)"
            [readonly]="readonly"
            [tabIndex]="(readonly || disabled) && '-1'"

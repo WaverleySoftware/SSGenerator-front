@@ -36,6 +36,7 @@
                           [moduleGroupId]="moduleGroupId"></type-of-fuel>
 
             <form-input [formControlName]="fields.fuelEnergyPerUnit.formControlName"
+                        [decimalPlaces]="9"
                         [label]="fields.fuelEnergyPerUnit.label"
                         [unit-names]="fields.fuelEnergyPerUnit.unitNames"
                         [unit-types]="fields.fuelEnergyPerUnit.unitTypes"
@@ -47,6 +48,7 @@
                         (inputChange)="inputChangeHandle($event)"> </form-input>
 
             <form-input [formControlName]="fields.fuelCarbonContent.formControlName"
+                        [decimalPlaces]="9"
                         [label]="fields.fuelCarbonContent.label"
                         [unit-names]="fields.fuelCarbonContent.unitNames"
                         [unit-types]="fields.fuelCarbonContent.unitTypes"
@@ -58,6 +60,7 @@
                         (inputChange)="inputChangeHandle($event)"></form-input>
 
             <form-input [formControlName]="fields.costOfFuelPerUnit.formControlName"
+                        [decimalPlaces]="9"
                         [label]="fields.costOfFuelPerUnit.label"
                         [unit-names]="fields.costOfFuelPerUnit.unitNames"
                         [unit-types]="fields.costOfFuelPerUnit?.unitTypes"
@@ -109,6 +112,7 @@
                          [label]="fields.isCo2OrCarbonEmissionsTaxed.label">
               <ng-container yes>
                 <form-input [formControlName]="fields.carbonTaxLevyCostPerUnit.formControlName"
+                            [decimalPlaces]="9"
                             [label]="fields.carbonTaxLevyCostPerUnit.label"
                             [unit-names]="fields.carbonTaxLevyCostPerUnit.unitNames"
                             [unit-types]="fields.carbonTaxLevyCostPerUnit.unitTypes"
@@ -121,6 +125,7 @@
                             group="emissions-taxed"></form-input>
 
                 <form-input [formControlName]="fields.costOfCo2PerUnitMass.formControlName"
+                            [decimalPlaces]="9"
                             [label]="fields.costOfCo2PerUnitMass.label"
                             [unit-names]="fields.costOfCo2PerUnitMass.unitNames"
                             [unit-types]="fields.costOfCo2PerUnitMass.unitTypes"
@@ -235,6 +240,7 @@
                    background="#EDF2F4">
           <div body>
             <form-input [formControlName]="fields.costOfEffluentPerUnit.formControlName"
+                        [decimalPlaces]="9"
                         [label]="fields.costOfEffluentPerUnit.label"
                         [unit-names]="fields.costOfEffluentPerUnit.unitNames"
                         [unit-types]="fields.costOfEffluentPerUnit.unitTypes"
