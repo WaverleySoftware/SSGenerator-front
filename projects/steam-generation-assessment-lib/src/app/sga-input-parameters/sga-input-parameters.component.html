@@ -21,10 +21,14 @@
 
     <div class="row" [formGroupName]="formGroupKey">
       <div class="col-md-6">
+        <ng-template #tooltipFuel>
+          <h6>{{'ALLOWS_YOU_TO_INPUT_FUEL_TYPE_AND_COSTS_HELP' | translate}}</h6>
+          <p>{{'IF_A_STANDARD_FUEL_IS_USED_THE_CALORIFIC_VALUE_AND_CO2_EMISSIONS_FSLASH_UNIT_OF_FUEL_WILL_BE_AUTOMATICALLY_POPULATED_FROM_LOO_HELP' | translate}}</p>
+        </ng-template>
         <sga-panel id="FuelPanel"
                    [(expanded)]="fieldsTree.utility_parameters.panels.fuel.status"
                    [title]="'FUEL' | translate"
-                   [titleTooltip]="('ALLOWS_YOU_TO_INPUT_FUEL_TYPE_AND_COSTS_HELP' | translate) + ('IF_A_STANDARD_FUEL_IS_USED_THE_CALORIFIC_VALUE_AND_CO2_EMISSIONS_FSLASH_UNIT_OF_FUEL_WILL_BE_AUTOMATICALLY_POPULATED_FROM_LOO_HELP' | translate)"
+                   [titleTooltip]="tooltipFuel"
                    background="#EDF2F4">
           <div body>
             <type-of-fuel [formControlName]="fields.inputFuelId.formControlName"
@@ -102,10 +106,14 @@
           </div>
         </sga-panel>
 
+        <ng-template #cO2EmissionTooltip>
+          <h6>{{'CARBON_TAX_LEVY_COST_PER_UNIT' | translate}}</h6>
+          <p>{{'IF_CARBON_TAX_IS_PART_OF_THE_FUEL_BILL_IT_CAN_EITHER_BE_BROKEN_OUT_TO_ALLOW_THE_COST_OF_CO2_EMISSIONS_TO_BE_CALCULATED_OR_CAN_HELP' | translate}}</p>
+        </ng-template>
         <sga-panel id="CO2EmissionPanel"
                    [(expanded)]="fieldsTree.utility_parameters.panels.co2_emission.status"
                    title="CO2 Emission"
-                   titleTooltip="Tooltip"
+                   [titleTooltip]="cO2EmissionTooltip"
                    background="#EDF2F4">
           <div body>
             <form-toggle [formControlName]="fields.isCo2OrCarbonEmissionsTaxed.formControlName"
@@ -143,10 +151,18 @@
       </div>
 
       <div class="col-md-6">
+        <ng-template #waterTooltip>
+          <div style="text-align: left;">
+            <h6>{{'IS_BOILER_HOUSE_WATER_MEASURED' | translate}}</h6>
+            <p>{{'IS_ALL_WATER_ENTERING_THE_BOILER_HOUSE_AS_PART_OF_THE_STEAM_GENERATION_PROCESS_MEASSURED_HELP' | translate}}</p>
+            <h6>{{'WATER_CONSUMPTION_PER_YEAR' | translate}}</h6>
+            <p>{{'ALL_WATER_ENTERING_THE_BOILER_HOUSE_AS_PART_OF_THE_STEAM_GENERATION_PROCESS_HELP' | translate}}</p>
+          </div>
+        </ng-template>
         <sga-panel [(expanded)]="fieldsTree.utility_parameters.panels.water.status"
                    id="WaterPanel"
                    title="Water"
-                   titleTooltip="Tooltip"
+                   [titleTooltip]="waterTooltip"
                    background="#EDF2F4">
           <div body>
             <form-input [formControlName]="fields.costOfWaterPerUnit.formControlName"
@@ -201,10 +217,22 @@
           </div>
         </sga-panel>
 
+        <ng-template #waterChemicalsTooltip>
+          <div style="text-align: left;">
+            <h6>{{'IS_CHEMICAL_COSTS_PER_YEAR_KNOWN' | translate}}</h6>
+            <p>{{'COST_OF_WATER_TREATMENT_CHEMICALS_ONLY_THIS_DOES_NOT_INCLUDE_SERVICE_AGREEMENTS_OR_MAINTENANCE_COSTS_HELP' | translate}}</p>
+
+            <h6>{{'TOTAL_CHEMICAL_COST_PER_YEAR' | translate}}</h6>
+            <p>{{'COST_OF_WATER_TREATMENT_CHEMICALS_FSLASH_UNIT_OF_BOILER_WATER_BEING_TREATED_FOR_EXAMPLE_0_15_FSLASH_M3_BOILER_WATER_THIS_HELP' | translate}}</p>
+
+            <h6>{{'O2_SCAVENGING_CHEMICALS_COST_SAVINGS' | translate}}</h6>
+            <p>{{'THIS_IS_USED_TO_CALCULATE_ANY_CHEMICAL_SAVINGS_FROM_INCREASING_FEEDWATER_TEMPERATURE_USING_DIRECT_STEAM_INJECTION_HELP' | translate}}</p>
+          </div>
+        </ng-template>
         <sga-panel [(expanded)]="fieldsTree.utility_parameters.panels.water_treatment_chemicals.status"
                    id="waterTreatmentChemicalsPanel"
                    title="Water treatment chemicals"
-                   titleTooltip="Tooltip"
+                   [titleTooltip]="waterChemicalsTooltip"
                    background="#EDF2F4">
           <div body>
             <form-toggle [formControlName]="fields.boilerWaterTreatmentChemicalCostsIsKnown.formControlName"
@@ -233,10 +261,14 @@
           </div>
         </sga-panel>
 
+        <ng-template #waterEffluentTooltip>
+          <h6>{{'IS_COOLING_WATER_USED' | translate}}</h6>
+          <p>{{'IF_BLOWDOWN_VESSEL_SELECTED_AND_THE_CHECK_BOX_IS_COOLING_WATER_USED_IS_TICKED_IT_WILL_IMPACT_ON_BOILER_HOUSE_WATER_CONSUMPTIO_HELP' | translate}}</p>
+        </ng-template>
         <sga-panel [(expanded)]="fieldsTree.utility_parameters.panels.water_effluent.status"
                    id="waterEffluentPanel"
                    title="Water effluent"
-                   titleTooltip="Tooltip"
+                   [titleTooltip]="waterEffluentTooltip"
                    background="#EDF2F4">
           <div body>
             <form-input [formControlName]="fields.costOfEffluentPerUnit.formControlName"
