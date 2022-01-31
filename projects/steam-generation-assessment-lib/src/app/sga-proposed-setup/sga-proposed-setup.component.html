@@ -1,124 +1,172 @@
 <sga-panel title="Proposed setup" [disableToggle]="true">
   <ng-container body>
-    <div class="sgaProposedSetup">
-      <sga-panel title="Setup parameters" titleTooltip="Some tooltip" id="SetupParametersPanel" background="#EDF2F4">
-        <form body class="setupParameters" [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
-          <div class="row">
-            <div class="col-md-4"></div>
-            <div class="col-md-4"><h5>{{'CURRENT_SITUATION' | translate}}</h5></div>
-            <div class="col-md-4"><h5>{{'PROPOSED_SITUATION' | translate}}</h5></div>
-          </div>
-          <div class="row">
-            <div class="col-md-4"><p>{{'PERCENT_CONDENSATE_RETURNED' | translate}}</p></div>
-            <div class="col-md-4"><form-input formControlName="PERCENT_CONDENSATE_RETURNED_l" unit="%" filled></form-input></div>
-            <div class="col-md-4"><form-input formControlName="PERCENT_CONDENSATE_RETURNED_r" unit="%" required></form-input></div>
-          </div>
-          <div class="row">
-            <div class="col-md-4"><p>{{'CONDENSATE_RETURNED' | translate}}</p></div>
-            <div class="col-md-4"><form-input formControlName="CONDENSATE_RETURNED_l" unit="m3" filled></form-input></div>
-            <div class="col-md-4"><form-input formControlName="CONDENSATE_RETURNED_r" unit="m3" required></form-input></div>
-          </div>
-          <div class="row">
-            <div class="col-md-4"><p>{{'TEMPERATURE_OF_CONDENSATE_RETURN' | translate}}</p></div>
-            <div class="col-md-4"><form-input formControlName="TEMPERATURE_OF_CONDENSATE_RETURN_l" unit="°C" filled></form-input></div>
-            <div class="col-md-4"><form-input formControlName="TEMPERATURE_OF_CONDENSATE_RETURN_r" unit="°C" required></form-input></div>
-          </div>
-          <div class="row">
-            <div class="col-md-4"><p>{{'WATER_REJECTION_RATE' | translate}}</p></div>
-            <div class="col-md-4"><form-input formControlName="WATER_REJECTION_RATE_l" unit="%" filled></form-input></div>
-            <div class="col-md-4"><form-input formControlName="WATER_REJECTION_RATE_r" unit="%" required></form-input></div>
-          </div>
-          <div class="row">
-            <div class="col-md-4"><p>{{'BOILER_EFFICIENCY' | translate}}</p></div>
-            <div class="col-md-4"><form-input formControlName="BOILER_EFFICIENCY_l" unit="%" filled></form-input></div>
-            <div class="col-md-4"><form-input formControlName="BOILER_EFFICIENCY_r" unit="%" required></form-input></div>
-          </div>
-          <div class="row">
-            <div class="col-md-4"><p>{{'ECONOMISER_REQUIRED' | translate}}</p></div>
-            <div class="col-md-8">
-              <form-toggle name="economiserRequired" formControlName="ECONOMISER_REQUIRED"></form-toggle>
+    <div class="sgaProposedSetup" *ngIf="units">
+      <sga-panel [(expanded)]="proposedFormPanel"
+                 title="Setup parameters"
+                 titleTooltip="Some tooltip"
+                 id="SetupParametersPanel"
+                 background="#EDF2F4">
+        <form body class="setupParameters" [formGroup]="form" (ngSubmit)="onSubmit()">
+          <ng-container formGroupName="proposedSetup">
+            <div class="row">
+              <div class="col-md-4"></div>
+              <div class="col-md-4"><h5>{{'CURRENT_SITUATION' | translate}}</h5></div>
+              <div class="col-md-4"><h5>{{'PROPOSED_SITUATION' | translate}}</h5></div>
             </div>
-          </div>
-          <div class="row">
-            <div class="col-md-4"><p>{{'TEMPERATURE_OF_FEEDTANK' | translate}}</p></div>
-            <div class="col-md-4"><form-input formControlName="TEMPERATURE_OF_FEEDTANK_l" unit="°C" filled></form-input></div>
-            <div class="col-md-4"><form-input formControlName="TEMPERATURE_OF_FEEDTANK_r" unit="°C" required></form-input></div>
-          </div>
-          <div class="row">
-            <div class="col-md-4"><p>{{'TEMPERATURE_OF_FEEDTANK' | translate}}</p></div>
-            <div class="col-md-4"><form-input formControlName="TEMPERATURE_OF_FEEDTANK_2_l" unit="bar gauge" filled></form-input></div>
-            <div class="col-md-4"><form-input formControlName="TEMPERATURE_OF_FEEDTANK_2_r" unit="bar gauge" required></form-input></div>
-          </div>
+            <div class="row">
+              <div class="col-md-4"><p>{{'PERCENT_CONDENSATE_RETURNED' | translate}}</p></div>
+              <div class="col-md-4"><form-input formControlName="benchmarkCondensateReturnedPercentage" unit="%" [readonly]="true" filled></form-input></div>
+              <div class="col-md-4"><form-input formControlName="proposalCondensateReturnedPercentage" unit="%" required></form-input></div>
+            </div>
+            <div class="row">
+              <div class="col-md-4"><p>{{'CONDENSATE_RETURNED' | translate}}</p></div>
+              <div class="col-md-4"><form-input formControlName="benchmarkCondensateReturn"
+                                                [unit]="units[data?.proposedSetup?.condensateReturnUnit] || '-'"
+                                                [readonly]="true"
+                                                filled></form-input></div>
+              <div class="col-md-4"><form-input formControlName="proposalCondensateReturned"
+                                                [unit]="units[data?.proposedSetup?.condensateReturnUnit] || '-'"
+                                                required></form-input></div>
+            </div>
+            <div class="row">
+              <div class="col-md-4"><p>{{'TEMPERATURE_OF_CONDENSATE_RETURN' | translate}}</p></div>
+              <div class="col-md-4">
+                <form-input formControlName="benchmarkCondensateTemperature"
+                            [unit]="units[data?.proposedSetup?.condensateTemperatureUnit] || '-'"
+                            [readonly]="true"
+                            filled></form-input>
+              </div>
+              <div class="col-md-4">
+                <form-input formControlName="proposalCondensateTemperature"
+                            [unit]="units[data?.proposedSetup?.condensateTemperatureUnit] || '-'"
+                            required></form-input>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4"><p>{{'WATER_REJECTION_RATE' | translate}}</p></div>
+              <div class="col-md-4"><form-input formControlName="benchmarkWaterRejectionRate" unit="%" [readonly]="true" filled></form-input></div>
+              <div class="col-md-4"><form-input formControlName="proposalWaterRejectionRate" unit="%" required></form-input></div>
+            </div>
+            <div class="row">
+              <div class="col-md-4"><p>{{'BOILER_EFFICIENCY' | translate}}</p></div>
+              <div class="col-md-4"><form-input formControlName="benchmarkBoilerEfficiency" unit="%" [readonly]="true" filled></form-input></div>
+              <div class="col-md-4"><form-input formControlName="proposalBoilerEfficiency" unit="%" required></form-input></div>
+            </div>
+            <div class="row">
+              <div class="col-md-4"><p>{{'ECONOMISER_REQUIRED' | translate}}</p></div>
+              <div class="col-md-8">
+                <form-toggle name="economiserRequired" formControlName="economiserRequired"></form-toggle>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4"><p>{{'TEMPERATURE_OF_FEEDTANK' | translate}}</p></div>
+              <div class="col-md-4">
+                <form-input formControlName="benchmarkTemperatureOfFeedtank"
+                            [unit]="units[data?.proposedSetup?.temperatureOfFeedtankUnit] || '-'"
+                            [readonly]="true"
+                            filled></form-input>
+              </div>
+              <div class="col-md-4">
+                <form-input formControlName="proposalTemperatureOfFeedtank"
+                            [unit]="units[data?.proposedSetup?.temperatureOfFeedtankUnit] || '-'"
+                            required></form-input>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4"><p>{{'DSI_PRESSURE' | translate}}</p></div>
+              <div class="col-md-4">
+                <form-input formControlName="benchmarkDsiPressure"
+                            [unit]="units[data?.proposedSetup?.dsiPressureUnit] || '-'"
+                            [readonly]="true"
+                            filled></form-input>
+              </div>
+              <div class="col-md-4">
+                <form-input formControlName="proposalDsiPressure"
+                            [unit]="units[data?.proposedSetup?.dsiPressureUnit] || '-'"
+                            required></form-input>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4">
+                <button type="submit">Generate proposed results</button>
+              </div>
+            </div>
+          </ng-container>
         </form>
       </sga-panel>
 
-      <p class="sgaProposedSetup_title">{{'POTENTIAL_BOILER_HOUSE_SAVINGS_BY_PROJECT' | translate}}</p>
-      <p class="sgaProposedSetup_subtitle mb-24">Saving £’000s / yr</p>
-      <app-chart-bar className="sgaProposedSetup_chart" [data]="chartData" [labels]="chartLabels"></app-chart-bar>
-      <hr>
-      <div class="row">
-        <div class="col-md-6">
-          <h5 class="sgaProposedSetup_title">
-            <span>Cost of Steam Generation</span>
-            <i class="fa fa-info-circle"></i>
-          </h5>
-          <app-chart-bar type="horizontalBar"
-                         [options]="costSteamGenerationChartOptions"
-                         [legend]="false"
-                         [data]="costSteamGenerationChart"
-                         [labels]="costSteamGenerationChartLabels"></app-chart-bar>
-          <p>Steam Generation Savings: <span class="text-bold">£7,691</span></p>
-          <p>Savings Including Condensate Effluent: <span class="text-bold">£7,691</span> </p>
-        </div>
-        <div class="col-md-6">
-          <h5 class="sgaProposedSetup_title mb-24">
-            <span>Add Features</span>
-            <i class="fa fa-info-circle"></i>
-          </h5>
-          <ul class="sgaProposedSetup_list">
-            <li>
-              <label>
-                <input type="checkbox">
-                Boiler efficiency improvements
-              </label>
-            </li>
-            <li>
-              <label>
-                <input type="checkbox">
-                Increase condensate return
-              </label>
-            </li>
-            <li>
-              <label>
-                <input type="checkbox">
-                Add water treatment plant (RO)
-              </label>
-            </li>
-            <li>
-              <label>
-                <input type="checkbox">
-                Add Auto TDS controls
-              </label>
-            </li>
-            <li>
-              <label>
-                <input type="checkbox">
-                Add Auto TDS and flash recovery
-              </label>
-            </li>
-            <li>
-              <label>
-                <input type="checkbox">
-                Add Auto TDS, flash recovery + heat Excanger
-              </label>
-            </li>
-            <li>
-              <label>
-                <input type="checkbox">
-                Add direct steam injection to feedtank
-              </label>
-            </li>
-          </ul>
+      <div [ngClass]="{loading: loading}">
+        <p class="sgaProposedSetup_title">{{'POTENTIAL_BOILER_HOUSE_SAVINGS_BY_PROJECT' | translate}}</p>
+        <p class="sgaProposedSetup_subtitle mb-24">Saving {{currency}}’000s / {{'YR' | translate}}</p>
+        <app-chart-bar className="sgaProposedSetup_chart"
+                       [data]="chartData"
+                       [labels]="chartLabels"></app-chart-bar>
+        <hr>
+        <div class="row">
+          <div class="col-md-6">
+            <h5 class="sgaProposedSetup_title">
+              <span>Cost of Steam Generation</span>
+              <i class="fa fa-info-circle"></i>
+            </h5>
+            <app-chart-bar type="horizontalBar"
+                           [options]="costSteamGenerationChartOptions"
+                           [legend]="false"
+                           [data]="costSteamGenerationChart"
+                           [labels]="costSteamGenerationChartLabels"></app-chart-bar>
+            <p>{{'STEAM_GENERATION_SAVINGS' | translate}}: <span class="text-bold">{{currency}}7,691</span></p>
+            <p>{{'SAVINGS_INCLUDING_CONDENSATE_EFFLUENT' | translate}}: <span class="text-bold">{{currency}}7,691</span> </p>
+          </div>
+          <form class="col-md-6" [formGroup]="form">
+            <h5 class="sgaProposedSetup_title mb-24">
+              <span>{{'ADD_FEATURES' | translate}}</span>
+              <i class="fa fa-info-circle"></i>
+            </h5>
+            <ul class="sgaProposedSetup_list" formGroupName="features">
+              <li>
+                <label>
+                  <input type="checkbox" formControlName="boilerEfficiencyImprovements" [value]="true">
+                  {{'BOILER_EFFICIENCY_IMPROVEMENTS' | translate}}
+                </label>
+              </li>
+              <li>
+                <label>
+                  <input type="checkbox" formControlName="increaseCondensateReturn" [value]="true">
+                  {{'INCREASE_CONDENSATE_RETURN' | translate}}
+                </label>
+              </li>
+              <li>
+                <label>
+                  <input type="checkbox" formControlName="addWaterTreatmentPlant" [value]="true">
+                  {{'ADD_WATER_TREATMENT_PLANT_RO' | translate}}
+                </label>
+              </li>
+              <li>
+                <label>
+                  <input type="checkbox" formControlName="addAutoTdsControls" [value]="true">
+                  {{'ADD_AUTO_TDS_CONTROLS' | translate}}
+                </label>
+              </li>
+              <li>
+                <label>
+                  <input type="checkbox" formControlName="addAutoTdsAndFlashRecovery" [value]="true">
+                  {{'ADD_AUTO_TDS_AND_FLASH_RECOVERY' | translate}}
+                </label>
+              </li>
+              <li>
+                <label>
+                  <input type="checkbox" formControlName="addAutoTdsAndFlashRecoveryPlusHearExchanger" [value]="true">
+                  {{'ADD_AUTO_TDS_FLASH_RECOVERY_HEAT_EXCHANGER' | translate}}
+                </label>
+              </li>
+
+              <li>
+                <label>
+                  <input type="checkbox" formControlName="addDirectSteamInjectionToFeedtank" [value]="true">
+                  {{'DIRECT_STEAM_INJECTION_TO_FEEDTANK' | translate}}
+                </label>
+              </li>
+            </ul>
+          </form>
         </div>
       </div>
     </div>

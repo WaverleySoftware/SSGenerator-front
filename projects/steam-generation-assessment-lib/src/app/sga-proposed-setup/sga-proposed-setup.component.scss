@@ -78,7 +78,7 @@
     }
 
     label {
-      display: flex;
+      display: inline-flex;
       align-items: center;
       font-family: var(--font-proxima-nova);
       font-style: normal;
@@ -125,6 +125,30 @@
     &::ng-deep {
       .formField-addon {
         text-transform: none;
+      }
+    }
+  }
+
+  .loading {
+    filter: blur(10px);
+  }
+
+  form {
+    button[type='submit'] {
+      padding: 10px 20px;
+      text-transform: uppercase;
+      outline: none;
+      color: var(--color-blue);
+      border: 1px solid var(--color-blue);
+      background-color: var(--color-white);
+      transition: 250ms ease-in-out background-color;
+      font-family: var(--font-proxima-nova);
+      font-weight: 600;
+      font-size: 18px;
+      line-height: 105%;
+      &:hover {
+        cursor: pointer;
+        background-color: var(--color-steel-20);
       }
     }
   }

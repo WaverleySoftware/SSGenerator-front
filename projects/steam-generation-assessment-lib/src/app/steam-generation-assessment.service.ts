@@ -1,9 +1,9 @@
-import { ElementRef, Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-import { BehaviorSubject, Observable } from "rxjs";
+import { ElementRef, Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, Observable } from 'rxjs';
 import {
   FormFieldTypesInterface,
-  FuelTypesEnum,
+  FuelTypesEnum, ProposedSetupInterface,
   SelectedUnitsList,
   SgaFeedTankTemperatureRequestInterface,
   SgaFuelTypes,
@@ -14,7 +14,7 @@ import {
   SteamCarbonEmissionInterface,
   SteamGeneratorInputsInterface,
   SteamGeneratorSelectedUnitsInterface,
-} from "./steam-generation-form.interface";
+} from './steam-generation-form.interface';
 import {
   DisplayGroup,
   EnumerationDefinition,
@@ -22,11 +22,11 @@ import {
   PreferenceService,
   TranslationService,
   UnitConvert
-} from "sizing-shared-lib";
-import { SizingUnitPreference } from "../../../sizing-shared-lib/src/lib/shared/preference/sizing-unit-preference.model";
-import { FormArray, FormBuilder, FormGroup, Validators } from "@angular/forms";
-import { SgaValidator } from "./steam-generation-assessment.validator";
-import { map, pairwise, startWith, tap } from "rxjs/operators";
+} from 'sizing-shared-lib';
+import { SizingUnitPreference } from '../../../sizing-shared-lib/src/lib/shared/preference/sizing-unit-preference.model';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { SgaValidator } from './steam-generation-assessment.validator';
+import { map, pairwise, startWith, tap } from 'rxjs/operators';
 
 @Injectable()
 export class SteamGenerationAssessmentService {
@@ -350,7 +350,10 @@ export class SteamGenerationAssessmentService {
       translations: ['TDS'],
     }
   };
-  private readonly _sizingFormGroupControls: { selectedUnits: Record<keyof SteamGeneratorSelectedUnitsInterface, any>; benchmarkInputs: Record<keyof SteamGeneratorInputsInterface, any> } = {
+  private readonly _sizingFormGroupControls: {
+    selectedUnits: Record<keyof SteamGeneratorSelectedUnitsInterface, any>;
+    benchmarkInputs: Record<keyof SteamGeneratorInputsInterface, any>
+  } = {
     selectedUnits: {
       energyUnitSelected: [null], // BoilerHouseEnergyUnits
       smallWeightUnitSelected: [null], // WeightUnit
@@ -368,60 +371,180 @@ export class SteamGenerationAssessmentService {
       hoursOfOperation: [8736, Validators.required, SgaValidator.validateAsyncFn(this, 'hoursOfOperation')], // HOURS_OF_OPERATION
       isSteamFlowMeasured: [false, SgaValidator.isSteamFlowMeasured], // IS_STEAM_FLOW_MEASURED
       isAutoTdsControlPResent: [false, SgaValidator.isAutoTdsControlPResent], // IS_AUTO_TDS_PRESENT
-      boilerSteamGeneratedPerYear: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'boilerSteamGeneratedPerYear', true)], // STEAM_GENERATION_PER_YEAR
-      boilerSteamGeneratedPerHour: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'boilerSteamGeneratedPerHour', true)],  // STEAM_GENERATION_PER_HOUR
+      boilerSteamGeneratedPerYear: [
+        null,
+        Validators.required,
+        SgaValidator.validateAsyncFn(this, 'boilerSteamGeneratedPerYear', true)
+      ], // STEAM_GENERATION_PER_YEAR
+      boilerSteamGeneratedPerHour: [
+        null,
+        Validators.required,
+        SgaValidator.validateAsyncFn(this, 'boilerSteamGeneratedPerHour', true)
+      ],  // STEAM_GENERATION_PER_HOUR
       inputFuelId: [null, Validators.required], // FUEL_TYPE
-      costOfFuelPerUnit: [null, Validators.required, SgaValidator.validateAsyncFn(this,'costOfFuelPerUnit', true)], // COST_OF_FUEL_PER_UNIT
+      costOfFuelPerUnit: [
+        null,
+        Validators.required,
+        SgaValidator.validateAsyncFn(this, 'costOfFuelPerUnit', true)
+      ], // COST_OF_FUEL_PER_UNIT
       fuelQtyPerYearIsKnown: [false, SgaValidator.fuelQtyPerYearIsKnown], // IS_FUEL_CONSUMPTION_MEASURED
-      costOfFuelPerYear: [null, Validators.required, SgaValidator.validateAsyncFn(this,'costOfFuelPerYear', true)], // FUEL_COSTS_PER_YEAR : Original "Fuel Costs per Year"
-      fuelConsumptionPerYear: [null, Validators.required, SgaValidator.validateAsyncFn(this,'fuelConsumptionPerYear', true)], // FUEL_CONSUMPTION_PER_YEAR
+      costOfFuelPerYear: [
+        null,
+        Validators.required,
+        SgaValidator.validateAsyncFn(this, 'costOfFuelPerYear', true)
+      ], // FUEL_COSTS_PER_YEAR : Original "Fuel Costs per Year"
+      fuelConsumptionPerYear: [
+        null,
+        Validators.required,
+        SgaValidator.validateAsyncFn(this, 'fuelConsumptionPerYear', true)
+      ], // FUEL_CONSUMPTION_PER_YEAR
       fuelEnergyPerUnit: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'fuelEnergyPerUnit')], // FUEL_CALORIFIC_VALUE
-      fuelCarbonContent: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'fuelCarbonContent')], // CO2_EMISSIONS_PER_UNIT_FUEL
-      costOfWaterPerUnit: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'costOfWaterPerUnit')], // COST_OF_WATER_FSLASH_UNIT
-      costOfEffluentPerUnit: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'costOfEffluentPerUnit')], // COST_OF_EFFLUENT_FSLASH_UNIT
-      boilerHouseWaterQtyPerYearIsKnown: [false, SgaValidator.boilerHouseWaterQtyPerYearIsKnown], // IS_WATER_ENTERING_THE_BOILER_HOUSE_MEASURED : Original IS_BOILER_HOUSE_WATER_MEASURED
-      costOfWaterPerYear: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'costOfWaterPerYear')], // WATER_CONSUMPTION_HOUR : NEW FIELD
-      waterConsumptionPerHour: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'waterConsumptionPerHour')], // WATER_CONSUMPTION_HOUR : NEW FIELD
-      waterConsumptionPerYear: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'waterConsumptionPerYear')], // WATER_CONSUMPTION_YEAR : Original WATER_CONSUMPTION_PER_YEAR
-      boilerWaterTreatmentChemicalCostsIsKnown: [false, SgaValidator.boilerWaterTreatmentChemicalCostsIsKnown], // ARE_CHEMICAL_COST_KNOWN : Original IS_CHEMICAL_COSTS_PER_YEAR_KNOWN
-      totalChemicalCostPerYear: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'totalChemicalCostPerYear')], // TOTAL_CHEMICAL_COSTS_PER_YEAR : Original TOTAL_CHEMICAL_COST_PER_YEAR
-      o2ScavengingChemicalsCostSavings: [null, null, SgaValidator.validateAsyncFn(this, 'o2ScavengingChemicalsCostSavings')], // O2_SCAVENGING_CHEMICALS_COST_SAVINGS
+      fuelCarbonContent: [
+        null,
+        Validators.required,
+        SgaValidator.validateAsyncFn(this, 'fuelCarbonContent')
+      ], // CO2_EMISSIONS_PER_UNIT_FUEL
+      costOfWaterPerUnit: [
+        null,
+        Validators.required,
+        SgaValidator.validateAsyncFn(this, 'costOfWaterPerUnit')
+      ], // COST_OF_WATER_FSLASH_UNIT
+      costOfEffluentPerUnit: [
+        null,
+        Validators.required,
+        SgaValidator.validateAsyncFn(this, 'costOfEffluentPerUnit')
+      ], // COST_OF_EFFLUENT_FSLASH_UNIT
+      boilerHouseWaterQtyPerYearIsKnown: [
+        false,
+        SgaValidator.boilerHouseWaterQtyPerYearIsKnown
+      ], // IS_WATER_ENTERING_THE_BOILER_HOUSE_MEASURED : Original IS_BOILER_HOUSE_WATER_MEASURED
+      costOfWaterPerYear: [
+        null,
+        Validators.required,
+        SgaValidator.validateAsyncFn(this, 'costOfWaterPerYear')
+      ], // WATER_CONSUMPTION_HOUR : NEW FIELD
+      waterConsumptionPerHour: [
+        null,
+        Validators.required,
+        SgaValidator.validateAsyncFn(this, 'waterConsumptionPerHour')
+      ], // WATER_CONSUMPTION_HOUR : NEW FIELD
+      waterConsumptionPerYear: [
+        null,
+        Validators.required,
+        SgaValidator.validateAsyncFn(this, 'waterConsumptionPerYear')
+      ], // WATER_CONSUMPTION_YEAR : Original WATER_CONSUMPTION_PER_YEAR
+      boilerWaterTreatmentChemicalCostsIsKnown: [
+        false,
+        SgaValidator.boilerWaterTreatmentChemicalCostsIsKnown], // ARE_CHEMICAL_COST_KNOWN : Original IS_CHEMICAL_COSTS_PER_YEAR_KNOWN
+      totalChemicalCostPerYear: [
+        null,
+        Validators.required,
+        SgaValidator.validateAsyncFn(this, 'totalChemicalCostPerYear')
+      ], // TOTAL_CHEMICAL_COSTS_PER_YEAR : Original TOTAL_CHEMICAL_COST_PER_YEAR
+      o2ScavengingChemicalsCostSavings: [
+        null,
+        null,
+        SgaValidator.validateAsyncFn(this, 'o2ScavengingChemicalsCostSavings')
+      ], // O2_SCAVENGING_CHEMICALS_COST_SAVINGS
       isCo2OrCarbonEmissionsTaxed: [false, SgaValidator.isCo2OrCarbonEmissionsTaxed],
-      carbonTaxLevyCostPerUnit: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'carbonTaxLevyCostPerUnit')], // CARBON_TAX_LEVY_COST_PER_UNIT
-      costOfCo2PerUnitMass: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'costOfCo2PerUnitMass')], // COST_OF_CO2_PER_UNIT_MASS : Original "Cost of CO2 / Unit Mass"
+      carbonTaxLevyCostPerUnit: [
+        null,
+        Validators.required,
+        SgaValidator.validateAsyncFn(this, 'carbonTaxLevyCostPerUnit')
+      ], // CARBON_TAX_LEVY_COST_PER_UNIT
+      costOfCo2PerUnitMass: [
+        null,
+        Validators.required,
+        SgaValidator.validateAsyncFn(this, 'costOfCo2PerUnitMass')
+      ], // COST_OF_CO2_PER_UNIT_MASS : Original "Cost of CO2 / Unit Mass"
       isBlowdownVesselPresent: [false], // IS_BLOWDOWN_VESSEL_PRESENT
       isCoolingWaterUsed: [false], // IS_COOLING_WATER_USED
       isSuperheatedSteam: [false, SgaValidator.isSuperheatedSteam], // IS_SUPERHEATED_STEAM
-      boilerEfficiency: [null, [Validators.required, Validators.max(100)], SgaValidator.validateAsyncFn(this, 'boilerEfficiency')], // BOILER_EFFICIENCY
+      boilerEfficiency: [
+        null,
+        [Validators.required, Validators.max(100)],
+        SgaValidator.validateAsyncFn(this, 'boilerEfficiency')
+      ], // BOILER_EFFICIENCY
       isFeedWaterMeasured: [false, SgaValidator.isFeedWaterMeasured], // IS_FEEDWATER_FLOWRATE_MEASURED
       boilerSteamPressure: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'boilerSteamPressure', true)], // STEAM_PRESSURE
       boilerSteamTemperature: [null, null, SgaValidator.validateAsyncFn(this, 'boilerSteamTemperature', true)], // STEAM_TEMPERATURE
       isEconomizerPresent: [false], // IS_ECONOMISER_PRESENT
-      boilerAverageTds: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'boilerAverageTds')], // AVERAGE_BOILER_TDS : Original BOILER_AVERAGE_TDS
-      boilerMaxTds: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'boilerMaxTds')], // MAXIMUM_ALLOWABLE_BOILER_TDS : Original BOILER_MAX_TDS
-      boilerFeedwaterConsumptionPerHour: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'boilerFeedwaterConsumptionPerHour', true)], // CONSUMPTION_PER_HR && CONSUMPTION_PER_YEAR
-      boilerFeedwaterConsumptionPerYear: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'boilerFeedwaterConsumptionPerYear', true)], // CONSUMPTION_PER_HR && CONSUMPTION_PER_YEAR
+      boilerAverageTds: [
+        null,
+        Validators.required,
+        SgaValidator.validateAsyncFn(this, 'boilerAverageTds')
+      ], // AVERAGE_BOILER_TDS : Original BOILER_AVERAGE_TDS
+      boilerMaxTds: [
+        null,
+        Validators.required,
+        SgaValidator.validateAsyncFn(this, 'boilerMaxTds')
+      ], // MAXIMUM_ALLOWABLE_BOILER_TDS : Original BOILER_MAX_TDS
+      boilerFeedwaterConsumptionPerHour: [
+        null,
+        Validators.required,
+        SgaValidator.validateAsyncFn(this, 'boilerFeedwaterConsumptionPerHour', true)
+      ], // CONSUMPTION_PER_HR && CONSUMPTION_PER_YEAR
+      boilerFeedwaterConsumptionPerYear: [
+        null,
+        Validators.required,
+        SgaValidator.validateAsyncFn(this, 'boilerFeedwaterConsumptionPerYear', true)
+      ], // CONSUMPTION_PER_HR && CONSUMPTION_PER_YEAR
       isFlashVesselPresent: [false, SgaValidator.isFlashVesselPresent], // IS_FLASH_VESSEL_PRESENT
       isHeatExchangerPresent: [false, SgaValidator.isHeatExchangerPresent], // IS_HEAT_EXCHANGER_PRESENT
-      waterTemperatureLeavingHeatExchanger: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'waterTemperatureLeavingHeatExchanger', null)], // WATER_TEMPERATURE_LEAVING_HEAT_EXCHANGER
+      waterTemperatureLeavingHeatExchanger: [
+        null,
+        Validators.required,
+        SgaValidator.validateAsyncFn(this, 'waterTemperatureLeavingHeatExchanger', null)], // WATER_TEMPERATURE_LEAVING_HEAT_EXCHANGER
       waterTreatmentMethod: [null, Validators.required], // WATER_TREATMENT_METHOD
-      percentageWaterRejection: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'percentageWaterRejection')], // PERCENTAGE_WATER_REJECTION
+      percentageWaterRejection: [
+        null,
+        Validators.required,
+        SgaValidator.validateAsyncFn(this, 'percentageWaterRejection')
+      ], // PERCENTAGE_WATER_REJECTION
       tdsOfMakeupWater: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'tdsOfMakeupWater')], // TDS_OF_MAKEUP_WATER
       isMakeUpWaterMonitored: [false, SgaValidator.isMakeUpWaterMonitored],
-      temperatureOfMakeupWater: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'temperatureOfMakeupWater', true)], // TEMPERATURE_OF_MAKE_UP_WATER : Original TEMPERATURE_OF_MAKEUP_WATER
+      temperatureOfMakeupWater: [
+        null,
+        Validators.required,
+        SgaValidator.validateAsyncFn(this, 'temperatureOfMakeupWater', true)
+      ], // TEMPERATURE_OF_MAKE_UP_WATER : Original TEMPERATURE_OF_MAKEUP_WATER
       makeupWaterAmountPerHour: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'makeupWaterAmountPerHour', true)],
       makeupWaterAmountPerYear: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'makeupWaterAmountPerYear', true)],
       atmosphericDeaerator: [true, SgaValidator.atmosphericDeaerator], // AUTMOSPHERIC_DEAERATOR (default)
       pressurisedDeaerator: [false, SgaValidator.pressurisedDeaerator], // PRESSURLSED_DEAERATOR
-      temperatureOfFeedtank: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'temperatureOfFeedtank')], // TEMPERATURE_OF_FEEDTANK
-      tdsOfFeedwaterInFeedtank: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'tdsOfFeedwaterInFeedtank', true)], // TDS_OF_FEEDWATER_IN_FEEDTANK
-      tdsOfCondensateReturn: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'tdsOfCondensateReturn')], // TDS_OF_CONDENSATE_RETURN
-      temperatureOfCondensateReturn: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'temperatureOfCondensateReturn')], // TEMPERATURE_OF_CONDENSATE_RETURN
+      temperatureOfFeedtank: [
+        null,
+        Validators.required,
+        SgaValidator.validateAsyncFn(this, 'temperatureOfFeedtank')
+      ], // TEMPERATURE_OF_FEEDTANK
+      tdsOfFeedwaterInFeedtank: [
+        null,
+        Validators.required,
+        SgaValidator.validateAsyncFn(this, 'tdsOfFeedwaterInFeedtank', true)
+      ], // TDS_OF_FEEDWATER_IN_FEEDTANK
+      tdsOfCondensateReturn: [
+        null,
+        Validators.required,
+        SgaValidator.validateAsyncFn(this, 'tdsOfCondensateReturn')
+      ], // TDS_OF_CONDENSATE_RETURN
+      temperatureOfCondensateReturn: [
+        null,
+        Validators.required,
+        SgaValidator.validateAsyncFn(this, 'temperatureOfCondensateReturn')
+      ], // TEMPERATURE_OF_CONDENSATE_RETURN
       areChemicalsAddedDirectlyToFeedtank: [false], // ARE_CHEMICALS_ADDED_DIRECTLY_TO_FEEDTANK
       pressureOfFeedtank: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'pressureOfFeedtank')], // PRESSURE_OF_FEEDTANK
-      pressureOfSteamSupplyingDsi: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'pressureOfSteamSupplyingDsi')], // PRESSURE_OF_STEAM_SUPPLYING_DSI
+      pressureOfSteamSupplyingDsi: [
+        null,
+        Validators.required,
+        SgaValidator.validateAsyncFn(this, 'pressureOfSteamSupplyingDsi')
+      ], // PRESSURE_OF_STEAM_SUPPLYING_DSI
       isCondensateReturnKnown: [false, SgaValidator.isCondensateReturnKnown], // IS_CONDENSATE_RETURN_KNOWN
-      percentageOfCondensateReturn: [null, Validators.required, SgaValidator.validateAsyncFn(this, 'percentageOfCondensateReturn')], // PERCENTAGE_OF_CONDENSATE_RETURN
+      percentageOfCondensateReturn: [
+        null,
+        Validators.required,
+        SgaValidator.validateAsyncFn(this, 'percentageOfCondensateReturn')
+      ], // PERCENTAGE_OF_CONDENSATE_RETURN
       volumeOfCondensateReturn: [null, null, SgaValidator.validateAsyncFn(this, 'volumeOfCondensateReturn')], // VOLUME_OF_CONDENSATE_RETURN
       isDsiPresent: [false, SgaValidator.isDsiPresent], // IS_DSI_PRESENT
     }
@@ -450,6 +573,84 @@ export class SteamGenerationAssessmentService {
       });
   }
 
+  private static _getFuelTypesList({enumerations}: DisplayGroup): EnumerationDefinition[] {
+    if (!enumerations) { return null; }
+
+    const {enumerationDefinitions} = enumerations
+      .find(({ enumerationName, opCoOverride }) => enumerationName === 'FuelTypeList_BoilerHouseInput' && !opCoOverride);
+    return enumerationDefinitions
+      .sort(({sequence}, b) => sequence > b.sequence ? 1 : sequence < b.sequence ? -1 : 0);
+  }
+
+  private static _checkIsHaveField(obj, key: string): boolean {
+    if (obj && typeof obj === 'object') {
+      if (obj.fields && obj.fields.length && obj.fields.indexOf(key) !== -1) {
+        return true;
+      } else {
+        let isHasKey = false;
+
+        for (const objKey in obj) {
+          if (this._checkIsHaveField(obj[objKey], key)) {
+            isHasKey = true;
+            break;
+          }
+        }
+
+        return isHasKey;
+      }
+    }
+
+    return false;
+  }
+
+  private static _expandFormPanels(fieldsTree: any, fieldName: string) {
+    if (fieldsTree && typeof fieldsTree === 'object') {
+      for (const key in fieldsTree) {
+        if (fieldsTree.hasOwnProperty(key)) {
+          const item = fieldsTree[key];
+          const hasField = this._checkIsHaveField(item, fieldName);
+
+          // Close all panels without first errored
+          if (item.hasOwnProperty('status') && item.status) {
+            item.status = false;
+          }
+
+          // If field has error open panel
+          if (hasField) {
+            if (item.hasOwnProperty('status') && item.status === false) {
+              setTimeout(() => item.status = true);
+            }
+            this._expandFormPanels(item, fieldName);
+
+            break;
+          }
+        }
+      }
+    }
+  }
+
+  static focusFirstErrorField(formGroup: FormGroup, elementRef: ElementRef, settingObj: SgFormStructureInterface): any {
+    // Set all field touched
+    formGroup.markAllAsTouched();
+    // check all fields
+    for (const key of Object.keys(formGroup.controls)) {
+      // get first invalid control
+      if (formGroup.controls[key].status === 'INVALID') {
+        // get field by data-form-name === name
+        const field = elementRef.nativeElement.querySelector(`[data-form-name="${key}"]`);
+
+        if (field && field.focus && typeof field.focus === 'function') {
+          // Open panel wit with invalid field
+          this._expandFormPanels(settingObj, key);
+          // Focus on field
+          setTimeout(() => field.focus(), 200);
+          // loop stop
+          return { field, key, control: formGroup.controls[key] };
+        }
+      }
+    }
+  }
+
   calculateResults(form: SgaSizingModuleFormInterface): Observable<any> {
     this.toggleLoading(true);
     return this.http.post<any>(`./Api/SteamGenerator/calculate-benchmark`, form)
@@ -464,6 +665,12 @@ export class SteamGenerationAssessmentService {
       );
   }
 
+  calculateProposed(body): Observable<any> {
+    this.toggleLoading(true);
+    return this.http.post('./Api/SteamGenerator/calculate-proposal', body)
+      .pipe(tap(null, null, () => this.toggleLoading(false)));
+  }
+
   validateSgaBenchmarkInput(
     field: keyof SteamGeneratorInputsInterface,
     form: SgaSizingModuleFormInterface
@@ -471,9 +678,13 @@ export class SteamGenerationAssessmentService {
     return this.http.post<any>(`./Api/SteamGenerator/validate-benchmark-input/${field}`, form);
   }
 
+  validateProposedInput(field: keyof ProposedSetupInterface, form: any): Observable<any> {
+    return this.http.post(`./Api/SteamGenerator/validate-proposal-input/${field}`, form);
+  }
+
   calculateCalorific(
     calorificData: SteamCalorificRequestInterface
-  ): Observable<{fuelCarbonContent: number; fuelEnergyPerUnit: number;}> {
+  ): Observable<{fuelCarbonContent: number; fuelEnergyPerUnit: number; }> {
     this.toggleLoading(true);
     return this.http.post<any>('./Api/SteamGenerator/calculate-carbon-and-calorific-value', calorificData)
       .pipe(tap(null, null, () => this.toggleLoading(false)));
@@ -491,7 +702,7 @@ export class SteamGenerationAssessmentService {
       .pipe(tap(null, null, () => this.toggleLoading(false)));
   }
 
-  calculateBoilerEfficiency(data: {isEconomizerPresent: boolean; inputFuelId: string;}): Observable<{boilerEfficiency: number}> {
+  calculateBoilerEfficiency(data: {isEconomizerPresent: boolean; inputFuelId: string; }): Observable<{boilerEfficiency: number}> {
     this.toggleLoading(true);
     return this.http.post<{boilerEfficiency: number}>('./Api/SteamGenerator/calculate-boiler-efficiency', data)
       .pipe(tap(null, null, () => this.toggleLoading(false)));
@@ -535,7 +746,7 @@ export class SteamGenerationAssessmentService {
       if (this._requestLoading$.value !== enable) {
         this._requestLoading$.next(!!enable);
       }
-    }
+    };
 
     // Fix multiple changes in one tik
     setTimeout(fn, 0);
@@ -576,12 +787,12 @@ export class SteamGenerationAssessmentService {
     return { unitsConverter: convertedUnitsArr[0], unitsConverterAfter: convertedUnitsArr[1] };
   }
 
-  private _getConverterUnits(data: {unitKey: any;preferenceKey: any;next: number;prev: number;}[]): [UnitConvert[], UnitConvert[]] {
-    let result: [UnitConvert[], UnitConvert[]] = [[],[]];
+  private _getConverterUnits(data: {unitKey: any; preferenceKey: any; next: number; prev: number; }[]): [UnitConvert[], UnitConvert[]] {
+    const result: [UnitConvert[], UnitConvert[]] = [[], []];
 
-    if (!data || !data.length) return result;
+    if (!data || !data.length) { return result; }
 
-    const isFuelChanged = data.find(({unitKey}) => unitKey == 'fuelUnitSelected');
+    const isFuelChanged = data.find(({unitKey}) => unitKey === 'fuelUnitSelected');
     const formattedFields = Object.values(this._sgaFormFields).reduce((obj, item) => ({
       ...obj,
       ...item.unitNames && item.unitNames.reduce((names, name) => ({
@@ -589,9 +800,9 @@ export class SteamGenerationAssessmentService {
       }), {})
     }), {});
 
-    for (let {prev, next, preferenceKey} of data) {
+    for (const {prev, next, preferenceKey} of data) {
       if (formattedFields[preferenceKey] && formattedFields[preferenceKey].length) {
-        for (let key of formattedFields[preferenceKey]) {
+        for (const key of formattedFields[preferenceKey]) {
           if (
             this._sgaFormFields[key].filled &&
             this._sgaFormFields[key].unitNames &&
@@ -618,23 +829,18 @@ export class SteamGenerationAssessmentService {
     return result;
   }
 
-  /**
-   * Get multiple Sizing preferences values
-   * @param obj { Object }  object where [key] is returned obj key and 'value' is returned sizing preference value
-   * @returns { {[key: string]: number} } object of Sizing preferences values
-   * **/
   public getSizingPreferenceValues(obj: { [key: string]: string }): {[key: string]: number} {
-    let res: { [key: string]: number } = {};
+    const res: { [key: string]: number } = {};
 
-    for (let sizingUnitPreference of this.preferenceService.sizingUnitPreferences) {
-      for (let nameKey in obj) {
+    for (const sizingUnitPreference of this.preferenceService.sizingUnitPreferences) {
+      for (const nameKey in obj) {
         if (
           obj[nameKey] &&
           sizingUnitPreference &&
           sizingUnitPreference.preference &&
           sizingUnitPreference.preference.name === obj[nameKey]
         ) {
-          res[nameKey] = parseInt(sizingUnitPreference.preference.value);
+          res[nameKey] = parseInt(sizingUnitPreference.preference.value, 10);
 
           break;
         }
@@ -644,11 +850,6 @@ export class SteamGenerationAssessmentService {
     return res;
   }
 
-  /**
-   * Get sizing preference from sizing preferences
-   * @param name { string } sizing preference name
-   * @returns 'SizingUnitPreference' interface
-   * **/
   public getSizingPreferenceByName(name: string): SizingUnitPreference {
     return this.preferenceService.sizingUnitPreferences
       .find(({ unitType, preference }) => {
@@ -656,62 +857,66 @@ export class SteamGenerationAssessmentService {
       });
   }
 
-  public getMultipleControlValues<T>(obj: { [key: string]: string }, formGroupKey: keyof SgaSizingModuleFormInterface = 'benchmarkInputs'): {[key: string]: any} {
+  public getMultipleControlValues<T>(
+    obj: { [key: string]: string },
+    formGroupKey: keyof SgaSizingModuleFormInterface = 'benchmarkInputs'
+  ): {[key: string]: any} {
     const result = {};
 
-    for (let objKey in obj) {
-      const control = this._sizingFormGroup.get(`${formGroupKey}.${obj[objKey]}`);
-      result[objKey] = control && control.value;
+    for (const objKey in obj) {
+      if (obj.hasOwnProperty(objKey)) {
+        const control = this._sizingFormGroup.get(`${formGroupKey}.${obj[objKey]}`);
+        result[objKey] = control && control.value;
+      }
     }
 
     return result;
   }
 
-  /**
-   * Set selected form values from sizing preferences
-  **/
-  public setSelectedValues(): {unitKey: any;preferenceKey: any;next: number;prev: number;}[] {
+  public setSelectedValues(): {unitKey: any; preferenceKey: any; next: number; prev: number; }[] {
     const sizingPreferences = this.preferenceService.sizingUnitPreferences;
-    const changedSelectedUnits: {unitKey: any; preferenceKey: any; next: number; prev: number;}[] = [];
+    const changedSelectedUnits: {unitKey: any; preferenceKey: any; next: number; prev: number; }[] = [];
 
-    if (!sizingPreferences || !sizingPreferences.length) return null;
+    if (!sizingPreferences || !sizingPreferences.length) { return null; }
 
     const selectedUnitsByPreferences = Object.assign(SelectedUnitsList) as {[p: string]: string};
 
     const selectedUnits = this.getSizingPreferenceValues(selectedUnitsByPreferences);
 
-    for (let key in selectedUnitsByPreferences) {
-      let unit = selectedUnits[key];
-      let prevValue = this._sizingFormGroup.get(`selectedUnits.${key}`) && this._sizingFormGroup.get(`selectedUnits.${key}`).value;
-      let preferenceKey = selectedUnitsByPreferences[key];
+    for (const key in selectedUnitsByPreferences) {
+      if (selectedUnitsByPreferences.hasOwnProperty(key)) {
+        let unit = selectedUnits[key];
+        let prevValue = this._sizingFormGroup.get(`selectedUnits.${key}`) && this._sizingFormGroup.get(`selectedUnits.${key}`).value;
+        let preferenceKey = selectedUnitsByPreferences[key];
 
-      if (selectedUnitsByPreferences[key] === 'FUEL_TYPE' && this.translationService.displayGroup) {
-        const item = SteamGenerationAssessmentService._getFuelTypesList(this.translationService.displayGroup)
-          .find(({ id }) => id === this._sizingFormGroup.get('benchmarkInputs.inputFuelId').value);
-        const sPreference = this.preferenceService.sizingUnitPreferences
-          .find(({ unitType }) => item && item.value && unitType === FuelTypesEnum[item.value.charAt(0)]);
+        if (selectedUnitsByPreferences[key] === 'FUEL_TYPE' && this.translationService.displayGroup) {
+          const item = SteamGenerationAssessmentService._getFuelTypesList(this.translationService.displayGroup)
+            .find(({ id }) => id === this._sizingFormGroup.get('benchmarkInputs.inputFuelId').value);
+          const sPreference = this.preferenceService.sizingUnitPreferences
+            .find(({ unitType }) => item && item.value && unitType === FuelTypesEnum[item.value.charAt(0)]);
 
-        const preference = sPreference && sPreference.preference;
-        preferenceKey = preference && preference.name;
-        unit = preference && parseInt(preference.value);
-        prevValue = this._prevFuelTypeUnit;
-      } else if (unit === undefined) {
-        const preferenceName = selectedUnitsByPreferences[key];
+          const preference = sPreference && sPreference.preference;
+          preferenceKey = preference && preference.name;
+          unit = preference && parseInt(preference.value, 10);
+          prevValue = this._prevFuelTypeUnit;
+        } else if (unit === undefined) {
+          const preferenceName = selectedUnitsByPreferences[key];
 
-        const preference = this._getPreferenceByName(preferenceName);
-        const unitType = preferenceName.charAt(preferenceName.length - 1) === 's' ? preferenceName : `${preferenceName}s`;
-        const sizingPreference = this._addSizingPreference(preference, unitType, preferenceName);
+          const preference = this._getPreferenceByName(preferenceName);
+          const unitType = preferenceName.charAt(preferenceName.length - 1) === 's' ? preferenceName : `${preferenceName}s`;
+          const sizingPreference = this._addSizingPreference(preference, unitType, preferenceName);
 
-        if (sizingPreference && sizingPreference.preference && sizingPreference.preference.value) {
-          unit = parseInt(sizingPreference.preference.value);
+          if (sizingPreference && sizingPreference.preference && sizingPreference.preference.value) {
+            unit = parseInt(sizingPreference.preference.value, 10);
+          }
         }
-      }
 
-      if (prevValue !== unit) {
-        changedSelectedUnits.push({unitKey: key, preferenceKey, next: unit, prev: prevValue});
-        this.setFormValue(key, unit, 'selectedUnits', { emitEvent: false });
-        if (preferenceKey === SgaFuelTypes[preferenceKey]) {
-          this._prevFuelTypeUnit = unit;
+        if (prevValue !== unit) {
+          changedSelectedUnits.push({unitKey: key, preferenceKey, next: unit, prev: prevValue});
+          this.setFormValue(key, unit, 'selectedUnits', { emitEvent: false });
+          if (preferenceKey === SgaFuelTypes[preferenceKey]) {
+            this._prevFuelTypeUnit = unit;
+          }
         }
       }
     }
@@ -719,30 +924,33 @@ export class SteamGenerationAssessmentService {
     return changedSelectedUnits;
   }
 
-  /**
-   * Set FormGroup values - Sizing form
-   * @param {string} formControlName name of form control field
-   * @param {any} value value
-   * @param {string} [formGroupName = 'benchmarkInputs'] key-name of parent formGroup
-   * @param {emitEvent?: true, onlySelf?: false} [opt] form control options
-   * */
-  public setFormValue(formControlName: string, value: any, formGroupName: keyof SgaSizingModuleFormInterface = 'benchmarkInputs', opt?: { emitEvent?: boolean, onlySelf?: boolean }): void {
-    if (!formControlName) return null;
+  public setFormValue(
+    formControlName: string,
+    value: any,
+    formGroupName: keyof SgaSizingModuleFormInterface = 'benchmarkInputs',
+    opt?: { emitEvent?: boolean, onlySelf?: boolean }
+  ): void {
+    if (!formControlName) { return null; }
 
     const control = this._sizingFormGroup.get(`${formGroupName}.${formControlName}`);
     const parsedValue = Number.isNaN(Number(value)) || typeof value === 'boolean' ? value : (value && +value);
 
     if (control && (control.value !== parsedValue)) {
-      console.log(`%c CHANGE FIELD {name:"${formControlName}", value: ${parsedValue}}`, 'background-color:#edf2f4;color:#002D72;padding:5px;');
+      console.log(
+        `%c CHANGE FIELD {name:"${formControlName}", value: ${parsedValue}}`,
+        'background-color:#edf2f4;color:#002D72;padding:5px;'
+      );
       control.patchValue(parsedValue, opt);
     }
   }
 
-  public setFormValues(values: {[key: string]: any}, formGroupName: keyof SgaSizingModuleFormInterface = 'benchmarkInputs',): void {
-    if (!values || !Object.keys(values).length) return null;
+  public setFormValues(values: {[key: string]: any}, formGroupName: keyof SgaSizingModuleFormInterface = 'benchmarkInputs', ): void {
+    if (!values || !Object.keys(values).length) { return null; }
 
-    for (let fieldName in values) {
-      this.setFormValue(fieldName, values[fieldName], formGroupName);
+    for (const fieldName in values) {
+      if (values.hasOwnProperty(fieldName)) {
+        this.setFormValue(fieldName, values[fieldName], formGroupName);
+      }
     }
   }
 
@@ -759,30 +967,32 @@ export class SteamGenerationAssessmentService {
   }
 
   private _changeSgaFieldsFromSizingPref(): void {
-    if (!this.preferenceService.sizingUnitPreferences) return null;
+    if (!this.preferenceService.sizingUnitPreferences) { return null; }
 
     const sizingUnitPreference = this.preferenceService.sizingUnitPreferences;
     const result = {};
 
     for (const key in this._sgaFormFields) {
-      const preferenceNames = this._sgaFormFields[key].unitNames;
-      const controlNames = this._sgaFormFields[key].controlNames;
+      if (this._sgaFormFields.hasOwnProperty(key)) {
+        const preferenceNames = this._sgaFormFields[key].unitNames;
+        const controlNames = this._sgaFormFields[key].controlNames;
 
-      if (preferenceNames && preferenceNames[0] && controlNames && controlNames[0]) {
-        const sPreference = sizingUnitPreference
-          .find(({ preference }) => preference && preference.name === preferenceNames[0]);
+        if (preferenceNames && preferenceNames[0] && controlNames && controlNames[0]) {
+          const sPreference = sizingUnitPreference
+            .find(({ preference }) => preference && preference.name === preferenceNames[0]);
 
-        if (sPreference && sPreference.preference && sPreference.preference.value) {
-          result[controlNames[0]] = parseInt(sPreference.preference.value);
+          if (sPreference && sPreference.preference && sPreference.preference.value) {
+            result[controlNames[0]] = parseInt(sPreference.preference.value, 10);
+          }
         }
-      }
 
-      if (preferenceNames && preferenceNames[1] && controlNames && controlNames[1]) {
-        const sPreference = sizingUnitPreference
-          .find(({ preference }) => preference && preference.name === preferenceNames[1]);
+        if (preferenceNames && preferenceNames[1] && controlNames && controlNames[1]) {
+          const sPreference = sizingUnitPreference
+            .find(({ preference }) => preference && preference.name === preferenceNames[1]);
 
-        if (sPreference && sPreference.preference && sPreference.preference.value) {
-          result[controlNames[1]] = parseInt(sPreference.preference.value);
+          if (sPreference && sPreference.preference && sPreference.preference.value) {
+            result[controlNames[1]] = parseInt(sPreference.preference.value, 10);
+          }
         }
       }
     }
@@ -798,86 +1008,10 @@ export class SteamGenerationAssessmentService {
   }
 
   private _addSizingPreference(preference: Preference, unitType: string, masterTextKey: string): SizingUnitPreference {
-    if (!preference) return null;
+    if (!preference) { return null; }
 
     this.preferenceService.addSizingUnitPreference(preference, unitType, masterTextKey, this.moduleGroupId);
 
     return this.preferenceService.sizingUnitPreferences.find(({ preference: { name }}) => name === preference.name);
-  }
-
-  private static _getFuelTypesList({enumerations}: DisplayGroup): EnumerationDefinition[] {
-    if (!enumerations) return null;
-
-    const {enumerationDefinitions} = enumerations
-      .find(({ enumerationName, opCoOverride }) => enumerationName === 'FuelTypeList_BoilerHouseInput' && !opCoOverride);
-    return enumerationDefinitions
-      .sort(({sequence}, b) => sequence > b.sequence ? 1 : sequence < b.sequence ? -1 : 0);
-  }
-
-  private static _checkIsHaveField(obj, key: string): boolean {
-    if (obj && typeof obj === 'object') {
-      if (obj.fields && obj.fields.length && obj.fields.indexOf(key) !== -1) {
-        return true
-      } else {
-        let isHasKey = false;
-
-        for (let objKey in obj) {
-          if (this._checkIsHaveField(obj[objKey], key)) {
-            isHasKey = true;
-            break;
-          }
-        }
-
-        return isHasKey;
-      }
-    }
-
-    return false;
-  }
-
-  private static _expandFormPanels(fieldsTree: any, fieldName: string) {
-    if (fieldsTree && typeof fieldsTree === 'object') {
-      for (let key in fieldsTree) {
-        const item = fieldsTree[key];
-        const hasField = this._checkIsHaveField(item, fieldName);
-
-        // Close all panels without first errored
-        if (item.hasOwnProperty('status') && item.status) {
-          item.status = false;
-        }
-
-        // If field has error open panel
-        if (hasField) {
-          if (item.hasOwnProperty('status') && item.status === false) {
-            setTimeout(() => item.status = true);
-          }
-          this._expandFormPanels(item, fieldName);
-
-          break;
-        }
-      }
-    }
-  }
-
-  static focusFirstErrorField(formGroup: FormGroup, elementRef: ElementRef, settingObj: SgFormStructureInterface): any {
-    // Set all field touched
-    formGroup.markAllAsTouched();
-    // check all fields
-    for (const key of Object.keys(formGroup.controls)) {
-      // get first invalid control
-      if (formGroup.controls[key].status === 'INVALID') {
-        // get field by data-form-name === name
-        const field = elementRef.nativeElement.querySelector(`[data-form-name="${key}"]`);
-
-        if (field && field.focus && typeof field.focus === 'function') {
-          // Open panel wit with invalid field
-          this._expandFormPanels(settingObj, key);
-          // Focus on field
-          setTimeout(() => field.focus(), 200);
-          // loop stop
-          return { field, key, control: formGroup.controls[key] }
-        }
-      }
-    }
   }
 }
