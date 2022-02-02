@@ -546,6 +546,33 @@ export interface ProposedDataInterface {
   proposedSetup: ProposedSetupInterface;
 }
 
+export enum ProposedSetupChartIndex {
+  'improvedBoilerEfficiency',
+  'condensateReturnPlusCondensateTemperature',
+  'changingWaterTreatment',
+  'addingAutomaticTdsControl',
+  'addingFlashHeatRecoveryToAutoTdsControl',
+  'addingHeatExchangerToHeatRecoveryToTdsBlowdown',
+  'effectOfDsiOnHotwell',
+}
+
+export enum ProposedSetupChartLabels {
+  improvedBoilerEfficiency = 'Increase boiler effiency',
+  condensateReturnPlusCondensateTemperature = 'Increase condensate return',
+  changingWaterTreatment = 'water treatment plant (RO)',
+  addingAutomaticTdsControl = 'auto tds control',
+  addingFlashHeatRecoveryToAutoTdsControl = 'auto TDS and Flash Heat Recovery',
+  addingHeatExchangerToHeatRecoveryToTdsBlowdown = 'Auto tds flash recovery + heat exchanger',
+  effectOfDsiOnHotwell = 'Direct steam injection feedtank',
+}
+
+export enum ProposedSetupChartElements {
+  'Fuel',
+  'Water and Chemicals',
+  'Effluent',
+  'Carbon tax',
+}
+
 export interface ProposalInputsReqInterface extends ProposedFeaturesInterface {
   benchmarkBoilerEfficiency: number;
   proposalBoilerEfficiency: number;
@@ -560,4 +587,10 @@ export interface ProposalInputsReqInterface extends ProposedFeaturesInterface {
   benchmarkWaterRejectionRate: number;
   proposalDesiredHotwellTemperatureUsingDSI: number;
   proposalDSIPressure: number;
+}
+
+export interface ProposedEfficiencyRequestInterface {
+  economiserRequired: boolean;
+  benchmarkBoilerEfficiency: number;
+  proposalBoilerEfficiency: number;
 }

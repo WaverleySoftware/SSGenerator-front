@@ -15,8 +15,12 @@
             </div>
             <div class="row">
               <div class="col-md-4"><p>{{'PERCENT_CONDENSATE_RETURNED' | translate}}</p></div>
-              <div class="col-md-4"><form-input formControlName="benchmarkCondensateReturnedPercentage" unit="%" [readonly]="true" filled></form-input></div>
-              <div class="col-md-4"><form-input formControlName="proposalCondensateReturnedPercentage" unit="%" required></form-input></div>
+              <div class="col-md-4">
+                <form-input formControlName="benchmarkCondensateReturnedPercentage" unit="%" [readonly]="true" filled></form-input>
+              </div>
+              <div class="col-md-4">
+                <form-input formControlName="proposalCondensateReturnedPercentage" unit="%" required></form-input>
+              </div>
             </div>
             <div class="row">
               <div class="col-md-4"><p>{{'CONDENSATE_RETURNED' | translate}}</p></div>
@@ -26,6 +30,7 @@
                                                 filled></form-input></div>
               <div class="col-md-4"><form-input formControlName="proposalCondensateReturned"
                                                 [unit]="units[data?.proposedSetup?.condensateReturnUnit] || '-'"
+                                                [readonly]="isCondensateReturnDisable"
                                                 required></form-input></div>
             </div>
             <div class="row">
@@ -55,7 +60,10 @@
             <div class="row">
               <div class="col-md-4"><p>{{'ECONOMISER_REQUIRED' | translate}}</p></div>
               <div class="col-md-8">
-                <form-toggle name="economiserRequired" formControlName="economiserRequired"></form-toggle>
+                <form-toggle [disabled]="inputData?.isEconomizerPresent"
+                             (valueChange)="economizerChange($event)"
+                             name="economiserRequired"
+                             formControlName="economiserRequired"></form-toggle>
               </div>
             </div>
             <div class="row">
@@ -88,87 +96,116 @@
             </div>
             <div class="row">
               <div class="col-md-4">
-                <button type="submit">Generate proposed results</button>
+                <button type="submit" [disabled]="!form.valid">Generate proposed results</button>
               </div>
             </div>
           </ng-container>
         </form>
       </sga-panel>
 
-      <div [ngClass]="{loading: loading}">
-        <p class="sgaProposedSetup_title">{{'POTENTIAL_BOILER_HOUSE_SAVINGS_BY_PROJECT' | translate}}</p>
-        <p class="sgaProposedSetup_subtitle mb-24">Saving {{currency}}’000s / {{'YR' | translate}}</p>
-        <app-chart-bar className="sgaProposedSetup_chart"
-                       [data]="chartData"
-                       [labels]="chartLabels"></app-chart-bar>
-        <hr>
-        <div class="row">
-          <div class="col-md-6">
-            <h5 class="sgaProposedSetup_title">
-              <span>Cost of Steam Generation</span>
-              <i class="fa fa-info-circle"></i>
-            </h5>
-            <app-chart-bar type="horizontalBar"
-                           [options]="costSteamGenerationChartOptions"
-                           [legend]="false"
-                           [data]="costSteamGenerationChart"
-                           [labels]="costSteamGenerationChartLabels"></app-chart-bar>
-            <p>{{'STEAM_GENERATION_SAVINGS' | translate}}: <span class="text-bold">{{currency}}7,691</span></p>
-            <p>{{'SAVINGS_INCLUDING_CONDENSATE_EFFLUENT' | translate}}: <span class="text-bold">{{currency}}7,691</span> </p>
+      <sga-panel [expanded]="!proposedFormPanel && !!results"
+                 [disableToggle]="!results"
+                 title="Proposed results"
+                 id="SetupParametersResultsPanel">
+        <ng-container body>
+          <p class="sgaProposedSetup_title">{{'POTENTIAL_BOILER_HOUSE_SAVINGS_BY_PROJECT' | translate}}</p>
+          <p class="sgaProposedSetup_subtitle mb-24">Saving {{currency}}’000s / {{'YR' | translate}}</p>
+          <app-chart-bar className="sgaProposedSetup_chart"
+                         [data]="verticalChartData"
+                         [labels]="verticalChartLabels"></app-chart-bar>
+          <hr>
+          <div class="row">
+            <div class="col-md-7">
+              <h5 class="sgaProposedSetup_title">
+                <span>Cost of Steam Generation</span>
+                <i class="fa fa-info-circle"></i>
+              </h5>
+              <app-chart-bar type="horizontalBar"
+                             [options]="{scales: { xAxes: [{ stacked: true, maxBarThickness: 58, display: false }] }}"
+                             [legend]="false"
+                             [data]="horizontalChartData"
+                             [labels]="['POTENTIAL', 'CURRENT']"></app-chart-bar>
+              <p>{{'STEAM_GENERATION_SAVINGS' | translate}}: <span class="text-bold">{{currency}}7,691</span></p>
+              <p>{{'SAVINGS_INCLUDING_CONDENSATE_EFFLUENT' | translate}}: <span class="text-bold">{{currency}}7,691</span> </p>
+            </div>
+            <form class="col-md-5" [formGroup]="form">
+              <h5 class="sgaProposedSetup_title mb-24">
+                <span>{{'ADD_FEATURES' | translate}}</span>
+                <i class="fa fa-info-circle"></i>
+              </h5>
+              <ul class="sgaProposedSetup_list" formGroupName="features">
+                <li>
+                  <label>
+                    <input type="checkbox"
+                           formControlName="boilerEfficiencyImprovements"
+                           (change)="changeFeature($event)"
+                           [disableControl]="data?.proposedSetup?.benchmarkBoilerEfficiency === data?.proposedSetup?.proposalBoilerEfficiency"
+                           [value]="true">
+                    <span>{{'BOILER_EFFICIENCY_IMPROVEMENTS' | translate}}</span>
+                  </label>
+                </li>
+                <li>
+                  <label>
+                    <input type="checkbox"
+                           formControlName="increaseCondensateReturn"
+                           (change)="changeFeature($event)"
+                           [disableControl]="data?.proposedSetup?.benchmarkCondensateReturnedPercentage === data?.proposedSetup?.proposalCondensateReturnedPercentage"
+                           [value]="true">
+                    <span>{{'INCREASE_CONDENSATE_RETURN' | translate}}</span>
+                  </label>
+                </li>
+                <li>
+                  <label>
+                    <input type="checkbox"
+                           formControlName="addWaterTreatmentPlant"
+                           (change)="changeFeature($event)"
+                           [disableControl]="!data?.features?.addWaterTreatmentPlant"
+                           [value]="true">
+                    <span>{{'ADD_WATER_TREATMENT_PLANT_RO' | translate}}</span>
+                  </label>
+                </li>
+                <li>
+                  <label>
+                    <input type="checkbox"
+                           formControlName="addAutoTdsControls"
+                           (change)="changeFeature($event)"
+                           [value]="true">
+                    <span>{{'ADD_AUTO_TDS_CONTROLS' | translate}}</span>
+                  </label>
+                </li>
+                <li>
+                  <label>
+                    <input type="checkbox"
+                           formControlName="addAutoTdsAndFlashRecovery"
+                           (change)="changeFeature($event)"
+                           [value]="true">
+                    <span>{{'ADD_AUTO_TDS_AND_FLASH_RECOVERY' | translate}}</span>
+                  </label>
+                </li>
+                <li>
+                  <label>
+                    <input type="checkbox"
+                           formControlName="addAutoTdsAndFlashRecoveryPlusHearExchanger"
+                           (change)="changeFeature($event)"
+                           [value]="true">
+                    <span>{{'ADD_AUTO_TDS_FLASH_RECOVERY_HEAT_EXCHANGER' | translate}}</span>
+                  </label>
+                </li>
+                <li>
+                  <label>
+                    <input type="checkbox"
+                           formControlName="addDirectSteamInjectionToFeedtank"
+                           (change)="changeFeature($event)"
+                           [disableControl]="data?.proposedSetup?.benchmarkDsiPressure !== 0 || data?.proposedSetup?.proposalDsiPressure === 0"
+                           [value]="true">
+                    <span>{{'DIRECT_STEAM_INJECTION_TO_FEEDTANK' | translate}}</span>
+                  </label>
+                </li>
+              </ul>
+            </form>
           </div>
-          <form class="col-md-6" [formGroup]="form">
-            <h5 class="sgaProposedSetup_title mb-24">
-              <span>{{'ADD_FEATURES' | translate}}</span>
-              <i class="fa fa-info-circle"></i>
-            </h5>
-            <ul class="sgaProposedSetup_list" formGroupName="features">
-              <li>
-                <label>
-                  <input type="checkbox" formControlName="boilerEfficiencyImprovements" [value]="true">
-                  {{'BOILER_EFFICIENCY_IMPROVEMENTS' | translate}}
-                </label>
-              </li>
-              <li>
-                <label>
-                  <input type="checkbox" formControlName="increaseCondensateReturn" [value]="true">
-                  {{'INCREASE_CONDENSATE_RETURN' | translate}}
-                </label>
-              </li>
-              <li>
-                <label>
-                  <input type="checkbox" formControlName="addWaterTreatmentPlant" [value]="true">
-                  {{'ADD_WATER_TREATMENT_PLANT_RO' | translate}}
-                </label>
-              </li>
-              <li>
-                <label>
-                  <input type="checkbox" formControlName="addAutoTdsControls" [value]="true">
-                  {{'ADD_AUTO_TDS_CONTROLS' | translate}}
-                </label>
-              </li>
-              <li>
-                <label>
-                  <input type="checkbox" formControlName="addAutoTdsAndFlashRecovery" [value]="true">
-                  {{'ADD_AUTO_TDS_AND_FLASH_RECOVERY' | translate}}
-                </label>
-              </li>
-              <li>
-                <label>
-                  <input type="checkbox" formControlName="addAutoTdsAndFlashRecoveryPlusHearExchanger" [value]="true">
-                  {{'ADD_AUTO_TDS_FLASH_RECOVERY_HEAT_EXCHANGER' | translate}}
-                </label>
-              </li>
-
-              <li>
-                <label>
-                  <input type="checkbox" formControlName="addDirectSteamInjectionToFeedtank" [value]="true">
-                  {{'DIRECT_STEAM_INJECTION_TO_FEEDTANK' | translate}}
-                </label>
-              </li>
-            </ul>
-          </form>
-        </div>
-      </div>
+        </ng-container>
+      </sga-panel>
     </div>
   </ng-container>
 </sga-panel>

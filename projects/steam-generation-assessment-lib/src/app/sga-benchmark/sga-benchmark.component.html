@@ -1,4 +1,4 @@
-<tabset class="sgaBenchmark" *ngIf="!!data; else noData">
+<tabset class="sgaBenchmark" *ngIf="!!data && !!units; else noData">
   <tab>
     <h5 class="sgaBaseTabs_title_md">{{'BENCHMARK' | translate}}</h5>
     <ng-template tabHeading>

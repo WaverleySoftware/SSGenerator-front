@@ -230,7 +230,7 @@ export class SgaValidator {
     if (fg) {
       const pressureOfSteamSupplyingDsi = fg.get('pressureOfSteamSupplyingDsi');
 
-      SgaValidator.toggleFields(pressureOfSteamSupplyingDsi, control.value);
+      SgaValidator.toggleFields(pressureOfSteamSupplyingDsi, control.value, null);
     }
 
     return null;

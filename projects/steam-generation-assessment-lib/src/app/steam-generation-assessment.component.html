@@ -41,7 +41,9 @@
     <tab heading="Proposed Setup" [disabled]="!proposedSetupData" (select)="setActiveTab($event)">
       <app-sga-proposed-setup [data]="proposedSetupData"
                               [currency]="currency"
+                              [results]="proposedSetupResults"
                               (generateProposed)="calculateProposedSetup($event)"
+                              [inputData]="sizingModuleForm.get('benchmarkInputs').value"
                               [units]="units$ | async"></app-sga-proposed-setup>
     </tab>
     <tab heading="Final Proposal" [disabled]="true" (select)="setActiveTab($event)">

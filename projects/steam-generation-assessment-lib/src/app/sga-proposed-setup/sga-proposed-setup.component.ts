@@ -1,50 +1,78 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
-import { AbstractControl, AsyncValidatorFn, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
-import { ChartBarDataInterface, ChartBarOptionsInterface } from '../modules/shared/interfaces/chart-bar.interface';
-import { ProposedDataInterface, ProposedSetupInterface } from '../steam-generation-form.interface';
-import { Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { ChartBarDataInterface } from '../modules/shared/interfaces/chart-bar.interface';
+import {
+  ProposedDataInterface,
+  ProposedSetupChartElements,
+  ProposedSetupChartIndex, ProposedSetupChartLabels,
+  SteamGeneratorInputsInterface
+} from '../steam-generation-form.interface';
 import { SteamGenerationAssessmentService } from '../steam-generation-assessment.service';
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-sga-proposed-setup',
   templateUrl: './sga-proposed-setup.component.html',
   styleUrls: ['./sga-proposed-setup.component.scss']
 })
-export class SgaProposedSetupComponent implements OnInit, OnChanges {
-  @Input() data: ProposedDataInterface;
+export class SgaProposedSetupComponent implements OnInit {
+  // Outer data
+  @Input() inputData: SteamGeneratorInputsInterface;
   @Input() currency: string;
   @Input() units: { [key: number]: string };
   @Output() generateProposed: EventEmitter<{proposedSetup: any, features: any}> = new EventEmitter<{proposedSetup: any, features: any}>();
 
-  public chartData: ChartBarDataInterface[] = [
+  // Setter / Getter
+  private proposedResults: any[];
+  @Input()
+  set results(data: any[]) {
+    this.proposedResults = data;
+    const { verticalChartData, horizontalChartData } = SgaProposedSetupComponent.generateChartsData(data);
+    this.verticalChartData = verticalChartData;
+    this.horizontalChartData = horizontalChartData;
+  }
+  get results() { return this.proposedResults; }
+  private proposedData: ProposedDataInterface;
+  @Input()
+  set data(data: ProposedDataInterface) {
+    this.proposedData = data;
+
+    if (data && data.proposedSetup && data.features) {
+      this.form.patchValue(
+        { proposedSetup: data.proposedSetup, features: data.features },
+        { onlySelf: true, emitEvent: false }
+      );
+    } else {
+      this.resetData();
+    }
+  }
+  get data(): ProposedDataInterface { return this.proposedData; }
+
+  // inner data
+  private ngUnsubscribe = new Subject<void>();
+  public verticalChartData: ChartBarDataInterface[] = [
     { data: [0, 0, 0, 0, 0, 0, 0], label: 'Fuel' },
     { data: [0, 0, 0, 0, 0, 0, 0], label: 'Water and Chemicals' },
     { data: [0, 0, 0, 0, 0, 0, 0], label: 'Effluent' },
     { data: [0, 0, 0, 0, 0, 0, 0], label: 'Carbont tax' },
   ];
-  public costSteamGenerationChart: ChartBarDataInterface[] = [
+  public horizontalChartData: ChartBarDataInterface[] = [
     { data: [0, 0], label: 'Fuel' },
     { data: [0, 0], label: 'Water and Chemicals' },
     { data: [0, 0], label: 'Effluent' },
     { data: [0, 0], label: 'Carbont tax' },
   ];
-  public chartLabels: string[] = [
-    'Increase boiler effiency',
-    'Increase condensate return',
-    'water treatment plant (RO)',
-    'auto tds control',
-    'auto TDS and Flash Heat Recovery',
-    'Auto tds flash recovery + heat exchanger',
-    'Direct steam injection feedtank'
+  public verticalChartLabels: string[] = [
+    ProposedSetupChartLabels.improvedBoilerEfficiency,
+    ProposedSetupChartLabels.condensateReturnPlusCondensateTemperature,
+    ProposedSetupChartLabels.changingWaterTreatment,
+    ProposedSetupChartLabels.addingAutomaticTdsControl,
+    ProposedSetupChartLabels.addingFlashHeatRecoveryToAutoTdsControl,
+    ProposedSetupChartLabels.addingHeatExchangerToHeatRecoveryToTdsBlowdown,
+    ProposedSetupChartLabels.effectOfDsiOnHotwell,
   ];
-  public costSteamGenerationChartLabels: string[] = ['POTENTIAL', 'CURRENT'];
-  public costSteamGenerationChartOptions: ChartBarOptionsInterface = {
-    scales: { xAxes: [{ stacked: true, maxBarThickness: 58, display: false }] }
-  };
   public proposedFormPanel = true;
-  public loading = false;
-  public isAutoTDSControlsChecked = false;
   public form: FormGroup = this.fb.group({
     proposedSetup: this.fb.group({
       benchmarkBoilerEfficiency: [0, Validators.required],
@@ -109,78 +137,123 @@ export class SgaProposedSetupComponent implements OnInit, OnChanges {
       return null;
     };
   }
-
-  private static asyncValidatorFn(service): AsyncValidatorFn {
-    return (control: AbstractControl): Observable<ValidationErrors> => {
-      if (service && service.validateProposedInput) {
-        const parentControls = control && control.parent && control.parent.controls;
-        const formGroup: FormGroup = control && control.root as FormGroup;
-        const fieldName = parentControls && Object.keys(parentControls)
-          .find(name => parentControls[name] === control) as keyof ProposedSetupInterface || null;
-
-        if (fieldName && formGroup) {
-          return service
-            .validateProposedInput(fieldName, {
-              ...formGroup.get('proposedSetup').value,
-              ...formGroup.get('features').value
-            })
-            .pipe(map((response: any) => {
-              if (!response || response.isValid) { return null; }
-
-              const { errors } = response;
-              let error = 'ERROR';
-
-              if (Array.isArray(errors)) {
-                error = errors[0].errorMessage;
-              }
-
-              return {
-                error,
-                message: errors[0] && (errors[0].customState || errors[0].customState === 0) && `(${errors[0].customState})`
-              };
-            }));
-        }
-      }
-
-      return of(null);
+  private static generateChartsData(data: any[]): {
+    verticalChartData: ChartBarDataInterface[]; horizontalChartData: ChartBarDataInterface[];
+  } {
+    const result: { verticalChartData: ChartBarDataInterface[]; horizontalChartData: ChartBarDataInterface[]; } = {
+      verticalChartData: [
+        { data: [0, 0, 0, 0, 0, 0, 0], label: 'Fuel' },
+        { data: [0, 0, 0, 0, 0, 0, 0], label: 'Water and Chemicals' },
+        { data: [0, 0, 0, 0, 0, 0, 0], label: 'Effluent' },
+        { data: [0, 0, 0, 0, 0, 0, 0], label: 'Carbon tax' },
+      ],
+      horizontalChartData: [
+        { data: [0, 0], label: 'Fuel' },
+        { data: [0, 0], label: 'Water and Chemicals' },
+        { data: [0, 0], label: 'Effluent' },
+        { data: [0, 0], label: 'Carbont tax' },
+      ]
     };
+
+    if (!data || !data.length) { return result; }
+
+    for (const col of data) {
+      const key = Object.keys(col)[0];
+      if (key && (ProposedSetupChartIndex[key] || ProposedSetupChartIndex[key] === 0)) {
+        // Fuel
+        result.verticalChartData[ProposedSetupChartElements['Fuel']]
+          .data[ProposedSetupChartIndex[key]] = col[key].propFuelValueSavings || 0;
+        // Water and Chemicals
+        result.verticalChartData[ProposedSetupChartElements['Water and Chemicals']]
+          .data[ProposedSetupChartIndex[key]] = col[key].propWaterAndChemicalValueSavings || 0;
+        // Effluent
+        result.verticalChartData[ProposedSetupChartElements['Effluent']]
+          .data[ProposedSetupChartIndex[key]] = col[key].propEffluentValueSavings || 0;
+        // Carbon tax
+        result.verticalChartData[ProposedSetupChartElements['Carbon tax']]
+          .data[ProposedSetupChartIndex[key]] = col[key].propCO2emmissionsReducedValueSavings || 0;
+      }
+    }
+
+    return result;
   }
 
-  private setTestData() {
-    this.loading = true;
-    setTimeout(() => {
-      this.chartData = [
-        { data: [272, 152, 80, 81, 56, 55, 0], label: 'Fuel' },
-        { data: [0, 84, 40, 19, 86, 27, 0], label: 'Water and Chemicals' },
-        { data: [0, 52, 41, 10, 80, 20, 0], label: 'Effluent' },
-        { data: [46, 18, 41, 10, 80, 20, 0], label: 'Carbont tax' },
-      ];
-      this.costSteamGenerationChart = [
-        { data: [152, 153], label: 'Fuel' },
-        { data: [84, 70], label: 'Water and Chemicals' },
-        { data: [52, 45], label: 'Effluent' },
-        { data: [18, 10], label: 'Carbont tax' },
-      ];
-      this.loading = false;
-    }, 2000);
+  private resetData() {
+    this.verticalChartData = [
+      { data: [0, 0, 0, 0, 0, 0, 0], label: 'Fuel' },
+      { data: [0, 0, 0, 0, 0, 0, 0], label: 'Water and Chemicals' },
+      { data: [0, 0, 0, 0, 0, 0, 0], label: 'Effluent' },
+      { data: [0, 0, 0, 0, 0, 0, 0], label: 'Carbont tax' },
+    ];
+    this.horizontalChartData = [
+      { data: [0, 0], label: 'Fuel' },
+      { data: [0, 0], label: 'Water and Chemicals' },
+      { data: [0, 0], label: 'Effluent' },
+      { data: [0, 0], label: 'Carbont tax' },
+    ];
+    this.form.setValue({
+      proposedSetup: {
+        benchmarkBoilerEfficiency: 0,
+        benchmarkCondensateReturn: 0,
+        benchmarkCondensateReturnedPercentage: 0,
+        benchmarkCondensateTemperature: 0,
+        benchmarkDsiPressure: 0,
+        benchmarkTemperatureOfFeedtank: 0,
+        benchmarkWaterRejectionRate: 0,
+        condensateReturnUnit: 0,
+        condensateTemperatureUnit: 0,
+        dsiPressureUnit: 0,
+        economiserRequired: false,
+        proposalBoilerEfficiency: 0,
+        proposalCondensateReturned: 0,
+        proposalCondensateReturnedPercentage: 0,
+        proposalCondensateTemperature: 0,
+        proposalCostOfSodiumSulphite: 0,
+        proposalDsiPressure: 0,
+        proposalTemperatureOfFeedtank: 0,
+        proposalWaterRejectionRate: 0,
+        temperatureOfFeedtankUnit: 0,
+      },
+      features: {
+        boilerEfficiencyImprovements: false,
+        increaseCondensateReturn: false,
+        addWaterTreatmentPlant: false,
+        addAutoTdsControls: false,
+        addAutoTdsAndFlashRecovery: false,
+        addAutoTdsAndFlashRecoveryPlusHearExchanger: false,
+        addDirectSteamInjectionToFeedtank: false,
+      },
+    }, { onlySelf: true, emitEvent: false });
+  }
+
+  get isCondensateReturnDisable(): boolean {
+    const fg: FormGroup = this.form.get('proposedSetup') as FormGroup;
+    return fg.get('proposalCondensateReturnedPercentage').value === fg.get('benchmarkCondensateReturnedPercentage').value &&
+      fg.get('benchmarkCondensateReturn').value === fg.get('proposalCondensateReturned').value;
   }
 
   ngOnInit() {}
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (this.data && this.data.proposedSetup && this.data.features) {
-      this.form.setValue({
-        proposedSetup: this.data.proposedSetup,
-        features: this.data.features
-      }, { onlySelf: true, emitEvent: false });
-    }
-  }
-
   onSubmit() {
     this.proposedFormPanel = false;
+    this.generateProposed.emit(this.form.getRawValue());
+  }
 
-    this.setTestData();
+  economizerChange(economiserRequired) {
+    const proposalBoilerEfficiencyControl = this.form.get('proposedSetup.proposalBoilerEfficiency');
 
+    this.sgaService.calcProposedBoilerEfficiency({
+      economiserRequired,
+      benchmarkBoilerEfficiency: this.form.get('proposedSetup.benchmarkBoilerEfficiency').value,
+      proposalBoilerEfficiency: proposalBoilerEfficiencyControl.value,
+    }).pipe(takeUntil(this.ngUnsubscribe)).subscribe(res => {
+      if (res && res.proposalBoilerEfficiency) {
+        proposalBoilerEfficiencyControl.patchValue(res.proposalBoilerEfficiency, { onlySelf: true, emitEvent: false });
+      }
+    });
+  }
+
+  changeFeature(changed?: Event) {
     this.generateProposed.emit(this.form.getRawValue());
   }
 }

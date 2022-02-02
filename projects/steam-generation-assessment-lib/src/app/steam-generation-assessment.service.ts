@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import {
   FormFieldTypesInterface,
-  FuelTypesEnum, ProposedSetupInterface,
+  FuelTypesEnum, ProposedEfficiencyRequestInterface, ProposedSetupInterface,
   SelectedUnitsList,
   SgaFeedTankTemperatureRequestInterface,
   SgaFuelTypes,
@@ -705,6 +705,12 @@ export class SteamGenerationAssessmentService {
   calculateBoilerEfficiency(data: {isEconomizerPresent: boolean; inputFuelId: string; }): Observable<{boilerEfficiency: number}> {
     this.toggleLoading(true);
     return this.http.post<{boilerEfficiency: number}>('./Api/SteamGenerator/calculate-boiler-efficiency', data)
+      .pipe(tap(null, null, () => this.toggleLoading(false)));
+  }
+
+  calcProposedBoilerEfficiency(data: ProposedEfficiencyRequestInterface): Observable<any> {
+    this.toggleLoading(true);
+    return this.http.post('./Api/SteamGenerator/calculate-proposal-boiler-efficiency', data)
       .pipe(tap(null, null, () => this.toggleLoading(false)));
   }
 
