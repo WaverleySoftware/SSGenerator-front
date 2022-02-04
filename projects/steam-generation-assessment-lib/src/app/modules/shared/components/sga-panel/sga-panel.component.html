@@ -5,7 +5,7 @@
       <h4 class="panel-title" *ngIf="!!title" [ngStyle]="{fontSize: titleSize }">
         <i *ngIf="!!invalid" class="fa fa-warning"></i>
         <span>{{title}}</span>
-        <i class="fa fa-info-circle ssPanel_tooltip" [tooltip]="titleTooltip" placement="right" *ngIf="!!titleTooltip"></i>
+        <i class="fa fa-info-circle ssPanel_tooltip" [tooltip]="titleTooltip" placement="bottom" *ngIf="!!titleTooltip"></i>
       </h4>
       <p class="ssPanel_subtitle" *ngIf="!!subtitle">{{subtitle}}</p>
     </div>

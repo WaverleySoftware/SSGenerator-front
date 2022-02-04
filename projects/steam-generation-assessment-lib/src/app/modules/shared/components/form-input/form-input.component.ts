@@ -26,13 +26,13 @@ export class FormInputComponent implements ControlValueAccessor, AfterContentIni
   @Input('unit-controls') unitControls: [string, string?];
   @Input('unit-translations') masterTextKeys: [string, string?];
   @Input('module-group-id') moduleGroupId: number = 9;
-
   @Input() formControlName: string;
   @Input() unit: string;
   @Input() label: string;
   @Input() error: string;
   @Input() message: string;
-  @Input() type: 'text' | 'number' | 'email' | 'password' | "radio" | string = 'number';
+  @Input() type: 'text' | 'number' | 'email' | 'password' | "radio" | string = 'text';
+  @Input() decimalPlaces: number = 2;
   @Input() required: boolean;
   @Input() readonly: boolean;
   @Input() disabled: boolean;
@@ -48,11 +48,10 @@ export class FormInputComponent implements ControlValueAccessor, AfterContentIni
   @ViewChild('inputRef', { static: true }) inputRef: ElementRef<HTMLInputElement>;
   @ViewChild('radioInputRef', { static: true }) radioInputRef: ElementRef<HTMLInputElement>;
 
-  @Input() value: any;
+  @Input() value: any = null;
   touched: boolean;
   focus: boolean;
   public control: AbstractControl;
-  public modelVal: any;
 
   constructor(@Optional() @Host() @SkipSelf() private controlContainer: ControlContainer) {}
 
@@ -83,18 +82,15 @@ export class FormInputComponent implements ControlValueAccessor, AfterContentIni
       if ('required' in outsideValue) this.required = outsideValue.required;
       if ('value' in outsideValue) {
         this.value = outsideValue.value;
-        this.modelVal = outsideValue.value;
       }
     } else {
       this.value = outsideValue;
-      this.modelVal = outsideValue;
     }
   }
 
   updateValue(insideValue: any) {
     this.error = null;
-    this.modelVal = insideValue;
-    this.value = insideValue === "" ? null : Number.isNaN(Number(insideValue)) ? insideValue : (insideValue && +insideValue);
+    this.value = Number.isNaN(Number(insideValue)) ? null : +insideValue;
     this.inputChange.emit({ name: this.formControlName, value: this.value});
     this.onChange(this.value);
     this.onTouched();

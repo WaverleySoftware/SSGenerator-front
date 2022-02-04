@@ -4,16 +4,15 @@ import {
   ChangeDetectorRef,
   Component,
   Input,
-  OnInit,
   ViewChild
-} from "@angular/core";
+} from '@angular/core';
 import { BaseChartDirective } from 'ng2-charts/ng2-charts';
-import { mergeDeep } from "../../utils/merge-deep";
+import { mergeDeep } from '../../utils/merge-deep';
 import {
   ChartBarColorsInterface,
   ChartBarDataInterface,
   ChartBarOptionsInterface
-} from "../../interfaces/chart-bar.interface";
+} from '../../interfaces/chart-bar.interface';
 
 @Component({
   selector: 'app-chart-bar',
@@ -32,10 +31,11 @@ export class ChartBarComponent implements AfterViewInit {
   @Input() labels: string[];
   @Input() className: string;
   @Input() style: { [p: string]: any } | null;
-  @Input() legend: boolean = true;
+  @Input() legend = true;
   @Input() type: 'horizontalBar' | 'bar' = 'bar';
+  @Input() loading = false;
   // Options: START
-  private _options: ChartBarOptionsInterface = {
+  private opt: ChartBarOptionsInterface = {
     scaleShowVerticalLines: true,
     maintainAspectRatio: false,
     responsive: true,
@@ -50,10 +50,22 @@ export class ChartBarComponent implements AfterViewInit {
       }
     },
     tooltips: {
-      enabled: false
-    },
-    hover: {
-      mode: null
+      callbacks: {
+        title: (tooltipItem, data) => {
+          switch (this.type) {
+            case 'bar': {
+              const index = tooltipItem && tooltipItem[0] && tooltipItem[0].datasetIndex;
+
+              return data && data.datasets && data.datasets[index] && data.datasets[index].label || '';
+            }
+            case 'horizontalBar': {
+              return tooltipItem && tooltipItem[0] && tooltipItem[0].label || '';
+            }
+            default: return '';
+          }
+        },
+        label: tooltipItem => tooltipItem && tooltipItem.value && Math.round(Number(tooltipItem.value) * 100) / 100
+      }
     },
     layout: {
       padding: {
@@ -66,7 +78,8 @@ export class ChartBarComponent implements AfterViewInit {
     scales: {
       xAxes: [{
         stacked: true,
-        maxBarThickness: 96,
+        maxBarThickness: this.type === 'horizontalBar' ? 58 : 96,
+        display: (this.type !== 'horizontalBar'),
         gridLines: {
           display: false,
           zeroLineColor: '#002D72',
@@ -81,6 +94,7 @@ export class ChartBarComponent implements AfterViewInit {
       }],
       yAxes: [{
         stacked: true,
+        maxBarThickness: this.type === 'horizontalBar' ? 58 : 96,
         scaleLabel: false,
         gridLines: {
           display: true,
@@ -97,15 +111,55 @@ export class ChartBarComponent implements AfterViewInit {
     },
   };
   get options(): ChartBarOptionsInterface {
-    return this._options;
+    return this.opt;
   }
   @Input() set options(val) {
-    this._options = mergeDeep(this._options, val);
-  };
+    this.opt = mergeDeep(this.opt, val);
+  }
   // Options: END
   @ViewChild('chartBarRef', { static: false }) chartRef: BaseChartDirective;
 
   constructor(private changeDetectorRef: ChangeDetectorRef) { }
+
+  private static formatLabels(label: any, index: number, labels: any[]): string | number | string[] {
+    if (typeof label === 'string') {
+      if (/\s/.test(label)) { return label.toUpperCase().split(' '); }
+
+      return (label || '').toUpperCase();
+    }
+
+    if (typeof label === 'number') {
+      if (isNaN(label)) { return null; } // will only work value is a number
+      if (label === 0) { return 0; }
+
+      let abs = Math.abs(label);
+      const rounder = Math.pow(10, 1);
+      const isNegative = label < 0; // will also work for Negetive numbers
+      let keySymbol = '';
+
+      const powers = [
+        {key: 'Q', value: Math.pow(10, 15)},
+        {key: 'T', value: Math.pow(10, 12)},
+        {key: 'B', value: Math.pow(10, 9)},
+        {key: 'M', value: Math.pow(10, 6)},
+        {key: 'K', value: 1000}
+      ];
+
+      for (const { key, value } of powers) {
+        let reduced = abs / value;
+        reduced = Math.round(reduced * rounder) / rounder;
+        if (reduced >= 1) {
+          abs = reduced;
+          keySymbol = key;
+          break;
+        }
+      }
+
+      return (isNegative ? '-' : '') + abs + keySymbol;
+    }
+
+    return label;
+  }
 
   ngAfterViewInit() {
     if (this.chartRef && this.chartRef.chart && this.chartRef.chart.data) {
@@ -119,16 +173,6 @@ export class ChartBarComponent implements AfterViewInit {
         = legendItem.hidden
         = !this.chartRef.chart.data.datasets[legendItem.datasetIndex].hidden;
       this.chartRef.chart.update();
-    }
-  }
-
-  private static formatLabels(label: string | number, index: number, labels: any[]): string | number | string[] {
-    if (typeof label !== 'string') return label;
-
-    if (/\s/.test(label)) {
-      return label.toUpperCase().split(" ");
-    } else{
-      return (label || '').toUpperCase();
     }
   }
 }

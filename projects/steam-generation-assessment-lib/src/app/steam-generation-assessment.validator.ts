@@ -52,7 +52,7 @@ export class SgaValidator {
       const totalChemicalCostPerYear = fg.get('totalChemicalCostPerYear');
       const o2ScavengingChemicalsCostSavings = fg.get('o2ScavengingChemicalsCostSavings');
 
-      SgaValidator.toggleFields([totalChemicalCostPerYear, o2ScavengingChemicalsCostSavings], control.value);
+      SgaValidator.toggleFields([totalChemicalCostPerYear, o2ScavengingChemicalsCostSavings], control.value, null);
     }
 
     return null;
@@ -253,13 +253,12 @@ export class SgaValidator {
     return null;
   }
 
-  /**
-   * @param service service with request functions
-   * @param {string} [name] keyof SteamGeneratorInputsInterface
-   * @param {boolean} isNullable send validation request if value is "0"
-   * */
-  static validateAsyncFn(service: SteamGenerationAssessmentService, name?: keyof SteamGeneratorInputsInterface, isNullable?: boolean): AsyncValidatorFn {
-    return function (control): Observable<ValidationErrors> {
+  static validateAsyncFn(
+    service: SteamGenerationAssessmentService,
+    name?: keyof SteamGeneratorInputsInterface,
+    isNullable?: boolean
+  ): AsyncValidatorFn {
+    return (control): Observable<ValidationErrors> => {
       if (!name) {
         name = SgaValidator._getControlName(control);
       }
@@ -269,7 +268,7 @@ export class SgaValidator {
         !service.checkSgaFieldIsFilled ||
         !service.validateSgaBenchmarkInput ||
         !control.dirty && control.untouched
-      ) return of(null);
+      ) { return of(null); }
 
       return timer(600).pipe(
         switchMap(() => {
@@ -277,8 +276,8 @@ export class SgaValidator {
           const validator = control && control.validator && control.validator({} as AbstractControl);
           const isFilled = service.checkSgaFieldIsFilled(name);
 
-          if (isFilled || !root || !root.value || control.disabled) return of(null);
-          if (!value && !isNullable && validator && validator.required) return of({ required: true });
+          if (isFilled || !root || !root.value || control.disabled) { return of(null); }
+          if (!value && !isNullable && validator && validator.required) { return of({required: true}); }
 
           return service.validateSgaBenchmarkInput(name as keyof SteamGeneratorInputsInterface, root.value).pipe(
             map((errors) => errors && SgaValidator._parseErrors(errors)),
@@ -286,7 +285,7 @@ export class SgaValidator {
           );
         })
       ).pipe(first());
-    }
+    };
   }
 
   static validateCalculation(response: SgaHttpValidationResponseInterface, formGroup: FormGroup): any {

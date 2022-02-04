@@ -49,3 +49,11 @@
     }
   }
 }
+
+.loading {
+  position: relative;
+  pointer-events: none;
+  &>* {
+   filter: blur(15px);
+  }
+}

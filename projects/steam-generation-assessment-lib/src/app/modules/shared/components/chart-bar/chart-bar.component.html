@@ -1,4 +1,4 @@
-<ng-container *ngIf="data.length">
+<div *ngIf="data.length" [ngClass]="loading && 'loading'">
   <ul *ngIf="!!legend && chartRef?.chart?.legend?.legendItems" class="sgaChartLegend">
     <li *ngFor="let item of chartRef?.chart?.legend?.legendItems" [ngClass]="{unselected: item.hidden}" (click)="legendClick(item)">
       <span [ngStyle]="{'background-color': item.fillStyle}"></span>
@@ -16,4 +16,4 @@
             [chartType]="type">
     </canvas>
   </div>
-</ng-container>
+</div>

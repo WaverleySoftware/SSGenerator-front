@@ -110,7 +110,6 @@ export class TypeOfFuelComponent implements ControlValueAccessor, AfterViewInit,
 
   private _setUnitControlValue(value: number, name?: string): void {
     if (this._unitControl && value && this._unitControl.value !== value) {
-      console.log(this._unitControl, value, '======_setUnitControlValue =======');
       this._unitValue = value;
       this._unitControl.setValue(this._unitValue);
     }

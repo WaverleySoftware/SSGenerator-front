@@ -2,6 +2,18 @@
   <div class="sgaBaseTabs_heading">
     <h4 class="sgaBaseTabs_heading__title">
       <span>{{'IMPROVING_STEAM_GENERATION_EFFICIENCY' | translate}}</span>
+
+      <ng-container *ngIf="benchmarkData; else testCalc">
+        <button class="sgaBaseTabs_heading__next" *ngIf="nextTab && !nextTab.disabled" (click)="nextTabHandle(tabsRef)">
+          {{nextTab?.heading || 'Next'}} <i class="fa fa-arrow-right"></i>
+        </button>
+      </ng-container>
+
+      <ng-template #testCalc>
+        <button class="sgaBaseTabs_heading__next" (click)="test()">
+          Calculate <i class="fa fa-arrow-right"></i>
+        </button>
+      </ng-template>
     </h4>
     <p class="sgaBaseTabs_heading__subtitle">
       {{('UNTITLED_PROJECT' | translate)+' - '+('UNTITLED_JOB' | translate)}}
@@ -9,22 +21,30 @@
   </div>
 
   <tabset class="sgaBaseTabs" #tabsRef>
-    <tab heading="Input parameters">
+    <tab heading="Input parameters" (select)="setActiveTab($event)">
       <app-sga-input-parameters [moduleGroupId]="moduleGroupId"
                                 (changeFuelType)="changeFuelType($event)"
                                 (calculateEfficiency)="calculateBoilerEfficiency($event)"
                                 (changeWaterTreatment)="changeWaterTreatment($event)"
                                 (changeCarbonEmission)="calculateCarbonEmission($event)"
+                                (changeSteamPressure)="calculateSaturatedAndFreezingTemperature($event)"
                                 [fieldsTree]="fieldsTree"
                                 [formGroup]="sizingModuleForm"></app-sga-input-parameters>
     </tab>
-    <tab heading="Benchmark" [disabled]="!benchmarkData">
-      <app-sga-benchmark [formGroup]="sizingModuleForm" [data]="benchmarkData"></app-sga-benchmark>
+    <tab heading="Benchmark" [disabled]="!benchmarkData" (select)="setActiveTab($event)">
+      <app-sga-benchmark [formGroup]="sizingModuleForm"
+                         [data]="benchmarkData"
+                         [units]="units$ | async"
+                         [currency]="currency"
+                         [chartData]="benchmarkChartData"></app-sga-benchmark>
     </tab>
-    <tab heading="Proposed Setup" [disabled]="true">
-      <app-sga-proposed-setup *ngIf="tabsRef?.tabs[2]?.active"></app-sga-proposed-setup>
+    <tab heading="Proposed Setup" [disabled]="!proposedSetupData" (select)="setActiveTab($event)">
+      <app-sga-proposed-setup [data]="proposedSetupData"
+                              [currency]="currency"
+                              (generateProposed)="calculateProposedSetup($event)"
+                              [units]="units$ | async"></app-sga-proposed-setup>
     </tab>
-    <tab heading="Final Proposal" [disabled]="true">
+    <tab heading="Final Proposal" [disabled]="true" (select)="setActiveTab($event)">
       <app-sga-final-proposal *ngIf="tabsRef?.tabs[3]?.active"></app-sga-final-proposal>
     </tab>
   </tabset>

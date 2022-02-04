@@ -38,9 +38,9 @@ intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> 
             // errorMessage =  `Error Status ${returnedError.status} : ${returnedError.error} - ${returnedError.error.message}`;
             handled = this.handleServerSideError(returnedError);
           }
-        } 
+        }
 
-        console.log(errorMessage ? errorMessage : returnedError);       
+        console.log(errorMessage ? errorMessage : returnedError);
         if (!handled) {
           if (errorMessage) {
             return throwError(errorMessage);
@@ -117,6 +117,9 @@ private handleServerSideError(error: HttpErrorResponse): boolean {
                         console.error('%c big bad 500', logFormat);
                         handled = true;
                         newMessage.displayValue = "The server responded with a 500 error for request - " + this.request.urlWithParams;
+                        if (error.error && error.error.message && error.error.errorCode && error.error.errorCode === 4001) {
+                          newMessage.messageKey = error.error.message;
+                        }
                         break;
 
                     case HttpError.BadGateway:

@@ -29,10 +29,18 @@ export interface ChartBarOptionsInterface {
     }
   },
   tooltips?: {
-    enabled: boolean;
+    enabled?: boolean;
+    usePointStyle?: boolean;
+    callbacks?: {
+      title?: (tooltipItem: any, data: any) => any,
+      label?: (tooltipItem: any, data: any) => any,
+      labelColor?: (context: any) => any;
+      labelTextColor?: (context: any) => any;
+    }
   },
   hover?: {
-    mode: null | string;
+    mode?: null | string;
+    intersect?: boolean;
   },
   layout?: {
     padding?: number | {

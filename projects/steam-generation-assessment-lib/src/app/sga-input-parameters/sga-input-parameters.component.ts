@@ -7,7 +7,7 @@ import {
   BoilerHouseTdsBlowdownTabFields,
   BoilerHouseWaterTreatmentTabFields,
   FormFieldTypesInterface,
-  SgaBoilerEfficiencyInterface, SgaFuelTypes, SgFormStructureInterface,
+  SgaBoilerEfficiencyInterface, SgaFuelTypes, SgaSaturatedTemperatureBodyInterface, SgFormStructureInterface,
   SteamCalorificRequestInterface,
   SteamCarbonEmissionInterface,
   SteamGeneratorInputsInterface,
@@ -30,6 +30,7 @@ export class SgaInputParametersComponent implements OnDestroy {
   @Output() calculateEfficiency: EventEmitter<SgaBoilerEfficiencyInterface> = new EventEmitter<SgaBoilerEfficiencyInterface>();
   @Output() changeWaterTreatment: EventEmitter<any> = new EventEmitter<any>();
   @Output() changeCarbonEmission: EventEmitter<SteamCarbonEmissionInterface> = new EventEmitter<SteamCarbonEmissionInterface>();
+  @Output() changeSteamPressure: EventEmitter<SgaSaturatedTemperatureBodyInterface> = new EventEmitter<SgaSaturatedTemperatureBodyInterface>();
 
   public fields: FormFieldTypesInterface;
   public carbonEmissionUpdate$ = new Subject<string>();
@@ -265,30 +266,7 @@ export class SgaInputParametersComponent implements OnDestroy {
       this.formGroup.get(`${this.formGroupKey}.boilerSteamTemperature`).updateValueAndValidity()
     }
 
-    this.steamGenerationAssessmentService.calculateSaturatedAndTemperature({...selectedUnits, ...inputValues, boilerSteamTemperature: null })
-      .pipe(takeUntil(this._ngUnsubscribe), filter(res => res && (res.isValid === undefined || res.isValid)))
-      .subscribe(({ boilerSteamTemperature }) => {
-        const temperature = boilerSteamTemperature && boilerSteamTemperature.boilerSteamTemperature;
-
-        if (temperature) {
-          this.formGroup
-            .get(`${this.formGroupKey}.boilerSteamTemperature`)
-            .setValidators([Validators.required, Validators.min(temperature)]);
-
-          if (
-            !inputValues.isSuperheatedSteam || !inputValues.boilerSteamTemperature ||
-            inputValues.boilerSteamTemperature < boilerSteamTemperature.boilerSteamTemperature
-          ) {
-            this.steamGenerationAssessmentService
-              .changeSgaFieldFilled('boilerSteamTemperature', true);
-            this.steamGenerationAssessmentService
-              .setFormValue('boilerSteamTemperature', temperature);
-            this.formGroup
-              .get(`${this.formGroupKey}.boilerSteamTemperature`)
-              .updateValueAndValidity({ onlySelf: true });
-          }
-        }
-      });
+    this.changeSteamPressure.emit({...selectedUnits, ...inputValues, boilerSteamTemperature: null});
   }
 
   private _changeCarbonEmission(fuelEnergyPerUnit): void {

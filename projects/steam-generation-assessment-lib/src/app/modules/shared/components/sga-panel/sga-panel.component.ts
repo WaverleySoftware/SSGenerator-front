@@ -6,18 +6,18 @@ import { AfterContentInit, Component, EventEmitter, Input, OnInit, Output, Templ
   styleUrls: ['./sga-panel.component.scss']
 })
 export class SgaPanelComponent implements OnInit, AfterContentInit {
-  @Input() id: string = 'SgaPanelComponent-ID';
+  @Input() id = 'SgaPanelComponent-ID';
   @Input() title: string;
   @Input() subtitle: string;
-  @Input() titleSize: string = '16px';
+  @Input() titleSize = '16px';
   @Input() titleTooltip: string | TemplateRef<any>;
   @Input() background: string;
-  @Input() showSeparator: boolean = true;
+  @Input() showSeparator = true;
   @Input() disableToggle: boolean;
   @Input() headingRef: TemplateRef<any>;
   @Input() disabled: boolean;
   @Input() invalid: boolean;
-  @Input() expanded: boolean = true;
+  @Input() expanded = true;
   @Output() expandedChange: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   constructor() { }
