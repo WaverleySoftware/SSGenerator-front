@@ -1,6 +1,6 @@
 <sga-panel title="Proposed setup" [disableToggle]="true">
   <ng-container body>
-    <div class="sgaProposedSetup" *ngIf="units">
+    <div class="sgaProposedSetup" *ngIf="units else noUnits">
       <sga-panel [(expanded)]="proposedFormPanel"
                  title="Setup parameters"
                  titleTooltip="Some tooltip"
@@ -95,8 +95,8 @@
               </div>
             </div>
             <div class="row">
-              <div class="col-md-4">
-                <button type="submit" [disabled]="!form.valid">Generate proposed results</button>
+              <div class="col-md-6">
+                <button type="submit" [disabled]="form.invalid">{{'GENERATE_PROPOSED_RESULTS' | translate}}</button>
               </div>
             </div>
           </ng-container>
@@ -121,12 +121,11 @@
                 <i class="fa fa-info-circle"></i>
               </h5>
               <app-chart-bar type="horizontalBar"
-                             [options]="{scales: { xAxes: [{ stacked: true, maxBarThickness: 58, display: false }] }}"
                              [legend]="false"
                              [data]="horizontalChartData"
                              [labels]="['POTENTIAL', 'CURRENT']"></app-chart-bar>
-              <p>{{'STEAM_GENERATION_SAVINGS' | translate}}: <span class="text-bold">{{currency}}7,691</span></p>
-              <p>{{'SAVINGS_INCLUDING_CONDENSATE_EFFLUENT' | translate}}: <span class="text-bold">{{currency}}7,691</span> </p>
+              <p>{{'STEAM_GENERATION_SAVINGS' | translate}}: <span class="text-bold">{{currency}}{{totalSaving.steamGenerationSavings | number: '0.0-2'}}</span></p>
+              <p>{{'SAVINGS_INCLUDING_CONDENSATE_EFFLUENT' | translate}}: <span class="text-bold">{{currency}}{{totalSaving.savingsIncludingCondensateEffluent | number: '0.0-2'}}</span> </p>
             </div>
             <form class="col-md-5" [formGroup]="form">
               <h5 class="sgaProposedSetup_title mb-24">
@@ -207,5 +206,9 @@
         </ng-container>
       </sga-panel>
     </div>
+
+    <ng-template #noUnits>
+      <h1>... No Units ...</h1>
+    </ng-template>
   </ng-container>
 </sga-panel>

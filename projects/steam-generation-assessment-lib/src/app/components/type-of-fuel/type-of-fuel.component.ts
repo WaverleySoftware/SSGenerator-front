@@ -1,14 +1,14 @@
 import {
-  AfterViewInit,
+  AfterContentInit,
   Component,
   EventEmitter,
   forwardRef,
   Host,
-  Input, OnDestroy,
+  Input, OnDestroy, OnInit,
   Optional,
   Output,
   SkipSelf
-} from "@angular/core";
+} from '@angular/core';
 import { EnumerationDefinition, PreferenceService, TranslationService, DisplayGroup } from "sizing-shared-lib";
 import { AbstractControl, ControlContainer, ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
 import { FuelTypesEnum, SgaFuelTypes } from "../../steam-generation-form.interface";
@@ -26,7 +26,7 @@ import { SizingUnitPreference } from "sizing-shared-lib/lib/shared/preference/si
     multi: true,
   }],
 })
-export class TypeOfFuelComponent implements ControlValueAccessor, AfterViewInit, OnDestroy {
+export class TypeOfFuelComponent implements ControlValueAccessor, OnInit, AfterContentInit, OnDestroy {
   @Input() label: string;
   @Input() disabled: boolean;
   @Input() unitFormControlName: string;
@@ -75,7 +75,7 @@ export class TypeOfFuelComponent implements ControlValueAccessor, AfterViewInit,
     this._getUnitControl();
   }
 
-  ngAfterViewInit() {
+  ngAfterContentInit() {
     this._getUnitControl();
   }
 

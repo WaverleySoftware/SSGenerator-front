@@ -1,15 +1,27 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { AbstractControl, AsyncValidatorFn, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { ChartBarDataInterface } from '../modules/shared/interfaces/chart-bar.interface';
 import {
   ProposedDataInterface,
   ProposedSetupChartElements,
-  ProposedSetupChartIndex, ProposedSetupChartLabels,
+  ProposedSetupChartIndex, ProposedSetupChartLabels, ProposedSetupInterface,
   SteamGeneratorInputsInterface
 } from '../steam-generation-form.interface';
 import { SteamGenerationAssessmentService } from '../steam-generation-assessment.service';
-import { takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import {
+  debounceTime,
+  delay,
+  distinctUntilChanged,
+  first,
+  map,
+  mapTo,
+  switchMap,
+  takeUntil,
+  tap,
+  startWith,
+  pairwise
+} from 'rxjs/operators';
+import { Observable, of, Subject, timer } from 'rxjs';
 
 @Component({
   selector: 'app-sga-proposed-setup',
@@ -28,24 +40,25 @@ export class SgaProposedSetupComponent implements OnInit {
   @Input()
   set results(data: any[]) {
     this.proposedResults = data;
-    const { verticalChartData, horizontalChartData } = SgaProposedSetupComponent.generateChartsData(data);
+    const { verticalChartData, horizontalChartData, total } = SgaProposedSetupComponent.generateChartsData(data);
     this.verticalChartData = verticalChartData;
     this.horizontalChartData = horizontalChartData;
+    this.totalSaving = {
+      savingsIncludingCondensateEffluent: total.savingsIncludingCondensateEffluent,
+      steamGenerationSavings: total.steamGenerationSavings
+    };
   }
   get results() { return this.proposedResults; }
   private proposedData: ProposedDataInterface;
   @Input()
   set data(data: ProposedDataInterface) {
-    this.proposedData = data;
-
-    if (data && data.proposedSetup && data.features) {
-      this.form.patchValue(
-        { proposedSetup: data.proposedSetup, features: data.features },
-        { onlySelf: true, emitEvent: false }
-      );
-    } else {
+    if (data && data.proposedSetup && data.features && this.form) {
+      this.form.patchValue({ proposedSetup: data.proposedSetup, features: data.features }, {emitEvent: false});
+    } else if (this.proposedData && !data) {
       this.resetData();
     }
+
+    this.proposedData = data;
   }
   get data(): ProposedDataInterface { return this.proposedData; }
 
@@ -73,50 +86,53 @@ export class SgaProposedSetupComponent implements OnInit {
     ProposedSetupChartLabels.effectOfDsiOnHotwell,
   ];
   public proposedFormPanel = true;
-  public form: FormGroup = this.fb.group({
-    proposedSetup: this.fb.group({
-      benchmarkBoilerEfficiency: [0, Validators.required],
-      benchmarkCondensateReturn: [0, Validators.required],
-      benchmarkCondensateReturnedPercentage: [0, Validators.required],
-      benchmarkCondensateTemperature: [0, Validators.required],
-      benchmarkDsiPressure: [0, Validators.required],
-      benchmarkTemperatureOfFeedtank: [0, Validators.required],
-      benchmarkWaterRejectionRate: [0, Validators.required],
-      condensateReturnUnit: [0, Validators.required],
-      condensateTemperatureUnit: [0, Validators.required],
-      dsiPressureUnit: [0, Validators.required],
-      economiserRequired: [false],
-      proposalBoilerEfficiency: [0, Validators.required],
-      proposalCondensateReturned: [0, Validators.required],
-      proposalCondensateReturnedPercentage: [0, Validators.required],
-      proposalCondensateTemperature: [0, Validators.required],
-      proposalCostOfSodiumSulphite: [0, Validators.required],
-      proposalDsiPressure: [0, Validators.required],
-      proposalTemperatureOfFeedtank: [0, Validators.required],
-      proposalWaterRejectionRate: [0, Validators.required],
-      temperatureOfFeedtankUnit: [0, Validators.required],
-    }),
-    features: this.fb.group({
-      boilerEfficiencyImprovements: [false],
-      increaseCondensateReturn: [false],
-      addWaterTreatmentPlant: [false],
-      addAutoTdsControls: [
-        false,
-        SgaProposedSetupComponent.validateTds(['addAutoTdsAndFlashRecovery', 'addAutoTdsAndFlashRecoveryPlusHearExchanger'])
-      ],
-      addAutoTdsAndFlashRecovery: [
-        false,
-        SgaProposedSetupComponent.validateTds(['addAutoTdsControls', 'addAutoTdsAndFlashRecoveryPlusHearExchanger'])
-      ],
-      addAutoTdsAndFlashRecoveryPlusHearExchanger: [
-        false,
-        SgaProposedSetupComponent.validateTds(['addAutoTdsControls', 'addAutoTdsAndFlashRecovery'])
-      ],
-      addDirectSteamInjectionToFeedtank: [false],
-    }),
-  });
+  public form: FormGroup;
+  public totalSaving: {steamGenerationSavings: number, savingsIncludingCondensateEffluent: number};
 
-  constructor(private fb: FormBuilder, private sgaService: SteamGenerationAssessmentService) {}
+  constructor(private fb: FormBuilder, private sgaService: SteamGenerationAssessmentService) {
+    this.form = this.fb.group({
+      proposedSetup: this.fb.group({
+        benchmarkBoilerEfficiency: [0, Validators.required],
+        benchmarkCondensateReturn: [0, Validators.required],
+        benchmarkCondensateReturnedPercentage: [0, Validators.required],
+        benchmarkCondensateTemperature: [0, Validators.required],
+        benchmarkDsiPressure: [0, Validators.required],
+        benchmarkTemperatureOfFeedtank: [0, Validators.required],
+        benchmarkWaterRejectionRate: [0, Validators.required],
+        condensateReturnUnit: [0, Validators.required],
+        condensateTemperatureUnit: [0, Validators.required],
+        dsiPressureUnit: [0, Validators.required],
+        economiserRequired: [false],
+        proposalBoilerEfficiency: [0, Validators.required],
+        proposalCondensateReturned: [0, Validators.required],
+        proposalCondensateReturnedPercentage: [0, Validators.required],
+        proposalCondensateTemperature: [0, Validators.required],
+        proposalCostOfSodiumSulphite: [0, Validators.required],
+        proposalDsiPressure: [0, Validators.required],
+        proposalTemperatureOfFeedtank: [0, Validators.required],
+        proposalWaterRejectionRate: [0, Validators.required],
+        temperatureOfFeedtankUnit: [0, Validators.required],
+      }),
+      features: this.fb.group({
+        boilerEfficiencyImprovements: [false],
+        increaseCondensateReturn: [false],
+        addWaterTreatmentPlant: [false],
+        addAutoTdsControls: [
+          false,
+          SgaProposedSetupComponent.validateTds(['addAutoTdsAndFlashRecovery', 'addAutoTdsAndFlashRecoveryPlusHearExchanger'])
+        ],
+        addAutoTdsAndFlashRecovery: [
+          false,
+          SgaProposedSetupComponent.validateTds(['addAutoTdsControls', 'addAutoTdsAndFlashRecoveryPlusHearExchanger'])
+        ],
+        addAutoTdsAndFlashRecoveryPlusHearExchanger: [
+          false,
+          SgaProposedSetupComponent.validateTds(['addAutoTdsControls', 'addAutoTdsAndFlashRecovery'])
+        ],
+        addDirectSteamInjectionToFeedtank: [false],
+      }),
+    });
+  }
 
   private static validateTds(setToFalseArr: string[]) {
     return (control: AbstractControl): ValidationErrors => {
@@ -139,8 +155,13 @@ export class SgaProposedSetupComponent implements OnInit {
   }
   private static generateChartsData(data: any[]): {
     verticalChartData: ChartBarDataInterface[]; horizontalChartData: ChartBarDataInterface[];
+    total: { steamGenerationSavings: number, savingsIncludingCondensateEffluent: number, data?: {benchmark: any, proposal: any} }
   } {
-    const result: { verticalChartData: ChartBarDataInterface[]; horizontalChartData: ChartBarDataInterface[]; } = {
+    const result: {
+      verticalChartData: ChartBarDataInterface[];
+      horizontalChartData: ChartBarDataInterface[];
+      total: { steamGenerationSavings: number, savingsIncludingCondensateEffluent: number, data?: {benchmark: any, proposal: any} }
+    } = {
       verticalChartData: [
         { data: [0, 0, 0, 0, 0, 0, 0], label: 'Fuel' },
         { data: [0, 0, 0, 0, 0, 0, 0], label: 'Water and Chemicals' },
@@ -152,12 +173,14 @@ export class SgaProposedSetupComponent implements OnInit {
         { data: [0, 0], label: 'Water and Chemicals' },
         { data: [0, 0], label: 'Effluent' },
         { data: [0, 0], label: 'Carbont tax' },
-      ]
+      ],
+      total: {steamGenerationSavings: 0, savingsIncludingCondensateEffluent: 0, data: { benchmark: null, proposal: null }}
     };
 
     if (!data || !data.length) { return result; }
 
     for (const col of data) {
+      // verticalChartData
       const key = Object.keys(col)[0];
       if (key && (ProposedSetupChartIndex[key] || ProposedSetupChartIndex[key] === 0)) {
         // Fuel
@@ -173,6 +196,51 @@ export class SgaProposedSetupComponent implements OnInit {
         result.verticalChartData[ProposedSetupChartElements['Carbon tax']]
           .data[ProposedSetupChartIndex[key]] = col[key].propCO2emmissionsReducedValueSavings || 0;
       }
+
+      // horizontalChartData && set total
+      if (col.benchmark || col.overallImpactOnProposalsSelectedOnBoilerHouse) {
+        const dataObj = col.benchmark || col.overallImpactOnProposalsSelectedOnBoilerHouse;
+        const dataIndex = col.benchmark ? 0 : 1;
+
+        // Fuel: CostOfFuelPerYear,
+        result.horizontalChartData[ProposedSetupChartElements['Fuel']].data[dataIndex] = dataObj.costOfFuelPerYear || 0;
+        // Water chemicals: WaterAndChemicalsCostTotalPerYear,
+        result.horizontalChartData[ProposedSetupChartElements['Water and Chemicals']]
+          .data[dataIndex] = dataObj.waterAndChemicalsCostTotalPerYear || 0;
+        // Effluent: CostOfBoilerHouseEffluent,
+        result.horizontalChartData[ProposedSetupChartElements['Effluent']].data[dataIndex] = dataObj.costOfBoilerHouseEffluent || 0;
+        // Carbon Tax: CostOfCO2PerYear
+        result.horizontalChartData[ProposedSetupChartElements['Carbon tax']].data[dataIndex] = dataObj.costOfCO2PerYear || 0;
+
+        // Set Total data
+        if (col.benchmark) {
+          result.total.data.benchmark = col.benchmark;
+        }
+        if (col.overallImpactOnProposalsSelectedOnBoilerHouse) {
+          result.total.data.proposal = col.overallImpactOnProposalsSelectedOnBoilerHouse;
+        }
+      }
+    }
+
+    // Total saving values
+    if (result.total.data.benchmark && result.total.data.proposal) {
+      const {benchmark, proposal} = result.total.data;
+
+      const deltaCostOfFuelPerYear = Math.round(proposal.costOfFuelPerYear - benchmark.costOfFuelPerYear);
+      const deltaWaterAndChemicalsCostTotalPerYear = Math.round(
+        proposal.waterAndChemicalsCostTotalPerYear - benchmark.waterAndChemicalsCostTotalPerYear
+      );
+      const deltaCostOfBoilerHouseEffluent = Math.round(proposal.costOfBoilerHouseEffluent - benchmark.costOfBoilerHouseEffluent) || 0;
+      const deltaMCondy = Math.round(proposal.mCondy - benchmark.mCondy) || 0;
+      const deltaCostOfEffm3 = Math.round(proposal.costOfEffm3 - benchmark.costOfEffm3) || 0;
+      const deltaCostOfCO2PerYear = Math.round(proposal.costOfCO2PerYear - benchmark.costOfCO2PerYear) || 0;
+
+      result.total.steamGenerationSavings = Math.round(proposal.totalCostOfSteamPerYear - benchmark.totalCostOfSteamPerYear) || 0;
+      result.total.savingsIncludingCondensateEffluent = deltaCostOfFuelPerYear +
+        deltaWaterAndChemicalsCostTotalPerYear +
+        deltaCostOfBoilerHouseEffluent +
+        (deltaMCondy * deltaCostOfEffm3) +
+        deltaCostOfCO2PerYear;
     }
 
     return result;
@@ -191,39 +259,48 @@ export class SgaProposedSetupComponent implements OnInit {
       { data: [0, 0], label: 'Effluent' },
       { data: [0, 0], label: 'Carbont tax' },
     ];
-    this.form.setValue({
-      proposedSetup: {
-        benchmarkBoilerEfficiency: 0,
-        benchmarkCondensateReturn: 0,
-        benchmarkCondensateReturnedPercentage: 0,
-        benchmarkCondensateTemperature: 0,
-        benchmarkDsiPressure: 0,
-        benchmarkTemperatureOfFeedtank: 0,
-        benchmarkWaterRejectionRate: 0,
-        condensateReturnUnit: 0,
-        condensateTemperatureUnit: 0,
-        dsiPressureUnit: 0,
-        economiserRequired: false,
-        proposalBoilerEfficiency: 0,
-        proposalCondensateReturned: 0,
-        proposalCondensateReturnedPercentage: 0,
-        proposalCondensateTemperature: 0,
-        proposalCostOfSodiumSulphite: 0,
-        proposalDsiPressure: 0,
-        proposalTemperatureOfFeedtank: 0,
-        proposalWaterRejectionRate: 0,
-        temperatureOfFeedtankUnit: 0,
-      },
-      features: {
-        boilerEfficiencyImprovements: false,
-        increaseCondensateReturn: false,
-        addWaterTreatmentPlant: false,
-        addAutoTdsControls: false,
-        addAutoTdsAndFlashRecovery: false,
-        addAutoTdsAndFlashRecoveryPlusHearExchanger: false,
-        addDirectSteamInjectionToFeedtank: false,
-      },
-    }, { onlySelf: true, emitEvent: false });
+    if (this.form && this.form.setValue) { this.form.reset(); }
+  }
+  private validateProposalForm() {
+    const form = this.form.get('proposedSetup') as FormGroup;
+
+    if (form && form.controls) {
+      for (const controlsKey in form.controls) {
+        if (controlsKey && controlsKey !== 'economiserRequired') {
+          const control = form.get(controlsKey);
+
+          if (control) {
+            control.valueChanges.pipe(
+              takeUntil(this.ngUnsubscribe),
+              tap(() => control.markAsPending({emitEvent: false})),
+              switchMap((value) => {
+                if (!value || value === 0) { return of({isValid: false, errors: [{errorMessage: 'REQUIRED_FIELD'}]}); }
+                return this.sgaService.validateProposedInput(controlsKey as keyof ProposedSetupInterface, form.getRawValue());
+              }),
+              map(res => {
+                if (!res || !res.hasOwnProperty('isValid') || res.isValid) { return null; }
+
+                let error = 'Some Error';
+
+                if (res.errors && Array.isArray(res.errors)) {
+                  error = res.errors[0].errorMessage;
+                }
+
+                return {
+                  error,
+                  message: res.errors[0] &&
+                    (res.errors[0].customState || res.errors[0].customState === 0) &&
+                    `(${res.errors[0].customState})`
+                };
+              }),
+            ).subscribe(
+              (error) => control.setErrors(error),
+              () => control.updateValueAndValidity({emitEvent: false})
+            );
+          }
+        }
+      }
+    }
   }
 
   get isCondensateReturnDisable(): boolean {
@@ -232,9 +309,15 @@ export class SgaProposedSetupComponent implements OnInit {
       fg.get('benchmarkCondensateReturn').value === fg.get('proposalCondensateReturned').value;
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.validateProposalForm();
+  }
 
   onSubmit() {
+    if (this.form.invalid) {
+      return;
+    }
+
     this.proposedFormPanel = false;
     this.generateProposed.emit(this.form.getRawValue());
   }

@@ -1,19 +1,19 @@
 import {
+  AfterContentInit,
   AfterViewInit,
   Component,
   EventEmitter,
   forwardRef,
   Host,
   Input,
-  OnInit,
   Optional,
   Output,
   SkipSelf
-} from "@angular/core";
-import { AbstractControl, ControlContainer, ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
+} from '@angular/core';
+import { AbstractControl, ControlContainer, ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import * as cloneDeep_ from 'lodash/cloneDeep';
-import { TranslationService } from "sizing-shared-lib";
-import { EnumListDefinitionInterface, EnumListInterface } from "../../interfaces/enum-list.interface";
+import { TranslationService } from 'sizing-shared-lib';
+import { EnumListDefinitionInterface, EnumListInterface } from '../../interfaces/enum-list.interface';
 
 
 
@@ -27,14 +27,14 @@ import { EnumListDefinitionInterface, EnumListInterface } from "../../interfaces
     useExisting: forwardRef(() => FormListComponent),
   }]
 })
-export class FormListComponent implements ControlValueAccessor, AfterViewInit {
-  @Input("enumeration-name") enumerationName: string;
-  @Input("filter-by") filterBy: string[];
-  @Input("opco-override") opCoOverride: boolean = false;
+export class FormListComponent implements ControlValueAccessor, AfterContentInit {
+  @Input('enumeration-name') enumerationName: string;
+  @Input('filter-by') filterBy: string[];
+  @Input('opco-override') opCoOverride = false;
   @Input('value') internalValue: any;
   @Input() label: string;
   @Input() formControlName: string;
-  @Output("on-change") externalOnChange = new EventEmitter<{ selectedValue: string, itemsCount: number }>();
+  @Output('on-change') externalOnChange = new EventEmitter<{ selectedValue: string, itemsCount: number }>();
 
   public isDisabled: boolean;
   public cloneDeep = cloneDeep_;
@@ -67,7 +67,7 @@ export class FormListComponent implements ControlValueAccessor, AfterViewInit {
     @Optional() @Host() @SkipSelf() private controlContainer: ControlContainer,
   ) { }
 
-  ngAfterViewInit() {
+  ngAfterContentInit() {
     if (this.controlContainer && this.formControlName) {
       this.control = this.controlContainer.control.get(this.formControlName);
       if (!this.control.value && this.list && this.list.length) {
