@@ -1,6 +1,6 @@
 import { AbstractControl, AsyncValidatorFn, FormGroup, ValidationErrors, Validators } from "@angular/forms";
-import { Observable, of, timer } from "rxjs";
-import { map, first, switchMap, catchError } from "rxjs/operators";
+import { BehaviorSubject, Observable, of, pipe, timer } from 'rxjs';
+import { map, first, switchMap, catchError, distinctUntilChanged, debounceTime } from 'rxjs/operators';
 import { SteamGenerationAssessmentService } from "./steam-generation-assessment.service";
 import { SgaHttpValidationResponseInterface, SteamGeneratorInputsInterface } from "./steam-generation-form.interface";
 import { HttpErrorResponse } from "@angular/common/http";
@@ -253,6 +253,30 @@ export class SgaValidator {
     return null;
   }
 
+  static testValidation(service: SteamGenerationAssessmentService, name: string, data: any): AsyncValidatorFn {
+    return (control: AbstractControl): Observable<ValidationErrors> => {
+      if (control && name && service && service.validateSgaBenchmarkInput) {
+        return service.validateSgaBenchmarkInput(name as keyof SteamGeneratorInputsInterface, {
+          selectedUnits: data.selectedUnits,
+          benchmarkInputs: { ...data.benchmarkInputs, hoursOfOperation: control.value }
+        }).pipe(map((errors) => errors && SgaValidator._parseErrors(errors)));
+
+        // return timer(600).pipe(
+        //   debounceTime(600),
+        //   distinctUntilChanged((a, b) => JSON.stringify(a) === JSON.stringify(b)),
+        //   switchMap(() => service.validateSgaBenchmarkInput(name as keyof SteamGeneratorInputsInterface, {
+        //     selectedUnits: data.selectedUnits,
+        //     benchmarkInputs: { ...data.benchmarkInputs, hoursOfOperation: control.value }
+        //   })),
+        //   map((errors) => errors && SgaValidator._parseErrors(errors)),
+        //   catchError((errors: HttpErrorResponse) => SgaValidator._parseSpecificErrors(errors)),
+        // );
+      }
+
+      return of(null);
+    };
+  }
+
   static validateAsyncFn(
     service: SteamGenerationAssessmentService,
     name?: keyof SteamGeneratorInputsInterface,
@@ -328,7 +352,7 @@ export class SgaValidator {
       error = errors[0].errorMessage;
     }
 
-    return { error: error, message: errors[0] && (errors[0].customState || errors[0].customState === 0) && `(${errors[0].customState})` };
+    return { error, message: errors[0] && (errors[0].customState || errors[0].customState === 0) && `(${Math.round(errors[0].customState)})` };
   }
 
   private static _parseSpecificErrors({ error }: HttpErrorResponse): Observable<ValidationErrors> {

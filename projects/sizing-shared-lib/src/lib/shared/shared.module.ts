@@ -47,6 +47,7 @@ import { CalculationsService } from "./calculations/calculations.service";
 import { SharedService } from "./shared.service";
 import { UserValidator } from "./validators/user.validator";
 import { ModulePreferenceService } from './module-preference/module-preference.service';
+import { SpiraxInputDirective } from './directives/spirax-input/spirax-input.directive';
 
 // https://angular.io/styleguide#!#04-10
 @NgModule({
@@ -98,7 +99,8 @@ import { ModulePreferenceService } from './module-preference/module-preference.s
     JqcloudDirective,
     NumberOnlyDirective,
     TwoDigitDecimalNumberDirective,
-    ModuleRibbonComponent
+    ModuleRibbonComponent,
+    SpiraxInputDirective
   ],
   exports: [
     CommonModule,
@@ -137,7 +139,8 @@ import { ModulePreferenceService } from './module-preference/module-preference.s
     PreferenceModule,
     ProductSelectorModule,
     ModuleRibbonComponent,
-    NgxDatatableModule
+    NgxDatatableModule,
+    SpiraxInputDirective
   ]
 })
 
