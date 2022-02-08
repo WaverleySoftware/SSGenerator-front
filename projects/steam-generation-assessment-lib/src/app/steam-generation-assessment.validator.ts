@@ -253,30 +253,6 @@ export class SgaValidator {
     return null;
   }
 
-  static testValidation(service: SteamGenerationAssessmentService, name: string, data: any): AsyncValidatorFn {
-    return (control: AbstractControl): Observable<ValidationErrors> => {
-      if (control && name && service && service.validateSgaBenchmarkInput) {
-        return service.validateSgaBenchmarkInput(name as keyof SteamGeneratorInputsInterface, {
-          selectedUnits: data.selectedUnits,
-          benchmarkInputs: { ...data.benchmarkInputs, hoursOfOperation: control.value }
-        }).pipe(map((errors) => errors && SgaValidator._parseErrors(errors)));
-
-        // return timer(600).pipe(
-        //   debounceTime(600),
-        //   distinctUntilChanged((a, b) => JSON.stringify(a) === JSON.stringify(b)),
-        //   switchMap(() => service.validateSgaBenchmarkInput(name as keyof SteamGeneratorInputsInterface, {
-        //     selectedUnits: data.selectedUnits,
-        //     benchmarkInputs: { ...data.benchmarkInputs, hoursOfOperation: control.value }
-        //   })),
-        //   map((errors) => errors && SgaValidator._parseErrors(errors)),
-        //   catchError((errors: HttpErrorResponse) => SgaValidator._parseSpecificErrors(errors)),
-        // );
-      }
-
-      return of(null);
-    };
-  }
-
   static validateAsyncFn(
     service: SteamGenerationAssessmentService,
     name?: keyof SteamGeneratorInputsInterface,
