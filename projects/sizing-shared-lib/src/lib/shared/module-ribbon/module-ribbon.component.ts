@@ -21,7 +21,7 @@ export class ModuleRibbonComponent implements OnInit  {
     private userProfileService: UserProfileService) {
 
   }
-  
+
   @Input('module-groups') moduleGroups: ModuleGroup[] = [];
 
   @Input('module-identifier') moduleIdentifier: string = "";
@@ -73,6 +73,7 @@ export class ModuleRibbonComponent implements OnInit  {
     const useWidth = image.naturalWidth > image.naturalHeight;
 
     // Assign a new property to the image.
+    // @ts-ignore
     image["useWidth"] = useWidth;
   }
 }

@@ -11,14 +11,14 @@ import {
   UnitsService
 } from 'sizing-shared-lib';
 import { FormGroup, Validators } from '@angular/forms';
-import { SteamGenerationAssessmentService } from './steam-generation-assessment.service';
+import { SteamGenerationAssessmentService } from './services/steam-generation-assessment.service';
 import { ActivatedRoute, Params } from '@angular/router';
 import { Observable, Subject } from 'rxjs';
 import { filter, map, takeUntil, tap } from 'rxjs/operators';
 import {
   BenchmarkDataInterface,
   FormFieldTypesInterface,
-  ProposedDataInterface,
+  ProposedDataInterface, ProposedEfficiencyRequestInterface,
   SgaBoilerEfficiencyInterface,
   SgaFuelTypes,
   SgaSaturatedTemperatureBodyInterface,
@@ -27,9 +27,9 @@ import {
   SteamCalorificRequestInterface,
   SteamCarbonEmissionInterface,
   SteamGeneratorInputsInterface
-} from './steam-generation-form.interface';
+} from './interfaces/steam-generation-form.interface';
 import { TabsetComponent } from 'ngx-bootstrap';
-import { ChartBarDataInterface } from './modules/shared/interfaces/chart-bar.interface';
+import { ChartBarDataInterface } from './interfaces/chart-bar.interface';
 import { TabDirective } from 'ngx-bootstrap/tabs/tab.directive';
 
 @Component({
@@ -49,6 +49,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   public benchmarkData: BenchmarkDataInterface;
   public benchmarkChartData: ChartBarDataInterface[];
   public proposedSetupData: ProposedDataInterface;
+  public proposedSetupResults: any[];
   private ngUnsubscribe = new Subject<void>();
   public fieldsTree: SgFormStructureInterface = {
     utility_parameters: {
@@ -190,6 +191,9 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       }
       if (this.proposedSetupData) {
         this.proposedSetupData = null;
+      }
+      if (this.proposedSetupResults) {
+        this.proposedSetupResults = null;
       }
     });
   }
@@ -377,16 +381,6 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     return true;
   }
 
-  public calculateProposedSetup(proposalInputs: ProposedDataInterface): void {
-    const body = { ...this.sizingModuleForm.getRawValue(), proposalInputs };
-
-    console.log({body}, '-----calculateProposedSetup');
-
-    this.sgaService.calculateProposed(body).pipe(takeUntil(this.ngUnsubscribe)).subscribe(res => {
-      console.log(res, '------res');
-    });
-  }
-
   public nextTabHandle(tabsRef?: TabsetComponent): void {
     if (tabsRef && tabsRef.tabs) {
       for (let i = 0; i <= tabsRef.tabs.length; i++) {
@@ -430,6 +424,20 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     if (!selectedValue) { return; }
 
     this._calculateWaterTreatment(selectedValue);
+  }
+
+  /** Request: 'calculate-proposal' */
+  public calculateProposedSetup(proposalInputs: ProposedDataInterface): void {
+    if (!proposalInputs || !proposalInputs.proposedSetup || !proposalInputs.features) { return; }
+
+    this.sgaService.calculateProposed({ ...this.sizingModuleForm.getRawValue(), proposalInputs })
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(res => {
+        if (res) {
+          this.proposedSetupResults = res;
+          this.setProposalSetupData(proposalInputs);
+        }
+      });
   }
 
   /** Request: 'calculate-saturated-and-freezing-temperature' */
@@ -787,9 +795,19 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     return this.benchmarkData;
   }
 
-  private setProposalSetupData(data: any) {
+  private setProposalSetupData(data: any, objKey?: keyof ProposedDataInterface) {
     if (!data) { return null; }
 
-    this.proposedSetupData = { features: data.features, proposedSetup: data.proposedSetup };
+    if (objKey) {
+      this.proposedSetupData = {
+        ...this.proposedSetupData,
+        [objKey]: { ...this.proposedSetupData[objKey], ...data }
+      };
+    } else {
+      this.proposedSetupData = {
+        features: data.features,
+        proposedSetup: data.proposedSetup
+      };
+    }
   }
 }
