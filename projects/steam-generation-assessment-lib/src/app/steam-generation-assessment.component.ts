@@ -11,7 +11,7 @@ import {
   UnitsService
 } from 'sizing-shared-lib';
 import { FormGroup, Validators } from '@angular/forms';
-import { SteamGenerationAssessmentService } from './steam-generation-assessment.service';
+import { SteamGenerationAssessmentService } from './services/steam-generation-assessment.service';
 import { ActivatedRoute, Params } from '@angular/router';
 import { Observable, Subject } from 'rxjs';
 import { filter, map, takeUntil, tap } from 'rxjs/operators';
@@ -27,9 +27,9 @@ import {
   SteamCalorificRequestInterface,
   SteamCarbonEmissionInterface,
   SteamGeneratorInputsInterface
-} from './steam-generation-form.interface';
+} from './interfaces/steam-generation-form.interface';
 import { TabsetComponent } from 'ngx-bootstrap';
-import { ChartBarDataInterface } from './modules/shared/interfaces/chart-bar.interface';
+import { ChartBarDataInterface } from './interfaces/chart-bar.interface';
 import { TabDirective } from 'ngx-bootstrap/tabs/tab.directive';
 
 @Component({

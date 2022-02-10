@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import { EnumerationDefinition, PreferenceService, TranslationService, DisplayGroup } from "sizing-shared-lib";
 import { AbstractControl, ControlContainer, ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
-import { FuelTypesEnum, SgaFuelTypes } from "../../steam-generation-form.interface";
+import { FuelTypesEnum, SgaFuelTypes } from "../../interfaces/steam-generation-form.interface";
 import { filter, map } from "rxjs/operators";
 import { Subscription } from "rxjs";
 import { SizingUnitPreference } from "sizing-shared-lib/lib/shared/preference/sizing-unit-preference.model";

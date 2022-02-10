@@ -48,6 +48,7 @@ import { SharedService } from "./shared.service";
 import { UserValidator } from "./validators/user.validator";
 import { ModulePreferenceService } from './module-preference/module-preference.service';
 import { SpiraxInputDirective } from './directives/spirax-input/spirax-input.directive';
+import { SpiraxFormsModule } from './spirax-forms/spirax-forms.module';
 
 // https://angular.io/styleguide#!#04-10
 @NgModule({
@@ -83,7 +84,8 @@ import { SpiraxInputDirective } from './directives/spirax-input/spirax-input.dir
     ProductSelectorModule,
     UnitsModule,
     SaveLoadModule,
-    NgxDatatableModule
+    NgxDatatableModule,
+    SpiraxFormsModule
   ],
   providers: [
     ColorsService,
@@ -140,7 +142,8 @@ import { SpiraxInputDirective } from './directives/spirax-input/spirax-input.dir
     ProductSelectorModule,
     ModuleRibbonComponent,
     NgxDatatableModule,
-    SpiraxInputDirective
+    SpiraxInputDirective,
+    SpiraxFormsModule
   ]
 })
 
