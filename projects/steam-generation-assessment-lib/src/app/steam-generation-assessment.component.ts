@@ -18,7 +18,7 @@ import { filter, map, takeUntil, tap } from 'rxjs/operators';
 import {
   BenchmarkDataInterface,
   FormFieldTypesInterface,
-  ProposedDataInterface, ProposedEfficiencyRequestInterface,
+  ProposedDataInterface,
   SgaBoilerEfficiencyInterface,
   SgaFuelTypes,
   SgaSaturatedTemperatureBodyInterface,
@@ -31,6 +31,8 @@ import {
 import { TabsetComponent } from 'ngx-bootstrap';
 import { ChartBarDataInterface } from './interfaces/chart-bar.interface';
 import { TabDirective } from 'ngx-bootstrap/tabs/tab.directive';
+import { SgaFormService } from './services/sga-form.service';
+import { SizingUnitPreference } from '../../../sizing-shared-lib/src/lib/shared/preference/sizing-unit-preference.model';
 
 @Component({
   selector: 'app-steam-generation-assessment',
@@ -40,18 +42,17 @@ import { TabDirective } from 'ngx-bootstrap/tabs/tab.directive';
 export class SteamGenerationAssessmentComponent extends BaseSizingModule implements OnInit, OnDestroy, AfterViewInit {
   readonly moduleGroupId: number = 9;
   readonly moduleName: string = 'steamGenerationAssessment';
-  private readonly fieldsGroupName: keyof SgaSizingModuleFormInterface = 'benchmarkInputs';
-  private readonly unitsGroupName: keyof SgaSizingModuleFormInterface = 'selectedUnits';
-  public moduleId = 2;
-  public readonly requestLoading$ = this.sgaService.getLoading();
-  public productName = 'Steam Generation Assessment';
-  public sizingModuleForm: FormGroup = this.sgaService.getSizingFormGroup();
-  public benchmarkData: BenchmarkDataInterface;
-  public benchmarkChartData: ChartBarDataInterface[];
-  public proposedSetupData: ProposedDataInterface;
-  public proposedSetupResults: any[];
+  private readonly fieldsGroupName = 'benchmarkInputs';
+  private readonly unitsGroupName = 'selectedUnits';
   private ngUnsubscribe = new Subject<void>();
-  public fieldsTree: SgFormStructureInterface = {
+  moduleId = 2;
+  productName = 'Steam Generation Assessment';
+  sizingModuleForm: FormGroup = this.formService.createInputParamsForm();
+  benchmarkData: BenchmarkDataInterface;
+  benchmarkChartData: ChartBarDataInterface[];
+  proposedSetupData: ProposedDataInterface;
+  proposedSetupResults: any[];
+  fieldsTree: SgFormStructureInterface = {
     utility_parameters: {
       status: true,
       panels: {
@@ -159,10 +160,12 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       }
     }
   };
-  public nextTab: TabDirective;
-  public currency: string;
-  public units$: Observable<{ [key: number]: string }> = this.unitsService.unitsChange
-    .pipe(map((data) => data.reduce((obj, item) => ({...obj, [item.id]: item.units}), {})));
+  nextTab: TabDirective;
+  currency: string;
+  readonly requestLoading$ = this.sgaService.getLoading();
+  sizingUnits$: Observable<{ [key: string]: string }> = this.preferenceService.sizingUnitPreferencesUpdate.pipe(
+    map(({list, updated}) => list.reduce((obj, item) => ({...obj, [item.preference.name]: item.preference.unitName}), {}))
+  );
 
   @ViewChild('tabsRef', {static: true}) tabsRef: TabsetComponent;
 
@@ -175,35 +178,91 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     private modulePreferenceService: ModulePreferenceService,
     protected translationService: TranslationService,
     private adminService: AdminService,
+    private formService: SgaFormService
   ) {
     super();
-    this.preferenceService.sizingUnitPreferencesUpdate.subscribe(({updated}) => {
-      if (updated.preference && updated.preference.name === 'BHCurrency') {
-        this.currency = updated.preference.unitName;
+  }
+
+  private createOrUpdateSizingPref(sizingUnitPreference?: SizingUnitPreference[]) {
+    const list = [
+      { name: 'BoilerHouseEnergyUnits', masterTextKey: 'ENERGY', selectedUnitName: 'energyUnitSelected' },
+      { name: 'WeightUnit', masterTextKey: 'SMALL_WEIGHT', selectedUnitName: 'smallWeightUnitSelected' },
+      { name: 'BHCurrency', masterTextKey: 'CURRENCY' },
+      { name: 'BoilerHouseEmissionUnits', masterTextKey: 'CO2_EMISSIONS', selectedUnitName: 'emissionUnitSelected' },
+      { name: 'BoilerHouseVolumeUnits', masterTextKey: 'VOLUME', selectedUnitName: 'volumeUnitSelected' },
+      {
+        name: 'BoilerHouseSmallMassFlowUnits',
+        masterTextKey: 'BOILER_HOUSE_SMALL_MASS_FLOW_UNITS',
+        selectedUnitName: 'smallMassFlowUnitSelected'
+      },
+      { name: 'BoilerHouseMassFlowUnits', masterTextKey: 'BOILER_HOUSE_MASS_FLOW_UNITS', selectedUnitName: 'massFlowUnitSelected' },
+      { name: 'TemperatureUnit', masterTextKey: 'TEMPERATURE', selectedUnitName: 'temperatureUnitSelected' },
+      { name: 'PressureUnit', masterTextKey: 'PRESSURE', selectedUnitName: 'pressureUnitSelected' },
+      { name: 'BoilerHouseTDSUnits', masterTextKey: 'TDS', selectedUnitName: 'tdsUnitSelected' },
+      {
+        name: 'BoilerHouseSmallVolumetricFlowUnits',
+        masterTextKey: 'SMALL_VOLUMETRIC_FLOW',
+        selectedUnitName: 'smallVolumetricFlowUnitSelected'
+      },
+      { name: 'BoilerHouseVolumetricFlowUnits', masterTextKey: 'VOLUMETRIC_FLOW', selectedUnitName: '' },
+      // FUEL_TYPES
+      { name: 'BoilerHouseLiquidFuelUnits', masterTextKey: 'LIQUID_FUEL', selectedUnitName: 'fuelUnitSelected' },
+      { name: 'BoilerHouseElectricalFuelUnits', masterTextKey: 'ELECTRICAL_FUEL', selectedUnitName: 'fuelUnitSelected' },
+      { name: 'BoilerHouseSolidFuelUnits', masterTextKey: 'SOLID_FUEL', selectedUnitName: 'fuelUnitSelected' },
+      { name: 'BoilerHouseGasFuelUnits', masterTextKey: 'GASEOUS_FUEL', selectedUnitName: 'fuelUnitSelected' },
+    ];
+
+    for (const item of list) {
+      const sPreferences = sizingUnitPreference || this.preferenceService.sizingUnitPreferences;
+      const isUpdate = sPreferences.find(({preference}) => preference.name === item.name);
+      const control = this.sizingModuleForm.get(`selectedUnits.${item.selectedUnitName}`);
+
+      if (isUpdate && isUpdate.preference) { // Update
+        if (control) {
+          control.patchValue(Number(isUpdate.preference.value));
+        }
+      } else { // Create
+        const preference = this.preferenceService.allPreferences.find(({name}) => name === item.name || name === item.name + 's');
+
+        if (preference) {
+          if (item.name === 'BHCurrency') {
+            this.adminService.getCurrencyData().subscribe(currencies => {
+              const currency = currencies.find(({currencyCode}) => currencyCode === preference.value);
+              if (currency) {
+                this.preferenceService.addSizingUnitPreference(
+                  {...preference, unitName: currency.symbol, masterTextKey: currency.masterTextKey},
+                  item.name,
+                  item.masterTextKey,
+                  this.moduleGroupId,
+                  undefined,
+                  currencies
+                );
+              }
+            });
+          } else {
+            const unitType = item.name.slice(-1) === 's' ? item.name : item.name + 's';
+
+            this.preferenceService.addSizingUnitPreference(preference, unitType, item.masterTextKey, this.moduleGroupId);
+
+            if (control) {
+              control.patchValue(Number(preference.value));
+            }
+          }
+        }
       }
-    });
+    }
   }
 
   ngOnInit() {
-    this.sizingModuleForm.valueChanges.pipe(takeUntil(this.ngUnsubscribe)).subscribe(() => {
-      if (this.benchmarkData) {
-        this.benchmarkData = null;
-      }
-      if (this.proposedSetupData) {
-        this.proposedSetupData = null;
-      }
-      if (this.proposedSetupResults) {
-        this.proposedSetupResults = null;
-      }
-    });
+    this.createOrUpdateSizingPref();
   }
 
   ngAfterViewInit() {
-    const converterUnits = this._getDefaultConvertedUnits();
+    /*const converterUnits = this._getDefaultConvertedUnits();
 
     this._convertUnits(converterUnits);
     this.sgaService.setSelectedValues();
-    this._calculateWaterTreatment();
+    this._calculateWaterTreatment();*/
   }
 
   ngOnDestroy(): void {
@@ -359,19 +418,20 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   }
 
   onUnitsChanged(): any {
-    const {unitsConverter, unitsConverterAfter} = this.sgaService.changeSizingUnits();
-
-    this._convertUnits(unitsConverter, (results) => {
-      if (unitsConverterAfter.length) {
-        for (const unitConvert of unitsConverterAfter) {
-          unitConvert.initialValue = results.find(({propertyName}) => unitConvert.propertyName === propertyName).convertedValue;
-        }
-
-        this._convertUnits(unitsConverterAfter);
-      }
-    });
-    this._calculateCalorificValue();
-    this.calculateSaturatedAndFreezingTemperature();
+    this.createOrUpdateSizingPref();
+    // const {unitsConverter, unitsConverterAfter} = this.sgaService.changeSizingUnits();
+    //
+    // this._convertUnits(unitsConverter, (results) => {
+    //   if (unitsConverterAfter.length) {
+    //     for (const unitConvert of unitsConverterAfter) {
+    //       unitConvert.initialValue = results.find(({propertyName}) => unitConvert.propertyName === propertyName).convertedValue;
+    //     }
+    //
+    //     this._convertUnits(unitsConverterAfter);
+    //   }
+    // });
+    // this._calculateCalorificValue();
+    // this.calculateSaturatedAndFreezingTemperature();
 
     return true;
   }

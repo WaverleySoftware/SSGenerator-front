@@ -53,8 +53,8 @@
 
 .spiraxInput {
   display: grid;
-  grid-template-areas: "fieldLabel fieldLabel" "fieldInput fieldUnit" "fieldMessage fieldMessage";
-  grid-template-columns: 1fr auto;
+  grid-template-areas: ". fieldLabel fieldLabel" "fieldRadioInput fieldInput fieldUnit" ". fieldMessage fieldMessage";
+  grid-template-columns: auto 1fr auto;
   color: var(--color-blue);
   font-family: var(--font-open-sans);
   font-style: normal;
@@ -85,6 +85,23 @@
         top: 35px;
       }
     }
+  }
+
+  &_radio {
+    grid-area: fieldRadioInput;
+    margin: 15px 15px 0 0 !important;
+    display: inline-block;
+    visibility: visible;
+    border-style: solid;
+    box-sizing: border-box;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    min-height: 20px;
+    border-color: var(--color-blue);
+    background-color: var(--color-white);
+    border-width: 6px;
   }
 
   &_control {
@@ -174,6 +191,22 @@
     &.ng-pristine:not(:placeholder-shown) {
       border-left-width: 5px !important;
       border-left-color: var(--color-blue) !important;
+    }
+
+    &:disabled, &[ng-reflect-is-disabled="true"] {
+      opacity: .5;
+      pointer-events: initial !important;
+      outline: none !important;
+      &~* {
+        opacity: .5;
+        outline: none;
+      }
+
+      &~.spiraxInput_radio {
+        border-width: 1px;
+        border-color: var(--color-steel-80);
+        background-color: var(--color-white);
+      }
     }
   }
 

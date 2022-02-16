@@ -22,33 +22,35 @@
 
   <tabset class="sgaBaseTabs" #tabsRef>
     <tab heading="Input parameters" (select)="setActiveTab($event)">
-      <app-sga-input-parameters [moduleGroupId]="moduleGroupId"
+      <app-sga-input-parameters [moduleGroupId]="moduleGroupId" [sizingUnits]="sizingUnits$ | async"></app-sga-input-parameters>
+
+      <!--<app-sga-input-parameters [moduleGroupId]="moduleGroupId"
                                 (changeFuelType)="changeFuelType($event)"
                                 (calculateEfficiency)="calculateBoilerEfficiency($event)"
                                 (changeWaterTreatment)="changeWaterTreatment($event)"
                                 (changeCarbonEmission)="calculateCarbonEmission($event)"
                                 (changeSteamPressure)="calculateSaturatedAndFreezingTemperature($event)"
                                 [fieldsTree]="fieldsTree"
-                                [formGroup]="sizingModuleForm"></app-sga-input-parameters>
+                                [formGroup]="sizingModuleForm"></app-sga-input-parameters>-->
     </tab>
-    <tab heading="Benchmark" [disabled]="!benchmarkData" (select)="setActiveTab($event)">
-      <app-sga-benchmark [formGroup]="sizingModuleForm"
-                         [data]="benchmarkData"
-                         [units]="units$ | async"
-                         [currency]="currency"
-                         [chartData]="benchmarkChartData"></app-sga-benchmark>
-    </tab>
-    <tab heading="Proposed Setup" [disabled]="!proposedSetupData" (select)="setActiveTab($event)">
-      <app-sga-proposed-setup [data]="proposedSetupData"
-                              [currency]="currency"
-                              [results]="proposedSetupResults"
-                              (generateProposed)="calculateProposedSetup($event)"
-                              [inputData]="sizingModuleForm.get('benchmarkInputs').value"
-                              [units]="units$ | async"></app-sga-proposed-setup>
-    </tab>
-    <tab heading="Final Proposal" [disabled]="true" (select)="setActiveTab($event)">
-      <app-sga-final-proposal *ngIf="tabsRef?.tabs[3]?.active"></app-sga-final-proposal>
-    </tab>
+<!--    <tab heading="Benchmark" [disabled]="!benchmarkData" (select)="setActiveTab($event)">-->
+<!--      <app-sga-benchmark [formGroup]="sizingModuleForm"-->
+<!--                         [data]="benchmarkData"-->
+<!--                         [units]="units$ | async"-->
+<!--                         [currency]="currency"-->
+<!--                         [chartData]="benchmarkChartData"></app-sga-benchmark>-->
+<!--    </tab>-->
+<!--    <tab heading="Proposed Setup" [disabled]="!proposedSetupData" (select)="setActiveTab($event)">-->
+<!--      <app-sga-proposed-setup [data]="proposedSetupData"-->
+<!--                              [currency]="currency"-->
+<!--                              [results]="proposedSetupResults"-->
+<!--                              (generateProposed)="calculateProposedSetup($event)"-->
+<!--                              [inputData]="sizingModuleForm.get('benchmarkInputs').value"-->
+<!--                              [units]="units$ | async"></app-sga-proposed-setup>-->
+<!--    </tab>-->
+<!--    <tab heading="Final Proposal" [disabled]="true" (select)="setActiveTab($event)">-->
+<!--      <app-sga-final-proposal *ngIf="tabsRef?.tabs[3]?.active"></app-sga-final-proposal>-->
+<!--    </tab>-->
   </tabset>
 
 </div>

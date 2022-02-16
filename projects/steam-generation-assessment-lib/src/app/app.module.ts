@@ -14,8 +14,11 @@ import { OnlyNumberDirective } from './directives/only-number.directive';
 import { SetUnitsDirective } from './directives/set-units.directive';
 import { NoCommaPipe } from './pipes/no-comma.pipe';
 import { ChartsModule } from 'ng2-charts';
+import { SgaFormService } from './services/sga-form.service';
+import { SgaApiService } from './services/sga-api.service';
+import { FuelTypeSelectionComponent } from './components/fuel-type-selection/fuel-type-selection.component';
 
-const providers = [SteamGenerationAssessmentService];
+const providers = [SteamGenerationAssessmentService, SgaFormService, SgaApiService];
 
 @NgModule({
   declarations: [
@@ -33,7 +36,8 @@ const providers = [SteamGenerationAssessmentService];
     InputLimitToDirective,
     OnlyNumberDirective,
     SetUnitsDirective,
-    NoCommaPipe
+    NoCommaPipe,
+    FuelTypeSelectionComponent
   ],
   imports: [
     CommonModule,
