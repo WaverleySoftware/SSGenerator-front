@@ -156,7 +156,7 @@
       }
     }
 
-    &.ng-untouched {
+    &.ng-untouched, &.ng-pristine.ng-touched {
       &~.spiraxInput_message {
         display: none;
       }

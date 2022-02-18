@@ -24,3 +24,13 @@ export interface InputParametersCreateFormInterface {
   selectedUnits: { [key in keyof SelectedUnitsInterface]: any };
   benchmarkInputs: { [key in keyof BenchmarkInputsInterface]: any };
 }
+
+export type TFormValueGetterInterface = (names: string | string[] | { [key: string]: any }, subForm?: string, separate?: boolean) => {
+  [key: string]: any
+};
+
+export type TFormBenchmarkValueSetterInterface = (
+  name: keyof BenchmarkInputsInterface | Partial<{[key in keyof BenchmarkInputsInterface]: any}>,
+  value?: any,
+  opt?: { onlySelf?: boolean; emitEvent?: boolean; disableFilled?: boolean; }
+) => AbstractControl | {[key in keyof BenchmarkInputsInterface]: AbstractControl};

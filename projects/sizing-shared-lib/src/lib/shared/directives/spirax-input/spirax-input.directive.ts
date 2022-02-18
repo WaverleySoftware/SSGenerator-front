@@ -149,10 +149,10 @@ export class SpiraxInputDirective implements OnInit, OnChanges, OnDestroy {
       return this.translatePipe.transform('REQUIRED');
     }
     if (errors.min) {
-      return this.translatePipe.transform(errors.message || 'TO_SMALL');
+      return this.translatePipe.transform(errors.message || 'THE_VALUE_IS_BELOW_THE_MINIMUM_ALLOWED_MESSAGE') + ` ${errors.min.min || ''}`;
     }
     if (errors.max) {
-      return this.translatePipe.transform(errors.message || 'TO_BIG');
+      return this.translatePipe.transform(errors.message || 'THE_VALUE_IS_BELOW_THE_MAXIMUM_ALLOWED_MESSAGE') + ` ${errors.max.max || ''}`;
     }
 
     return errors.error ? this.translatePipe.transform(errors.error) + ' ' + (errors.message || '') : (errors.message || '');

@@ -1,6 +1,11 @@
 import { Injectable } from '@angular/core';
 import { AbstractControl, AbstractControlOptions, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { InputParametersCreateFormInterface, InputParametersTFormInterface, TForm } from '../interfaces/forms.interface';
+import {
+  InputParametersCreateFormInterface,
+  InputParametersTFormInterface,
+  TForm,
+  TFormValueGetterInterface
+} from '../interfaces/forms.interface';
 import { BenchmarkInputsInterface } from '../interfaces/benchmarkInputs.interface';
 import { SelectedUnitsInterface } from '../interfaces/selectedUnits.interface';
 import { validateBenchmarkInput } from '../validators/sga-benchmark.validator';
@@ -33,64 +38,64 @@ export class SgaFormService {
         fuelUnitSelected: [null]
       },
       benchmarkInputs: {
-        hoursOfOperation: [null, Validators.required, validateBenchmarkInput(this.apiService)],
+        hoursOfOperation: [8736, Validators.required, validateBenchmarkInput(this.apiService)],
         isSteamFlowMeasured: [false],
         isAutoTdsControlPResent: [false],
-        boilerSteamGeneratedPerYear: [{value: null, disabled: true}],
-        boilerSteamGeneratedPerHour: [{value: null, disabled: true}],
-        inputFuelId: [null],
-        costOfFuelPerUnit: [null],
+        boilerSteamGeneratedPerYear: [{value: null, disabled: true}, Validators.required, validateBenchmarkInput(this.apiService)],
+        boilerSteamGeneratedPerHour: [{value: null, disabled: true}, Validators.required, validateBenchmarkInput(this.apiService)],
+        inputFuelId: [null, Validators.required],
+        costOfFuelPerUnit: [null, Validators.required, validateBenchmarkInput(this.apiService)],
         fuelQtyPerYearIsKnown: [false],
-        costOfFuelPerYear: [{value: null, disabled: true}],
-        fuelConsumptionPerYear: [{value: null, disabled: true}],
-        fuelEnergyPerUnit: [null],
-        fuelCarbonContent: [null],
-        costOfWaterPerUnit: [null],
-        costOfEffluentPerUnit: [null],
+        costOfFuelPerYear: [{value: null, disabled: true}, Validators.required, validateBenchmarkInput(this.apiService)],
+        fuelConsumptionPerYear: [{value: null, disabled: true}, Validators.required, validateBenchmarkInput(this.apiService)],
+        fuelEnergyPerUnit: [null, Validators.required, validateBenchmarkInput(this.apiService)],
+        fuelCarbonContent: [null, Validators.required, validateBenchmarkInput(this.apiService)],
+        costOfWaterPerUnit: [null, Validators.required, validateBenchmarkInput(this.apiService)],
+        costOfEffluentPerUnit: [null, Validators.required, validateBenchmarkInput(this.apiService)],
         boilerHouseWaterQtyPerYearIsKnown: [false],
-        costOfWaterPerYear: [{value: null, disabled: true}],
-        waterConsumptionPerHour: [{value: null, disabled: true}],
-        waterConsumptionPerYear: [{value: null, disabled: true}],
+        costOfWaterPerYear: [{value: null, disabled: true}, Validators.required, validateBenchmarkInput(this.apiService)],
+        waterConsumptionPerHour: [{value: null, disabled: true}, Validators.required, validateBenchmarkInput(this.apiService)],
+        waterConsumptionPerYear: [{value: null, disabled: true}, Validators.required, validateBenchmarkInput(this.apiService)],
         boilerWaterTreatmentChemicalCostsIsKnown: [false],
-        totalChemicalCostPerYear: [{value: null, disabled: true}],
-        o2ScavengingChemicalsCostSavings: [{value: null, disabled: true}],
+        totalChemicalCostPerYear: [{value: null, disabled: true}, Validators.required, validateBenchmarkInput(this.apiService)],
+        o2ScavengingChemicalsCostSavings: [{value: null, disabled: true}, Validators.required, validateBenchmarkInput(this.apiService)],
         isCo2OrCarbonEmissionsTaxed: [false],
-        carbonTaxLevyCostPerUnit: [{value: null, disabled: true}],
-        costOfCo2PerUnitMass: [{value: null, disabled: true}],
+        carbonTaxLevyCostPerUnit: [{value: null, disabled: true}, Validators.required, validateBenchmarkInput(this.apiService)],
+        costOfCo2PerUnitMass: [{value: null, disabled: true}, Validators.required, validateBenchmarkInput(this.apiService)],
         isBlowdownVesselPresent: [false],
         isCoolingWaterUsed: [false],
         isSuperheatedSteam: [false],
-        boilerEfficiency: [null],
+        boilerEfficiency: [null, Validators.required, validateBenchmarkInput(this.apiService)],
         isFeedWaterMeasured: [false],
-        boilerSteamPressure: [null],
-        boilerSteamTemperature: [null],
+        boilerSteamPressure: [null, Validators.required, validateBenchmarkInput(this.apiService)],
+        boilerSteamTemperature: [{value: null, disabled: true}, Validators.required, validateBenchmarkInput(this.apiService)],
         isEconomizerPresent: [false],
-        boilerAverageTds: [null],
-        boilerMaxTds: [null],
-        boilerFeedwaterConsumptionPerHour: [{value: null, disabled: true}],
-        boilerFeedwaterConsumptionPerYear: [{value: null, disabled: true}],
-        isFlashVesselPresent: [false],
-        isHeatExchangerPresent: [false],
-        waterTemperatureLeavingHeatExchanger: [{value: null, disabled: true}],
+        boilerAverageTds: [null, Validators.required, validateBenchmarkInput(this.apiService)],
+        boilerMaxTds: [null, Validators.required, validateBenchmarkInput(this.apiService)],
+        boilerFeedwaterConsumptionPerHour: [{value: null, disabled: true}, Validators.required, validateBenchmarkInput(this.apiService)],
+        boilerFeedwaterConsumptionPerYear: [{value: null, disabled: true}, Validators.required, validateBenchmarkInput(this.apiService)],
+        isFlashVesselPresent: [{value: false, disabled: true}],
+        isHeatExchangerPresent: [{value: false, disabled: true}, { updateOn: 'change' }],
+        waterTemperatureLeavingHeatExchanger: [{value: null, disabled: true}, Validators.required, validateBenchmarkInput(this.apiService)],
         waterTreatmentMethod: [null],
-        percentageWaterRejection: [null],
-        tdsOfMakeupWater: [null],
+        percentageWaterRejection: [null, Validators.required, validateBenchmarkInput(this.apiService)],
+        tdsOfMakeupWater: [null, Validators.required, validateBenchmarkInput(this.apiService)],
         isMakeUpWaterMonitored: [false],
-        temperatureOfMakeupWater: [{value: null, disabled: true}],
-        makeupWaterAmountPerHour: [null],
-        makeupWaterAmountPerYear: [{value: null, disabled: true}],
+        temperatureOfMakeupWater: [{value: null, disabled: true}, Validators.required, validateBenchmarkInput(this.apiService)],
+        makeupWaterAmountPerHour: [null, Validators.required, validateBenchmarkInput(this.apiService)],
+        makeupWaterAmountPerYear: [{value: null, disabled: true}, Validators.required, validateBenchmarkInput(this.apiService)],
         atmosphericDeaerator: [true],
         pressurisedDeaerator: [false],
-        temperatureOfFeedtank: [null],
-        tdsOfFeedwaterInFeedtank: [null],
-        tdsOfCondensateReturn: [null],
-        temperatureOfCondensateReturn: [null],
+        temperatureOfFeedtank: [null, Validators.required, validateBenchmarkInput(this.apiService)],
+        tdsOfFeedwaterInFeedtank: [null, Validators.required, validateBenchmarkInput(this.apiService)],
+        tdsOfCondensateReturn: [null, Validators.required, validateBenchmarkInput(this.apiService)],
+        temperatureOfCondensateReturn: [null, Validators.required, validateBenchmarkInput(this.apiService)],
         areChemicalsAddedDirectlyToFeedtank: [false],
-        pressureOfFeedtank: [{value: null, disabled: true}],
-        pressureOfSteamSupplyingDsi: [{value: null, disabled: true}],
+        pressureOfFeedtank: [{value: null, disabled: true}, Validators.required, validateBenchmarkInput(this.apiService)],
+        pressureOfSteamSupplyingDsi: [{value: null, disabled: true}, Validators.required, validateBenchmarkInput(this.apiService)],
         isCondensateReturnKnown: [false],
-        percentageOfCondensateReturn: [{value: null, disabled: true}],
-        volumeOfCondensateReturn: [{value: null, disabled: true}],
+        percentageOfCondensateReturn: [{value: null, disabled: true}, Validators.required, validateBenchmarkInput(this.apiService)],
+        volumeOfCondensateReturn: [{value: null, disabled: true}, Validators.required, validateBenchmarkInput(this.apiService)],
         isDsiPresent: [false],
       }
     };
@@ -102,8 +107,11 @@ export class SgaFormService {
     return this.inputParamsFg;
   }
 
-  createFormValueSetter<T>(formGroup: FormGroup | TForm<any>, subFormKey?: string):
-    (name: keyof T, value: any, opt?: { onlySelf?: boolean; emitEvent?: boolean; disableFilled?: boolean; }) => AbstractControl {
+  createFormValueSetter<T>(formGroup: FormGroup | TForm<any>, subFormKey?: string): (
+    name: keyof T | Partial<{[key in keyof T]: any}>,
+    value?: any,
+    opt?: { onlySelf?: boolean; emitEvent?: boolean; disableFilled?: boolean; }
+  ) => AbstractControl | {[key in keyof T]: AbstractControl} {
     if (!formGroup) {
       return null;
     }
@@ -111,22 +119,88 @@ export class SgaFormService {
     const fg = subFormKey ? formGroup.get(subFormKey as string) : formGroup;
 
     return (name, value, opt) => {
-      const control = fg.get(name as string);
+      if (typeof name === 'string') {
+        const control = fg.get(name as string);
 
-      if (control) {
-        if (!opt || !opt.disableFilled) {
-          control.markAsPristine({onlySelf: true});
-          control.markAsUntouched({onlySelf: true});
+        if (control) {
+          if (!opt || !opt.disableFilled) {
+            control.markAsPristine({onlySelf: true});
+            control.markAsUntouched({onlySelf: true});
+          }
+
+          control.patchValue(value, opt);
         }
 
-        control.patchValue(value, opt);
-      }
+        return control;
+      } else if (typeof name === 'object') {
+        let controls: {[key in keyof T]: AbstractControl};
 
-      return control;
+        for (const key of Object.keys(name)) {
+          const control = fg.get(key);
+
+          if (control) {
+            if (!opt || !opt.disableFilled) {
+              control.markAsPristine({onlySelf: true});
+              control.markAsUntouched({onlySelf: true});
+            }
+
+            control.patchValue(name[key], opt);
+
+            controls = {
+              ...controls,
+              [key]: control
+            };
+          }
+        }
+
+        return controls;
+      }
     };
   }
 
+  createFormValueGetter(formGroup: FormGroup | TForm<any>, subFormKey?: string): TFormValueGetterInterface {
+    if (!formGroup) { return null; }
+
+    const fg = subFormKey ? formGroup.get(subFormKey as string) : formGroup;
+    const getControlValues = (names, subForm?, separate?) => {
+      if (typeof names === 'string') {
+        const control = subForm ? fg.get(`${subForm}.${names}`) : fg.get(names);
+        return control && {[names]: control.value};
+      }
+
+      if (Array.isArray(names)) {
+        const values = {};
+        for (const name of names) {
+          const control = subForm ? fg.get(`${subForm}.${name}`) : fg.get(name);
+          values[name] = control && control.value;
+        }
+
+        return values;
+      }
+
+      if (typeof names === 'object') {
+        let values = {};
+        for (const key of Object.keys(names)) {
+          const result = getControlValues(names[key], key);
+          if (separate) {
+            values[key] = {...values[key], ...result };
+          } else {
+            values = { ...values, ...result };
+          }
+        }
+
+        return values;
+      }
+    };
+
+    return getControlValues;
+  }
+
   getInputParamsFg(): TForm<InputParametersTFormInterface> {
+    if (!this.inputParamsFg) {
+      this.inputParamsFg = this.createInputParamsForm();
+    }
+
     return this.inputParamsFg;
   }
 }

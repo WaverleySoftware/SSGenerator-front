@@ -15,10 +15,10 @@ export class SgaBenchmarkComponent implements OnInit {
   @Input() currency: string;
   @Input() formGroup: FormGroup;
   @Input() chartData: ChartBarDataInterface[] = [
-    { data: [272], label: 'Fuel' },
-    { data: [30], label: 'Water and Chemicals' },
-    { data: [10], label: 'Effluent' },
-    { data: [46], label: 'Carbont tax' },
+    { data: [0], label: 'Fuel' },
+    { data: [0], label: 'Water and Chemicals' },
+    { data: [0], label: 'Effluent' },
+    { data: [0], label: 'Carbont tax' },
   ];
 
   constructor() {}
