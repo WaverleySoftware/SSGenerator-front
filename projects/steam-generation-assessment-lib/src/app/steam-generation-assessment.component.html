@@ -1,4 +1,4 @@
-<div class="sga-wrapper" [ngClass]="{'requestLoader': false}">
+<div class="sga-wrapper" [ngClass]="{'requestLoader': requestLoading$ | async}">
   <div class="sgaBaseTabs_heading">
     <h4 class="sgaBaseTabs_heading__title">
       <span>{{'IMPROVING_STEAM_GENERATION_EFFICIENCY' | translate}}</span>

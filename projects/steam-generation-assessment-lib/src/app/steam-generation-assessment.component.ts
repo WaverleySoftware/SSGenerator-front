@@ -12,8 +12,8 @@ import {
 } from 'sizing-shared-lib';
 import { FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Params } from '@angular/router';
-import { Observable, Subject } from 'rxjs';
-import { filter, map, switchMap, takeUntil } from 'rxjs/operators';
+import { combineLatest, Observable, Subject } from 'rxjs';
+import { distinctUntilChanged, filter, map, switchMap, takeUntil } from 'rxjs/operators';
 import {
   BenchmarkDataInterface,
   ProposedDataInterface
@@ -50,6 +50,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   moduleId = 2;
   productName = 'Steam Generation Assessment';
   sizingModuleForm: FormGroup = this.formService.getInputParamsFg();
+  requestLoading$ = this.apiService.requestLoading$;
   setBenchmarkInputValue: TFormBenchmarkValueSetterInterface;
   getSizingFormValues: TFormValueGetterInterface;
   benchmarkData: BenchmarkDataInterface;
@@ -179,15 +180,20 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     });
 
     // Calculate Steam Pressure
-    this.sizingModuleForm.get('benchmarkInputs.boilerSteamPressure').statusChanges.pipe(
+    combineLatest([
+      this.sizingModuleForm.get('benchmarkInputs.boilerSteamPressure').statusChanges,
+      this.sizingModuleForm.get('benchmarkInputs.boilerSteamPressure').valueChanges,
+    ]).pipe(
       takeUntil(this.ngUnsubscribe),
-      filter(v => v === 'VALID'),
+      filter(([v1]) => v1 === 'VALID'),
+      distinctUntilChanged(([a1, a2], [b1, b2]) => JSON.stringify(a2) === JSON.stringify(b2)),
       map(() => this.getSizingFormValues({
         selectedUnits: ['temperatureUnitSelected', 'pressureUnitSelected'],
         benchmarkInputs: ['isSuperheatedSteam', 'boilerSteamPressure', 'boilerSteamPressure']
       })),
       switchMap((data: SgaCalcSaturatedAndFreezingTemperatureReqInterface) => this.apiService.calculateSaturatedAndTemperature(data)),
-      map(({boilerSteamTemperature: {boilerSteamTemperature}}) => {
+      filter((res) => !!res && !!res.boilerSteamTemperature && !!res.boilerSteamTemperature.boilerSteamTemperature),
+      map(({boilerSteamTemperature: { boilerSteamTemperature }}) => {
         const control = this.sizingModuleForm.get('benchmarkInputs.boilerSteamTemperature');
         control.setValidators([Validators.required, Validators.min(Math.floor(boilerSteamTemperature * 100) / 100)]);
         return {next: boilerSteamTemperature, prev: control.value };
