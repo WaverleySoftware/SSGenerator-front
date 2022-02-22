@@ -1,0 +1,239 @@
+<spirax-panel title="Proposed setup" [disableToggle]="true">
+  <ng-container body>
+    <div class="sgaProposedSetup" *ngIf="units else noUnits">
+      <spirax-panel [(expanded)]="proposedFormPanel"
+                 title="Setup parameters"
+                 titleTooltip="Some tooltip"
+                 id="SetupParametersPanel"
+                 background="#EDF2F4">
+        <form body class="setupParameters" [formGroup]="form" (ngSubmit)="onSubmit()">
+          <ng-container formGroupName="proposedSetup">
+            <div class="row">
+              <div class="col-md-4"></div>
+              <div class="col-md-4"><h5>{{'CURRENT_SITUATION' | translate}}</h5></div>
+              <div class="col-md-4"><h5>{{'PROPOSED_SITUATION' | translate}}</h5></div>
+            </div>
+            <div class="row">
+              <div class="col-md-4"><p>{{'PERCENT_CONDENSATE_RETURNED' | translate}}</p></div>
+              <div class="col-md-4">
+                <input type="number"
+                       formControlName="benchmarkCondensateReturnedPercentage"
+                       [unitsStr]="['%']"
+                       readonly
+                       disabled
+                       spirax-input/>
+              </div>
+              <div class="col-md-4">
+                <input type="number"
+                       formControlName="proposalCondensateReturnedPercentage"
+                       [unitsStr]="['%']"
+                       spirax-input/>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4"><p>{{'CONDENSATE_RETURNED' | translate}}</p></div>
+
+              <div class="col-md-4">
+                <input type="number"
+                       formControlName="benchmarkCondensateReturn"
+                       [unitsStr]="[units[data?.proposedSetup?.condensateReturnUnit] || '-']"
+                       readonly
+                       disabled
+                       spirax-input/>
+              </div>
+              <div class="col-md-4">
+                <input type="number"
+                       formControlName="proposalCondensateReturned"
+                       [unitsStr]="[units[data?.proposedSetup?.condensateReturnUnit] || '-']"
+                       [disabled]="isCondensateReturnDisable"
+                       spirax-input/>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4"><p>{{'TEMPERATURE_OF_CONDENSATE_RETURN' | translate}}</p></div>
+              <div class="col-md-4">
+                <input type="number"
+                       formControlName="benchmarkCondensateTemperature"
+                       [unitsStr]="[units[data?.proposedSetup?.condensateTemperatureUnit] || '-']"
+                       readonly
+                       disabled
+                       spirax-input/>
+              </div>
+              <div class="col-md-4">
+                <input type="number"
+                       formControlName="proposalCondensateTemperature"
+                       [unitsStr]="[units[data?.proposedSetup?.condensateTemperatureUnit] || '-']"
+                       spirax-input/>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4"><p>{{'WATER_REJECTION_RATE' | translate}}</p></div>
+              <div class="col-md-4">
+                <input type="number" formControlName="benchmarkWaterRejectionRate" [unitsStr]="['%']" spirax-input disabled/>
+              </div>
+              <div class="col-md-4">
+                <input type="number" formControlName="proposalWaterRejectionRate" [unitsStr]="['%']" spirax-input/>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4"><p>{{'BOILER_EFFICIENCY' | translate}}</p></div>
+              <div class="col-md-4">
+                <input type="number" formControlName="benchmarkBoilerEfficiency" [unitsStr]="['%']" spirax-input disabled/>
+              </div>
+              <div class="col-md-4">
+                <input type="number" formControlName="proposalBoilerEfficiency" [unitsStr]="['%']" spirax-input/>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4"><p>{{'ECONOMISER_REQUIRED' | translate}}</p></div>
+              <div class="col-md-8">
+                <spirax-toggle [disabled]="inputData?.isEconomizerPresent"
+                             (valueChange)="economizerChange($event)"
+                             name="economiserRequired"
+                             formControlName="economiserRequired"></spirax-toggle>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4"><p>{{'TEMPERATURE_OF_FEEDTANK' | translate}}</p></div>
+              <div class="col-md-4">
+                <input type="number" formControlName="benchmarkTemperatureOfFeedtank"
+                       [unitsStr]="[units[data?.proposedSetup?.temperatureOfFeedtankUnit] || '-']"
+                       spirax-input disabled/>
+              </div>
+              <div class="col-md-4">
+                <input type="number" formControlName="proposalTemperatureOfFeedtank"
+                       [unitsStr]="[units[data?.proposedSetup?.temperatureOfFeedtankUnit] || '-']"
+                       spirax-input/>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4"><p>{{'DSI_PRESSURE' | translate}}</p></div>
+              <div class="col-md-4">
+                <input type="number" formControlName="benchmarkDsiPressure"
+                       [unitsStr]="[units[data?.proposedSetup?.dsiPressureUnit] || '-']"
+                       spirax-input disabled/>
+              </div>
+              <div class="col-md-4">
+                <input type="number" formControlName="proposalDsiPressure"
+                       [unitsStr]="[units[data?.proposedSetup?.dsiPressureUnit] || '-']"
+                       spirax-input/>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <button type="submit" [disabled]="form.invalid">{{'GENERATE_PROPOSED_RESULTS' | translate}}</button>
+              </div>
+            </div>
+          </ng-container>
+        </form>
+      </spirax-panel>
+
+      <spirax-panel [expanded]="!proposedFormPanel && !!results"
+                 [disableToggle]="!results"
+                 title="Proposed results"
+                 id="SetupParametersResultsPanel">
+        <ng-container body>
+          <p class="sgaProposedSetup_title">{{'POTENTIAL_BOILER_HOUSE_SAVINGS_BY_PROJECT' | translate}}</p>
+          <p class="sgaProposedSetup_subtitle mb-24">Saving {{currency}}’000s / {{'YR' | translate}}</p>
+          <app-chart-bar className="sgaProposedSetup_chart"
+                         [data]="verticalChartData"
+                         [labels]="verticalChartLabels"></app-chart-bar>
+          <hr>
+          <div class="row">
+            <div class="col-md-7">
+              <h5 class="sgaProposedSetup_title">
+                <span>Cost of Steam Generation</span>
+                <i class="fa fa-info-circle"></i>
+              </h5>
+              <app-chart-bar type="horizontalBar"
+                             [legend]="false"
+                             [data]="horizontalChartData"
+                             [labels]="['POTENTIAL', 'CURRENT']"></app-chart-bar>
+              <p>{{'STEAM_GENERATION_SAVINGS' | translate}}: <span class="text-bold">{{currency}}{{totalSaving.steamGenerationSavings | number: '0.0-2'}}</span></p>
+              <p>{{'SAVINGS_INCLUDING_CONDENSATE_EFFLUENT' | translate}}: <span class="text-bold">{{currency}}{{totalSaving.savingsIncludingCondensateEffluent | number: '0.0-2'}}</span> </p>
+            </div>
+            <form class="col-md-5" [formGroup]="form">
+              <h5 class="sgaProposedSetup_title mb-24">
+                <span>{{'ADD_FEATURES' | translate}}</span>
+                <i class="fa fa-info-circle"></i>
+              </h5>
+              <ul class="sgaProposedSetup_list" formGroupName="features">
+                <li>
+                  <label>
+                    <input type="checkbox"
+                           formControlName="boilerEfficiencyImprovements"
+                           (change)="changeFeature($event)"
+                           [disableControl]="data?.proposedSetup?.benchmarkBoilerEfficiency === data?.proposedSetup?.proposalBoilerEfficiency"
+                           [value]="true">
+                    <span>{{'BOILER_EFFICIENCY_IMPROVEMENTS' | translate}}</span>
+                  </label>
+                </li>
+                <li>
+                  <label>
+                    <input type="checkbox"
+                           formControlName="increaseCondensateReturn"
+                           (change)="changeFeature($event)"
+                           [disableControl]="data?.proposedSetup?.benchmarkCondensateReturnedPercentage === data?.proposedSetup?.proposalCondensateReturnedPercentage"
+                           [value]="true">
+                    <span>{{'INCREASE_CONDENSATE_RETURN' | translate}}</span>
+                  </label>
+                </li>
+                <li>
+                  <label>
+                    <input type="checkbox"
+                           formControlName="addWaterTreatmentPlant"
+                           (change)="changeFeature($event)"
+                           [disableControl]="!data?.features?.addWaterTreatmentPlant"
+                           [value]="true">
+                    <span>{{'ADD_WATER_TREATMENT_PLANT_RO' | translate}}</span>
+                  </label>
+                </li>
+                <li>
+                  <label>
+                    <input type="checkbox"
+                           formControlName="addAutoTdsControls"
+                           (change)="changeFeature($event)"
+                           [value]="true">
+                    <span>{{'ADD_AUTO_TDS_CONTROLS' | translate}}</span>
+                  </label>
+                </li>
+                <li>
+                  <label>
+                    <input type="checkbox"
+                           formControlName="addAutoTdsAndFlashRecovery"
+                           (change)="changeFeature($event)"
+                           [value]="true">
+                    <span>{{'ADD_AUTO_TDS_AND_FLASH_RECOVERY' | translate}}</span>
+                  </label>
+                </li>
+                <li>
+                  <label>
+                    <input type="checkbox"
+                           formControlName="addAutoTdsAndFlashRecoveryPlusHearExchanger"
+                           (change)="changeFeature($event)"
+                           [value]="true">
+                    <span>{{'ADD_AUTO_TDS_FLASH_RECOVERY_HEAT_EXCHANGER' | translate}}</span>
+                  </label>
+                </li>
+                <li>
+                  <label>
+                    <input type="checkbox"
+                           formControlName="addDirectSteamInjectionToFeedtank"
+                           (change)="changeFeature($event)"
+                           [disableControl]="data?.proposedSetup?.benchmarkDsiPressure !== 0 || data?.proposedSetup?.proposalDsiPressure === 0"
+                           [value]="true">
+                    <span>{{'DIRECT_STEAM_INJECTION_TO_FEEDTANK' | translate}}</span>
+                  </label>
+                </li>
+              </ul>
+            </form>
+          </div>
+        </ng-container>
+      </spirax-panel>
+    </div>
+
+    <ng-template #noUnits>
+      <h1>... No Units ...</h1>
+    </ng-template>
+  </ng-container>
+</spirax-panel>

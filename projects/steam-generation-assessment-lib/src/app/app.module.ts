@@ -1,19 +1,21 @@
-import { ModuleWithProviders, NgModule } from "@angular/core";
-import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { CommonModule } from "@angular/common";
-import { BlockUIModule } from "ng-block-ui";
-import { ProjectsJobsModule, SizingSharedLibModule } from "sizing-shared-lib";
+import { ModuleWithProviders, NgModule } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { BlockUIModule } from 'ng-block-ui';
+import { ProjectsJobsModule, SizingSharedLibModule } from 'sizing-shared-lib';
 import { SteamGenerationAssessmentComponent } from './steam-generation-assessment.component';
-import { SharedModule } from "./modules/shared/shared.module";
 import { TabsModule } from 'ngx-bootstrap/tabs';
-import { SgaInputParametersComponent } from './sga-input-parameters/sga-input-parameters.component';
-import { SgaBenchmarkComponent } from './sga-benchmark/sga-benchmark.component';
-import { SgaProposedSetupComponent } from './sga-proposed-setup/sga-proposed-setup.component';
-import { SgaFinalProposalComponent } from './sga-final-proposal/sga-final-proposal.component';
-import { SteamGenerationAssessmentService } from "./steam-generation-assessment.service";
-import { TypeOfFuelComponent } from './components/type-of-fuel/type-of-fuel.component';
+import { SteamGenerationAssessmentService } from './services/steam-generation-assessment.service';
+import { SgaInputParametersComponent, SgaBenchmarkComponent, SgaProposedSetupComponent, SgaFinalProposalComponent } from './tabs';
+import { BoilerSchemeComponent, ChartBarComponent, FormListComponent } from './components';
+import { DisableControlDirective } from './directives/disable-control.directive';
+import { NoCommaPipe } from './pipes/no-comma.pipe';
+import { ChartsModule } from 'ng2-charts';
+import { SgaFormService } from './services/sga-form.service';
+import { SgaApiService } from './services/sga-api.service';
+import { DecimalPlacePipe } from './pipes/decimal-place.pipe';
 
-const providers = [SteamGenerationAssessmentService];
+const providers = [SteamGenerationAssessmentService, SgaFormService, SgaApiService];
 
 @NgModule({
   declarations: [
@@ -22,18 +24,23 @@ const providers = [SteamGenerationAssessmentService];
     SgaBenchmarkComponent,
     SgaProposedSetupComponent,
     SgaFinalProposalComponent,
-    TypeOfFuelComponent
+    BoilerSchemeComponent,
+    ChartBarComponent,
+    FormListComponent,
+    DisableControlDirective,
+    NoCommaPipe,
+    DecimalPlacePipe
   ],
-	imports: [
-		CommonModule,
-		SizingSharedLibModule.forRoot(),
-		ProjectsJobsModule,
-		FormsModule,
-		ReactiveFormsModule,
-		BlockUIModule,
-		SharedModule,
+  imports: [
+    CommonModule,
+    SizingSharedLibModule.forRoot(),
+    ProjectsJobsModule,
+    FormsModule,
+    ReactiveFormsModule,
+    BlockUIModule,
     TabsModule.forRoot(),
-	],
+    ChartsModule
+  ],
   providers,
   entryComponents: [SteamGenerationAssessmentComponent],
   exports: [SteamGenerationAssessmentComponent]
