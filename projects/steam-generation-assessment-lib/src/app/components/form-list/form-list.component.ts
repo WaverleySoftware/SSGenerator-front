@@ -1,6 +1,5 @@
 import {
   AfterContentInit,
-  AfterViewInit,
   Component,
   EventEmitter,
   forwardRef,
@@ -14,10 +13,12 @@ import { AbstractControl, ControlContainer, ControlValueAccessor, NG_VALUE_ACCES
 import * as cloneDeep_ from 'lodash/cloneDeep';
 import { TranslationService } from 'sizing-shared-lib';
 import { EnumListDefinitionInterface, EnumListInterface } from '../../interfaces/enum-list.interface';
+import { FormListChangeInterface } from '../../interfaces/e-emiters.interface';
 
 
 
 @Component({
+  // tslint:disable-next-line:component-selector
   selector: 'form-list',
   templateUrl: './form-list.component.html',
   styleUrls: ['./form-list.component.scss'],
@@ -34,10 +35,11 @@ export class FormListComponent implements ControlValueAccessor, AfterContentInit
   @Input('value') internalValue: any;
   @Input() label: string;
   @Input() formControlName: string;
-  @Output('on-change') externalOnChange = new EventEmitter<{ selectedValue: string, itemsCount: number }>();
+  @Output('on-change') externalOnChange = new EventEmitter<FormListChangeInterface>();
 
-  public isDisabled: boolean;
-  public cloneDeep = cloneDeep_;
+  item: any;
+  isDisabled: boolean;
+  cloneDeep = cloneDeep_;
   private control: AbstractControl;
 
   get list(): EnumListDefinitionInterface[] {
@@ -79,13 +81,15 @@ export class FormListComponent implements ControlValueAccessor, AfterContentInit
   registerOnChange(fn: any): void {
     this.onChange = (newValue: string) => {
       this.internalValue = newValue;
+      this.setItemValue(this.internalValue);
       this.onTouched();
 
       fn(this.internalValue);
 
       this.externalOnChange.emit({
         selectedValue: newValue,
-        itemsCount: (this.list ? this.list.length : 0)
+        itemsCount: (this.list ? this.list.length : 0),
+        item: this.item
       });
     };
   }
@@ -105,11 +109,17 @@ export class FormListComponent implements ControlValueAccessor, AfterContentInit
     } else {
       this.internalValue = val && val.value || val;
     }
+    this.setItemValue(this.internalValue);
   }
 
   updateValue(val: any): void {
     this.internalValue = val;
+    this.setItemValue(this.internalValue);
     this.onChange(this.internalValue);
     this.onTouched();
+  }
+
+  private setItemValue(internalValue: string) {
+    this.item = this.list && this.list.find(({id}) => id === internalValue)
   }
 }

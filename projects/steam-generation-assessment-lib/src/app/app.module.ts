@@ -7,15 +7,15 @@ import { SteamGenerationAssessmentComponent } from './steam-generation-assessmen
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { SteamGenerationAssessmentService } from './services/steam-generation-assessment.service';
 import { SgaInputParametersComponent, SgaBenchmarkComponent, SgaProposedSetupComponent, SgaFinalProposalComponent } from './tabs';
-import { BoilerSchemeComponent, ChartBarComponent, FormInputComponent, FormListComponent, TypeOfFuelComponent } from './components';
+import { BoilerSchemeComponent, ChartBarComponent, FormListComponent } from './components';
 import { DisableControlDirective } from './directives/disable-control.directive';
-import { InputLimitToDirective } from './directives/limit-length.directive';
-import { OnlyNumberDirective } from './directives/only-number.directive';
-import { SetUnitsDirective } from './directives/set-units.directive';
 import { NoCommaPipe } from './pipes/no-comma.pipe';
 import { ChartsModule } from 'ng2-charts';
+import { SgaFormService } from './services/sga-form.service';
+import { SgaApiService } from './services/sga-api.service';
+import { DecimalPlacePipe } from './pipes/decimal-place.pipe';
 
-const providers = [SteamGenerationAssessmentService];
+const providers = [SteamGenerationAssessmentService, SgaFormService, SgaApiService];
 
 @NgModule({
   declarations: [
@@ -24,16 +24,12 @@ const providers = [SteamGenerationAssessmentService];
     SgaBenchmarkComponent,
     SgaProposedSetupComponent,
     SgaFinalProposalComponent,
-    TypeOfFuelComponent,
     BoilerSchemeComponent,
     ChartBarComponent,
-    FormInputComponent,
     FormListComponent,
     DisableControlDirective,
-    InputLimitToDirective,
-    OnlyNumberDirective,
-    SetUnitsDirective,
-    NoCommaPipe
+    NoCommaPipe,
+    DecimalPlacePipe
   ],
   imports: [
     CommonModule,

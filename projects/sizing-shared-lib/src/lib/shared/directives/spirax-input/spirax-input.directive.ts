@@ -1,4 +1,15 @@
-import { Directive, ElementRef, Input, OnChanges, OnInit, Optional, SimpleChanges } from '@angular/core';
+import {
+  Directive,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  Optional,
+  Output,
+  SimpleChanges
+} from '@angular/core';
 import { Subject } from 'rxjs';
 import { distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { AbstractControl, NgControl, ValidationErrors } from '@angular/forms';
@@ -10,14 +21,16 @@ import { TranslatePipe } from '../../translation/translate.pipe';
   // tslint:disable-next-line:directive-selector
   selector: '[spirax-input]',
 })
-export class SpiraxInputDirective implements OnInit, OnChanges {
+export class SpiraxInputDirective implements OnInit, OnChanges, OnDestroy {
   @Input() unitIds?: [number, number?];
   @Input() unitsStr?: [string?, string?];
-  @Input() label: string;
+  @Input() label?: string;
   @Input() error?: string | ValidationErrors;
-
+  @Input() radio?: any;
+  @Output() radioClick: EventEmitter<any> = new EventEmitter<any>();
   private ngUnsubscribe = new Subject<void>();
   private units: {[key: number]: string};
+  private wrapperNode: HTMLElement;
 
   constructor(
     private el: ElementRef,
@@ -25,6 +38,7 @@ export class SpiraxInputDirective implements OnInit, OnChanges {
     private translatePipe: TranslatePipe,
     @Optional() private control: NgControl
   ) {}
+
   ngOnInit() {
     this.generateInputWrapper();
     this.fieldMessageChange();
@@ -60,9 +74,15 @@ export class SpiraxInputDirective implements OnInit, OnChanges {
     }
   }
 
+  ngOnDestroy() {
+    if (this.wrapperNode && this.wrapperNode.removeEventListener && this.radio !== undefined) {
+      this.wrapperNode.removeEventListener('click', this.wrapperClickHandle);
+    }
+  }
+
   private generateInputWrapper() {
     if (this.el && this.el.nativeElement) {
-      const wrapper = document.createElement('div');
+      this.wrapperNode = document.createElement('div');
       const message = document.createElement('p');
 
       if ((this.unitIds && this.unitIds.length) || (this.unitsStr && this.unitsStr.length)) {
@@ -73,10 +93,10 @@ export class SpiraxInputDirective implements OnInit, OnChanges {
         const label = document.createElement('label');
         label.classList.add('spiraxInput_label');
         label.innerHTML = this.label;
-        wrapper.appendChild(label);
+        this.wrapperNode.appendChild(label);
       }
 
-      wrapper.classList.add('spiraxInput');
+      this.wrapperNode.classList.add('spiraxInput');
       message.classList.add('spiraxInput_message');
       message.innerHTML = this.generateMessage(this.control && this.control.control);
 
@@ -84,13 +104,23 @@ export class SpiraxInputDirective implements OnInit, OnChanges {
       this.el.nativeElement.classList.add('spiraxInput_control');
 
       if (this.el.nativeElement.parentNode) {
-        this.el.nativeElement.parentNode.insertBefore(wrapper, this.el.nativeElement);
+        this.el.nativeElement.parentNode.insertBefore(this.wrapperNode, this.el.nativeElement);
       }
 
-      wrapper.appendChild(this.el.nativeElement);
-      wrapper.appendChild(message);
+      this.wrapperNode.appendChild(this.el.nativeElement);
+
+      if (this.radio !== undefined) {
+        const radioCheck = document.createElement('span');
+        radioCheck.classList.add('spiraxInput_radio');
+        this.wrapperNode.appendChild(radioCheck);
+        this.wrapperNode.addEventListener('click', this.wrapperClickHandle);
+      }
+
+      this.wrapperNode.appendChild(message);
     }
   }
+
+  private wrapperClickHandle = (data: any) => this.radioClick.emit(data);
 
   private fieldMessageChange(c?: AbstractControl) {
     const control: AbstractControl = c || this.control && this.control.control;
@@ -119,10 +149,10 @@ export class SpiraxInputDirective implements OnInit, OnChanges {
       return this.translatePipe.transform('REQUIRED');
     }
     if (errors.min) {
-      return this.translatePipe.transform(errors.message || 'TO_SMALL');
+      return this.translatePipe.transform(errors.message || 'THE_VALUE_IS_BELOW_THE_MINIMUM_ALLOWED_MESSAGE') + ` ${errors.min.min || ''}`;
     }
     if (errors.max) {
-      return this.translatePipe.transform(errors.message || 'TO_BIG');
+      return this.translatePipe.transform(errors.message || 'THE_VALUE_IS_BELOW_THE_MAXIMUM_ALLOWED_MESSAGE') + ` ${errors.max.max || ''}`;
     }
 
     return errors.error ? this.translatePipe.transform(errors.error) + ' ' + (errors.message || '') : (errors.message || '');

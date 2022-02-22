@@ -1,23 +1,3 @@
-export interface SteamCalorificRequestInterface {
-  energyUnitSelected: number;
-  smallWeightUnitSelected: number;
-  inputFuelId: string;
-  fuelUnitSelected: number;
-}
-
-export interface SgaBoilerEfficiencyInterface {
-  inputFuelId: string;
-  isEconomizerPresent: boolean;
-}
-
-export interface SgaFeedTankTemperatureRequestInterface {
-  isPressureDeaerator: boolean;
-  pressureOfFeedtank: number;
-  pressureUnitSelected: number;
-  temperatureOfFeedtank: number;
-  temperatureUnitSelected: number;
-}
-
 export interface SteamCarbonEmissionInterface {
   energyUnitSelected: number;
   smallWeightUnitSelected: number;
@@ -140,13 +120,6 @@ export interface SgaHttpValidationResponseInterface {
   ruleSetsExecuted: string[];
 }
 
-export interface SgaSaturatedTemperatureBodyInterface {
-  temperatureUnitSelected: number;
-  pressureUnitSelected: number;
-  isSuperheatedSteam: boolean;
-  boilerSteamPressure: number;
-  boilerSteamTemperature: number;
-}
 
 export interface SgaSaturatedAndTemperatureRespInterface {
   boilerSteamPressure: number;
@@ -157,92 +130,6 @@ export interface SgaSaturatedAndTemperatureRespInterface {
   media: string;
   mediaState: string;
   meltingPoint: number;
-}
-
-export enum BoilerHouseBoilerTabFields {
-  'isSuperheatedSteam',
-  'isSteamFlowMeasured',
-  'boilerSteamGeneratedPerHour',
-  'boilerSteamGeneratedPerYear',
-  'boilerSteamTemperature',
-  'boilerSteamPressure',
-  'isEconomizerPresent',
-  'boilerEfficiency'
-}
-
-export enum BoilerHouseTdsBlowdownTabFields {
-  // blowdown_equipment
-  'isBlowdownVesselPresent',
-  'isCoolingWaterUsed',
-  'isAutoTdsControlPResent',
-  'isFlashVesselPresent',
-  'isHeatExchangerPresent',
-  'waterTemperatureLeavingHeatExchanger',
-  // tds_blowdown_parameters
-  'tdsOfFeedwaterInFeedtank',
-  'boilerAverageTds',
-  'boilerMaxTds',
-}
-
-export enum BoilerHouseWaterTreatmentTabFields {
-  // make_up_water
-  'isMakeUpWaterMonitored',
-  'temperatureOfMakeupWater',
-  'makeupWaterAmountPerHour',
-  'makeupWaterAmountPerYear',
-  // water_treatment_parameters
-  'waterTreatmentMethod',
-  'percentageWaterRejection',
-  'tdsOfMakeupWater',
-}
-
-export enum BoilerHouseFeedwaterAndCondensateTabFields {
-  // deaerator_type
-  'atmosphericDeaerator',
-  'pressurisedDeaerator',
-  // boiler_feedwater
-  'isFeedWaterMeasured',
-  'boilerFeedwaterConsumptionPerHour',
-  'boilerFeedwaterConsumptionPerYear',
-  'temperatureOfFeedtank',
-  // 'tdsOfFeedwaterInFeedtank', // duplicate
-  'areChemicalsAddedDirectlyToFeedtank',
-  'pressureOfSteamSupplyingDsi',
-  'pressureOfFeedtank',
-  // condensate_return
-  'isCondensateReturnKnown',
-  'percentageOfCondensateReturn',
-  'volumeOfCondensateReturn',
-  'temperatureOfCondensateReturn',
-  'tdsOfCondensateReturn'
-}
-
-export enum UtilityParametersFields {
-  // Fuel
-  'hoursOfOperation',
-  'inputFuelId',
-  'fuelEnergyPerUnit',
-  'fuelCarbonContent',
-  'costOfFuelPerUnit',
-  'fuelQtyPerYearIsKnown',
-  'costOfFuelPerYear',
-  'fuelConsumptionPerYear',
-  // CO2 Emission
-  'isCo2OrCarbonEmissionsTaxed',
-  'carbonTaxLevyCostPerUnit',
-  'costOfCo2PerUnitMass',
-  // Water
-  'costOfWaterPerUnit',
-  'boilerHouseWaterQtyPerYearIsKnown',
-  'costOfWaterPerYear',
-  'waterConsumptionPerHour',
-  'waterConsumptionPerYear',
-  // Water treatment chemicals
-  'boilerWaterTreatmentChemicalCostsIsKnown',
-  'totalChemicalCostPerYear',
-  'o2ScavengingChemicalsCostSavings',
-  // Water effluent
-  'costOfEffluentPerUnit'
 }
 
 export enum SelectedUnitsList {
@@ -257,13 +144,6 @@ export enum SelectedUnitsList {
   temperatureUnitSelected = 'TemperatureUnit',
   tdsUnitSelected = 'BoilerHouseTDSUnits',
   fuelUnitSelected = 'FUEL_TYPE'
-}
-
-export enum SgaFuelTypes {
-  BoilerHouseLiquidFuelUnits = 'BoilerHouseLiquidFuelUnits',
-  BoilerHouseElectricalFuelUnits = 'BoilerHouseElectricalFuelUnits',
-  BoilerHouseGasFuelUnits = 'BoilerHouseGasFuelUnits',
-  BoilerHouseSolidFuelUnits = 'BoilerHouseSolidFuelUnits',
 }
 
 export enum FuelTypesEnum {
@@ -587,10 +467,4 @@ export interface ProposalInputsReqInterface extends ProposedFeaturesInterface {
   benchmarkWaterRejectionRate: number;
   proposalDesiredHotwellTemperatureUsingDSI: number;
   proposalDSIPressure: number;
-}
-
-export interface ProposedEfficiencyRequestInterface {
-  economiserRequired: boolean;
-  benchmarkBoilerEfficiency: number;
-  proposalBoilerEfficiency: number;
 }

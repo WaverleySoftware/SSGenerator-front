@@ -3,17 +3,11 @@
     <h4 class="sgaBaseTabs_heading__title">
       <span>{{'IMPROVING_STEAM_GENERATION_EFFICIENCY' | translate}}</span>
 
-      <ng-container *ngIf="benchmarkData; else testCalc">
+      <ng-container *ngIf="benchmarkData">
         <button class="sgaBaseTabs_heading__next" *ngIf="nextTab && !nextTab.disabled" (click)="nextTabHandle(tabsRef)">
           {{nextTab?.heading || 'Next'}} <i class="fa fa-arrow-right"></i>
         </button>
       </ng-container>
-
-      <ng-template #testCalc>
-        <button class="sgaBaseTabs_heading__next" (click)="test()">
-          Calculate <i class="fa fa-arrow-right"></i>
-        </button>
-      </ng-template>
     </h4>
     <p class="sgaBaseTabs_heading__subtitle">
       {{('UNTITLED_PROJECT' | translate)+' - '+('UNTITLED_JOB' | translate)}}
@@ -23,13 +17,9 @@
   <tabset class="sgaBaseTabs" #tabsRef>
     <tab heading="Input parameters" (select)="setActiveTab($event)">
       <app-sga-input-parameters [moduleGroupId]="moduleGroupId"
-                                (changeFuelType)="changeFuelType($event)"
+                                (changeFuelType)="calculateCalorificValue($event)"
                                 (calculateEfficiency)="calculateBoilerEfficiency($event)"
-                                (changeWaterTreatment)="changeWaterTreatment($event)"
-                                (changeCarbonEmission)="calculateCarbonEmission($event)"
-                                (changeSteamPressure)="calculateSaturatedAndFreezingTemperature($event)"
-                                [fieldsTree]="fieldsTree"
-                                [formGroup]="sizingModuleForm"></app-sga-input-parameters>
+                                (calculateWaterTreatment)="calculateWaterTreatment($event)"></app-sga-input-parameters>
     </tab>
     <tab heading="Benchmark" [disabled]="!benchmarkData" (select)="setActiveTab($event)">
       <app-sga-benchmark [formGroup]="sizingModuleForm"

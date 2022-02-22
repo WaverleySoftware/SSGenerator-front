@@ -7,7 +7,7 @@ import { SizingUnitPreference } from "./sizing-unit-preference.model";
 import { Observable, Subject } from "rxjs/Rx";
 import "rxjs/add/operator/map";
 import "rxjs/add/operator/catch";
-import { Unit } from "../units/unit.model";
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn:'root'
@@ -53,8 +53,8 @@ export class PreferenceService {
       }
 
       // Add the new preference
-	    this.sizingUnitPreferencesUpdate.next({list: this.sizingUnitPreferences, updated: sizingUnitPreference});
       this.sizingUnitPreferences.push(sizingUnitPreference);
+      this.sizingUnitPreferencesUpdate.next({list: this.sizingUnitPreferences, updated: sizingUnitPreference});
       console.log("New preference added " + sizingUnitPreference.unitType);
     });
   }

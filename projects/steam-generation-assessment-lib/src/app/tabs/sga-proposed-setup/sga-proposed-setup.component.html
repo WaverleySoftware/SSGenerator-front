@@ -16,46 +16,73 @@
             <div class="row">
               <div class="col-md-4"><p>{{'PERCENT_CONDENSATE_RETURNED' | translate}}</p></div>
               <div class="col-md-4">
-                <form-input formControlName="benchmarkCondensateReturnedPercentage" unit="%" [readonly]="true" filled></form-input>
+                <input type="number"
+                       formControlName="benchmarkCondensateReturnedPercentage"
+                       [unitsStr]="['%']"
+                       readonly
+                       disabled
+                       spirax-input/>
               </div>
               <div class="col-md-4">
-                <form-input formControlName="proposalCondensateReturnedPercentage" unit="%" required></form-input>
+                <input type="number"
+                       formControlName="proposalCondensateReturnedPercentage"
+                       [unitsStr]="['%']"
+                       spirax-input/>
               </div>
             </div>
             <div class="row">
               <div class="col-md-4"><p>{{'CONDENSATE_RETURNED' | translate}}</p></div>
-              <div class="col-md-4"><form-input formControlName="benchmarkCondensateReturn"
-                                                [unit]="units[data?.proposedSetup?.condensateReturnUnit] || '-'"
-                                                [readonly]="true"
-                                                filled></form-input></div>
-              <div class="col-md-4"><form-input formControlName="proposalCondensateReturned"
-                                                [unit]="units[data?.proposedSetup?.condensateReturnUnit] || '-'"
-                                                [readonly]="isCondensateReturnDisable"
-                                                required></form-input></div>
+
+              <div class="col-md-4">
+                <input type="number"
+                       formControlName="benchmarkCondensateReturn"
+                       [unitsStr]="[units[data?.proposedSetup?.condensateReturnUnit] || '-']"
+                       readonly
+                       disabled
+                       spirax-input/>
+              </div>
+              <div class="col-md-4">
+                <input type="number"
+                       formControlName="proposalCondensateReturned"
+                       [unitsStr]="[units[data?.proposedSetup?.condensateReturnUnit] || '-']"
+                       [disabled]="isCondensateReturnDisable"
+                       spirax-input/>
+              </div>
             </div>
             <div class="row">
               <div class="col-md-4"><p>{{'TEMPERATURE_OF_CONDENSATE_RETURN' | translate}}</p></div>
               <div class="col-md-4">
-                <form-input formControlName="benchmarkCondensateTemperature"
-                            [unit]="units[data?.proposedSetup?.condensateTemperatureUnit] || '-'"
-                            [readonly]="true"
-                            filled></form-input>
+                <input type="number"
+                       formControlName="benchmarkCondensateTemperature"
+                       [unitsStr]="[units[data?.proposedSetup?.condensateTemperatureUnit] || '-']"
+                       readonly
+                       disabled
+                       spirax-input/>
               </div>
               <div class="col-md-4">
-                <form-input formControlName="proposalCondensateTemperature"
-                            [unit]="units[data?.proposedSetup?.condensateTemperatureUnit] || '-'"
-                            required></form-input>
+                <input type="number"
+                       formControlName="proposalCondensateTemperature"
+                       [unitsStr]="[units[data?.proposedSetup?.condensateTemperatureUnit] || '-']"
+                       spirax-input/>
               </div>
             </div>
             <div class="row">
               <div class="col-md-4"><p>{{'WATER_REJECTION_RATE' | translate}}</p></div>
-              <div class="col-md-4"><form-input formControlName="benchmarkWaterRejectionRate" unit="%" [readonly]="true" filled></form-input></div>
-              <div class="col-md-4"><form-input formControlName="proposalWaterRejectionRate" unit="%" required></form-input></div>
+              <div class="col-md-4">
+                <input type="number" formControlName="benchmarkWaterRejectionRate" [unitsStr]="['%']" spirax-input disabled/>
+              </div>
+              <div class="col-md-4">
+                <input type="number" formControlName="proposalWaterRejectionRate" [unitsStr]="['%']" spirax-input/>
+              </div>
             </div>
             <div class="row">
               <div class="col-md-4"><p>{{'BOILER_EFFICIENCY' | translate}}</p></div>
-              <div class="col-md-4"><form-input formControlName="benchmarkBoilerEfficiency" unit="%" [readonly]="true" filled></form-input></div>
-              <div class="col-md-4"><form-input formControlName="proposalBoilerEfficiency" unit="%" required></form-input></div>
+              <div class="col-md-4">
+                <input type="number" formControlName="benchmarkBoilerEfficiency" [unitsStr]="['%']" spirax-input disabled/>
+              </div>
+              <div class="col-md-4">
+                <input type="number" formControlName="proposalBoilerEfficiency" [unitsStr]="['%']" spirax-input/>
+              </div>
             </div>
             <div class="row">
               <div class="col-md-4"><p>{{'ECONOMISER_REQUIRED' | translate}}</p></div>
@@ -69,29 +96,27 @@
             <div class="row">
               <div class="col-md-4"><p>{{'TEMPERATURE_OF_FEEDTANK' | translate}}</p></div>
               <div class="col-md-4">
-                <form-input formControlName="benchmarkTemperatureOfFeedtank"
-                            [unit]="units[data?.proposedSetup?.temperatureOfFeedtankUnit] || '-'"
-                            [readonly]="true"
-                            filled></form-input>
+                <input type="number" formControlName="benchmarkTemperatureOfFeedtank"
+                       [unitsStr]="[units[data?.proposedSetup?.temperatureOfFeedtankUnit] || '-']"
+                       spirax-input disabled/>
               </div>
               <div class="col-md-4">
-                <form-input formControlName="proposalTemperatureOfFeedtank"
-                            [unit]="units[data?.proposedSetup?.temperatureOfFeedtankUnit] || '-'"
-                            required></form-input>
+                <input type="number" formControlName="proposalTemperatureOfFeedtank"
+                       [unitsStr]="[units[data?.proposedSetup?.temperatureOfFeedtankUnit] || '-']"
+                       spirax-input/>
               </div>
             </div>
             <div class="row">
               <div class="col-md-4"><p>{{'DSI_PRESSURE' | translate}}</p></div>
               <div class="col-md-4">
-                <form-input formControlName="benchmarkDsiPressure"
-                            [unit]="units[data?.proposedSetup?.dsiPressureUnit] || '-'"
-                            [readonly]="true"
-                            filled></form-input>
+                <input type="number" formControlName="benchmarkDsiPressure"
+                       [unitsStr]="[units[data?.proposedSetup?.dsiPressureUnit] || '-']"
+                       spirax-input disabled/>
               </div>
               <div class="col-md-4">
-                <form-input formControlName="proposalDsiPressure"
-                            [unit]="units[data?.proposedSetup?.dsiPressureUnit] || '-'"
-                            required></form-input>
+                <input type="number" formControlName="proposalDsiPressure"
+                       [unitsStr]="[units[data?.proposedSetup?.dsiPressureUnit] || '-']"
+                       spirax-input/>
               </div>
             </div>
             <div class="row">

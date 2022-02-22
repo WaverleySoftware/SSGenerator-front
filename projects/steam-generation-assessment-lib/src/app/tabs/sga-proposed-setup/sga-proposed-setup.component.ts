@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { AbstractControl, AsyncValidatorFn, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { ChartBarDataInterface } from '../../interfaces/chart-bar.interface';
 import {
   ProposedDataInterface,
@@ -7,21 +7,14 @@ import {
   ProposedSetupChartIndex, ProposedSetupChartLabels, ProposedSetupInterface,
   SteamGeneratorInputsInterface
 } from '../../interfaces/steam-generation-form.interface';
-import { SteamGenerationAssessmentService } from '../../services/steam-generation-assessment.service';
 import {
-  debounceTime,
-  delay,
-  distinctUntilChanged,
-  first,
   map,
-  mapTo,
   switchMap,
   takeUntil,
-  tap,
-  startWith,
-  pairwise
+  tap
 } from 'rxjs/operators';
-import { Observable, of, Subject, timer } from 'rxjs';
+import { of, Subject } from 'rxjs';
+import { SgaApiService } from '../../services/sga-api.service';
 
 @Component({
   selector: 'app-sga-proposed-setup',
@@ -89,7 +82,7 @@ export class SgaProposedSetupComponent implements OnInit {
   public form: FormGroup;
   public totalSaving: {steamGenerationSavings: number, savingsIncludingCondensateEffluent: number};
 
-  constructor(private fb: FormBuilder, private sgaService: SteamGenerationAssessmentService) {
+  constructor(private fb: FormBuilder, private apiService: SgaApiService) {
     this.form = this.fb.group({
       proposedSetup: this.fb.group({
         benchmarkBoilerEfficiency: [0, Validators.required],
@@ -275,7 +268,7 @@ export class SgaProposedSetupComponent implements OnInit {
               tap(() => control.markAsPending({emitEvent: false})),
               switchMap((value) => {
                 if (!value || value === 0) { return of({isValid: false, errors: [{errorMessage: 'REQUIRED_FIELD'}]}); }
-                return this.sgaService.validateProposedInput(controlsKey as keyof ProposedSetupInterface, form.getRawValue());
+                return this.apiService.proposalValidate(controlsKey as keyof ProposedSetupInterface, form.getRawValue());
               }),
               map(res => {
                 if (!res || !res.hasOwnProperty('isValid') || res.isValid) { return null; }
@@ -325,7 +318,7 @@ export class SgaProposedSetupComponent implements OnInit {
   economizerChange(economiserRequired) {
     const proposalBoilerEfficiencyControl = this.form.get('proposedSetup.proposalBoilerEfficiency');
 
-    this.sgaService.calcProposedBoilerEfficiency({
+    this.apiService.calculateProposedBoilerEfficiency({
       economiserRequired,
       benchmarkBoilerEfficiency: this.form.get('proposedSetup.benchmarkBoilerEfficiency').value,
       proposalBoilerEfficiency: proposalBoilerEfficiencyControl.value,

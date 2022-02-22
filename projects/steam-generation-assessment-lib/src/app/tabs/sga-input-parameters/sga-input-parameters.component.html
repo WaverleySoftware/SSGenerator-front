@@ -1,723 +1,649 @@
 
-<spirax-panel [(expanded)]="fieldsTree.utility_parameters.status"
-           id="UtilityParameters"
-           [invalid]="checkUtilityParametersIsValid()"
-           [title]="'UTILITY_PARAMETERS' | translate"
-           titleSize="24px">
-  <form body class="container-fluid" [formGroup]="formGroup">
-    <div class="row mb-5" [formGroupName]="formGroupKey">
-      <div class="col-md-5">
-        <form-input [formControlName]="fields.hoursOfOperation.formControlName"
-                    [label]="fields.hoursOfOperation.label"
-                    [unit-names]="fields.hoursOfOperation.controlNames"
-                    [unit-types]="fields.hoursOfOperation.unitTypes"
-                    [unit-translations]="fields.hoursOfOperation.translations"
-                    [unit-controls]="fields.hoursOfOperation.controlNames"
-                    [required]="isRequired('hoursOfOperation')"
-                    [(filled)]="fields.hoursOfOperation.filled"
-                    [module-group-id]="moduleGroupId"></form-input>
+<ng-container *ngIf="sizingUnits$ | async as sizingUnits; else loading">
+
+  <spirax-panel [title]="'UTILITY_PARAMETERS' | translate"
+                [(expanded)]="structure?.utility_parameters.status"
+                id="UtilityParameters"
+                titleSize="24px">
+    <form body [formGroup]="formGroup">
+      <div class="container-fluid" formGroupName="benchmarkInputs">
+        <div class="row mb-5">
+          <div class="col-md-5">
+            <input [label]="'HOURS_OF_OPERATION' | translate"
+                   [value]="getValue('hoursOfOperation') | decimalPlace: 2"
+                   formControlName="hoursOfOperation"
+                   type="number"
+                   spirax-input
+                   required>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <ng-template #tooltipFuel>
+              <h6>{{'ALLOWS_YOU_TO_INPUT_FUEL_TYPE_AND_COSTS_HELP' | translate}}</h6>
+              <p>{{'IF_A_STANDARD_FUEL_IS_USED_THE_CALORIFIC_VALUE_AND_CO2_EMISSIONS_FSLASH_UNIT_OF_FUEL_WILL_BE_AUTOMATICALLY_POPULATED_FROM_LOO_HELP' | translate}}</p>
+            </ng-template>
+            <spirax-panel id="FuelPanel"
+                          [(expanded)]="structure?.utility_parameters.panels.fuel.status"
+                          [title]="'FUEL' | translate"
+                          [titleTooltip]="tooltipFuel" background="#EDF2F4">
+              <div body>
+                <form-list formControlName="inputFuelId"
+                           enumeration-name="FuelTypeList_BoilerHouseInput"
+                           (on-change)="fuelTypeHandle($event)"
+                           label="FUEL_TYPE"
+                           #fuel></form-list>
+
+                <input [label]="'FUEL_CALORIFIC_VALUE' | translate"
+                       [unitsStr]="[sizingUnits['BoilerHouseEnergyUnits']?.unit, sizingUnits[getFuelTypeName(fuel?.item?.value)]?.unit]"
+                       [value]="getValue('fuelEnergyPerUnit') | decimalPlace: 9"
+                       formControlName="fuelEnergyPerUnit"
+                       type="number"
+                       spirax-input
+                       required/>
+
+                <input [label]="'CO2_EMISSIONS_PER_UNIT_FUEL' | translate"
+                       [unitsStr]="[sizingUnits['WeightUnit']?.unit, sizingUnits[getFuelTypeName(fuel?.item?.value)]?.unit]"
+                       [value]="getValue('fuelCarbonContent') | decimalPlace: 9"
+                       formControlName="fuelCarbonContent"
+                       type="number"
+                       spirax-input
+                       required>
+
+                <input [label]="'COST_OF_FUEL_PER_UNIT' | translate"
+                       [unitsStr]="[sizingUnits['BHCurrency']?.unit, sizingUnits[getFuelTypeName(fuel?.item?.value)]?.unit]"
+                       [value]="getValue('costOfFuelPerUnit') | decimalPlace: 9"
+                       formControlName="costOfFuelPerUnit"
+                       type="number"
+                       spirax-input
+                       required>
+
+                <spirax-toggle formControlName="fuelQtyPerYearIsKnown"
+                               (valueChange)="toggleInput($event && 'costOfFuelPerYear', !$event && ['costOfFuelPerYear', 'fuelConsumptionPerYear'])"
+                               label="IS_FUEL_CONSUMPTION_MEASURED">
+                  <div yes>
+                    <input [label]="'FUEL_COSTS_PER_YEAR' | translate"
+                           [unitsStr]="[sizingUnits['BHCurrency']?.unit, 'yr']"
+                           (radioClick)="toggleInput('costOfFuelPerYear', 'fuelConsumptionPerYear', null)"
+                           [value]="getValue('costOfFuelPerYear') | decimalPlace: sizingUnits['BHCurrency']?.decimal"
+                           radio
+                           formControlName="costOfFuelPerYear"
+                           type="number"
+                           spirax-input
+                           required>
+
+                    <input [label]="'FUEL_CONSUMPTION_PER_YEAR' | translate"
+                           [unitsStr]="[sizingUnits[getFuelTypeName(fuel?.item?.value)]?.unit, 'yr']"
+                           (radioClick)="toggleInput('fuelConsumptionPerYear', 'costOfFuelPerYear', null)"
+                           [value]="getValue('fuelConsumptionPerYear') | decimalPlace: sizingUnits['BHCurrency']?.decimal"
+                           [radio]="true"
+                           formControlName="fuelConsumptionPerYear"
+                           type="number"
+                           spirax-input
+                           required>
+                  </div>
+                </spirax-toggle>
+              </div>
+            </spirax-panel>
+
+            <ng-template #cO2EmissionTooltip>
+              <h6>{{'CARBON_TAX_LEVY_COST_PER_UNIT' | translate}}</h6>
+              <p>{{'IF_CARBON_TAX_IS_PART_OF_THE_FUEL_BILL_IT_CAN_EITHER_BE_BROKEN_OUT_TO_ALLOW_THE_COST_OF_CO2_EMISSIONS_TO_BE_CALCULATED_OR_CAN_HELP' | translate}}</p>
+            </ng-template>
+            <spirax-panel id="CO2EmissionPanel"
+                          title="CO2 Emission"
+                          [(expanded)]="structure?.utility_parameters.panels.co2_emission.status"
+                          [titleTooltip]="cO2EmissionTooltip" background="#EDF2F4">
+              <spirax-toggle body
+                             formControlName="isCo2OrCarbonEmissionsTaxed"
+                             (valueChange)="toggleInput($event && ['carbonTaxLevyCostPerUnit'], !$event && ['carbonTaxLevyCostPerUnit', 'costOfCo2PerUnitMass'])"
+                             label="ARE_CO2_OR_CARBON_EMISSIONS_TAXED">
+                <div yes>
+                  <input [label]="'CARBON_TAX_LEVY_COST_PER_UNIT' | translate"
+                         [unitsStr]="[sizingUnits['BHCurrency']?.unit, sizingUnits['BoilerHouseEnergyUnits']?.unit]"
+                         (radioClick)="toggleInput('carbonTaxLevyCostPerUnit', 'costOfCo2PerUnitMass', null)"
+                         [value]="getValue('carbonTaxLevyCostPerUnit') | decimalPlace: sizingUnits['BoilerHouseEnergyUnits']?.decimal"
+                         radio
+                         formControlName="carbonTaxLevyCostPerUnit"
+                         type="number"
+                         spirax-input
+                         required>
+                  <input [label]="'COST_OF_CO2_PER_UNIT_MASS' | translate"
+                         [unitsStr]="[sizingUnits['BHCurrency']?.unit, sizingUnits['BoilerHouseEmissionUnits']?.unit]"
+                         (radioClick)="toggleInput('costOfCo2PerUnitMass', 'carbonTaxLevyCostPerUnit', null)"
+                         [value]="getValue('costOfCo2PerUnitMass') | decimalPlace: sizingUnits['BoilerHouseEmissionUnits']?.decimal"
+                         radio
+                         formControlName="costOfCo2PerUnitMass"
+                         type="number"
+                         spirax-input
+                         required>
+                </div>
+              </spirax-toggle>
+            </spirax-panel>
+          </div>
+
+          <div class="col-md-6">
+            <ng-template #waterTooltip>
+              <div style="text-align: left;">
+                <h6>{{'IS_BOILER_HOUSE_WATER_MEASURED' | translate}}</h6>
+                <p>{{'IS_ALL_WATER_ENTERING_THE_BOILER_HOUSE_AS_PART_OF_THE_STEAM_GENERATION_PROCESS_MEASSURED_HELP' | translate}}</p>
+                <h6>{{'WATER_CONSUMPTION_PER_YEAR' | translate}}</h6>
+                <p>{{'ALL_WATER_ENTERING_THE_BOILER_HOUSE_AS_PART_OF_THE_STEAM_GENERATION_PROCESS_HELP' | translate}}</p>
+              </div>
+            </ng-template>
+            <spirax-panel id="WaterPanel"
+                          title="Water"
+                          [(expanded)]="structure?.utility_parameters.panels.water.status"
+                          [titleTooltip]="waterTooltip" background="#EDF2F4">
+              <div body>
+                <input [label]="'COST_OF_WATER_FSLASH_UNIT' | translate"
+                       [unitsStr]="[sizingUnits['BHCurrency']?.unit, sizingUnits['BoilerHouseVolumeUnits']?.unit]"
+                       [value]="getValue('costOfWaterPerUnit') | decimalPlace: sizingUnits['BoilerHouseVolumeUnits']?.decimal"
+                       formControlName="costOfWaterPerUnit"
+                       type="number"
+                       spirax-input
+                       required>
+
+                <spirax-toggle formControlName="boilerHouseWaterQtyPerYearIsKnown"
+                               (valueChange)="toggleInput($event && 'costOfWaterPerYear', !$event && ['costOfWaterPerYear', 'waterConsumptionPerHour', 'waterConsumptionPerYear'])"
+                               label="IS_WATER_ENTERING_THE_BOILER_HOUSE_MEASURED">
+                  <div yes>
+                    <input [label]="'COST_OF_WATER_PER_YEAR' | translate"
+                           [unitsStr]="[sizingUnits['BHCurrency']?.unit, 'yr']"
+                           (radioClick)="toggleInput('costOfWaterPerYear', ['waterConsumptionPerHour', 'waterConsumptionPerYear'], null)"
+                           [value]="getValue('costOfWaterPerYear') | decimalPlace: sizingUnits['BHCurrency']?.decimal"
+                           radio
+                           formControlName="costOfWaterPerYear"
+                           type="number"
+                           spirax-input
+                           required>
+
+                    <input [label]="'WATER_CONSUMPTION_HOUR' | translate"
+                           [unitsStr]="[sizingUnits['BoilerHouseVolumeUnits']?.unit, 'hr']"
+                           (radioClick)="toggleInput('waterConsumptionPerHour', ['waterConsumptionPerYear', 'costOfWaterPerYear'], null)"
+                           [value]="getValue('waterConsumptionPerHour') | decimalPlace: sizingUnits['BoilerHouseVolumeUnits']?.decimal"
+                           radio
+                           formControlName="waterConsumptionPerHour"
+                           type="number"
+                           spirax-input
+                           required>
+
+                    <input [label]="'WATER_CONSUMPTION_YEAR' | translate"
+                           [unitsStr]="[sizingUnits['BoilerHouseVolumeUnits']?.unit, 'yr']"
+                           (radioClick)="toggleInput('waterConsumptionPerYear', ['waterConsumptionPerHour', 'costOfWaterPerYear'], null)"
+                           [value]="getValue('waterConsumptionPerYear') | decimalPlace: sizingUnits['BoilerHouseVolumeUnits']?.decimal"
+                           radio
+                           formControlName="waterConsumptionPerYear"
+                           type="number"
+                           spirax-input
+                           required>
+                  </div>
+                </spirax-toggle>
+              </div>
+            </spirax-panel>
+
+            <ng-template #waterChemicalsTooltip>
+              <div style="text-align: left;">
+                <h6>{{'IS_CHEMICAL_COSTS_PER_YEAR_KNOWN' | translate}}</h6>
+                <p>{{'COST_OF_WATER_TREATMENT_CHEMICALS_ONLY_THIS_DOES_NOT_INCLUDE_SERVICE_AGREEMENTS_OR_MAINTENANCE_COSTS_HELP' | translate}}</p>
+
+                <h6>{{'TOTAL_CHEMICAL_COST_PER_YEAR' | translate}}</h6>
+                <p>{{'COST_OF_WATER_TREATMENT_CHEMICALS_FSLASH_UNIT_OF_BOILER_WATER_BEING_TREATED_FOR_EXAMPLE_0_15_FSLASH_M3_BOILER_WATER_THIS_HELP' | translate}}</p>
+
+                <h6>{{'O2_SCAVENGING_CHEMICALS_COST_SAVINGS' | translate}}</h6>
+                <p>{{'THIS_IS_USED_TO_CALCULATE_ANY_CHEMICAL_SAVINGS_FROM_INCREASING_FEEDWATER_TEMPERATURE_USING_DIRECT_STEAM_INJECTION_HELP' | translate}}</p>
+              </div>
+            </ng-template>
+            <spirax-panel id="waterTreatmentChemicalsPanel"
+                          title="Water treatment chemicals"
+                          [(expanded)]="structure?.utility_parameters.panels.water_treatment_chemicals.status"
+                          [titleTooltip]="waterChemicalsTooltip" background="#EDF2F4">
+              <spirax-toggle body formControlName="boilerWaterTreatmentChemicalCostsIsKnown"
+                             (valueChange)="toggleInput($event && 'totalChemicalCostPerYear', !$event && ['totalChemicalCostPerYear', 'o2ScavengingChemicalsCostSavings'], null)"
+                             label="ARE_CHEMICAL_COST_KNOWN">
+                <div yes>
+                  <input [label]="'TOTAL_CHEMICAL_COSTS_PER_YEAR' | translate"
+                         [unitsStr]="[sizingUnits['BHCurrency']?.unit, 'yr']"
+                         (radioClick)="toggleInput('totalChemicalCostPerYear', 'o2ScavengingChemicalsCostSavings', null)"
+                         [value]="getValue('totalChemicalCostPerYear') | decimalPlace: sizingUnits['BHCurrency']?.decimal"
+                         radio
+                         formControlName="totalChemicalCostPerYear"
+                         type="number"
+                         spirax-input
+                         required>
+                  <input [label]="'O2_SCAVENGING_CHEMICALS_COST_SAVINGS' | translate"
+                         [unitsStr]="[sizingUnits['BHCurrency']?.unit, 'yr']"
+                         (radioClick)="toggleInput('o2ScavengingChemicalsCostSavings', 'totalChemicalCostPerYear', null)"
+                         [value]="getValue('o2ScavengingChemicalsCostSavings') | decimalPlace: sizingUnits['BHCurrency']?.decimal"
+                         radio
+                         formControlName="o2ScavengingChemicalsCostSavings"
+                         type="number"
+                         spirax-input
+                         required>
+                </div>
+              </spirax-toggle>
+            </spirax-panel>
+
+            <ng-template #waterEffluentTooltip>
+              <h6>{{'IS_COOLING_WATER_USED' | translate}}</h6>
+              <p>{{'IF_BLOWDOWN_VESSEL_SELECTED_AND_THE_CHECK_BOX_IS_COOLING_WATER_USED_IS_TICKED_IT_WILL_IMPACT_ON_BOILER_HOUSE_WATER_CONSUMPTIO_HELP' | translate}}</p>
+            </ng-template>
+            <spirax-panel id="waterEffluentPanel"
+                          title="Water effluent"
+                          [(expanded)]="structure?.utility_parameters.panels.water_effluent.status"
+                          [titleTooltip]="waterEffluentTooltip" background="#EDF2F4">
+              <div body>
+                <input [label]="'COST_OF_EFFLUENT_FSLASH_UNIT' | translate"
+                       [unitsStr]="[sizingUnits['BHCurrency']?.unit, sizingUnits['BoilerHouseVolumeUnits']?.unit]"
+                       [value]="getValue('costOfEffluentPerUnit') | decimalPlace: sizingUnits['BoilerHouseVolumeUnits']?.decimal"
+                       formControlName="costOfEffluentPerUnit"
+                       type="number"
+                       spirax-input
+                       required>
+              </div>
+            </spirax-panel>
+          </div>
+        </div>
       </div>
-    </div>
+    </form>
+  </spirax-panel>
 
-    <div class="row" [formGroupName]="formGroupKey">
-      <div class="col-md-6">
-        <ng-template #tooltipFuel>
-          <h6>{{'ALLOWS_YOU_TO_INPUT_FUEL_TYPE_AND_COSTS_HELP' | translate}}</h6>
-          <p>{{'IF_A_STANDARD_FUEL_IS_USED_THE_CALORIFIC_VALUE_AND_CO2_EMISSIONS_FSLASH_UNIT_OF_FUEL_WILL_BE_AUTOMATICALLY_POPULATED_FROM_LOO_HELP' | translate}}</p>
-        </ng-template>
-        <spirax-panel id="FuelPanel"
-                   [(expanded)]="fieldsTree.utility_parameters.panels.fuel.status"
-                   [title]="'FUEL' | translate"
-                   [titleTooltip]="tooltipFuel"
-                   background="#EDF2F4">
-          <div body>
-            <type-of-fuel [formControlName]="fields.inputFuelId.formControlName"
-                          [label]="fields.inputFuelId.label"
-                          [unitFormControlName]="'fuelUnitSelected'"
-                          [(fuelTypeName)]="fuelTypeName"
-                          (changeUnit)="updateFuelUnit($event)"
-                          (ngModelChange)="changeFuelTypeHandle($event)"
-                          [moduleGroupId]="moduleGroupId"></type-of-fuel>
+  <spirax-panel [title]="'BOILER_HOUSE_PARAMETERS' | translate"
+                [(expanded)]="structure?.boiler_house_parameters.status"
+                [showSeparator]="false"
+                id="BoilerHouseParameters"
+                titleSize="24px">
+    <form body [formGroup]="formGroup">
+      <div class="container-fluid" formGroupName="benchmarkInputs">
+        <div class="row">
+          <div class="col-md-12">
+            <tabset type="pills" class="sgaTabs">
+              <tab [heading]="'BOILER' | translate" [active]="structure.boiler_house_parameters.panels.boiler.status">
+                <spirax-panel id="boilerParametersPanel"
+                              [(expanded)]="structure?.boiler_house_parameters.panels.boiler.panels.boiler_parameters.status"
+                              [title]="'BOILER_PARAMETERS' | translate" background="#EDF2F4">
+                  <div body class="row">
+                    <div class="col-md-6 border-r-md">
+                      <spirax-toggle formControlName="isSuperheatedSteam"
+                                     (valueChange)="toggleInput($event && 'boilerSteamTemperature', !$event && 'boilerSteamTemperature')"
+                                     label="IS_SUPERHEATED_STEAM"></spirax-toggle>
 
-            <form-input [formControlName]="fields.fuelEnergyPerUnit.formControlName"
-                        [decimalPlaces]="9"
-                        [label]="fields.fuelEnergyPerUnit.label"
-                        [unit-names]="fields.fuelEnergyPerUnit.unitNames"
-                        [unit-types]="fields.fuelEnergyPerUnit.unitTypes"
-                        [unit-translations]="fields.fuelEnergyPerUnit?.translations"
-                        [unit-controls]="fields.fuelEnergyPerUnit?.controlNames"
-                        [required]="isRequired('fuelEnergyPerUnit')"
-                        [(filled)]="fields.fuelEnergyPerUnit.filled"
-                        [module-group-id]="moduleGroupId"
-                        (inputChange)="inputChangeHandle($event)"> </form-input>
+                      <spirax-toggle formControlName="isSteamFlowMeasured"
+                                     (valueChange)="toggleInput($event && 'boilerSteamGeneratedPerHour', !$event && ['boilerSteamGeneratedPerHour', 'boilerSteamGeneratedPerYear'], null)"
+                                     label="IS_STEAM_FLOW_MEASURED">
+                        <div yes>
+                          <input [label]="'STEAM_GENERATION_PER_HOUR' | translate"
+                                 [unitsStr]="[sizingUnits['BoilerHouseSmallMassFlowUnits']?.unit]"
+                                 (radioClick)="toggleInput('boilerSteamGeneratedPerHour', 'boilerSteamGeneratedPerYear', null)"
+                                 [value]="getValue('boilerSteamGeneratedPerHour') | decimalPlace: sizingUnits['BoilerHouseSmallMassFlowUnits']?.decimal"
+                                 radio
+                                 formControlName="boilerSteamGeneratedPerHour"
+                                 type="number"
+                                 spirax-input
+                                 required>
+                          <input [label]="'STEAM_GENERATION_PER_YEAR' | translate"
+                                 [unitsStr]="[sizingUnits['BoilerHouseMassFlowUnits']?.unit]"
+                                 (radioClick)="toggleInput('boilerSteamGeneratedPerYear', 'boilerSteamGeneratedPerHour', null)"
+                                 [value]="getValue('boilerSteamGeneratedPerYear') | decimalPlace: sizingUnits['BoilerHouseMassFlowUnits']?.decimal"
+                                 radio
+                                 formControlName="boilerSteamGeneratedPerYear"
+                                 type="number"
+                                 spirax-input
+                                 disabled
+                                 required>
+                        </div>
+                      </spirax-toggle>
+                    </div>
+                    <div class="col-md-6">
+                      <input [label]="'STEAM_TEMPERATURE' | translate"
+                             [unitsStr]="[sizingUnits['TemperatureUnit']?.unit]"
+                             [value]="getValue('boilerSteamTemperature') | decimalPlace: sizingUnits['TemperatureUnit']?.decimal"
+                             formControlName="boilerSteamTemperature"
+                             type="number"
+                             spirax-input
+                             required>
 
-            <form-input [formControlName]="fields.fuelCarbonContent.formControlName"
-                        [decimalPlaces]="9"
-                        [label]="fields.fuelCarbonContent.label"
-                        [unit-names]="fields.fuelCarbonContent.unitNames"
-                        [unit-types]="fields.fuelCarbonContent.unitTypes"
-                        [unit-translations]="fields.fuelCarbonContent.translations"
-                        [unit-controls]="fields.fuelCarbonContent.controlNames"
-                        [module-group-id]="moduleGroupId"
-                        [(filled)]="fields.fuelCarbonContent.filled"
-                        [required]="isRequired('fuelCarbonContent')"
-                        (inputChange)="inputChangeHandle($event)"></form-input>
+                      <input [label]="'STEAM_PRESSURE' | translate"
+                             [unitsStr]="[sizingUnits['PressureUnit']?.unit]"
+                             [value]="getValue('boilerSteamPressure') | decimalPlace: sizingUnits['PressureUnit']?.decimal"
+                             formControlName="boilerSteamPressure"
+                             type="number"
+                             spirax-input
+                             required>
 
-            <form-input [formControlName]="fields.costOfFuelPerUnit.formControlName"
-                        [decimalPlaces]="9"
-                        [label]="fields.costOfFuelPerUnit.label"
-                        [unit-names]="fields.costOfFuelPerUnit.unitNames"
-                        [unit-types]="fields.costOfFuelPerUnit?.unitTypes"
-                        [unit-translations]="fields.costOfFuelPerUnit?.translations"
-                        [unit-controls]="fields.costOfFuelPerUnit?.controlNames"
-                        [module-group-id]="moduleGroupId"
-                        [(filled)]="fields.costOfFuelPerUnit.filled"
-                        [required]="isRequired('costOfFuelPerUnit')"></form-input>
+                      <spirax-toggle formControlName="isEconomizerPresent" label="IS_ECONOMISER_PRESENT" (valueChange)="boilerEfficiencyHandle($event)"></spirax-toggle>
 
-            <spirax-toggle [formControlName]="fields.fuelQtyPerYearIsKnown.formControlName"
-                         [label]="fields.fuelQtyPerYearIsKnown.label">
-              <ng-container yes>
-                <form-input [formControlName]="fields.costOfFuelPerYear.formControlName"
-                            [label]="fields.costOfFuelPerYear.label"
-                            [unit-names]="fields.costOfFuelPerYear?.unitNames"
-                            [unit-types]="fields.costOfFuelPerYear?.unitTypes"
-                            [unit-controls]="fields.costOfFuelPerYear?.controlNames"
-                            [unit-translations]="fields.costOfFuelPerYear?.translations"
-                            [module-group-id]="moduleGroupId"
-                            [required]="isRequired('costOfFuelPerYear')"
-                            [(filled)]="fields.costOfFuelPerYear.filled"
-                            [groupControls]="['fuelConsumptionPerYear']"
-                            group="fuelQtyPerYearIsKnownGroup"
-                            unit="/y"></form-input>
-                <form-input [formControlName]="fields.fuelConsumptionPerYear.formControlName"
-                            [label]="fields.fuelConsumptionPerYear.label"
-                            [unit-names]="fields.fuelConsumptionPerYear.unitNames"
-                            [unit-types]="fields.fuelConsumptionPerYear.unitTypes"
-                            [unit-translations]="fields.fuelConsumptionPerYear.translations"
-                            [unit-controls]="fields.fuelConsumptionPerYear.controlNames"
-                            [required]="isRequired('fuelConsumptionPerYear')"
-                            [(filled)]="fields.fuelConsumptionPerYear.filled"
-                            [groupControls]="['costOfFuelPerYear']"
-                            [module-group-id]="moduleGroupId"
-                            group="fuelQtyPerYearIsKnownGroup"
-                            unit="/yr"></form-input>
-              </ng-container>
-            </spirax-toggle>
+                      <input [label]="'BOILER_EFFICIENCY' | translate"
+                             [unitsStr]="['%']"
+                             [value]="getValue('boilerEfficiency') | decimalPlace: 2"
+                             formControlName="boilerEfficiency"
+                             type="number"
+                             spirax-input
+                             required>
+                    </div>
+                  </div>
+                </spirax-panel>
+              </tab>
+              <tab [heading]="'TDS_BLOWDOWN' | translate" [active]="structure.boiler_house_parameters.panels.tds_blowdown.status">
+                <spirax-panel id="blowdownEquipmentPanel"
+                              [(expanded)]="structure?.boiler_house_parameters.panels.tds_blowdown.panels.blowdown_equipment.status"
+                              [title]="'BLOWDOWN_EQUIPMENT' | translate" background="#EDF2F4">
+                  <div class="row" body>
+                    <div class="col-md-4 border-r-md">
+                      <spirax-toggle formControlName="isBlowdownVesselPresent" label="IS_BLOWDOWN_VESSEL_PRESENT"></spirax-toggle>
+
+                      <spirax-toggle formControlName="isCoolingWaterUsed" label="IS_COOLING_WATER_USED"></spirax-toggle>
+                    </div>
+                    <div class="col-md-4 border-r-md">
+                      <spirax-toggle formControlName="isAutoTdsControlPResent"
+                                     (valueChange)="toggleInput('isFlashVesselPresent', ['isFlashVesselPresent', 'isHeatExchangerPresent', 'waterTemperatureLeavingHeatExchanger'], false, $event)"
+                                     label="IS_AUTO_TDS_PRESENT"></spirax-toggle>
+
+                      <spirax-toggle formControlName="isFlashVesselPresent"
+                                     (valueChange)="toggleInput('isHeatExchangerPresent', ['isHeatExchangerPresent', 'waterTemperatureLeavingHeatExchanger'], false, $event)"
+                                     label="IS_FLASH_VESSEL_PRESENT"></spirax-toggle>
+                    </div>
+                    <div class="col-md-4">
+                      <spirax-toggle formControlName="isHeatExchangerPresent"
+                                     (valueChange)="toggleInput('waterTemperatureLeavingHeatExchanger', 'waterTemperatureLeavingHeatExchanger', null, $event)"
+                                     label="IS_HEAT_EXCHANGER_PRESENT">
+                        <div yes>
+                          <input [label]="'WATER_TEMPERATURE_LEAVING_HEAT_EXCHANGER' | translate"
+                                 [unitsStr]="[sizingUnits['TemperatureUnit']?.unit]"
+                                 [value]="getValue('waterTemperatureLeavingHeatExchanger') | decimalPlace: sizingUnits['TemperatureUnit']?.decimal"
+                                 formControlName="waterTemperatureLeavingHeatExchanger"
+                                 type="number"
+                                 spirax-input
+                                 required>
+                        </div>
+                      </spirax-toggle>
+                    </div>
+                  </div>
+                </spirax-panel>
+
+                <spirax-panel id="tdsBlowdownParametersPanel"
+                              [(expanded)]="structure?.boiler_house_parameters.panels.tds_blowdown.panels.tds_blowdown_parameters.status"
+                              [title]="'TDS_BLOWDOWN_PARAMETERS' | translate" background="#EDF2F4">
+                  <div class="row" body>
+                    <div class="col-md-4 border-r-md">
+                      <input [label]="'TDS_OF_FEEDWATER_IN_FEEDTANK' | translate"
+                             [unitsStr]="[sizingUnits['BoilerHouseTDSUnits']?.unit]"
+                             [value]="getValue('tdsOfFeedwaterInFeedtank') | decimalPlace: sizingUnits['BoilerHouseTDSUnits']?.decimal"
+                             formControlName="tdsOfFeedwaterInFeedtank"
+                             type="number"
+                             spirax-input
+                             required>
+                    </div>
+                    <div class="col-md-4 border-r-md">
+                      <input [label]="'AVERAGE_BOILER_TDS' | translate"
+                             [unitsStr]="[sizingUnits['BoilerHouseTDSUnits']?.unit]"
+                             [value]="getValue('boilerAverageTds') | decimalPlace: sizingUnits['BoilerHouseTDSUnits']?.decimal"
+                             formControlName="boilerAverageTds"
+                             type="number"
+                             spirax-input
+                             required>
+                    </div>
+                    <div class="col-md-4">
+                      <input [label]="'MAXIMUM_ALLOWABLE_BOILER_TDS' | translate"
+                             [unitsStr]="[sizingUnits['BoilerHouseTDSUnits']?.unit]"
+                             [value]="getValue('boilerMaxTds') | decimalPlace: sizingUnits['BoilerHouseTDSUnits']?.decimal"
+                             formControlName="boilerMaxTds"
+                             type="number"
+                             spirax-input
+                             required>
+                    </div>
+                  </div>
+                </spirax-panel>
+              </tab>
+              <tab [heading]="'WATER_TREATMENT' | translate" [active]="structure.boiler_house_parameters.panels.water_treatment.status">
+                <spirax-panel id="makeUpWaterPanel"
+                              [(expanded)]="structure?.boiler_house_parameters.panels.water_treatment.panels.make_up_water.status"
+                              [title]="'MAKE_UP_WATER' | translate" background="#EDF2F4">
+                  <div class="row" body>
+                    <div class="col-md-6">
+                      <spirax-toggle formControlName="isMakeUpWaterMonitored" label="IS_MAKE_UP_WATER_MONITORED"
+                                     (valueChange)="toggleInput($event && 'temperatureOfMakeupWater', !$event && 'temperatureOfMakeupWater', null)">
+                        <div yes>
+                          <input [label]="'TEMPERATURE_OF_MAKE_UP_WATER' | translate"
+                                 [unitsStr]="[sizingUnits['TemperatureUnit']?.unit]"
+                                 [value]="getValue('temperatureOfMakeupWater') | decimalPlace: sizingUnits['TemperatureUnit']?.decimal"
+                                 formControlName="temperatureOfMakeupWater"
+                                 type="number"
+                                 spirax-input
+                                 required>
+                        </div>
+                      </spirax-toggle>
+                    </div>
+                    <div class="col-md-6 border-l-md">
+                      <input [label]="'MAKE_UP_WATER_PER_HOUR' | translate"
+                             [unitsStr]="[sizingUnits['BoilerHouseSmallVolumetricFlowUnits']?.unit]"
+                             (radioClick)="toggleInput('makeupWaterAmountPerHour', 'makeupWaterAmountPerYear', null)"
+                             [value]="getValue('makeupWaterAmountPerHour') | decimalPlace: sizingUnits['BoilerHouseSmallVolumetricFlowUnits']?.decimal"
+                             radio
+                             formControlName="makeupWaterAmountPerHour"
+                             type="number"
+                             spirax-input>
+                      <input [label]="'MAKE_UP_WATER_PER_YEAR' | translate"
+                             [unitsStr]="[sizingUnits['BoilerHouseVolumetricFlowUnits']?.unit]"
+                             (radioClick)="toggleInput('makeupWaterAmountPerYear', 'makeupWaterAmountPerHour', null)"
+                             [value]="getValue('makeupWaterAmountPerYear') | decimalPlace: sizingUnits['BoilerHouseVolumetricFlowUnits']?.decimal"
+                             radio
+                             formControlName="makeupWaterAmountPerYear"
+                             type="number"
+                             spirax-input>
+                    </div>
+                  </div>
+                </spirax-panel>
+
+                <spirax-panel id="waterTreatmentParametersPanel"
+                              [(expanded)]="structure?.boiler_house_parameters.panels.water_treatment.panels.water_treatment_parameters.status"
+                              [title]="'WATER_TREATMENT_PARAMETERS' | translate" background="#EDF2F4">
+                  <div class="row" body>
+                    <div class="col-md-4">
+                      <form-list formControlName="waterTreatmentMethod"
+                                 enumeration-name="WaterTreatmentMethodList_BoilerHouseInput"
+                                 (on-change)="waterTreatmentHandle($event)"
+                                 label="WATER_TREATMENT_METHOD"></form-list>
+                    </div>
+                    <div class="col-md-4">
+                      <input [label]="'PERCENTAGE_WATER_REJECTION' | translate"
+                             [unitsStr]="['%']"
+                             [value]="getValue('percentageWaterRejection') | decimalPlace: 2"
+                             formControlName="percentageWaterRejection"
+                             type="number"
+                             spirax-input
+                             required>
+                    </div>
+                    <div class="col-md-4">
+                      <input [label]="'TDS_OF_MAKEUP_WATER' | translate"
+                             [unitsStr]="[sizingUnits['BoilerHouseTDSUnits']?.unit]"
+                             [value]="getValue('tdsOfMakeupWater') | decimalPlace: sizingUnits['BoilerHouseTDSUnits']?.decimal"
+                             formControlName="tdsOfMakeupWater"
+                             type="number"
+                             spirax-input
+                             required>
+                    </div>
+                  </div>
+                </spirax-panel>
+              </tab>
+              <tab [heading]="'FEEDWATER_AND_CONDENSATE' | translate" [active]="structure.boiler_house_parameters.panels.feedwater_and_condensate.status">
+                <spirax-panel id="deaeratorTypePanel"
+                              [(expanded)]="structure?.boiler_house_parameters.panels.feedwater_and_condensate.panels.deaerator_type.status"
+                              [title]="'DEAERATOR_TYPE' | translate" background="#EDF2F4">
+                  <div class="row" body>
+                    <div class="col-md-4">
+                      <spirax-form-radio-group [inputValue]="true"
+                                               formControlName="atmosphericDeaerator"
+                                               label="AUTMOSPHERIC_DEAERATOR"
+                                               [defaultChecked]="formGroup.get('benchmarkInputs.atmosphericDeaerator').value"
+                                               (valueChange)="setFormValue({pressurisedDeaerator: false, atmosphericDeaerator: true}); setFormValue('temperatureOfFeedtank', null); toggleInput(['isDsiPresent'], 'pressureOfFeedtank', null)"
+                                               name="deaeratorType">
+                        <img src="/assets/img/steam_generation/deaerator_type_1.png" alt="deaerator_type_1">
+                      </spirax-form-radio-group>
+                    </div>
+                    <div class="col-md-4">
+                      <spirax-form-radio-group [inputValue]="true"
+                                               formControlName="pressurisedDeaerator"
+                                               label="PRESSURLSED_DEAERATOR"
+                                               [defaultChecked]="formGroup.get('benchmarkInputs.pressurisedDeaerator').value"
+                                               (valueChange)="setFormValue({pressurisedDeaerator: true, atmosphericDeaerator: false}); toggleInput('pressureOfFeedtank', ['isDsiPresent', 'pressureOfSteamSupplyingDsi'], null)"
+                                               name="deaeratorType">
+                        <img src="/assets/img/steam_generation/boiler-scheme/images/PressurisedDAImgCrop.png"
+                             alt="deaerator_type_1">
+                      </spirax-form-radio-group>
+                    </div>
+                  </div>
+                </spirax-panel>
+
+                <spirax-panel id="boilerFeedwaterPanel"
+                              [(expanded)]="structure?.boiler_house_parameters.panels.feedwater_and_condensate.panels.boiler_feedwater.status"
+                              [title]="'BOILER_FEEDWATER' | translate" background="#EDF2F4">
+                  <div class="row" body>
+                    <div class="col-md-4 border-r-md">
+                      <spirax-toggle formControlName="isFeedWaterMeasured"
+                                     (valueChange)="toggleInput($event && 'boilerFeedwaterConsumptionPerHour', !$event && ['boilerFeedwaterConsumptionPerHour', 'boilerFeedwaterConsumptionPerYear', null])"
+                                     label="IS_FEEDWATER_FLOWRATE_MEASURED">
+                        <div yes>
+                          <input [label]="'CONSUMPTION_PER_HR' | translate"
+                                 [unitsStr]="[sizingUnits['BoilerHouseSmallVolumetricFlowUnits']?.unit]"
+                                 (radioClick)="toggleInput('boilerFeedwaterConsumptionPerHour', 'boilerFeedwaterConsumptionPerYear', null)"
+                                 [value]="getValue('boilerFeedwaterConsumptionPerHour') | decimalPlace: sizingUnits['BoilerHouseSmallVolumetricFlowUnits']?.decimal"
+                                 radio
+                                 formControlName="boilerFeedwaterConsumptionPerHour"
+                                 type="number"
+                                 spirax-input
+                                 required>
+
+                          <input [label]="'CONSUMPTION_PER_YEAR' | translate"
+                                 [unitsStr]="[sizingUnits['BoilerHouseVolumeUnits']?.unit, 'yr']"
+                                 (radioClick)="toggleInput('boilerFeedwaterConsumptionPerYear', 'boilerFeedwaterConsumptionPerHour', null)"
+                                 [value]="getValue('boilerFeedwaterConsumptionPerYear') | decimalPlace: sizingUnits['BoilerHouseVolumeUnits']?.decimal"
+                                 radio
+                                 formControlName="boilerFeedwaterConsumptionPerYear"
+                                 type="number"
+                                 disabled
+                                 spirax-input
+                                 required>
+                        </div>
+                      </spirax-toggle>
+                    </div>
+                    <div class="col-md-4 border-r-md">
+                      <input [label]="'TEMPERATURE_OF_FEEDTANK' | translate"
+                             [unitsStr]="[sizingUnits['TemperatureUnit']?.unit]"
+                             [value]="getValue('temperatureOfFeedtank') | decimalPlace: sizingUnits['TemperatureUnit']?.decimal"
+                             formControlName="temperatureOfFeedtank"
+                             type="number"
+                             spirax-input
+                             required>
+                      <input [label]="'TDS_OF_FEEDWATER_IN_FEEDTANK' | translate"
+                             [unitsStr]="[sizingUnits['BoilerHouseVolumeUnits']?.unit]"
+                             [disabled]="true"
+                             [value]="getValue('tdsOfFeedwaterInFeedtank') | decimalPlace: sizingUnits['BoilerHouseVolumeUnits']?.decimal"
+                             formControlName="tdsOfFeedwaterInFeedtank"
+                             type="number"
+                             tabindex="-1"
+                             readonly
+                             disabled
+                             spirax-input
+                             required>
+
+                      <spirax-toggle formControlName="areChemicalsAddedDirectlyToFeedtank" label="ARE_CHEMICALS_ADDED_DIRECTLY_TO_FEEDTANK"></spirax-toggle>
+                    </div>
+                    <div class="col-md-4">
+                      <ng-container *ngIf="formGroup.get('benchmarkInputs.atmosphericDeaerator')?.value; else pressureDeaerator">
+                        <spirax-toggle formControlName="isDsiPresent"
+                                       (valueChange)="toggleInput($event && 'pressureOfSteamSupplyingDsi', !$event && 'pressureOfSteamSupplyingDsi', null)"
+                                       label="IS_DSI_PRESENT">
+                          <div yes>
+                            <input [label]="'PRESSURE_OF_STEAM_SUPPLYING_DSI' | translate"
+                                   [unitsStr]="[sizingUnits['PressureUnit']?.unit]"
+                                   [value]="getValue('pressureOfSteamSupplyingDsi') | decimalPlace: sizingUnits['PressureUnit']?.decimal"
+                                   formControlName="pressureOfSteamSupplyingDsi"
+                                   type="number"
+                                   spirax-input
+                                   required>
+                          </div>
+                        </spirax-toggle>
+                      </ng-container>
+
+                      <ng-template #pressureDeaerator>
+                        <div>
+                          <input [label]="'PRESSURE_OF_FEEDTANK' | translate"
+                                 [unitsStr]="[sizingUnits['PressureUnit']?.unit]"
+                                 [value]="getValue('pressureOfFeedtank') | decimalPlace: sizingUnits['PressureUnit']?.decimal"
+                                 formControlName="pressureOfFeedtank"
+                                 type="number"
+                                 spirax-input
+                                 required>
+                        </div>
+                      </ng-template>
+                    </div>
+                  </div>
+                </spirax-panel>
+
+                <spirax-panel id="condensateReturnPanel"
+                              [(expanded)]="structure?.boiler_house_parameters.panels.feedwater_and_condensate.panels.condensate_return.status"
+                              [title]="'CONDENSATE_RETURN' | translate" background="#EDF2F4">
+                  <div class="row" body>
+                    <div class="col-md-6 border-r-md">
+                      <spirax-toggle formControlName="isCondensateReturnKnown"
+                                     (valueChange)="toggleInput($event && 'percentageOfCondensateReturn', !$event && ['percentageOfCondensateReturn', 'volumeOfCondensateReturn'], null)"
+                                     label="IS_CONDENSATE_RETURN_KNOWN">
+                        <div yes>
+                          <input [label]="'PERCENTAGE_OF_CONDENSATE_RETURN' | translate"
+                                 [unitsStr]="['%']"
+                                 (radioClick)="toggleInput('percentageOfCondensateReturn', 'volumeOfCondensateReturn', null)"
+                                 [value]="getValue('percentageOfCondensateReturn') | decimalPlace: 2"
+                                 radio
+                                 formControlName="percentageOfCondensateReturn"
+                                 type="number"
+                                 spirax-input
+                                 required>
+                          <input [label]="'VOLUME_OF_CONDENSATE_RETURN' | translate"
+                                 [unitsStr]="[sizingUnits['BoilerHouseVolumeUnits']?.unit, 'yr']"
+                                 (radioClick)="toggleInput('volumeOfCondensateReturn', 'percentageOfCondensateReturn', null)"
+                                 [value]="getValue('volumeOfCondensateReturn') | decimalPlace: sizingUnits['BoilerHouseVolumeUnits']?.decimal"
+                                 radio
+                                 formControlName="volumeOfCondensateReturn"
+                                 type="number"
+                                 disabled
+                                 spirax-input
+                                 required>
+                        </div>
+                      </spirax-toggle>
+                    </div>
+                    <div class="col-md-6">
+                      <input [label]="'TEMPERATURE_OF_CONDENSATE_RETURN' | translate"
+                             [unitsStr]="[sizingUnits['TemperatureUnit']?.unit]"
+                             [value]="getValue('temperatureOfCondensateReturn') | decimalPlace: sizingUnits['TemperatureUnit']?.decimal"
+                             formControlName="temperatureOfCondensateReturn"
+                             type="number"
+                             spirax-input
+                             required>
+
+                      <input [label]="'TDS_OF_CONDENSATE_RETURN' | translate"
+                             [unitsStr]="[sizingUnits['BoilerHouseTDSUnits']?.unit]"
+                             [value]="getValue('tdsOfCondensateReturn') | decimalPlace: sizingUnits['BoilerHouseTDSUnits']?.decimal"
+                             formControlName="tdsOfCondensateReturn"
+                             type="number"
+                             spirax-input
+                             required>
+                    </div>
+                  </div>
+                </spirax-panel>
+              </tab>
+            </tabset>
           </div>
-        </spirax-panel>
 
-        <ng-template #cO2EmissionTooltip>
-          <h6>{{'CARBON_TAX_LEVY_COST_PER_UNIT' | translate}}</h6>
-          <p>{{'IF_CARBON_TAX_IS_PART_OF_THE_FUEL_BILL_IT_CAN_EITHER_BE_BROKEN_OUT_TO_ALLOW_THE_COST_OF_CO2_EMISSIONS_TO_BE_CALCULATED_OR_CAN_HELP' | translate}}</p>
-        </ng-template>
-        <spirax-panel id="CO2EmissionPanel"
-                   [(expanded)]="fieldsTree.utility_parameters.panels.co2_emission.status"
-                   title="CO2 Emission"
-                   [titleTooltip]="cO2EmissionTooltip"
-                   background="#EDF2F4">
-          <div body>
-            <spirax-toggle [formControlName]="fields.isCo2OrCarbonEmissionsTaxed.formControlName"
-                         [label]="fields.isCo2OrCarbonEmissionsTaxed.label">
-              <ng-container yes>
-                <form-input [formControlName]="fields.carbonTaxLevyCostPerUnit.formControlName"
-                            [decimalPlaces]="9"
-                            [label]="fields.carbonTaxLevyCostPerUnit.label"
-                            [unit-names]="fields.carbonTaxLevyCostPerUnit.unitNames"
-                            [unit-types]="fields.carbonTaxLevyCostPerUnit.unitTypes"
-                            [unit-translations]="fields.carbonTaxLevyCostPerUnit.translations"
-                            [unit-controls]="fields.carbonTaxLevyCostPerUnit.controlNames"
-                            [module-group-id]="moduleGroupId"
-                            [(filled)]="fields.carbonTaxLevyCostPerUnit.filled"
-                            [required]="isRequired('carbonTaxLevyCostPerUnit')"
-                            [groupControls]="['costOfCo2PerUnitMass']"
-                            group="emissions-taxed"></form-input>
-
-                <form-input [formControlName]="fields.costOfCo2PerUnitMass.formControlName"
-                            [decimalPlaces]="9"
-                            [label]="fields.costOfCo2PerUnitMass.label"
-                            [unit-names]="fields.costOfCo2PerUnitMass.unitNames"
-                            [unit-types]="fields.costOfCo2PerUnitMass.unitTypes"
-                            [unit-translations]="fields.costOfCo2PerUnitMass.translations"
-                            [unit-controls]="fields.costOfCo2PerUnitMass.controlNames"
-                            [module-group-id]="moduleGroupId"
-                            [(filled)]="fields.costOfCo2PerUnitMass.filled"
-                            [required]="isRequired('costOfCo2PerUnitMass')"
-                            [groupControls]="['carbonTaxLevyCostPerUnit']"
-                            group="emissions-taxed"></form-input>
-              </ng-container>
-            </spirax-toggle>
+          <div class="col-md-2"></div>
+          <div class="col-md-8">
+            <app-boiler-scheme></app-boiler-scheme>
           </div>
-        </spirax-panel>
+        </div>
       </div>
+    </form>
+  </spirax-panel>
+</ng-container>
 
-      <div class="col-md-6">
-        <ng-template #waterTooltip>
-          <div style="text-align: left;">
-            <h6>{{'IS_BOILER_HOUSE_WATER_MEASURED' | translate}}</h6>
-            <p>{{'IS_ALL_WATER_ENTERING_THE_BOILER_HOUSE_AS_PART_OF_THE_STEAM_GENERATION_PROCESS_MEASSURED_HELP' | translate}}</p>
-            <h6>{{'WATER_CONSUMPTION_PER_YEAR' | translate}}</h6>
-            <p>{{'ALL_WATER_ENTERING_THE_BOILER_HOUSE_AS_PART_OF_THE_STEAM_GENERATION_PROCESS_HELP' | translate}}</p>
-          </div>
-        </ng-template>
-        <spirax-panel [(expanded)]="fieldsTree.utility_parameters.panels.water.status"
-                   id="WaterPanel"
-                   title="Water"
-                   [titleTooltip]="waterTooltip"
-                   background="#EDF2F4">
-          <div body>
-            <form-input [formControlName]="fields.costOfWaterPerUnit.formControlName"
-                        [label]="fields.costOfWaterPerUnit.label"
-                        [unit-names]="fields.costOfWaterPerUnit.unitNames"
-                        [unit-types]="fields.costOfWaterPerUnit.unitTypes"
-                        [unit-translations]="fields.costOfWaterPerUnit.translations"
-                        [unit-controls]="fields.costOfWaterPerUnit.controlNames"
-                        [required]="isRequired('costOfWaterPerUnit')"
-                        [(filled)]="fields.costOfWaterPerUnit.filled"></form-input>
-
-            <spirax-toggle [formControlName]="fields.boilerHouseWaterQtyPerYearIsKnown.formControlName"
-                         [label]="fields.boilerHouseWaterQtyPerYearIsKnown.label">
-              <ng-container yes>
-                <form-input [formControlName]="fields.costOfWaterPerYear.formControlName"
-                            [label]="fields.costOfWaterPerYear.label"
-                            [unit-names]="fields.costOfWaterPerYear.unitNames"
-                            [unit-types]="fields.costOfWaterPerYear.unitTypes"
-                            [unit-translations]="fields.costOfWaterPerYear.translations"
-                            [unit-controls]="fields.costOfWaterPerYear.controlNames"
-                            [required]="isRequired('costOfWaterPerYear')"
-                            [(filled)]="fields.costOfWaterPerYear.filled"
-                            [groupControls]="['waterConsumptionPerHour', 'waterConsumptionPerYear']"
-                            unit="/y"
-                            group="isWaterEnteringBoilerHouseMeasured"></form-input>
-
-                <form-input [formControlName]="fields.waterConsumptionPerHour.formControlName"
-                            [label]="fields.waterConsumptionPerHour.label"
-                            [unit-names]="fields.waterConsumptionPerHour.unitNames"
-                            [unit-types]="fields.waterConsumptionPerHour.unitTypes"
-                            [unit-translations]="fields.waterConsumptionPerHour.translations"
-                            [unit-controls]="fields.waterConsumptionPerHour.controlNames"
-                            [required]="isRequired('waterConsumptionPerHour')"
-                            [(filled)]="fields.waterConsumptionPerHour.filled"
-                            [groupControls]="['costOfWaterPerYear', 'waterConsumptionPerYear']"
-                            unit="/h"
-                            group="isWaterEnteringBoilerHouseMeasured"></form-input>
-
-                <form-input [formControlName]="fields.waterConsumptionPerYear.formControlName"
-                            [label]="fields.waterConsumptionPerYear.label"
-                            [unit-names]="fields.waterConsumptionPerYear.unitNames"
-                            [unit-types]="fields.waterConsumptionPerYear.unitTypes"
-                            [unit-translations]="fields.waterConsumptionPerYear.translations"
-                            [unit-controls]="fields.waterConsumptionPerYear.controlNames"
-                            [required]="isRequired('waterConsumptionPerYear')"
-                            [(filled)]="fields.waterConsumptionPerYear.filled"
-                            [groupControls]="['costOfWaterPerYear', 'waterConsumptionPerHour']"
-                            unit="/y"
-                            group="isWaterEnteringBoilerHouseMeasured"></form-input>
-              </ng-container>
-            </spirax-toggle>
-          </div>
-        </spirax-panel>
-
-        <ng-template #waterChemicalsTooltip>
-          <div style="text-align: left;">
-            <h6>{{'IS_CHEMICAL_COSTS_PER_YEAR_KNOWN' | translate}}</h6>
-            <p>{{'COST_OF_WATER_TREATMENT_CHEMICALS_ONLY_THIS_DOES_NOT_INCLUDE_SERVICE_AGREEMENTS_OR_MAINTENANCE_COSTS_HELP' | translate}}</p>
-
-            <h6>{{'TOTAL_CHEMICAL_COST_PER_YEAR' | translate}}</h6>
-            <p>{{'COST_OF_WATER_TREATMENT_CHEMICALS_FSLASH_UNIT_OF_BOILER_WATER_BEING_TREATED_FOR_EXAMPLE_0_15_FSLASH_M3_BOILER_WATER_THIS_HELP' | translate}}</p>
-
-            <h6>{{'O2_SCAVENGING_CHEMICALS_COST_SAVINGS' | translate}}</h6>
-            <p>{{'THIS_IS_USED_TO_CALCULATE_ANY_CHEMICAL_SAVINGS_FROM_INCREASING_FEEDWATER_TEMPERATURE_USING_DIRECT_STEAM_INJECTION_HELP' | translate}}</p>
-          </div>
-        </ng-template>
-        <spirax-panel [(expanded)]="fieldsTree.utility_parameters.panels.water_treatment_chemicals.status"
-                   id="waterTreatmentChemicalsPanel"
-                   title="Water treatment chemicals"
-                   [titleTooltip]="waterChemicalsTooltip"
-                   background="#EDF2F4">
-          <div body>
-            <spirax-toggle [formControlName]="fields.boilerWaterTreatmentChemicalCostsIsKnown.formControlName"
-                         [label]="fields.boilerWaterTreatmentChemicalCostsIsKnown.label">
-              <ng-container yes>
-                <form-input [formControlName]="fields.totalChemicalCostPerYear.formControlName"
-                            [label]="fields.totalChemicalCostPerYear.label"
-                            [unit-names]="fields.totalChemicalCostPerYear.unitNames"
-                            [unit-types]="fields.totalChemicalCostPerYear.unitTypes"
-                            [unit-translations]="fields.totalChemicalCostPerYear.translations"
-                            [unit-controls]="fields.totalChemicalCostPerYear.controlNames"
-                            [required]="isRequired('totalChemicalCostPerYear')"
-                            [(filled)]="fields.totalChemicalCostPerYear.filled"
-                            unit="/y"></form-input>
-                <form-input [formControlName]="fields.o2ScavengingChemicalsCostSavings.formControlName"
-                            [label]="fields.o2ScavengingChemicalsCostSavings.label"
-                            [unit-names]="fields.o2ScavengingChemicalsCostSavings.unitNames"
-                            [unit-types]="fields.o2ScavengingChemicalsCostSavings.unitTypes"
-                            [unit-translations]="fields.o2ScavengingChemicalsCostSavings.translations"
-                            [unit-controls]="fields.o2ScavengingChemicalsCostSavings.controlNames"
-                            [required]="fields.o2ScavengingChemicalsCostSavings.required"
-                            [(filled)]="fields.o2ScavengingChemicalsCostSavings.filled"
-                            unit="/y"></form-input>
-              </ng-container>
-            </spirax-toggle>
-          </div>
-        </spirax-panel>
-
-        <ng-template #waterEffluentTooltip>
-          <h6>{{'IS_COOLING_WATER_USED' | translate}}</h6>
-          <p>{{'IF_BLOWDOWN_VESSEL_SELECTED_AND_THE_CHECK_BOX_IS_COOLING_WATER_USED_IS_TICKED_IT_WILL_IMPACT_ON_BOILER_HOUSE_WATER_CONSUMPTIO_HELP' | translate}}</p>
-        </ng-template>
-        <spirax-panel [(expanded)]="fieldsTree.utility_parameters.panels.water_effluent.status"
-                   id="waterEffluentPanel"
-                   title="Water effluent"
-                   [titleTooltip]="waterEffluentTooltip"
-                   background="#EDF2F4">
-          <div body>
-            <form-input [formControlName]="fields.costOfEffluentPerUnit.formControlName"
-                        [decimalPlaces]="9"
-                        [label]="fields.costOfEffluentPerUnit.label"
-                        [unit-names]="fields.costOfEffluentPerUnit.unitNames"
-                        [unit-types]="fields.costOfEffluentPerUnit.unitTypes"
-                        [unit-translations]="fields.costOfEffluentPerUnit.translations"
-                        [unit-controls]="fields.costOfEffluentPerUnit.controlNames"
-                        [required]="isRequired('costOfEffluentPerUnit')"
-                        [(filled)]="fields.costOfEffluentPerUnit.filled"></form-input>
-          </div>
-        </spirax-panel>
-      </div>
-    </div>
-  </form>
-</spirax-panel>
-
-<spirax-panel [(expanded)]="fieldsTree.boiler_house_parameters.status"
-           [showSeparator]="false"
-           [invalid]="checkBoilerHouseParametersIsValid().isInvalid"
-           [title]="'BOILER_HOUSE_PARAMETERS' | translate"
-           id="BoilerHouseParameters"
-           titleSize="24px">
-  <form body class="container-fluid" [formGroup]="formGroup">
-    <div class="row" [formGroupName]="formGroupKey">
-      <div class="col-md-12">
-        <tabset type="pills" class="sgaTabs">
-          <tab [heading]="'BOILER' | translate"
-               [active]="fieldsTree.boiler_house_parameters.panels.boiler.status"
-               [ngClass]="{invalid: checkBoilerHouseParametersIsValid().boiler}"
-               [customClass]="checkBoilerHouseParametersIsValid().boiler && ' invalid'">
-            <spirax-panel id="boilerParametersPanel"
-                       [(expanded)]="fieldsTree.boiler_house_parameters.panels.boiler.panels.boiler_parameters.status"
-                       [title]="'BOILER_PARAMETERS' | translate"
-                       background="#EDF2F4">
-              <div body class="row">
-                <div class="col-md-6 border-r-md">
-                  <spirax-toggle [formControlName]="fields.isSuperheatedSteam.formControlName"
-                               (valueChange)="focusOnField('boilerSteamTemperature', $event);"
-                               [label]="fields.isSuperheatedSteam.label"></spirax-toggle>
-
-                  <spirax-toggle [formControlName]="fields.isSteamFlowMeasured.formControlName"
-                               [label]="fields.isSteamFlowMeasured.label">
-                    <ng-container yes>
-                      <form-input [formControlName]="fields.boilerSteamGeneratedPerHour.formControlName"
-                                  [label]="fields.boilerSteamGeneratedPerHour.label"
-                                  [unit-names]="fields.boilerSteamGeneratedPerHour.unitNames"
-                                  [unit-types]="fields.boilerSteamGeneratedPerHour.unitTypes"
-                                  [unit-translations]="fields.boilerSteamGeneratedPerHour.translations"
-                                  [unit-controls]="fields.boilerSteamGeneratedPerHour.controlNames"
-                                  [required]="isRequired('boilerSteamGeneratedPerHour')"
-                                  [(filled)]="fields.boilerSteamGeneratedPerHour.filled"
-                                  [groupControls]="['boilerSteamGeneratedPerYear']"
-                                  group="boilerSteamGeneratedTime"></form-input>
-
-                      <form-input [formControlName]="fields.boilerSteamGeneratedPerYear.formControlName"
-                                  [label]="fields.boilerSteamGeneratedPerYear.label"
-                                  [unit-names]="fields.boilerSteamGeneratedPerYear.unitNames"
-                                  [unit-types]="fields.boilerSteamGeneratedPerYear.unitTypes"
-                                  [unit-translations]="fields.boilerSteamGeneratedPerYear.translations"
-                                  [unit-controls]="fields.boilerSteamGeneratedPerYear.controlNames"
-                                  [required]="isRequired('boilerSteamGeneratedPerHour')"
-                                  [(filled)]="fields.boilerSteamGeneratedPerYear.filled"
-                                  [groupControls]="['boilerSteamGeneratedPerHour']"
-                                  group="boilerSteamGeneratedTime"></form-input>
-                    </ng-container>
-                  </spirax-toggle>
-                </div>
-                <div class="col-md-6">
-                  <form-input [formControlName]="fields.boilerSteamTemperature.formControlName"
-                              [label]="fields.boilerSteamTemperature.label"
-                              [unit-names]="fields.boilerSteamTemperature.unitNames"
-                              [unit-types]="fields.boilerSteamTemperature.unitTypes"
-                              [unit-translations]="fields.boilerSteamTemperature.translations"
-                              [unit-controls]="fields.boilerSteamTemperature.controlNames"
-                              [required]="isRequired('boilerSteamTemperature')"
-                              (inputChange)="inputChangeHandle($event)"
-                              [(filled)]="fields.boilerSteamTemperature.filled"></form-input>
-
-                  <form-input [formControlName]="fields.boilerSteamPressure.formControlName"
-                              (inputChange)="inputChangeHandle($event)"
-                              [label]="fields.boilerSteamPressure.label"
-                              [unit-names]="fields.boilerSteamPressure.unitNames"
-                              [unit-types]="fields.boilerSteamPressure.unitTypes"
-                              [unit-translations]="fields.boilerSteamPressure.translations"
-                              [unit-controls]="fields.boilerSteamPressure.controlNames"
-                              [required]="isRequired('boilerSteamPressure')"
-                              [(filled)]="fields.boilerSteamPressure.filled"></form-input>
-
-                  <spirax-toggle [formControlName]="fields.isEconomizerPresent.formControlName"
-                               [label]="fields.isEconomizerPresent.label"
-                               (valueChange)="calculateEfficiency.emit({isEconomizerPresent: $event || false, inputFuelId: formGroup.get(formGroupKey+'.inputFuelId').value})"
-                  ></spirax-toggle>
-
-                  <form-input [formControlName]="fields.boilerEfficiency.formControlName"
-                              [label]="fields.boilerEfficiency.label"
-                              [unit-names]="fields.boilerEfficiency.unitNames"
-                              [unit-types]="fields.boilerEfficiency.unitTypes"
-                              [unit-translations]="fields.boilerEfficiency.translations"
-                              [unit-controls]="fields.boilerEfficiency.controlNames"
-                              [required]="isRequired('boilerEfficiency')"
-                              [(filled)]="fields.boilerEfficiency.filled"
-                              unit="%"></form-input>
-                </div>
-              </div>
-            </spirax-panel>
-          </tab>
-          <tab [heading]="'TDS_BLOWDOWN' | translate"
-               [active]="fieldsTree.boiler_house_parameters.panels.tds_blowdown.status"
-               [customClass]="checkBoilerHouseParametersIsValid().tdsBlowdown && ' invalid'">
-            <spirax-panel id="blowdownEquipmentPanel"
-                       [(expanded)]="fieldsTree.boiler_house_parameters.panels.tds_blowdown.panels.blowdown_equipment.status"
-                       [title]="'BLOWDOWN_EQUIPMENT' | translate"
-                       background="#EDF2F4">
-              <div class="row" body>
-                <div class="col-md-4 border-r-md">
-                  <spirax-toggle [formControlName]="fields.isBlowdownVesselPresent.formControlName"
-                               [label]="fields.isBlowdownVesselPresent.label"></spirax-toggle>
-
-                  <spirax-toggle [formControlName]="fields.isCoolingWaterUsed.formControlName"
-                               [label]="fields.isCoolingWaterUsed.label"></spirax-toggle>
-                </div>
-                <div class="col-md-4 border-r-md">
-                  <spirax-toggle [formControlName]="fields.isAutoTdsControlPResent.formControlName"
-                               [label]="fields.isAutoTdsControlPResent.label"></spirax-toggle>
-
-                  <spirax-toggle [formControlName]="fields.isFlashVesselPresent.formControlName"
-                               [label]="fields.isFlashVesselPresent.label"></spirax-toggle>
-                </div>
-                <div class="col-md-4">
-                  <spirax-toggle [formControlName]="fields.isHeatExchangerPresent.formControlName"
-                               [label]="fields.isHeatExchangerPresent.label"
-                               (valueChange)="changeIsHeatExchangerPresent($event)">
-                    <form-input yes
-                                [formControlName]="fields.waterTemperatureLeavingHeatExchanger.formControlName"
-                                [label]="fields.waterTemperatureLeavingHeatExchanger.label"
-                                [unit-names]="fields.waterTemperatureLeavingHeatExchanger.unitNames"
-                                [unit-types]="fields.waterTemperatureLeavingHeatExchanger.unitTypes"
-                                [unit-translations]="fields.waterTemperatureLeavingHeatExchanger.translations"
-                                [unit-controls]="fields.waterTemperatureLeavingHeatExchanger.controlNames"
-                                [required]="isRequired('waterTemperatureLeavingHeatExchanger')"
-                                [(filled)]="fields.waterTemperatureLeavingHeatExchanger.filled"></form-input>
-                  </spirax-toggle>
-                </div>
-              </div>
-            </spirax-panel>
-
-            <spirax-panel id="tdsBlowdownParametersPanel"
-                       [(expanded)]="fieldsTree.boiler_house_parameters.panels.tds_blowdown.panels.tds_blowdown_parameters.status"
-                       [title]="'TDS_BLOWDOWN_PARAMETERS' | translate"
-                       background="#EDF2F4">
-              <div class="row" body>
-                <div class="col-md-4 border-r-md">
-                  <form-input [formControlName]="fields.tdsOfFeedwaterInFeedtank.formControlName"
-                              [label]="fields.tdsOfFeedwaterInFeedtank.label"
-                              [unit-names]="fields.tdsOfFeedwaterInFeedtank.unitNames"
-                              [unit-types]="fields.tdsOfFeedwaterInFeedtank.unitTypes"
-                              [unit-translations]="fields.tdsOfFeedwaterInFeedtank.translations"
-                              [unit-controls]="fields.tdsOfFeedwaterInFeedtank.controlNames"
-                              [value]="formGroup.get(formGroupKey+'.tdsOfFeedwaterInFeedtank').value"
-                              [required]="isRequired('tdsOfFeedwaterInFeedtank')"
-                              [(filled)]="fields.tdsOfFeedwaterInFeedtank.filled"></form-input>
-                </div>
-                <div class="col-md-4 border-r-md">
-                  <form-input [formControlName]="fields.boilerAverageTds.formControlName"
-                              [label]="fields.boilerAverageTds.label"
-                              [unit-names]="fields.boilerAverageTds.unitNames"
-                              [unit-types]="fields.boilerAverageTds.unitTypes"
-                              [unit-translations]="fields.boilerAverageTds.translations"
-                              [unit-controls]="fields.boilerAverageTds.controlNames"
-                              [required]="isRequired('boilerAverageTds')"
-                              [(filled)]="fields.boilerAverageTds.filled"></form-input>
-                </div>
-                <div class="col-md-4">
-                  <form-input [formControlName]="fields.boilerMaxTds.formControlName"
-                              [label]="fields.boilerMaxTds.label"
-                              [unit-names]="fields.boilerMaxTds.unitNames"
-                              [unit-types]="fields.boilerMaxTds.unitTypes"
-                              [unit-translations]="fields.boilerMaxTds.translations"
-                              [unit-controls]="fields.boilerMaxTds.controlNames"
-                              [required]="isRequired('boilerMaxTds')"
-                              [(filled)]="fields.boilerMaxTds.filled"></form-input>
-                </div>
-              </div>
-            </spirax-panel>
-          </tab>
-          <tab [heading]="'WATER_TREATMENT' | translate"
-               [active]="fieldsTree.boiler_house_parameters.panels.water_treatment.status"
-               [customClass]="checkBoilerHouseParametersIsValid().waterTreatment && ' invalid'">
-            <spirax-panel id="makeUpWaterPanel"
-                       [(expanded)]="fieldsTree.boiler_house_parameters.panels.water_treatment.panels.make_up_water.status"
-                       [title]="'MAKE_UP_WATER' | translate"
-                       background="#EDF2F4">
-              <div class="row" body>
-                <div class="col-md-6">
-                  <spirax-toggle [formControlName]="fields.isMakeUpWaterMonitored.formControlName"
-                               [label]="fields.isMakeUpWaterMonitored.label">
-                    <form-input yes
-                                [formControlName]="fields.temperatureOfMakeupWater.formControlName"
-                                [label]="fields.temperatureOfMakeupWater.label"
-                                [unit-names]="fields.temperatureOfMakeupWater.unitNames"
-                                [unit-types]="fields.temperatureOfMakeupWater.unitTypes"
-                                [unit-translations]="fields.temperatureOfMakeupWater.translations"
-                                [unit-controls]="fields.temperatureOfMakeupWater.controlNames"
-                                [required]="fields.temperatureOfMakeupWater.required"
-                                [(filled)]="fields.temperatureOfMakeupWater.filled"></form-input>
-                  </spirax-toggle>
-                </div>
-                <div class="col-md-6 border-l-md">
-                  <form-input [formControlName]="fields.makeupWaterAmountPerHour.formControlName"
-                              [label]="fields.makeupWaterAmountPerHour.label"
-                              [unit-names]="fields.makeupWaterAmountPerHour.unitNames"
-                              [unit-types]="fields.makeupWaterAmountPerHour.unitTypes"
-                              [unit-translations]="fields.makeupWaterAmountPerHour.translations"
-                              [unit-controls]="fields.makeupWaterAmountPerHour.controlNames"
-                              [required]="isRequired('makeupWaterAmountPerHour')"
-                              [(filled)]="fields.makeupWaterAmountPerHour.filled"
-                              [groupControls]="['makeupWaterAmountPerYear']"
-                              [defaultChecked]="true"
-                              group="makeupWaterAmount"></form-input>
-                  <form-input [formControlName]="fields.makeupWaterAmountPerYear.formControlName"
-                              [label]="fields.makeupWaterAmountPerYear.label"
-                              [unit-names]="fields.makeupWaterAmountPerYear.unitNames"
-                              [unit-types]="fields.makeupWaterAmountPerYear.unitTypes"
-                              [unit-translations]="fields.makeupWaterAmountPerYear.translations"
-                              [unit-controls]="fields.makeupWaterAmountPerYear.controlNames"
-                              [required]="isRequired('makeupWaterAmountPerYear')"
-                              [(filled)]="fields.makeupWaterAmountPerYear.filled"
-                              [groupControls]="['makeupWaterAmountPerHour']"
-                              group="makeupWaterAmount"></form-input>
-                </div>
-              </div>
-            </spirax-panel>
-
-            <spirax-panel id="waterTreatmentParametersPanel"
-                       [(expanded)]="fieldsTree.boiler_house_parameters.panels.water_treatment.panels.water_treatment_parameters.status"
-                       [title]="'WATER_TREATMENT_PARAMETERS' | translate"
-                       background="#EDF2F4">
-              <div class="row" body>
-                <div class="col-md-4">
-                  <form-list formControlName="waterTreatmentMethod"
-                             enumeration-name="WaterTreatmentMethodList_BoilerHouseInput"
-                             (on-change)="changeWaterTreatment.emit($event)"
-                             label="WATER_TREATMENT_METHOD"></form-list>
-                </div>
-                <div class="col-md-4">
-                  <form-input [formControlName]="fields.percentageWaterRejection.formControlName"
-                              [label]="fields.percentageWaterRejection.label"
-                              [unit-names]="fields.percentageWaterRejection.unitNames"
-                              [unit-types]="fields.percentageWaterRejection.unitTypes"
-                              [unit-translations]="fields.percentageWaterRejection.translations"
-                              [unit-controls]="fields.percentageWaterRejection.controlNames"
-                              [required]="isRequired('percentageWaterRejection')"
-                              [(filled)]="fields.percentageWaterRejection.filled"
-                              unit="%"></form-input>
-                </div>
-                <div class="col-md-4">
-                  <form-input [formControlName]="fields.tdsOfMakeupWater.formControlName"
-                              [label]="fields.tdsOfMakeupWater.label"
-                              [unit-names]="fields.tdsOfMakeupWater.unitNames"
-                              [unit-types]="fields.tdsOfMakeupWater.unitTypes"
-                              [unit-translations]="fields.tdsOfMakeupWater.translations"
-                              [unit-controls]="fields.tdsOfMakeupWater.controlNames"
-                              [required]="isRequired('tdsOfMakeupWater')"
-                              [(filled)]="fields.tdsOfMakeupWater.filled"></form-input>
-                </div>
-              </div>
-            </spirax-panel>
-          </tab>
-          <tab [heading]="'FEEDWATER_AND_CONDENSATE' | translate"
-               [active]="fieldsTree.boiler_house_parameters.panels.feedwater_and_condensate.status"
-               [customClass]="checkBoilerHouseParametersIsValid().feedwaterAndCondensate && ' invalid'">
-            <spirax-panel id="deaeratorTypePanel"
-                       [(expanded)]="fieldsTree.boiler_house_parameters.panels.feedwater_and_condensate.panels.deaerator_type.status"
-                       [title]="'DEAERATOR_TYPE' | translate" background="#EDF2F4">
-              <div class="row" body>
-                <div class="col-md-4">
-                  <spirax-form-radio-group [inputValue]="true"
-                              [formControlName]="fields.atmosphericDeaerator.formControlName"
-                              [label]="fields.atmosphericDeaerator.label"
-                              [defaultChecked]="formGroup.get(formGroupKey+'.atmosphericDeaerator').value"
-                              name="deaeratorType">
-                    <img src="/assets/img/steam_generation/deaerator_type_1.png" alt="deaerator_type_1">
-                  </spirax-form-radio-group>
-                </div>
-                <div class="col-md-4">
-                  <spirax-form-radio-group [inputValue]="true"
-                              [formControlName]="fields.pressurisedDeaerator.formControlName"
-                              [label]="fields.pressurisedDeaerator.label"
-                              [defaultChecked]="formGroup.get(formGroupKey+'.pressurisedDeaerator').value"
-                              (valueChange)="setPressureDeaerator($event)"
-                              name="deaeratorType">
-                    <img src="/assets/img/steam_generation/boiler-scheme/images/PressurisedDAImgCrop.png"
-                         alt="deaerator_type_1">
-                  </spirax-form-radio-group>
-                </div>
-              </div>
-            </spirax-panel>
-
-            <spirax-panel id="boilerFeedwaterPanel"
-                       [(expanded)]="fieldsTree.boiler_house_parameters.panels.feedwater_and_condensate.panels.boiler_feedwater.status"
-                       [title]="'BOILER_FEEDWATER' | translate"
-                       background="#EDF2F4">
-              <div class="row" body>
-                <div class="col-md-4 border-r-md">
-                  <spirax-toggle [formControlName]="fields.isFeedWaterMeasured.formControlName"
-                               [label]="fields.isFeedWaterMeasured.label">
-                    <ng-container yes>
-                      <form-input [formControlName]="fields.boilerFeedwaterConsumptionPerHour.formControlName"
-                                  [label]="fields.boilerFeedwaterConsumptionPerHour.label"
-                                  [unit-names]="fields.boilerFeedwaterConsumptionPerHour.unitNames"
-                                  [unit-types]="fields.boilerFeedwaterConsumptionPerHour.unitTypes"
-                                  [unit-translations]="fields.boilerFeedwaterConsumptionPerHour.translations"
-                                  [unit-controls]="fields.boilerFeedwaterConsumptionPerHour.controlNames"
-                                  [required]="isRequired('boilerFeedwaterConsumptionPerYear')"
-                                  [(filled)]="fields.boilerFeedwaterConsumptionPerHour.filled"
-                                  [groupControls]="['boilerFeedwaterConsumptionPerYear']"
-                                  group="boilerFeedwaterConsumptionGroup"></form-input>
-
-                      <form-input [formControlName]="fields.boilerFeedwaterConsumptionPerYear.formControlName"
-                                  [label]="fields.boilerFeedwaterConsumptionPerYear.label"
-                                  [unit-names]="fields.boilerFeedwaterConsumptionPerYear.unitNames"
-                                  [unit-types]="fields.boilerFeedwaterConsumptionPerYear.unitTypes"
-                                  [unit-translations]="fields.boilerFeedwaterConsumptionPerYear.translations"
-                                  [unit-controls]="fields.boilerFeedwaterConsumptionPerYear.controlNames"
-                                  [required]="isRequired('boilerFeedwaterConsumptionPerHour')"
-                                  [(filled)]="fields.boilerFeedwaterConsumptionPerYear.filled"
-                                  [groupControls]="['boilerFeedwaterConsumptionPerHour']"
-                                  unit="/y"
-                                  group="boilerFeedwaterConsumptionGroup"></form-input>
-                    </ng-container>
-                  </spirax-toggle>
-                </div>
-                <div class="col-md-4 border-r-md">
-                  <form-input [formControlName]="fields.temperatureOfFeedtank.formControlName"
-                              [label]="fields.temperatureOfFeedtank.label"
-                              [unit-names]="fields.temperatureOfFeedtank.unitNames"
-                              [unit-types]="fields.temperatureOfFeedtank.unitTypes"
-                              [unit-translations]="fields.temperatureOfFeedtank.translations"
-                              [unit-controls]="fields.temperatureOfFeedtank.controlNames"
-                              [required]="isRequired('temperatureOfFeedtank')"
-                              [(filled)]="fields.temperatureOfFeedtank.filled"></form-input>
-
-                  <form-input [formControlName]="fields.tdsOfFeedwaterInFeedtank.formControlName"
-                              [label]="fields.tdsOfFeedwaterInFeedtank.label"
-                              [unit-names]="fields.tdsOfFeedwaterInFeedtank.unitNames"
-                              [unit-types]="fields.tdsOfFeedwaterInFeedtank.unitTypes"
-                              [unit-translations]="fields.tdsOfFeedwaterInFeedtank.translations"
-                              [unit-controls]="fields.tdsOfFeedwaterInFeedtank.controlNames"
-                              [required]="isRequired('tdsOfFeedwaterInFeedtank')"
-                              [value]="formGroup.get(formGroupKey+'.tdsOfFeedwaterInFeedtank').value"
-                              [(filled)]="fields.tdsOfFeedwaterInFeedtank.filled"
-                              [readonly]="true"></form-input>
-
-                  <spirax-toggle [formControlName]="fields.areChemicalsAddedDirectlyToFeedtank.formControlName"
-                               [label]="fields.areChemicalsAddedDirectlyToFeedtank.label"></spirax-toggle>
-                </div>
-                <div class="col-md-4">
-                  <spirax-toggle [formControlName]="fields.isDsiPresent.formControlName"
-                               [label]="fields.isDsiPresent.label">
-                    <form-input yes
-                                [formControlName]="fields.pressureOfSteamSupplyingDsi.formControlName"
-                                [label]="fields.pressureOfSteamSupplyingDsi.label"
-                                [unit-names]="fields.pressureOfSteamSupplyingDsi.unitNames"
-                                [unit-types]="fields.pressureOfSteamSupplyingDsi.unitTypes"
-                                [unit-translations]="fields.pressureOfSteamSupplyingDsi.translations"
-                                [unit-controls]="fields.pressureOfSteamSupplyingDsi.controlNames"
-                                [required]="isRequired('pressureOfSteamSupplyingDsi')"
-                                [(filled)]="fields.pressureOfSteamSupplyingDsi.filled"></form-input>
-                  </spirax-toggle>
-
-                  <form-input [formControlName]="fields.pressureOfFeedtank.formControlName"
-                              [label]="fields.pressureOfFeedtank.label"
-                              [unit-names]="fields.pressureOfFeedtank.unitNames"
-                              [unit-types]="fields.pressureOfFeedtank.unitTypes"
-                              [unit-translations]="fields.pressureOfFeedtank.translations"
-                              [unit-controls]="fields.pressureOfFeedtank.controlNames"
-                              [required]="isRequired('pressureOfFeedtank')"
-                              [(filled)]="fields.pressureOfFeedtank.filled"
-                  ></form-input>
-                </div>
-              </div>
-            </spirax-panel>
-
-            <spirax-panel id="condensateReturnPanel"
-                       [(expanded)]="fieldsTree.boiler_house_parameters.panels.feedwater_and_condensate.panels.condensate_return.status"
-                       [title]="'CONDENSATE_RETURN' | translate"
-                       background="#EDF2F4">
-              <div class="row" body>
-                <div class="col-md-6 border-r-md">
-                  <spirax-toggle [formControlName]="fields.isCondensateReturnKnown.formControlName"
-                               [label]="fields.isCondensateReturnKnown.label">
-                    <ng-container yes>
-                      <form-input [formControlName]="fields.percentageOfCondensateReturn.formControlName"
-                                  [label]="fields.percentageOfCondensateReturn.label"
-                                  [unit-names]="fields.percentageOfCondensateReturn.unitNames"
-                                  [unit-types]="fields.percentageOfCondensateReturn.unitTypes"
-                                  [unit-translations]="fields.percentageOfCondensateReturn.translations"
-                                  [unit-controls]="fields.percentageOfCondensateReturn.controlNames"
-                                  [required]="isRequired('percentageOfCondensateReturn')"
-                                  [(filled)]="fields.percentageOfCondensateReturn.filled"
-                                  [groupControls]="['volumeOfCondensateReturn']"
-                                  unit="%"
-                                  group="isCondensateReturnKnown"></form-input>
-
-                      <form-input [formControlName]="fields.volumeOfCondensateReturn.formControlName"
-                                  [label]="fields.volumeOfCondensateReturn.label"
-                                  [unit-names]="fields.volumeOfCondensateReturn.unitNames"
-                                  [unit-types]="fields.volumeOfCondensateReturn.unitTypes"
-                                  [unit-translations]="fields.volumeOfCondensateReturn.translations"
-                                  [unit-controls]="fields.volumeOfCondensateReturn.controlNames"
-                                  [required]="isRequired('volumeOfCondensateReturn')"
-                                  [(filled)]="fields.volumeOfCondensateReturn.filled"
-                                  [groupControls]="['percentageOfCondensateReturn']"
-                                  unit="/y"
-                                  group="isCondensateReturnKnown"></form-input>
-                    </ng-container>
-                  </spirax-toggle>
-                </div>
-                <div class="col-md-6">
-                  <form-input [formControlName]="fields.temperatureOfCondensateReturn.formControlName"
-                              [label]="fields.temperatureOfCondensateReturn.label"
-                              [unit-names]="fields.temperatureOfCondensateReturn.unitNames"
-                              [unit-types]="fields.temperatureOfCondensateReturn.unitTypes"
-                              [unit-translations]="fields.temperatureOfCondensateReturn.translations"
-                              [unit-controls]="fields.temperatureOfCondensateReturn.controlNames"
-                              [required]="isRequired('temperatureOfCondensateReturn')"
-                              [(filled)]="fields.temperatureOfCondensateReturn.filled"></form-input>
-
-                  <form-input [formControlName]="fields.tdsOfCondensateReturn.formControlName"
-                              [label]="fields.tdsOfCondensateReturn.label"
-                              [unit-names]="fields.tdsOfCondensateReturn.unitNames"
-                              [unit-types]="fields.tdsOfCondensateReturn.unitTypes"
-                              [unit-translations]="fields.tdsOfCondensateReturn.translations"
-                              [unit-controls]="fields.tdsOfCondensateReturn.controlNames"
-                              [required]="isRequired('tdsOfCondensateReturn')"
-                              [(filled)]="fields.tdsOfCondensateReturn.filled"></form-input>
-                </div>
-              </div>
-            </spirax-panel>
-          </tab>
-        </tabset>
-      </div>
-
-      <div class="col-md-2"></div>
-      <div class="col-md-8">
-        <app-boiler-scheme></app-boiler-scheme>
-      </div>
-    </div>
-  </form>
-</spirax-panel>
+<ng-template #loading><h2 style="width: 100%; text-align: center;">Loading...</h2></ng-template>
