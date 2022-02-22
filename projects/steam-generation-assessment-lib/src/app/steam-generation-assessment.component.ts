@@ -251,19 +251,32 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
 
     this.convertUnits(filteredData);
     this.calculateCalorificValue({energyUnitSelected, smallWeightUnitSelected, inputFuelId, fuelUnitSelected});
-    this.apiService.calculateSaturatedAndTemperature({
-      boilerSteamTemperature: null,
-      isSuperheatedSteam, boilerSteamPressure,
-      pressureUnitSelected, temperatureUnitSelected
-    }).pipe(
-      filter((res) => !!res && !!res.boilerSteamTemperature && !!res.boilerSteamTemperature.boilerSteamTemperature),
-      map((res) => {
-        const reqTemperature = res.boilerSteamTemperature.boilerSteamTemperature;
-        const control = this.sizingModuleForm.get('benchmarkInputs.boilerSteamTemperature');
-        control.setValidators([Validators.required, Validators.min(Math.floor(reqTemperature * 100) / 100)]);
-        return {next: reqTemperature, prev: control.value };
-      })
-    ).subscribe(({next}) => this.setBenchmarkInputValue({boilerSteamTemperature: next}));
+
+    if (isSuperheatedSteam && boilerSteamPressure && pressureUnitSelected && temperatureUnitSelected) {
+      this.apiService.calculateSaturatedAndTemperature({
+        boilerSteamTemperature: null,
+        isSuperheatedSteam, boilerSteamPressure,
+        pressureUnitSelected, temperatureUnitSelected
+      }).pipe(
+        filter((res) => !!res && !!res.boilerSteamTemperature && !!res.boilerSteamTemperature.boilerSteamTemperature),
+        map((res) => {
+          const reqTemperature = res.boilerSteamTemperature.boilerSteamTemperature;
+          const control = this.sizingModuleForm.get('benchmarkInputs.boilerSteamTemperature');
+          control.setValidators([Validators.required, Validators.min(Math.floor(reqTemperature * 100) / 100)]);
+          return {next: reqTemperature, prev: control.value };
+        })
+      ).subscribe(({next}) => this.setBenchmarkInputValue({boilerSteamTemperature: next}));
+    }
+
+    const fg = this.sizingModuleForm.get('benchmarkInputs') as FormGroup;
+    for (const controlsKey in fg.controls) {
+      if (controlsKey) {
+        const control = fg.get(controlsKey);
+        if (control && control.invalid && !control.pristine && control.value) {
+          control.updateValueAndValidity({emitEvent: true, onlySelf: true});
+        }
+      }
+    }
 
     return true;
   }

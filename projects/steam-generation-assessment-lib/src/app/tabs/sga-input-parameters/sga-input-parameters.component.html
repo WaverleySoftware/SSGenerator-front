@@ -10,7 +10,7 @@
         <div class="row mb-5">
           <div class="col-md-5">
             <input [label]="'HOURS_OF_OPERATION' | translate"
-                   [value]="getValue('hoursOfOperation') | decimalPlace: 2"
+                   [value]="getValue('hoursOfOperation') | decimalPlace: 0"
                    formControlName="hoursOfOperation"
                    type="number"
                    spirax-input
