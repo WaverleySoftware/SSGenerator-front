@@ -13,6 +13,7 @@ import { NoCommaPipe } from './pipes/no-comma.pipe';
 import { ChartsModule } from 'ng2-charts';
 import { SgaFormService } from './services/sga-form.service';
 import { SgaApiService } from './services/sga-api.service';
+import { DecimalPlacePipe } from './pipes/decimal-place.pipe';
 
 const providers = [SteamGenerationAssessmentService, SgaFormService, SgaApiService];
 
@@ -27,7 +28,8 @@ const providers = [SteamGenerationAssessmentService, SgaFormService, SgaApiServi
     ChartBarComponent,
     FormListComponent,
     DisableControlDirective,
-    NoCommaPipe
+    NoCommaPipe,
+    DecimalPlacePipe
   ],
   imports: [
     CommonModule,

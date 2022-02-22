@@ -14,15 +14,19 @@ export interface SelectedUnitsInterface {
 }
 
 export enum SelectedUnitPreferenceEnum {
-  energyUnitSelected = 'BoilerHouseEnergyUnits',
-  smallWeightUnitSelected = 'WeightUnit',
-  emissionUnitSelected = 'BoilerHouseEmissionUnits',
-  volumeUnitSelected = 'BoilerHouseVolumeUnits',
-  smallVolumetricFlowUnitSelected = 'BoilerHouseSmallVolumetricFlowUnits',
-  massFlowUnitSelected = 'BoilerHouseMassFlowUnits',
-  smallMassFlowUnitSelected = 'BoilerHouseSmallMassFlowUnits',
-  pressureUnitSelected = 'PressureUnit',
-  temperatureUnitSelected = 'TemperatureUnit',
-  tdsUnitSelected = 'BoilerHouseTDSUnits',
-  fuelUnitSelected = 'FUEL_TYPE'
+  BoilerHouseEnergyUnits = 'energyUnitSelected',
+  WeightUnit = 'smallWeightUnitSelected',
+  BoilerHouseEmissionUnits = 'emissionUnitSelected',
+  BoilerHouseVolumeUnits = 'volumeUnitSelected',
+  BoilerHouseSmallVolumetricFlowUnits = 'smallVolumetricFlowUnitSelected',
+  BoilerHouseMassFlowUnits = 'massFlowUnitSelected',
+  BoilerHouseSmallMassFlowUnits = 'smallMassFlowUnitSelected',
+  PressureUnit = 'pressureUnitSelected',
+  TemperatureUnit = 'temperatureUnitSelected',
+  BoilerHouseTDSUnits = 'tdsUnitSelected',
+  // FUEL_TYPE = 'fuelUnitSelected'
+  BoilerHouseLiquidFuelUnits = 'fuelUnitSelected',
+  BoilerHouseElectricalFuelUnits = 'fuelUnitSelected',
+  BoilerHouseGasFuelUnits = 'fuelUnitSelected',
+  BoilerHouseSolidFuelUnits = 'fuelUnitSelected',
 }

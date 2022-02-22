@@ -120,6 +120,6 @@ export class FormListComponent implements ControlValueAccessor, AfterContentInit
   }
 
   private setItemValue(internalValue: string) {
-    this.item = this.list.find(({id}) => id === internalValue);
+    this.item = this.list && this.list.find(({id}) => id === internalValue)
   }
 }

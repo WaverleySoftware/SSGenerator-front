@@ -8,16 +8,14 @@ import {
   Project,
   TranslationService,
   UnitConvert,
-  UnitsService
+  UnitsService,
+  EnumerationDefinition
 } from 'sizing-shared-lib';
 import { FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Params } from '@angular/router';
-import { combineLatest, Observable, Subject } from 'rxjs';
+import { combineLatest, Observable, of, Subject } from 'rxjs';
 import { distinctUntilChanged, filter, map, switchMap, takeUntil } from 'rxjs/operators';
-import {
-  BenchmarkDataInterface,
-  ProposedDataInterface
-} from './interfaces/steam-generation-form.interface';
+import { BenchmarkDataInterface, ProposedDataInterface } from './interfaces/steam-generation-form.interface';
 import { TabsetComponent } from 'ngx-bootstrap';
 import { ChartBarDataInterface } from './interfaces/chart-bar.interface';
 import { TabDirective } from 'ngx-bootstrap/tabs/tab.directive';
@@ -36,6 +34,8 @@ import { SgaApiService } from './services/sga-api.service';
 import { TFormBenchmarkValueSetterInterface, TFormValueGetterInterface } from './interfaces/forms.interface';
 import sgaInputParametersFields from './utils/sga-input-parameters-fields';
 import { benchmarkCalculationValidator } from './validators/sga-benchmark.validator';
+import { SelectedUnitPreferenceEnum } from './interfaces/selectedUnits.interface';
+import sizingFormDefValues from './utils/sizing-form-def-values';
 
 
 @Component({
@@ -82,86 +82,6 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     );
     this.getSizingFormValues = this.formService.createFormValueGetter(this.sizingModuleForm);
   }
-
-  testCalc() {
-    this.sizingModuleForm.setValue({
-      selectedUnits: {
-        energyUnitSelected: 108,
-        smallWeightUnitSelected: 26,
-        emissionUnitSelected: 27,
-        volumeUnitSelected: 16,
-        smallVolumetricFlowUnitSelected: 76,
-        massFlowUnitSelected: 230,
-        smallMassFlowUnitSelected: 84,
-        pressureUnitSelected: 50,
-        temperatureUnitSelected: 146,
-        tdsUnitSelected: 228,
-        fuelUnitSelected: 18
-      },
-      benchmarkInputs: {
-        hoursOfOperation: 8736,
-        isSteamFlowMeasured: true,
-        isAutoTdsControlPResent: true,
-        boilerSteamGeneratedPerYear: null,
-        boilerSteamGeneratedPerHour: 10,
-        inputFuelId: '8c24c468-e50a-45ac-bc4c-8ebd60470c99',
-        costOfFuelPerUnit: 3,
-        fuelQtyPerYearIsKnown: false,
-        costOfFuelPerYear: null,
-        fuelConsumptionPerYear: null,
-        fuelEnergyPerUnit: 0.315165984,
-        fuelCarbonContent: 0.058297197558432,
-        costOfWaterPerUnit: 0.326775872,
-        costOfEffluentPerUnit: 0.2973264,
-        boilerHouseWaterQtyPerYearIsKnown: false,
-        costOfWaterPerYear: null,
-        waterConsumptionPerHour: null,
-        waterConsumptionPerYear: null,
-        boilerWaterTreatmentChemicalCostsIsKnown: false,
-        totalChemicalCostPerYear: null,
-        o2ScavengingChemicalsCostSavings: null,
-        isCo2OrCarbonEmissionsTaxed: false,
-        carbonTaxLevyCostPerUnit: null,
-        costOfCo2PerUnitMass: 0,
-        isBlowdownVesselPresent: false,
-        isCoolingWaterUsed: false,
-        isSuperheatedSteam: false,
-        boilerEfficiency: 80,
-        isFeedWaterMeasured: false,
-        boilerSteamPressure: 10,
-        boilerSteamTemperature: 184.115270845302,
-        isEconomizerPresent: false,
-        boilerAverageTds: 2800,
-        boilerMaxTds: 3500,
-        boilerFeedwaterConsumptionPerHour: null,
-        boilerFeedwaterConsumptionPerYear: null,
-        isFlashVesselPresent: false,
-        isHeatExchangerPresent: false,
-        waterTemperatureLeavingHeatExchanger: null,
-        waterTreatmentMethod: 'aa5642a0-88a5-43e1-ba9d-367db3bb9df5',
-        percentageWaterRejection: 4,
-        tdsOfMakeupWater: 155,
-        isMakeUpWaterMonitored: false,
-        temperatureOfMakeupWater: null,
-        makeupWaterAmountPerHour: 10,
-        makeupWaterAmountPerYear: null,
-        atmosphericDeaerator: true,
-        pressurisedDeaerator: false,
-        temperatureOfFeedtank: 90,
-        tdsOfFeedwaterInFeedtank: 75,
-        tdsOfCondensateReturn: 10,
-        temperatureOfCondensateReturn: 80,
-        areChemicalsAddedDirectlyToFeedtank: false,
-        pressureOfFeedtank: null,
-        pressureOfSteamSupplyingDsi: 3,
-        isCondensateReturnKnown: false,
-        percentageOfCondensateReturn: null,
-        volumeOfCondensateReturn: null,
-        isDsiPresent: true
-      }
-    });
-    this.onCalculateSizing(this.sizingModuleForm);
-  }
   ngOnInit() {
     this.createOrUpdateSizingPref();
     this.convertUnits(this.getDefaultConvertedUnits());
@@ -200,6 +120,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       }),
       filter(({prev, next}) => prev < next)
     ).subscribe(({next}) => this.setBenchmarkInputValue({boilerSteamTemperature: next}));
+
     // Calculate CO2 Emission
     this.sizingModuleForm.get('benchmarkInputs.fuelEnergyPerUnit').statusChanges.pipe(
       takeUntil(this.ngUnsubscribe),
@@ -211,6 +132,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       filter((v) => v.energyUnitSelected && v.fuelCarbonContent && v.fuelEnergyPerUnit &&
         v.fuelUnitSelected && v.inputFuelId && v.smallWeightUnitSelected),
     ).subscribe((data: SgaCalcCarbonEmissionReqInterface) => this.calculateCarbonEmission(data));
+
     // Set Pressure Deaerator type
     this.sizingModuleForm.get('benchmarkInputs.pressurisedDeaerator').valueChanges.pipe(
       takeUntil(this.ngUnsubscribe),
@@ -237,6 +159,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
     this.preferenceService.clearUnitPreferences();
+    this.sizingModuleForm.reset(sizingFormDefValues);
   }
 
   onCalculateSizing(formGroup: FormGroup): any {
@@ -308,44 +231,39 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   }
 
   onUnitsChanged(): any {
-    const sizingUnitPreferences = this.createOrUpdateSizingPref();
-    if (sizingUnitPreferences) {
-      const fieldNames = [];
+    const data = this.createOrUpdateSizingPref();
+    const filteredData = data.filter(({propertyName}) => propertyName !== 'fuelEnergyPerUnit' && propertyName !== 'fuelCarbonContent');
+    const {
+      inputFuelId,
+      isSuperheatedSteam,
+      boilerSteamPressure,
+      fuelUnitSelected,
+      energyUnitSelected,
+      smallWeightUnitSelected,
+      temperatureUnitSelected,
+      pressureUnitSelected
+    } = this.getSizingFormValues({
+      benchmarkInputs: ['inputFuelId', 'isSuperheatedSteam', 'boilerSteamPressure'],
+      selectedUnits: [
+        'fuelUnitSelected', 'energyUnitSelected', 'smallWeightUnitSelected', 'temperatureUnitSelected', 'pressureUnitSelected'
+      ]
+    });
 
-      for (const sizingUnitPreference of sizingUnitPreferences) {
-        const name = sizingUnitPreference.preference.name;
-
-        for (const key of Object.keys(sgaInputParametersFields)) {
-          if (
-            sgaInputParametersFields[key] &&
-            sgaInputParametersFields[key].unitNames &&
-            sgaInputParametersFields[key].unitNames.includes(name)
-          ) {
-            fieldNames.push(key);
-          }
-        }
-      }
-
-      console.log(fieldNames, '----fieldNames');
-    }
-    // const {unitsConverter, unitsConverterAfter} = this.sgaService.changeSizingUnits();
-    //
-    // this._convertUnits(unitsConverter, (results) => {
-    //   if (unitsConverterAfter.length) {
-    //     for (const unitConvert of unitsConverterAfter) {
-    //       unitConvert.initialValue = results.find(({propertyName}) => unitConvert.propertyName === propertyName).convertedValue;
-    //     }
-    //
-    //     this._convertUnits(unitsConverterAfter);
-    //   }
-    // });
-    /*this._calculateCalorificValue({
-      energyUnitSelected: this._getSizingValue('BoilerHouseEnergyUnits'),
-      smallWeightUnitSelected: this._getSizingValue('WeightUnit'),
-      inputFuelId: this._getControlValue('inputFuelId'),
-      fuelUnitSelected: this._getControlValue('fuelUnitSelected', 'selectedUnits')
-    });*/
-    // this.calculateSaturatedAndFreezingTemperature();
+    this.convertUnits(filteredData);
+    this.calculateCalorificValue({energyUnitSelected, smallWeightUnitSelected, inputFuelId, fuelUnitSelected});
+    this.apiService.calculateSaturatedAndTemperature({
+      boilerSteamTemperature: null,
+      isSuperheatedSteam, boilerSteamPressure,
+      pressureUnitSelected, temperatureUnitSelected
+    }).pipe(
+      filter((res) => !!res && !!res.boilerSteamTemperature && !!res.boilerSteamTemperature.boilerSteamTemperature),
+      map((res) => {
+        const reqTemperature = res.boilerSteamTemperature.boilerSteamTemperature;
+        const control = this.sizingModuleForm.get('benchmarkInputs.boilerSteamTemperature');
+        control.setValidators([Validators.required, Validators.min(Math.floor(reqTemperature * 100) / 100)]);
+        return {next: reqTemperature, prev: control.value };
+      })
+    ).subscribe(({next}) => this.setBenchmarkInputValue({boilerSteamTemperature: next}));
 
     return true;
   }
@@ -441,7 +359,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       .subscribe((res) => this.setBenchmarkInputValue(res));
   }
 
-  private createOrUpdateSizingPref(sizingUnitPreference?: SizingUnitPreference[]): SizingUnitPreference[] {
+  private createOrUpdateSizingPref(sizingUnitPreference?: SizingUnitPreference[]): UnitConvert[] {
     const list = [
       { name: 'BoilerHouseEnergyUnits', masterTextKey: 'ENERGY', selectedUnitName: 'energyUnitSelected' },
       { name: 'WeightUnit', masterTextKey: 'SMALL_WEIGHT', selectedUnitName: 'smallWeightUnitSelected' },
@@ -472,14 +390,11 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
 
     const fuelId = this.sizingModuleForm.get('benchmarkInputs.inputFuelId').value;
     let fuelTypeName: string;
-    const updatedSizingUnitPreferences = [];
+    let updatedSizingUnitPreferences: UnitConvert[] = [];
 
     if (fuelId) {
-      const enumerations = this.translationService.displayGroup && this.translationService.displayGroup.enumerations;
-      const enumeration = enumerations.find(({ enumerationName, opCoOverride }) => enumerationName === 'FuelTypeList_BoilerHouseInput');
-      const enumerationDefinition = enumeration && enumeration.enumerationDefinitions.find(({id}) => id === fuelId);
-      const firstLetter = enumerationDefinition && enumerationDefinition.value.charAt(0).toUpperCase();
-      fuelTypeName = FuelTypesEnumerationLetter[firstLetter];
+      const enumerationDefinition = this.getEnumerationDefinition('FuelTypeList_BoilerHouseInput', {id: fuelId});
+      fuelTypeName = enumerationDefinition && FuelTypesEnumerationLetter[enumerationDefinition.value.charAt(0).toUpperCase()];
     }
 
     for (const item of list) {
@@ -490,10 +405,16 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       if (isUpdate && isUpdate.preference) { // Update
         const newValue = Number(isUpdate.preference.value);
         if (item.name === fuelTypeName) {
-          if (control.value !== newValue) { updatedSizingUnitPreferences.push(isUpdate); }
+          if (control.value !== newValue) {
+            updatedSizingUnitPreferences = updatedSizingUnitPreferences
+              .concat(this.createConvert('FUEL_TYPE_NAME', SelectedUnitPreferenceEnum[isUpdate.preference.name], newValue));
+          }
           control.patchValue(newValue);
         } else if (item.selectedUnitName !== 'fuelUnitSelected' && control) {
-          if (control.value !== newValue) { updatedSizingUnitPreferences.push(isUpdate); }
+          if (control.value !== newValue) {
+            updatedSizingUnitPreferences = updatedSizingUnitPreferences
+              .concat(this.createConvert(isUpdate.preference.name, SelectedUnitPreferenceEnum[isUpdate.preference.name], newValue));
+          }
           control.patchValue(newValue);
         }
       } else { // Create
@@ -527,9 +448,32 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       }
     }
 
-    this.setBenchmarkInputValue('waterTreatmentMethod', this.getEnumerationDefinitionId('WaterTreatmentMethodList_BoilerHouseInput'));
+    this.setBenchmarkInputValue('waterTreatmentMethod', this.getEnumerationDefinition('WaterTreatmentMethodList_BoilerHouseInput').id);
 
-    return updatedSizingUnitPreferences.length ? updatedSizingUnitPreferences : null;
+    return updatedSizingUnitPreferences;
+  }
+
+  private createConvert(name: string, selectedUnitsName: string, newValue: any): UnitConvert[] {
+    const unitConverts: UnitConvert[] = [];
+
+    for (const key of Object.keys(sgaInputParametersFields)) {
+      const item = sgaInputParametersFields[key];
+      if (item && item.unitNames && item.unitNames.includes(name)) {
+        const values = this.getSizingFormValues({selectedUnits: selectedUnitsName, benchmarkInputs: key});
+        const control = this.sizingModuleForm.get(`benchmarkInputs.${key}`);
+        if (control && control.pristine && values[selectedUnitsName] && values[key]) {
+          unitConverts.push({
+            propertyName: key,
+            initialValue: values[key],
+            initialUnitId: values[selectedUnitsName],
+            targetUnitId: newValue,
+            convertedValue: null,
+          });
+        }
+      }
+    }
+
+    return unitConverts;
   }
 
   private getDefaultConvertedUnits(): UnitConvert[] {
@@ -595,7 +539,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
           break;
         }
         case 'SteamGenerationFuelType': { // inputFuelId
-          const fuelTypeId = this.getEnumerationDefinitionId('FuelTypeList_BoilerHouseInput', value);
+          const fuelTypeId = this.getEnumerationDefinition('FuelTypeList_BoilerHouseInput', { value }).id;
           if (fuelTypeId) {
             this.setBenchmarkInputValue('inputFuelId', fuelTypeId);
           }
@@ -643,9 +587,11 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     this.unitsService.unitsConverter({ unitsConverter: data }).pipe(takeUntil(this.ngUnsubscribe)).subscribe(({ unitsConverter}) => {
       if (!unitsConverter || !unitsConverter.length) { return null; }
 
-      if (callback && typeof callback === 'function') { callback(unitsConverter); }
-
-      this.setBenchmarkInputValue(unitsConverter.reduce((acc, item) => ({...acc, [item.propertyName]: item.convertedValue}), {}));
+      if (callback && typeof callback === 'function') {
+        callback(unitsConverter);
+      } else {
+        this.setBenchmarkInputValue(unitsConverter.reduce((acc, item) => ({...acc, [item.propertyName]: item.convertedValue}), {}));
+      }
     });
   }
 
@@ -708,7 +654,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     }
   }
 
-  private getEnumerationDefinitionId(name: string, value?: string): string {
+  private getEnumerationDefinition(name: string, value?: Partial<{ [key in keyof EnumerationDefinition]: any }>): EnumerationDefinition {
     const enumerations = this.translationService.displayGroup.enumerations
       .find(({enumerationName, opCoOverride}) => enumerationName === name && opCoOverride === false);
 
@@ -719,10 +665,12 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     let item = enumerations.enumerationDefinitions[0];
 
     if (value) {
-      item = enumerations && enumerations.enumerationDefinitions.find((v) => v.value === value);
+      const key = Object.keys(value)[0];
+      const searchVal = value[key];
+      item = enumerations && enumerations.enumerationDefinitions.find((v) => v[key] === searchVal);
     }
 
-    return item && item.id as string;
+    return item;
   }
 
   private _loadJob(): void {

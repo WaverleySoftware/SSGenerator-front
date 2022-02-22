@@ -24,12 +24,12 @@ const getControlNameFromReqError = (error: SgaErrorInterface): {name: string, er
   };
 };
 
-export const validateBenchmarkInput = (service: SgaApiService): AsyncValidatorFn =>
+export const validateBenchmarkInput = (service: SgaApiService, isNull?: boolean): AsyncValidatorFn =>
   (control: AbstractControl): Observable<ValidationErrors> => {
   const fg: FormGroup = control && control.root as FormGroup;
   const name = getNameFomControl(control);
 
-  if (!fg || !name || !service || !control || (control.pristine && !control.touched)) {
+  if (!fg || !name || !service || !control || (control.pristine && !control.touched) || (isNull && !control.value)) {
     return of(null);
   }
 
