@@ -37,8 +37,16 @@ export const validateBenchmarkInput = (service: SgaApiService, isNull?: boolean)
     selectedUnits: fg.get('selectedUnits').value,
     benchmarkInputs: { ...fg.get('benchmarkInputs').value, [name]: control.value },
   }).pipe(
-    map(res => res && res.errors && res.errors[0] && res.errors[0].errorMessage && !res.isValid ? res.errors[0] : null),
-    map((error) => error && ({error: error.errorMessage, message: error.customState && Math.round(error.customState * 100) / 100})),
+    map(res => {
+      if (res && !res.isValid) {
+        const error = res.errors && res.errors[0] && res.errors[0].errorMessage;
+        const customState = res.errors && res.errors[0] && res.errors[0].customState;
+        const message = customState && Math.round(customState * 100) / 100 || res.error && res.error.title || 'Unknown error';
+        return { error, message };
+      } else {
+        return null;
+      }
+    }),
     catchError((err: HttpErrorResponse) => err && of({message: err.error && err.error.title || 'Unknown error'})),
   );
 };

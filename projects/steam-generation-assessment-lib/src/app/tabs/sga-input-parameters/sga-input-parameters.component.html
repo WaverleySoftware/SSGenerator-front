@@ -10,9 +10,9 @@
         <div class="row mb-5">
           <div class="col-md-5">
             <input [label]="'HOURS_OF_OPERATION' | translate"
-                   [value]="getValue('hoursOfOperation') | decimalPlace: 0"
-                   formControlName="hoursOfOperation"
+                   sga-decimal-places
                    type="number"
+                   formControlName="hoursOfOperation"
                    spirax-input
                    required>
           </div>
@@ -38,6 +38,7 @@
                 <input [label]="'FUEL_CALORIFIC_VALUE' | translate"
                        [unitsStr]="[sizingUnits['BoilerHouseEnergyUnits']?.unit, sizingUnits[getFuelTypeName(fuel?.item?.value)]?.unit]"
                        [value]="getValue('fuelEnergyPerUnit') | decimalPlace: 9"
+                       [sga-decimal-places]="9"
                        formControlName="fuelEnergyPerUnit"
                        type="number"
                        spirax-input
@@ -54,6 +55,7 @@
                 <input [label]="'COST_OF_FUEL_PER_UNIT' | translate"
                        [unitsStr]="[sizingUnits['BHCurrency']?.unit, sizingUnits[getFuelTypeName(fuel?.item?.value)]?.unit]"
                        [value]="getValue('costOfFuelPerUnit') | decimalPlace: 9"
+                       [sga-decimal-places]="9"
                        formControlName="costOfFuelPerUnit"
                        type="number"
                        spirax-input
@@ -67,6 +69,7 @@
                            [unitsStr]="[sizingUnits['BHCurrency']?.unit, 'yr']"
                            (radioClick)="toggleInput('costOfFuelPerYear', 'fuelConsumptionPerYear', null)"
                            [value]="getValue('costOfFuelPerYear') | decimalPlace: sizingUnits['BHCurrency']?.decimal"
+                           [sga-decimal-places]="sizingUnits['BHCurrency']?.decimal"
                            radio
                            formControlName="costOfFuelPerYear"
                            type="number"
@@ -77,6 +80,7 @@
                            [unitsStr]="[sizingUnits[getFuelTypeName(fuel?.item?.value)]?.unit, 'yr']"
                            (radioClick)="toggleInput('fuelConsumptionPerYear', 'costOfFuelPerYear', null)"
                            [value]="getValue('fuelConsumptionPerYear') | decimalPlace: sizingUnits['BHCurrency']?.decimal"
+                           [sga-decimal-places]="sizingUnits['BHCurrency']?.decimal"
                            [radio]="true"
                            formControlName="fuelConsumptionPerYear"
                            type="number"
@@ -104,6 +108,7 @@
                          [unitsStr]="[sizingUnits['BHCurrency']?.unit, sizingUnits['BoilerHouseEnergyUnits']?.unit]"
                          (radioClick)="toggleInput('carbonTaxLevyCostPerUnit', 'costOfCo2PerUnitMass', null)"
                          [value]="getValue('carbonTaxLevyCostPerUnit') | decimalPlace: sizingUnits['BoilerHouseEnergyUnits']?.decimal"
+                         [sga-decimal-places]="sizingUnits['BoilerHouseEnergyUnits']?.decimal"
                          radio
                          formControlName="carbonTaxLevyCostPerUnit"
                          type="number"
@@ -113,6 +118,7 @@
                          [unitsStr]="[sizingUnits['BHCurrency']?.unit, sizingUnits['BoilerHouseEmissionUnits']?.unit]"
                          (radioClick)="toggleInput('costOfCo2PerUnitMass', 'carbonTaxLevyCostPerUnit', null)"
                          [value]="getValue('costOfCo2PerUnitMass') | decimalPlace: sizingUnits['BoilerHouseEmissionUnits']?.decimal"
+                         [sga-decimal-places]="sizingUnits['BoilerHouseEmissionUnits']?.decimal"
                          radio
                          formControlName="costOfCo2PerUnitMass"
                          type="number"
@@ -140,6 +146,7 @@
                 <input [label]="'COST_OF_WATER_FSLASH_UNIT' | translate"
                        [unitsStr]="[sizingUnits['BHCurrency']?.unit, sizingUnits['BoilerHouseVolumeUnits']?.unit]"
                        [value]="getValue('costOfWaterPerUnit') | decimalPlace: sizingUnits['BoilerHouseVolumeUnits']?.decimal"
+                       [sga-decimal-places]="sizingUnits['BoilerHouseVolumeUnits']?.decimal"
                        formControlName="costOfWaterPerUnit"
                        type="number"
                        spirax-input
@@ -153,6 +160,7 @@
                            [unitsStr]="[sizingUnits['BHCurrency']?.unit, 'yr']"
                            (radioClick)="toggleInput('costOfWaterPerYear', ['waterConsumptionPerHour', 'waterConsumptionPerYear'], null)"
                            [value]="getValue('costOfWaterPerYear') | decimalPlace: sizingUnits['BHCurrency']?.decimal"
+                           [sga-decimal-places]="sizingUnits['BHCurrency']?.decimal"
                            radio
                            formControlName="costOfWaterPerYear"
                            type="number"
@@ -163,6 +171,7 @@
                            [unitsStr]="[sizingUnits['BoilerHouseVolumeUnits']?.unit, 'hr']"
                            (radioClick)="toggleInput('waterConsumptionPerHour', ['waterConsumptionPerYear', 'costOfWaterPerYear'], null)"
                            [value]="getValue('waterConsumptionPerHour') | decimalPlace: sizingUnits['BoilerHouseVolumeUnits']?.decimal"
+                           [sga-decimal-places]="sizingUnits['BoilerHouseVolumeUnits']?.decimal"
                            radio
                            formControlName="waterConsumptionPerHour"
                            type="number"
@@ -173,6 +182,7 @@
                            [unitsStr]="[sizingUnits['BoilerHouseVolumeUnits']?.unit, 'yr']"
                            (radioClick)="toggleInput('waterConsumptionPerYear', ['waterConsumptionPerHour', 'costOfWaterPerYear'], null)"
                            [value]="getValue('waterConsumptionPerYear') | decimalPlace: sizingUnits['BoilerHouseVolumeUnits']?.decimal"
+                           [sga-decimal-places]="sizingUnits['BoilerHouseVolumeUnits']?.decimal"
                            radio
                            formControlName="waterConsumptionPerYear"
                            type="number"
@@ -207,6 +217,7 @@
                          [unitsStr]="[sizingUnits['BHCurrency']?.unit, 'yr']"
                          (radioClick)="toggleInput('totalChemicalCostPerYear', 'o2ScavengingChemicalsCostSavings', null)"
                          [value]="getValue('totalChemicalCostPerYear') | decimalPlace: sizingUnits['BHCurrency']?.decimal"
+                         [sga-decimal-places]="sizingUnits['BHCurrency']?.decimal"
                          radio
                          formControlName="totalChemicalCostPerYear"
                          type="number"
@@ -216,6 +227,7 @@
                          [unitsStr]="[sizingUnits['BHCurrency']?.unit, 'yr']"
                          (radioClick)="toggleInput('o2ScavengingChemicalsCostSavings', 'totalChemicalCostPerYear', null)"
                          [value]="getValue('o2ScavengingChemicalsCostSavings') | decimalPlace: sizingUnits['BHCurrency']?.decimal"
+                         [sga-decimal-places]="sizingUnits['BHCurrency']?.decimal"
                          radio
                          formControlName="o2ScavengingChemicalsCostSavings"
                          type="number"
@@ -237,6 +249,7 @@
                 <input [label]="'COST_OF_EFFLUENT_FSLASH_UNIT' | translate"
                        [unitsStr]="[sizingUnits['BHCurrency']?.unit, sizingUnits['BoilerHouseVolumeUnits']?.unit]"
                        [value]="getValue('costOfEffluentPerUnit') | decimalPlace: sizingUnits['BoilerHouseVolumeUnits']?.decimal"
+                       [sga-decimal-places]="sizingUnits['BoilerHouseVolumeUnits']?.decimal"
                        formControlName="costOfEffluentPerUnit"
                        type="number"
                        spirax-input
@@ -277,6 +290,7 @@
                                  [unitsStr]="[sizingUnits['BoilerHouseSmallMassFlowUnits']?.unit]"
                                  (radioClick)="toggleInput('boilerSteamGeneratedPerHour', 'boilerSteamGeneratedPerYear', null)"
                                  [value]="getValue('boilerSteamGeneratedPerHour') | decimalPlace: sizingUnits['BoilerHouseSmallMassFlowUnits']?.decimal"
+                                 [sga-decimal-places]="sizingUnits['BoilerHouseSmallMassFlowUnits']?.decimal"
                                  radio
                                  formControlName="boilerSteamGeneratedPerHour"
                                  type="number"
@@ -286,6 +300,7 @@
                                  [unitsStr]="[sizingUnits['BoilerHouseMassFlowUnits']?.unit]"
                                  (radioClick)="toggleInput('boilerSteamGeneratedPerYear', 'boilerSteamGeneratedPerHour', null)"
                                  [value]="getValue('boilerSteamGeneratedPerYear') | decimalPlace: sizingUnits['BoilerHouseMassFlowUnits']?.decimal"
+                                 [sga-decimal-places]="sizingUnits['BoilerHouseMassFlowUnits']?.decimal"
                                  radio
                                  formControlName="boilerSteamGeneratedPerYear"
                                  type="number"
@@ -299,6 +314,7 @@
                       <input [label]="'STEAM_TEMPERATURE' | translate"
                              [unitsStr]="[sizingUnits['TemperatureUnit']?.unit]"
                              [value]="getValue('boilerSteamTemperature') | decimalPlace: sizingUnits['TemperatureUnit']?.decimal"
+                             [sga-decimal-places]="sizingUnits['TemperatureUnit']?.decimal"
                              formControlName="boilerSteamTemperature"
                              type="number"
                              spirax-input
@@ -307,6 +323,7 @@
                       <input [label]="'STEAM_PRESSURE' | translate"
                              [unitsStr]="[sizingUnits['PressureUnit']?.unit]"
                              [value]="getValue('boilerSteamPressure') | decimalPlace: sizingUnits['PressureUnit']?.decimal"
+                             [sga-decimal-places]="sizingUnits['PressureUnit']?.decimal"
                              formControlName="boilerSteamPressure"
                              type="number"
                              spirax-input
@@ -317,6 +334,7 @@
                       <input [label]="'BOILER_EFFICIENCY' | translate"
                              [unitsStr]="['%']"
                              [value]="getValue('boilerEfficiency') | decimalPlace: 2"
+                             [sga-decimal-places]="2"
                              formControlName="boilerEfficiency"
                              type="number"
                              spirax-input
@@ -352,6 +370,7 @@
                           <input [label]="'WATER_TEMPERATURE_LEAVING_HEAT_EXCHANGER' | translate"
                                  [unitsStr]="[sizingUnits['TemperatureUnit']?.unit]"
                                  [value]="getValue('waterTemperatureLeavingHeatExchanger') | decimalPlace: sizingUnits['TemperatureUnit']?.decimal"
+                                 [sga-decimal-places]="sizingUnits['TemperatureUnit']?.decimal"
                                  formControlName="waterTemperatureLeavingHeatExchanger"
                                  type="number"
                                  spirax-input
@@ -370,6 +389,7 @@
                       <input [label]="'TDS_OF_FEEDWATER_IN_FEEDTANK' | translate"
                              [unitsStr]="[sizingUnits['BoilerHouseTDSUnits']?.unit]"
                              [value]="getValue('tdsOfFeedwaterInFeedtank') | decimalPlace: sizingUnits['BoilerHouseTDSUnits']?.decimal"
+                             [sga-decimal-places]="sizingUnits['BoilerHouseTDSUnits']?.decimal"
                              formControlName="tdsOfFeedwaterInFeedtank"
                              type="number"
                              spirax-input
@@ -379,6 +399,7 @@
                       <input [label]="'AVERAGE_BOILER_TDS' | translate"
                              [unitsStr]="[sizingUnits['BoilerHouseTDSUnits']?.unit]"
                              [value]="getValue('boilerAverageTds') | decimalPlace: sizingUnits['BoilerHouseTDSUnits']?.decimal"
+                             [sga-decimal-places]="sizingUnits['BoilerHouseTDSUnits']?.decimal"
                              formControlName="boilerAverageTds"
                              type="number"
                              spirax-input
@@ -388,6 +409,7 @@
                       <input [label]="'MAXIMUM_ALLOWABLE_BOILER_TDS' | translate"
                              [unitsStr]="[sizingUnits['BoilerHouseTDSUnits']?.unit]"
                              [value]="getValue('boilerMaxTds') | decimalPlace: sizingUnits['BoilerHouseTDSUnits']?.decimal"
+                             [sga-decimal-places]="sizingUnits['BoilerHouseTDSUnits']?.decimal"
                              formControlName="boilerMaxTds"
                              type="number"
                              spirax-input
@@ -408,6 +430,7 @@
                           <input [label]="'TEMPERATURE_OF_MAKE_UP_WATER' | translate"
                                  [unitsStr]="[sizingUnits['TemperatureUnit']?.unit]"
                                  [value]="getValue('temperatureOfMakeupWater') | decimalPlace: sizingUnits['TemperatureUnit']?.decimal"
+                                 [sga-decimal-places]="sizingUnits['TemperatureUnit']?.decimal"
                                  formControlName="temperatureOfMakeupWater"
                                  type="number"
                                  spirax-input
@@ -420,6 +443,7 @@
                              [unitsStr]="[sizingUnits['BoilerHouseSmallVolumetricFlowUnits']?.unit]"
                              (radioClick)="toggleInput('makeupWaterAmountPerHour', 'makeupWaterAmountPerYear', null)"
                              [value]="getValue('makeupWaterAmountPerHour') | decimalPlace: sizingUnits['BoilerHouseSmallVolumetricFlowUnits']?.decimal"
+                             [sga-decimal-places]="sizingUnits['BoilerHouseSmallVolumetricFlowUnits']?.decimal"
                              radio
                              formControlName="makeupWaterAmountPerHour"
                              type="number"
@@ -428,6 +452,7 @@
                              [unitsStr]="[sizingUnits['BoilerHouseVolumetricFlowUnits']?.unit]"
                              (radioClick)="toggleInput('makeupWaterAmountPerYear', 'makeupWaterAmountPerHour', null)"
                              [value]="getValue('makeupWaterAmountPerYear') | decimalPlace: sizingUnits['BoilerHouseVolumetricFlowUnits']?.decimal"
+                             [sga-decimal-places]="sizingUnits['BoilerHouseVolumetricFlowUnits']?.decimal"
                              radio
                              formControlName="makeupWaterAmountPerYear"
                              type="number"
@@ -450,6 +475,7 @@
                       <input [label]="'PERCENTAGE_WATER_REJECTION' | translate"
                              [unitsStr]="['%']"
                              [value]="getValue('percentageWaterRejection') | decimalPlace: 2"
+                             [sga-decimal-places]="2"
                              formControlName="percentageWaterRejection"
                              type="number"
                              spirax-input
@@ -459,6 +485,7 @@
                       <input [label]="'TDS_OF_MAKEUP_WATER' | translate"
                              [unitsStr]="[sizingUnits['BoilerHouseTDSUnits']?.unit]"
                              [value]="getValue('tdsOfMakeupWater') | decimalPlace: sizingUnits['BoilerHouseTDSUnits']?.decimal"
+                             [sga-decimal-places]="sizingUnits['BoilerHouseTDSUnits']?.decimal"
                              formControlName="tdsOfMakeupWater"
                              type="number"
                              spirax-input
@@ -509,6 +536,7 @@
                                  [unitsStr]="[sizingUnits['BoilerHouseSmallVolumetricFlowUnits']?.unit]"
                                  (radioClick)="toggleInput('boilerFeedwaterConsumptionPerHour', 'boilerFeedwaterConsumptionPerYear', null)"
                                  [value]="getValue('boilerFeedwaterConsumptionPerHour') | decimalPlace: sizingUnits['BoilerHouseSmallVolumetricFlowUnits']?.decimal"
+                                 [sga-decimal-places]="sizingUnits['BoilerHouseSmallVolumetricFlowUnits']?.decimal"
                                  radio
                                  formControlName="boilerFeedwaterConsumptionPerHour"
                                  type="number"
@@ -519,6 +547,7 @@
                                  [unitsStr]="[sizingUnits['BoilerHouseVolumeUnits']?.unit, 'yr']"
                                  (radioClick)="toggleInput('boilerFeedwaterConsumptionPerYear', 'boilerFeedwaterConsumptionPerHour', null)"
                                  [value]="getValue('boilerFeedwaterConsumptionPerYear') | decimalPlace: sizingUnits['BoilerHouseVolumeUnits']?.decimal"
+                                 [sga-decimal-places]="sizingUnits['BoilerHouseVolumeUnits']?.decimal"
                                  radio
                                  formControlName="boilerFeedwaterConsumptionPerYear"
                                  type="number"
@@ -532,6 +561,7 @@
                       <input [label]="'TEMPERATURE_OF_FEEDTANK' | translate"
                              [unitsStr]="[sizingUnits['TemperatureUnit']?.unit]"
                              [value]="getValue('temperatureOfFeedtank') | decimalPlace: sizingUnits['TemperatureUnit']?.decimal"
+                             [sga-decimal-places]="sizingUnits['TemperatureUnit']?.decimal"
                              formControlName="temperatureOfFeedtank"
                              type="number"
                              spirax-input
@@ -540,6 +570,7 @@
                              [unitsStr]="[sizingUnits['BoilerHouseVolumeUnits']?.unit]"
                              [disabled]="true"
                              [value]="getValue('tdsOfFeedwaterInFeedtank') | decimalPlace: sizingUnits['BoilerHouseVolumeUnits']?.decimal"
+                             [sga-decimal-places]="sizingUnits['BoilerHouseVolumeUnits']?.decimal"
                              formControlName="tdsOfFeedwaterInFeedtank"
                              type="number"
                              tabindex="-1"
@@ -559,6 +590,7 @@
                             <input [label]="'PRESSURE_OF_STEAM_SUPPLYING_DSI' | translate"
                                    [unitsStr]="[sizingUnits['PressureUnit']?.unit]"
                                    [value]="getValue('pressureOfSteamSupplyingDsi') | decimalPlace: sizingUnits['PressureUnit']?.decimal"
+                                   [sga-decimal-places]="sizingUnits['PressureUnit']?.decimal"
                                    formControlName="pressureOfSteamSupplyingDsi"
                                    type="number"
                                    spirax-input
@@ -572,6 +604,7 @@
                           <input [label]="'PRESSURE_OF_FEEDTANK' | translate"
                                  [unitsStr]="[sizingUnits['PressureUnit']?.unit]"
                                  [value]="getValue('pressureOfFeedtank') | decimalPlace: sizingUnits['PressureUnit']?.decimal"
+                                 [sga-decimal-places]="sizingUnits['PressureUnit']?.decimal"
                                  formControlName="pressureOfFeedtank"
                                  type="number"
                                  spirax-input
@@ -595,6 +628,7 @@
                                  [unitsStr]="['%']"
                                  (radioClick)="toggleInput('percentageOfCondensateReturn', 'volumeOfCondensateReturn', null)"
                                  [value]="getValue('percentageOfCondensateReturn') | decimalPlace: 2"
+                                 [sga-decimal-places]="2"
                                  radio
                                  formControlName="percentageOfCondensateReturn"
                                  type="number"
@@ -604,6 +638,7 @@
                                  [unitsStr]="[sizingUnits['BoilerHouseVolumeUnits']?.unit, 'yr']"
                                  (radioClick)="toggleInput('volumeOfCondensateReturn', 'percentageOfCondensateReturn', null)"
                                  [value]="getValue('volumeOfCondensateReturn') | decimalPlace: sizingUnits['BoilerHouseVolumeUnits']?.decimal"
+                                 [sga-decimal-places]="sizingUnits['BoilerHouseVolumeUnits']?.decimal"
                                  radio
                                  formControlName="volumeOfCondensateReturn"
                                  type="number"
@@ -617,6 +652,7 @@
                       <input [label]="'TEMPERATURE_OF_CONDENSATE_RETURN' | translate"
                              [unitsStr]="[sizingUnits['TemperatureUnit']?.unit]"
                              [value]="getValue('temperatureOfCondensateReturn') | decimalPlace: sizingUnits['TemperatureUnit']?.decimal"
+                             [sga-decimal-places]="sizingUnits['TemperatureUnit']?.decimal"
                              formControlName="temperatureOfCondensateReturn"
                              type="number"
                              spirax-input
@@ -625,6 +661,7 @@
                       <input [label]="'TDS_OF_CONDENSATE_RETURN' | translate"
                              [unitsStr]="[sizingUnits['BoilerHouseTDSUnits']?.unit]"
                              [value]="getValue('tdsOfCondensateReturn') | decimalPlace: sizingUnits['BoilerHouseTDSUnits']?.decimal"
+                             [sga-decimal-places]="sizingUnits['BoilerHouseTDSUnits']?.decimal"
                              formControlName="tdsOfCondensateReturn"
                              type="number"
                              spirax-input
