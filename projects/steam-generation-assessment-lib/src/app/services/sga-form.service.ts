@@ -122,7 +122,7 @@ export class SgaFormService {
       if (typeof name === 'string') {
         const control = fg.get(name as string);
 
-        if (control) {
+        if (control && control.value !== value) {
           if (!opt || !opt.disableFilled) {
             control.markAsPristine({onlySelf: true});
             control.markAsUntouched({onlySelf: true});
@@ -138,7 +138,7 @@ export class SgaFormService {
         for (const key of Object.keys(name)) {
           const control = fg.get(key);
 
-          if (control) {
+          if (control && control.value !== name[key]) {
             if (!opt || !opt.disableFilled) {
               control.markAsPristine({onlySelf: true});
               control.markAsUntouched({onlySelf: true});

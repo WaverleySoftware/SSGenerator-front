@@ -116,7 +116,7 @@ export class SgaInputParametersComponent {
         const emitData = this.formValueGetter({selectedUnits: ['energyUnitSelected', 'smallWeightUnitSelected']});
         const fuelUnitSelected = Number(sPreference.preference.value);
 
-        this.formGroup.get('selectedUnits.fuelUnitSelected').setValue(fuelUnitSelected);
+        // this.formGroup.get('selectedUnits.fuelUnitSelected').setValue(fuelUnitSelected);
         this.changeFuelType.emit({
           energyUnitSelected: emitData.energyUnitSelected,
           smallWeightUnitSelected: emitData.smallWeightUnitSelected,

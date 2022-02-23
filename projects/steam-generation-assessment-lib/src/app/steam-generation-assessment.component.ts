@@ -13,7 +13,7 @@ import {
 } from 'sizing-shared-lib';
 import { FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Params } from '@angular/router';
-import { combineLatest, Observable, of, Subject } from 'rxjs';
+import { combineLatest, Observable, Subject } from 'rxjs';
 import { distinctUntilChanged, filter, map, switchMap, takeUntil } from 'rxjs/operators';
 import { BenchmarkDataInterface, ProposedDataInterface } from './interfaces/steam-generation-form.interface';
 import { TabsetComponent } from 'ngx-bootstrap';
@@ -232,7 +232,6 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
 
   onUnitsChanged(): any {
     const data = this.createOrUpdateSizingPref();
-    const filteredData = data.filter(({propertyName}) => propertyName !== 'fuelEnergyPerUnit' && propertyName !== 'fuelCarbonContent');
     const {
       inputFuelId,
       isSuperheatedSteam,
@@ -249,7 +248,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       ]
     });
 
-    this.convertUnits(filteredData);
+    this.convertUnits(data.filter(({propertyName}) => propertyName !== 'fuelEnergyPerUnit' && propertyName !== 'fuelCarbonContent'));
     this.calculateCalorificValue({energyUnitSelected, smallWeightUnitSelected, inputFuelId, fuelUnitSelected});
 
     if (isSuperheatedSteam && boilerSteamPressure && pressureUnitSelected && temperatureUnitSelected) {
@@ -258,6 +257,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
         isSuperheatedSteam, boilerSteamPressure,
         pressureUnitSelected, temperatureUnitSelected
       }).pipe(
+        takeUntil(this.ngUnsubscribe),
         filter((res) => !!res && !!res.boilerSteamTemperature && !!res.boilerSteamTemperature.boilerSteamTemperature),
         map((res) => {
           const reqTemperature = res.boilerSteamTemperature.boilerSteamTemperature;
@@ -417,17 +417,13 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
 
       if (isUpdate && isUpdate.preference) { // Update
         const newValue = Number(isUpdate.preference.value);
-        if (item.name === fuelTypeName) {
-          if (control.value !== newValue) {
-            updatedSizingUnitPreferences = updatedSizingUnitPreferences
-              .concat(this.createConvert('FUEL_TYPE_NAME', SelectedUnitPreferenceEnum[isUpdate.preference.name], newValue));
-          }
+        if (item.name === fuelTypeName && control.value !== newValue) {
+          updatedSizingUnitPreferences = updatedSizingUnitPreferences
+            .concat(this.createConvert('FUEL_TYPE_NAME', SelectedUnitPreferenceEnum[fuelTypeName], newValue));
           control.patchValue(newValue);
-        } else if (item.selectedUnitName !== 'fuelUnitSelected' && control) {
-          if (control.value !== newValue) {
-            updatedSizingUnitPreferences = updatedSizingUnitPreferences
-              .concat(this.createConvert(isUpdate.preference.name, SelectedUnitPreferenceEnum[isUpdate.preference.name], newValue));
-          }
+        } else if (item.selectedUnitName !== 'fuelUnitSelected' && control && control.value !== newValue) {
+          updatedSizingUnitPreferences = updatedSizingUnitPreferences
+            .concat(this.createConvert(isUpdate.preference.name, SelectedUnitPreferenceEnum[isUpdate.preference.name], newValue));
           control.patchValue(newValue);
         }
       } else { // Create
@@ -560,7 +556,10 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
         }
         case 'SteamGenerationFuelUnit': { // fuelUnitSelected
           if (value) {
-            this.sizingModuleForm.get('selectedUnits.fuelUnitSelected').setValue(Number(value));
+            const control = this.sizingModuleForm.get('selectedUnits.fuelUnitSelected');
+            if (control && !control.value) {
+              control.setValue(Number(value), {onlySelf: true, emitEvent: false});
+            }
           }
           obj.costOfFuelPerUnit['initialUnitId'] = Number(value);
           break;
