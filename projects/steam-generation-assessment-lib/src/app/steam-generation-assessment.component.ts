@@ -76,11 +76,13 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     private apiService: SgaApiService,
   ) {
     super();
-    this.setBenchmarkInputValue = this.formService.createFormValueSetter<BenchmarkInputsInterface>(
-      this.sizingModuleForm,
-      'benchmarkInputs'
-    );
+    this.setBenchmarkInputValue = this.formService
+      .createFormValueSetter<BenchmarkInputsInterface>(this.sizingModuleForm, 'benchmarkInputs');
     this.getSizingFormValues = this.formService.createFormValueGetter(this.sizingModuleForm);
+
+    this.sizingModuleForm.get('benchmarkInputs').valueChanges
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(() => this.resetBenchmarkData());
   }
   ngOnInit() {
     this.createOrUpdateSizingPref();
@@ -283,6 +285,10 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       }
     }
 
+    if (data.length) {
+      this.resetBenchmarkData();
+    }
+
     return true;
   }
 
@@ -375,6 +381,22 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     this.apiService.calculateWaterTreatment(data)
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((res) => this.setBenchmarkInputValue(res));
+  }
+
+  private resetBenchmarkData() {
+    if (this.benchmarkData) {
+      this.benchmarkData = null;
+    }
+    if (this.benchmarkChartData) {
+      this.benchmarkChartData = null;
+    }
+    if (this.proposedSetupData) {
+      this.proposedSetupData = null;
+    }
+    if (this.proposedSetupResults) {
+      this.proposedSetupResults = null;
+    }
+    this.setActiveTab(0);
   }
 
   private createOrUpdateSizingPref(sizingUnitPreference?: SizingUnitPreference[]): UnitConvert[] {
