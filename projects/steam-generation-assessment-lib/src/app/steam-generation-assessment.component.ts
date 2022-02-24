@@ -118,7 +118,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
         control.setValidators([Validators.required, Validators.min(Math.floor(boilerSteamTemperature * 100) / 100)]);
         return {next: boilerSteamTemperature, prev: control.value };
       }),
-      filter(({prev, next}) => prev < next)
+      filter(({prev, next}) => !this.sizingModuleForm.get('benchmarkInputs.isSuperheatedSteam').value || prev < next)
     ).subscribe(({next}) => this.setBenchmarkInputValue({boilerSteamTemperature: next}));
 
     // Calculate CO2 Emission
@@ -249,9 +249,14 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     });
 
     this.convertUnits(data.filter(({propertyName}) => propertyName !== 'fuelEnergyPerUnit' && propertyName !== 'fuelCarbonContent'));
-    this.calculateCalorificValue({energyUnitSelected, smallWeightUnitSelected, inputFuelId, fuelUnitSelected});
+    if (data.some((v) => v.propertyName === 'fuelEnergyPerUnit' || v.propertyName === 'fuelCarbonContent')) {
+      this.calculateCalorificValue({energyUnitSelected, smallWeightUnitSelected, inputFuelId, fuelUnitSelected});
+    }
 
-    if (isSuperheatedSteam && boilerSteamPressure && pressureUnitSelected && temperatureUnitSelected) {
+    if (
+      data.some(({propertyName}) => propertyName === 'boilerSteamTemperature') &&
+      isSuperheatedSteam && boilerSteamPressure && pressureUnitSelected && temperatureUnitSelected
+    ) {
       this.apiService.calculateSaturatedAndTemperature({
         boilerSteamTemperature: null,
         isSuperheatedSteam, boilerSteamPressure,
@@ -470,7 +475,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       if (item && item.unitNames && item.unitNames.includes(name)) {
         const values = this.getSizingFormValues({selectedUnits: selectedUnitsName, benchmarkInputs: key});
         const control = this.sizingModuleForm.get(`benchmarkInputs.${key}`);
-        if (control && control.pristine && values[selectedUnitsName] && values[key]) {
+        if (control && control.pristine && control.value && values[selectedUnitsName] && values[key]) {
           unitConverts.push({
             propertyName: key,
             initialValue: values[key],
