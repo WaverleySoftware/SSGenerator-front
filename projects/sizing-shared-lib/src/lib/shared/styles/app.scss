@@ -173,6 +173,14 @@
 
 .alert-grey {
   @include alert-variant(#f5f5f5, $alert-grey-border, $alert-grey-text);
+
+  position: fixed;
+  top: 150px;
+  z-index: 9999999;
+  max-width: 60vw;
+  @media screen and (max-width: 991px) {
+    right: 0;
+  }
 }
 
 /***************************************/

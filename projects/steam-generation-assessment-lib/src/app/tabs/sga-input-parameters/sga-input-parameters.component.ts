@@ -40,6 +40,29 @@ export class SgaInputParametersComponent {
     this.formValueGetter = this.formService.createFormValueGetter(this.formGroup);
   }
 
+  getInvalidBlock(structure): boolean {
+    if (Array.isArray(structure)) {
+      for (const el of structure) {
+        if (el && typeof el === 'string') {
+          const control = this.formGroup.get(`benchmarkInputs.${el}`);
+          if (control && control.touched && control.invalid) {
+            return true;
+          }
+        }
+      }
+    } else {
+      let isInvalid = false;
+      for (const key of Object.keys(structure)) {
+        if (this.getInvalidBlock(structure[key])) {
+          isInvalid = true;
+        }
+      }
+      return isInvalid;
+    }
+
+    return false;
+  }
+
   getValue(name: keyof BenchmarkInputsInterface): number {
     const control = this.formGroup.get(`benchmarkInputs.${name}`);
     return control && control.value;

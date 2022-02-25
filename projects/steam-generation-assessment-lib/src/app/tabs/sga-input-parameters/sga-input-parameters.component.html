@@ -3,6 +3,7 @@
 
   <spirax-panel [title]="'UTILITY_PARAMETERS' | translate"
                 [(expanded)]="structure?.utility_parameters.status"
+                [invalid]="getInvalidBlock(structure.utility_parameters)"
                 id="UtilityParameters"
                 titleSize="24px">
     <form body [formGroup]="formGroup">
@@ -25,6 +26,7 @@
               <p>{{'IF_A_STANDARD_FUEL_IS_USED_THE_CALORIFIC_VALUE_AND_CO2_EMISSIONS_FSLASH_UNIT_OF_FUEL_WILL_BE_AUTOMATICALLY_POPULATED_FROM_LOO_HELP' | translate}}</p>
             </ng-template>
             <spirax-panel id="FuelPanel"
+                          [invalid]="getInvalidBlock(structure.utility_parameters.panels.fuel.fields)"
                           [(expanded)]="structure?.utility_parameters.panels.fuel.status"
                           [title]="'FUEL' | translate"
                           [titleTooltip]="tooltipFuel" background="#EDF2F4">
@@ -97,6 +99,7 @@
             </ng-template>
             <spirax-panel id="CO2EmissionPanel"
                           title="CO2 Emission"
+                          [invalid]="getInvalidBlock(structure.utility_parameters.panels.co2_emission.fields)"
                           [(expanded)]="structure?.utility_parameters.panels.co2_emission.status"
                           [titleTooltip]="cO2EmissionTooltip" background="#EDF2F4">
               <spirax-toggle body
@@ -140,6 +143,7 @@
             </ng-template>
             <spirax-panel id="WaterPanel"
                           title="Water"
+                          [invalid]="getInvalidBlock(structure.utility_parameters.panels.water.fields)"
                           [(expanded)]="structure?.utility_parameters.panels.water.status"
                           [titleTooltip]="waterTooltip" background="#EDF2F4">
               <div body>
@@ -207,6 +211,7 @@
             </ng-template>
             <spirax-panel id="waterTreatmentChemicalsPanel"
                           title="Water treatment chemicals"
+                          [invalid]="getInvalidBlock(structure.utility_parameters.panels.water_treatment_chemicals.fields)"
                           [(expanded)]="structure?.utility_parameters.panels.water_treatment_chemicals.status"
                           [titleTooltip]="waterChemicalsTooltip" background="#EDF2F4">
               <spirax-toggle body formControlName="boilerWaterTreatmentChemicalCostsIsKnown"
@@ -243,6 +248,7 @@
             </ng-template>
             <spirax-panel id="waterEffluentPanel"
                           title="Water effluent"
+                          [invalid]="getInvalidBlock(structure.utility_parameters.panels.water_effluent.fields)"
                           [(expanded)]="structure?.utility_parameters.panels.water_effluent.status"
                           [titleTooltip]="waterEffluentTooltip" background="#EDF2F4">
               <div body>
@@ -265,6 +271,7 @@
   <spirax-panel [title]="'BOILER_HOUSE_PARAMETERS' | translate"
                 [(expanded)]="structure?.boiler_house_parameters.status"
                 [showSeparator]="false"
+                [invalid]="getInvalidBlock(structure.boiler_house_parameters.panels)"
                 id="BoilerHouseParameters"
                 titleSize="24px">
     <form body [formGroup]="formGroup">
@@ -272,8 +279,11 @@
         <div class="row">
           <div class="col-md-12">
             <tabset type="pills" class="sgaTabs">
-              <tab [heading]="'BOILER' | translate" [active]="structure.boiler_house_parameters.panels.boiler.status">
+              <tab [heading]="'BOILER' | translate"
+                   [customClass]="getInvalidBlock(structure.boiler_house_parameters.panels.boiler) && ' invalid'"
+                   [active]="structure.boiler_house_parameters.panels.boiler.status">
                 <spirax-panel id="boilerParametersPanel"
+                              [invalid]="getInvalidBlock(structure.boiler_house_parameters.panels.boiler.panels.boiler_parameters.fields)"
                               [(expanded)]="structure?.boiler_house_parameters.panels.boiler.panels.boiler_parameters.status"
                               [title]="'BOILER_PARAMETERS' | translate" background="#EDF2F4">
                   <div body class="row">
@@ -343,8 +353,11 @@
                   </div>
                 </spirax-panel>
               </tab>
-              <tab [heading]="'TDS_BLOWDOWN' | translate" [active]="structure.boiler_house_parameters.panels.tds_blowdown.status">
+              <tab [heading]="'TDS_BLOWDOWN' | translate"
+                   [customClass]="getInvalidBlock(structure.boiler_house_parameters.panels.tds_blowdown) && ' invalid'"
+                   [active]="structure.boiler_house_parameters.panels.tds_blowdown.status">
                 <spirax-panel id="blowdownEquipmentPanel"
+                              [invalid]="getInvalidBlock(structure.boiler_house_parameters.panels.tds_blowdown.panels.blowdown_equipment.fields)"
                               [(expanded)]="structure?.boiler_house_parameters.panels.tds_blowdown.panels.blowdown_equipment.status"
                               [title]="'BLOWDOWN_EQUIPMENT' | translate" background="#EDF2F4">
                   <div class="row" body>
@@ -382,6 +395,7 @@
                 </spirax-panel>
 
                 <spirax-panel id="tdsBlowdownParametersPanel"
+                              [invalid]="getInvalidBlock(structure.boiler_house_parameters.panels.tds_blowdown.panels.tds_blowdown_parameters.fields)"
                               [(expanded)]="structure?.boiler_house_parameters.panels.tds_blowdown.panels.tds_blowdown_parameters.status"
                               [title]="'TDS_BLOWDOWN_PARAMETERS' | translate" background="#EDF2F4">
                   <div class="row" body>
@@ -418,8 +432,11 @@
                   </div>
                 </spirax-panel>
               </tab>
-              <tab [heading]="'WATER_TREATMENT' | translate" [active]="structure.boiler_house_parameters.panels.water_treatment.status">
+              <tab [heading]="'WATER_TREATMENT' | translate"
+                   [customClass]="getInvalidBlock(structure.boiler_house_parameters.panels.water_treatment) && ' invalid'"
+                   [active]="structure.boiler_house_parameters.panels.water_treatment.status">
                 <spirax-panel id="makeUpWaterPanel"
+                              [invalid]="getInvalidBlock(structure?.boiler_house_parameters.panels.water_treatment.panels.make_up_water.fields)"
                               [(expanded)]="structure?.boiler_house_parameters.panels.water_treatment.panels.make_up_water.status"
                               [title]="'MAKE_UP_WATER' | translate" background="#EDF2F4">
                   <div class="row" body>
@@ -462,6 +479,7 @@
                 </spirax-panel>
 
                 <spirax-panel id="waterTreatmentParametersPanel"
+                              [invalid]="getInvalidBlock(structure?.boiler_house_parameters.panels.water_treatment.panels.water_treatment_parameters.fields)"
                               [(expanded)]="structure?.boiler_house_parameters.panels.water_treatment.panels.water_treatment_parameters.status"
                               [title]="'WATER_TREATMENT_PARAMETERS' | translate" background="#EDF2F4">
                   <div class="row" body>
@@ -494,7 +512,9 @@
                   </div>
                 </spirax-panel>
               </tab>
-              <tab [heading]="'FEEDWATER_AND_CONDENSATE' | translate" [active]="structure.boiler_house_parameters.panels.feedwater_and_condensate.status">
+              <tab [heading]="'FEEDWATER_AND_CONDENSATE' | translate"
+                   [customClass]="getInvalidBlock(structure.boiler_house_parameters.panels.feedwater_and_condensate) && ' invalid'"
+                   [active]="structure.boiler_house_parameters.panels.feedwater_and_condensate.status">
                 <spirax-panel id="deaeratorTypePanel"
                               [(expanded)]="structure?.boiler_house_parameters.panels.feedwater_and_condensate.panels.deaerator_type.status"
                               [title]="'DEAERATOR_TYPE' | translate" background="#EDF2F4">
@@ -524,6 +544,7 @@
                 </spirax-panel>
 
                 <spirax-panel id="boilerFeedwaterPanel"
+                              [invalid]="getInvalidBlock(structure?.boiler_house_parameters.panels.feedwater_and_condensate.panels.boiler_feedwater.fields)"
                               [(expanded)]="structure?.boiler_house_parameters.panels.feedwater_and_condensate.panels.boiler_feedwater.status"
                               [title]="'BOILER_FEEDWATER' | translate" background="#EDF2F4">
                   <div class="row" body>
@@ -616,6 +637,7 @@
                 </spirax-panel>
 
                 <spirax-panel id="condensateReturnPanel"
+                              [invalid]="getInvalidBlock(structure?.boiler_house_parameters.panels.feedwater_and_condensate.panels.condensate_return.fields)"
                               [(expanded)]="structure?.boiler_house_parameters.panels.feedwater_and_condensate.panels.condensate_return.status"
                               [title]="'CONDENSATE_RETURN' | translate" background="#EDF2F4">
                   <div class="row" body>
