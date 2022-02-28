@@ -3,17 +3,11 @@
     <h4 class="sgaBaseTabs_heading__title">
       <span>{{'IMPROVING_STEAM_GENERATION_EFFICIENCY' | translate}}</span>
 
-      <ng-container *ngIf="benchmarkData; else testCalc">
+      <ng-container *ngIf="benchmarkData">
         <button class="sgaBaseTabs_heading__next" *ngIf="nextTab && !nextTab.disabled" (click)="nextTabHandle(tabsRef)">
           {{nextTab?.heading || 'Next'}} <i class="fa fa-arrow-right"></i>
         </button>
       </ng-container>
-
-      <ng-template #testCalc>
-        <button class="sgaBaseTabs_heading__next" (click)="calcTestData()">
-          Calculate <i class="fa fa-arrow-right"></i>
-        </button>
-      </ng-template>
     </h4>
     <p class="sgaBaseTabs_heading__subtitle">
       {{('UNTITLED_PROJECT' | translate)+' - '+('UNTITLED_JOB' | translate)}}
