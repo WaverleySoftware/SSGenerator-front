@@ -83,11 +83,6 @@ export interface SteamGeneratorInputsInterface {
   isDsiPresent:	boolean;
 }
 
-export interface SgaSizingModuleFormInterface {
-  selectedUnits: SteamGeneratorSelectedUnitsInterface;
-  benchmarkInputs: SteamGeneratorInputsInterface;
-}
-
 export type FormFieldTypesInterface = {
   [key in keyof Partial<SteamGeneratorInputsInterface>]: {
     formControlName: string;
@@ -144,14 +139,6 @@ export enum SelectedUnitsList {
   temperatureUnitSelected = 'TemperatureUnit',
   tdsUnitSelected = 'BoilerHouseTDSUnits',
   fuelUnitSelected = 'FUEL_TYPE'
-}
-
-export enum FuelTypesEnum {
-  L = 'BoilerHouseLiquidFuelUnits', // BoilerHouseLiquidFuelUnits
-  E = 'BoilerHouseElectricalFuelUnits', // BoilerHouseElectricalFuelUnits
-  G = 'BoilerHouseGasFuelUnits', // BoilerHouseGasFuelUnits
-  O = 'BoilerHouseGasFuelUnits', // BoilerHouseGasFuelUnits
-  S = 'BoilerHouseSolidFuelUnits', // BoilerHouseSolidFuelUnits
 }
 
 export interface SgFormStructureInterface {

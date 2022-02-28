@@ -84,6 +84,64 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(() => this.resetBenchmarkData());
   }
+  // TODO: For testing only
+  calcTestData() {
+    this.sizingModuleForm.patchValue({
+      selectedUnits: {
+        energyUnitSelected: 108,
+        smallWeightUnitSelected: 26,
+        emissionUnitSelected: 27,
+        volumeUnitSelected: 16,
+        smallVolumetricFlowUnitSelected: 76,
+        massFlowUnitSelected: 230,
+        smallMassFlowUnitSelected: 84,
+        pressureUnitSelected: 50,
+        temperatureUnitSelected: 146,
+        tdsUnitSelected: 228,
+        fuelUnitSelected: 108
+      },
+      benchmarkInputs: {
+        hoursOfOperation: 8736,
+        isSteamFlowMeasured: false,
+        isAutoTdsControlPResent: false,
+        inputFuelId: '8c24c468-e50a-45ac-bc4c-8ebd60470c99',
+        costOfFuelPerUnit: 0.0000849504,
+        fuelQtyPerYearIsKnown: true,
+        costOfFuelPerYear: 10,
+        fuelEnergyPerUnit: 1,
+        fuelCarbonContent: 0.184973,
+        costOfWaterPerUnit: 0.326775872,
+        costOfEffluentPerUnit: 0.2973264,
+        boilerHouseWaterQtyPerYearIsKnown: false,
+        boilerWaterTreatmentChemicalCostsIsKnown: false,
+        isCo2OrCarbonEmissionsTaxed: false,
+        isBlowdownVesselPresent: false,
+        isCoolingWaterUsed: false,
+        isSuperheatedSteam: false,
+        boilerEfficiency: 80,
+        isFeedWaterMeasured: false,
+        boilerSteamPressure: 10,
+        isEconomizerPresent: false,
+        boilerAverageTds: 2500,
+        boilerMaxTds: 3800,
+        waterTreatmentMethod: 'aa5642a0-88a5-43e1-ba9d-367db3bb9df5',
+        percentageWaterRejection: 4,
+        tdsOfMakeupWater: 155,
+        isMakeUpWaterMonitored: false,
+        makeupWaterAmountPerHour: 10,
+        atmosphericDeaerator: true,
+        pressurisedDeaerator: false,
+        temperatureOfFeedtank: 80,
+        tdsOfFeedwaterInFeedtank: 75,
+        tdsOfCondensateReturn: 10,
+        temperatureOfCondensateReturn: 80,
+        areChemicalsAddedDirectlyToFeedtank: false,
+        isCondensateReturnKnown: false,
+        isDsiPresent: false
+      }
+    }, {emitEvent: false, onlySelf: true});
+    this.onCalculateSizing(this.sizingModuleForm);
+  }
   ngOnInit() {
     this.createOrUpdateSizingPref();
     this.convertUnits(this.getDefaultConvertedUnits());
@@ -165,7 +223,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   }
 
   onCalculateSizing(formGroup: FormGroup): any {
-    this.apiService.calculateBenchmark(formGroup.getRawValue())
+    this.apiService.calculateBenchmark(formGroup.value)
       .pipe(
         takeUntil(this.ngUnsubscribe),
         map(res => benchmarkCalculationValidator(res, this.sizingModuleForm, this.elRef)),
@@ -642,17 +700,17 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   }
 
   private resetCurrencies(): void {
-    const preference = this.preferenceService.sizingUnitPreferences.find(({ unitType }) => unitType === 'BHCurrencys');
-    this.adminService.getCurrencyData().subscribe((currencies) => {
-      this.preferenceService.addSizingUnitPreference(
+    const preference = this.preferenceService.sizingUnitPreferences.find(({ unitType }) => unitType === 'BHCurrency');
+    if (preference) {
+      this.adminService.getCurrencyData().subscribe((currencies) => this.preferenceService.addSizingUnitPreference(
         preference.preference,
         preference.unitType,
         'CURRENCY',
         this.moduleGroupId,
         undefined,
         currencies
-      );
-    });
+      ));
+    }
   }
 
   private setBenchmarkData(data: any) {

@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { AbstractControl, FormGroup, ValidationErrors } from '@angular/forms';
 import { ChartBarDataInterface } from '../../interfaces/chart-bar.interface';
 import {
   ProposedDataInterface,
@@ -15,6 +15,8 @@ import {
 } from 'rxjs/operators';
 import { of, Subject } from 'rxjs';
 import { SgaApiService } from '../../services/sga-api.service';
+import { SgaFormService } from '../../services/sga-form.service';
+import { horizontalChart, verticalChart, verticalChartLabels } from '../../utils/proposed-setup-def-data';
 
 @Component({
   selector: 'app-sga-proposed-setup',
@@ -30,8 +32,7 @@ export class SgaProposedSetupComponent implements OnInit {
 
   // Setter / Getter
   private proposedResults: any[];
-  @Input()
-  set results(data: any[]) {
+  @Input() set results(data: any[]) {
     this.proposedResults = data;
     const { verticalChartData, horizontalChartData, total } = SgaProposedSetupComponent.generateChartsData(data);
     this.verticalChartData = verticalChartData;
@@ -43,8 +44,7 @@ export class SgaProposedSetupComponent implements OnInit {
   }
   get results() { return this.proposedResults; }
   private proposedData: ProposedDataInterface;
-  @Input()
-  set data(data: ProposedDataInterface) {
+  @Input() set data(data: ProposedDataInterface) {
     if (data && data.proposedSetup && data.features && this.form) {
       this.form.patchValue({ proposedSetup: data.proposedSetup, features: data.features }, {emitEvent: false});
     } else if (this.proposedData && !data) {
@@ -57,95 +57,15 @@ export class SgaProposedSetupComponent implements OnInit {
 
   // inner data
   private ngUnsubscribe = new Subject<void>();
-  public verticalChartData: ChartBarDataInterface[] = [
-    { data: [0, 0, 0, 0, 0, 0, 0], label: 'Fuel' },
-    { data: [0, 0, 0, 0, 0, 0, 0], label: 'Water and Chemicals' },
-    { data: [0, 0, 0, 0, 0, 0, 0], label: 'Effluent' },
-    { data: [0, 0, 0, 0, 0, 0, 0], label: 'Carbont tax' },
-  ];
-  public horizontalChartData: ChartBarDataInterface[] = [
-    { data: [0, 0], label: 'Fuel' },
-    { data: [0, 0], label: 'Water and Chemicals' },
-    { data: [0, 0], label: 'Effluent' },
-    { data: [0, 0], label: 'Carbont tax' },
-  ];
-  public verticalChartLabels: string[] = [
-    ProposedSetupChartLabels.improvedBoilerEfficiency,
-    ProposedSetupChartLabels.condensateReturnPlusCondensateTemperature,
-    ProposedSetupChartLabels.changingWaterTreatment,
-    ProposedSetupChartLabels.addingAutomaticTdsControl,
-    ProposedSetupChartLabels.addingFlashHeatRecoveryToAutoTdsControl,
-    ProposedSetupChartLabels.addingHeatExchangerToHeatRecoveryToTdsBlowdown,
-    ProposedSetupChartLabels.effectOfDsiOnHotwell,
-  ];
+  public verticalChartData: ChartBarDataInterface[] = verticalChart;
+  public horizontalChartData: ChartBarDataInterface[] = horizontalChart;
+  public verticalChartLabels: string[] = verticalChartLabels;
   public proposedFormPanel = true;
-  public form: FormGroup;
+  public form = this.formService.getProposedSetupForm();
   public totalSaving: {steamGenerationSavings: number, savingsIncludingCondensateEffluent: number};
 
-  constructor(private fb: FormBuilder, private apiService: SgaApiService) {
-    this.form = this.fb.group({
-      proposedSetup: this.fb.group({
-        benchmarkBoilerEfficiency: [0, Validators.required],
-        benchmarkCondensateReturn: [0, Validators.required],
-        benchmarkCondensateReturnedPercentage: [0, Validators.required],
-        benchmarkCondensateTemperature: [0, Validators.required],
-        benchmarkDsiPressure: [0, Validators.required],
-        benchmarkTemperatureOfFeedtank: [0, Validators.required],
-        benchmarkWaterRejectionRate: [0, Validators.required],
-        condensateReturnUnit: [0, Validators.required],
-        condensateTemperatureUnit: [0, Validators.required],
-        dsiPressureUnit: [0, Validators.required],
-        economiserRequired: [false],
-        proposalBoilerEfficiency: [0, Validators.required],
-        proposalCondensateReturned: [0, Validators.required],
-        proposalCondensateReturnedPercentage: [0, Validators.required],
-        proposalCondensateTemperature: [0, Validators.required],
-        proposalCostOfSodiumSulphite: [0, Validators.required],
-        proposalDsiPressure: [0, Validators.required],
-        proposalTemperatureOfFeedtank: [0, Validators.required],
-        proposalWaterRejectionRate: [0, Validators.required],
-        temperatureOfFeedtankUnit: [0, Validators.required],
-      }),
-      features: this.fb.group({
-        boilerEfficiencyImprovements: [false],
-        increaseCondensateReturn: [false],
-        addWaterTreatmentPlant: [false],
-        addAutoTdsControls: [
-          false,
-          SgaProposedSetupComponent.validateTds(['addAutoTdsAndFlashRecovery', 'addAutoTdsAndFlashRecoveryPlusHearExchanger'])
-        ],
-        addAutoTdsAndFlashRecovery: [
-          false,
-          SgaProposedSetupComponent.validateTds(['addAutoTdsControls', 'addAutoTdsAndFlashRecoveryPlusHearExchanger'])
-        ],
-        addAutoTdsAndFlashRecoveryPlusHearExchanger: [
-          false,
-          SgaProposedSetupComponent.validateTds(['addAutoTdsControls', 'addAutoTdsAndFlashRecovery'])
-        ],
-        addDirectSteamInjectionToFeedtank: [false],
-      }),
-    });
-  }
+  constructor(private apiService: SgaApiService, private formService: SgaFormService) {}
 
-  private static validateTds(setToFalseArr: string[]) {
-    return (control: AbstractControl): ValidationErrors => {
-      if (control && control.value) {
-        const fg: FormGroup = control.parent as FormGroup;
-
-        if (fg) {
-          for (const name of setToFalseArr) {
-            const field = fg.get(name);
-
-            if (field && field.value) {
-              fg.patchValue({ [name]: false }, { emitEvent: false, onlySelf: true });
-            }
-          }
-        }
-      }
-
-      return null;
-    };
-  }
   private static generateChartsData(data: any[]): {
     verticalChartData: ChartBarDataInterface[]; horizontalChartData: ChartBarDataInterface[];
     total: { steamGenerationSavings: number, savingsIncludingCondensateEffluent: number, data?: {benchmark: any, proposal: any} }
@@ -155,18 +75,8 @@ export class SgaProposedSetupComponent implements OnInit {
       horizontalChartData: ChartBarDataInterface[];
       total: { steamGenerationSavings: number, savingsIncludingCondensateEffluent: number, data?: {benchmark: any, proposal: any} }
     } = {
-      verticalChartData: [
-        { data: [0, 0, 0, 0, 0, 0, 0], label: 'Fuel' },
-        { data: [0, 0, 0, 0, 0, 0, 0], label: 'Water and Chemicals' },
-        { data: [0, 0, 0, 0, 0, 0, 0], label: 'Effluent' },
-        { data: [0, 0, 0, 0, 0, 0, 0], label: 'Carbon tax' },
-      ],
-      horizontalChartData: [
-        { data: [0, 0], label: 'Fuel' },
-        { data: [0, 0], label: 'Water and Chemicals' },
-        { data: [0, 0], label: 'Effluent' },
-        { data: [0, 0], label: 'Carbont tax' },
-      ],
+      verticalChartData: verticalChart,
+      horizontalChartData: horizontalChart,
       total: {steamGenerationSavings: 0, savingsIncludingCondensateEffluent: 0, data: { benchmark: null, proposal: null }}
     };
 
@@ -240,20 +150,11 @@ export class SgaProposedSetupComponent implements OnInit {
   }
 
   private resetData() {
-    this.verticalChartData = [
-      { data: [0, 0, 0, 0, 0, 0, 0], label: 'Fuel' },
-      { data: [0, 0, 0, 0, 0, 0, 0], label: 'Water and Chemicals' },
-      { data: [0, 0, 0, 0, 0, 0, 0], label: 'Effluent' },
-      { data: [0, 0, 0, 0, 0, 0, 0], label: 'Carbont tax' },
-    ];
-    this.horizontalChartData = [
-      { data: [0, 0], label: 'Fuel' },
-      { data: [0, 0], label: 'Water and Chemicals' },
-      { data: [0, 0], label: 'Effluent' },
-      { data: [0, 0], label: 'Carbont tax' },
-    ];
+    this.verticalChartData = verticalChart;
+    this.horizontalChartData = horizontalChart;
     if (this.form && this.form.setValue) { this.form.reset(); }
   }
+
   private validateProposalForm() {
     const form = this.form.get('proposedSetup') as FormGroup;
 

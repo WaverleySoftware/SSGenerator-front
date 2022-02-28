@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { AbstractControl, AbstractControlOptions, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {
   InputParametersCreateFormInterface,
-  InputParametersTFormInterface,
+  InputParametersTFormInterface, ProposedSetupCreateFormInterface, ProposedSetupTFormInterface,
   TForm,
   TFormValueGetterInterface
 } from '../interfaces/forms.interface';
@@ -10,11 +10,16 @@ import { BenchmarkInputsInterface } from '../interfaces/benchmarkInputs.interfac
 import { SelectedUnitsInterface } from '../interfaces/selectedUnits.interface';
 import { validateBenchmarkInput } from '../validators/sga-benchmark.validator';
 import { SgaApiService } from './sga-api.service';
+import { SgaProposedSetupComponent } from '../tabs';
+import { ProposedSetupInterface } from '../interfaces/proposed-setup.interface';
+import { ProposedFeaturesInterface } from '../interfaces/proposed-features.interface';
+import { disableControl } from '../validators/sga-proposed-setup.validator';
 
 
 @Injectable()
 export class SgaFormService {
   private inputParamsFg: TForm<InputParametersTFormInterface>;
+  private proposedSetupFg: TForm<ProposedSetupTFormInterface>;
 
   constructor(private fb: FormBuilder, private apiService: SgaApiService) { }
 
@@ -22,7 +27,7 @@ export class SgaFormService {
     return this.fb.group(data, opt) as TForm<T>;
   }
 
-  createInputParamsForm(): TForm<InputParametersTFormInterface> {
+  private createInputParamsForm(): TForm<InputParametersTFormInterface> {
     const data: InputParametersCreateFormInterface = {
       selectedUnits: {
         energyUnitSelected: [null],
@@ -99,12 +104,52 @@ export class SgaFormService {
         isDsiPresent: [false],
       }
     };
-    this.inputParamsFg = this.createFormGroup<InputParametersTFormInterface>({
+
+    return this.createFormGroup<InputParametersTFormInterface>({
       selectedUnits: this.createFormGroup<SelectedUnitsInterface>(data.selectedUnits),
       benchmarkInputs: this.createFormGroup<BenchmarkInputsInterface>(data.benchmarkInputs)
     }, {updateOn: 'blur'}) as TForm<InputParametersTFormInterface>;
+  }
 
-    return this.inputParamsFg;
+  private createProposedSetupForm(): TForm<ProposedSetupTFormInterface> {
+    const data: ProposedSetupCreateFormInterface = {
+      proposedSetup: {
+        benchmarkBoilerEfficiency: [0, Validators.required],
+        benchmarkCondensateReturn: [0, Validators.required],
+        benchmarkCondensateReturnedPercentage: [0, Validators.required],
+        benchmarkCondensateTemperature: [0, Validators.required],
+        benchmarkDsiPressure: [0, Validators.required],
+        benchmarkTemperatureOfFeedtank: [0, Validators.required],
+        benchmarkWaterRejectionRate: [0, Validators.required],
+        condensateReturnUnit: [0, Validators.required],
+        condensateTemperatureUnit: [0, Validators.required],
+        dsiPressureUnit: [0, Validators.required],
+        economiserRequired: [false],
+        proposalBoilerEfficiency: [0, Validators.required],
+        proposalCondensateReturned: [0, Validators.required],
+        proposalCondensateReturnedPercentage: [0, Validators.required],
+        proposalCondensateTemperature: [0, Validators.required],
+        proposalCostOfSodiumSulphite: [0, Validators.required],
+        proposalDsiPressure: [0, Validators.required],
+        proposalTemperatureOfFeedtank: [0, Validators.required],
+        proposalWaterRejectionRate: [0, Validators.required],
+        temperatureOfFeedtankUnit: [0, Validators.required],
+      },
+      features: {
+        boilerEfficiencyImprovements: [false],
+        increaseCondensateReturn: [false],
+        addWaterTreatmentPlant: [false],
+        addAutoTdsControls: [false, disableControl(['addAutoTdsAndFlashRecovery', 'addAutoTdsAndFlashRecoveryPlusHearExchanger'])],
+        addAutoTdsAndFlashRecovery: [false, disableControl(['addAutoTdsControls', 'addAutoTdsAndFlashRecoveryPlusHearExchanger'])],
+        addAutoTdsAndFlashRecoveryPlusHearExchanger: [false, disableControl(['addAutoTdsControls', 'addAutoTdsAndFlashRecovery'])],
+        addDirectSteamInjectionToFeedtank: [false],
+      },
+    };
+
+    return this.createFormGroup<ProposedSetupTFormInterface>({
+      proposedSetup: this.createFormGroup<ProposedSetupInterface>(data.proposedSetup),
+      features: this.createFormGroup<ProposedFeaturesInterface>(data.features),
+    }, {updateOn: 'blur'}) as TForm<ProposedSetupTFormInterface>;
   }
 
   createFormValueSetter<T>(formGroup: FormGroup | TForm<any>, subFormKey?: string): (
@@ -202,6 +247,14 @@ export class SgaFormService {
     }
 
     return this.inputParamsFg;
+  }
+
+  getProposedSetupForm(): TForm<ProposedSetupTFormInterface> {
+    if (!this.proposedSetupFg) {
+      this.proposedSetupFg = this.createProposedSetupForm();
+    }
+
+    return this.proposedSetupFg;
   }
 }
 

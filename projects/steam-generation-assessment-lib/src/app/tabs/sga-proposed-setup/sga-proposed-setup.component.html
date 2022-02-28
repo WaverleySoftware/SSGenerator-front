@@ -19,6 +19,7 @@
                 <input type="number"
                        formControlName="benchmarkCondensateReturnedPercentage"
                        [unitsStr]="['%']"
+                       [sga-decimal-places]="2"
                        readonly
                        disabled
                        spirax-input/>
@@ -27,6 +28,7 @@
                 <input type="number"
                        formControlName="proposalCondensateReturnedPercentage"
                        [unitsStr]="['%']"
+                       [sga-decimal-places]="2"
                        spirax-input/>
               </div>
             </div>
@@ -69,19 +71,35 @@
             <div class="row">
               <div class="col-md-4"><p>{{'WATER_REJECTION_RATE' | translate}}</p></div>
               <div class="col-md-4">
-                <input type="number" formControlName="benchmarkWaterRejectionRate" [unitsStr]="['%']" spirax-input disabled/>
+                <input type="number"
+                       formControlName="benchmarkWaterRejectionRate"
+                       [unitsStr]="['%']"
+                       [sga-decimal-places]="2"
+                       spirax-input disabled/>
               </div>
               <div class="col-md-4">
-                <input type="number" formControlName="proposalWaterRejectionRate" [unitsStr]="['%']" spirax-input/>
+                <input type="number"
+                       formControlName="proposalWaterRejectionRate"
+                       [unitsStr]="['%']"
+                       [sga-decimal-places]="2"
+                       spirax-input/>
               </div>
             </div>
             <div class="row">
               <div class="col-md-4"><p>{{'BOILER_EFFICIENCY' | translate}}</p></div>
               <div class="col-md-4">
-                <input type="number" formControlName="benchmarkBoilerEfficiency" [unitsStr]="['%']" spirax-input disabled/>
+                <input type="number"
+                       formControlName="benchmarkBoilerEfficiency"
+                       [unitsStr]="['%']"
+                       [sga-decimal-places]="2"
+                       spirax-input disabled/>
               </div>
               <div class="col-md-4">
-                <input type="number" formControlName="proposalBoilerEfficiency" [unitsStr]="['%']" spirax-input/>
+                <input type="number"
+                       formControlName="proposalBoilerEfficiency"
+                       [unitsStr]="['%']"
+                       [sga-decimal-places]="2"
+                       spirax-input/>
               </div>
             </div>
             <div class="row">

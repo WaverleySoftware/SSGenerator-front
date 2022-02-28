@@ -41,6 +41,7 @@
                        [unitsStr]="[sizingUnits['BoilerHouseEnergyUnits']?.unit, sizingUnits[getFuelTypeName(fuel?.item?.value)]?.unit]"
                        [value]="getValue('fuelEnergyPerUnit') | decimalPlace: 9"
                        [sga-decimal-places]="9"
+                       [disabled]="sizingUnits['BoilerHouseEnergyUnits']?.unit === sizingUnits[getFuelTypeName(fuel?.item?.value)]?.unit"
                        formControlName="fuelEnergyPerUnit"
                        type="number"
                        spirax-input
@@ -49,6 +50,8 @@
                 <input [label]="'CO2_EMISSIONS_PER_UNIT_FUEL' | translate"
                        [unitsStr]="[sizingUnits['WeightUnit']?.unit, sizingUnits[getFuelTypeName(fuel?.item?.value)]?.unit]"
                        [value]="getValue('fuelCarbonContent') | decimalPlace: 9"
+                       [sga-decimal-places]="9"
+                       [disabled]="sizingUnits['WeightUnit']?.unit === sizingUnits[getFuelTypeName(fuel?.item?.value)]?.unit"
                        formControlName="fuelCarbonContent"
                        type="number"
                        spirax-input
@@ -524,7 +527,7 @@
                                                formControlName="atmosphericDeaerator"
                                                label="AUTMOSPHERIC_DEAERATOR"
                                                [defaultChecked]="formGroup.get('benchmarkInputs.atmosphericDeaerator').value"
-                                               (valueChange)="setFormValue({pressurisedDeaerator: false, atmosphericDeaerator: true}); setFormValue('temperatureOfFeedtank', null); toggleInput(['isDsiPresent'], 'pressureOfFeedtank', null)"
+                                               (valueChange)="setFormValue({pressurisedDeaerator: false, atmosphericDeaerator: true}); setFormValue('temperatureOfFeedtank', null); toggleInput('isDsiPresent', 'pressureOfFeedtank', null)"
                                                name="deaeratorType">
                         <img src="/assets/img/steam_generation/deaerator_type_1.png" alt="deaerator_type_1">
                       </spirax-form-radio-group>
@@ -534,7 +537,7 @@
                                                formControlName="pressurisedDeaerator"
                                                label="PRESSURLSED_DEAERATOR"
                                                [defaultChecked]="formGroup.get('benchmarkInputs.pressurisedDeaerator').value"
-                                               (valueChange)="setFormValue({pressurisedDeaerator: true, atmosphericDeaerator: false}); toggleInput('pressureOfFeedtank', ['isDsiPresent', 'pressureOfSteamSupplyingDsi'], null)"
+                                               (valueChange)="setFormValue({pressurisedDeaerator: true, atmosphericDeaerator: false}); toggleInput('pressureOfFeedtank', ['pressureOfSteamSupplyingDsi'], null); toggleInput(null, 'isDsiPresent', false)"
                                                name="deaeratorType">
                         <img src="/assets/img/steam_generation/boiler-scheme/images/PressurisedDAImgCrop.png"
                              alt="deaerator_type_1">
@@ -605,7 +608,7 @@
                     <div class="col-md-4">
                       <ng-container *ngIf="formGroup.get('benchmarkInputs.atmosphericDeaerator')?.value; else pressureDeaerator">
                         <spirax-toggle formControlName="isDsiPresent"
-                                       (valueChange)="toggleInput($event && 'pressureOfSteamSupplyingDsi', !$event && 'pressureOfSteamSupplyingDsi', null)"
+                                       (valueChange)="toggleInput($event && 'pressureOfSteamSupplyingDsi', !$event && 'pressureOfSteamSupplyingDsi', false)"
                                        label="IS_DSI_PRESENT">
                           <div yes>
                             <input [label]="'PRESSURE_OF_STEAM_SUPPLYING_DSI' | translate"
