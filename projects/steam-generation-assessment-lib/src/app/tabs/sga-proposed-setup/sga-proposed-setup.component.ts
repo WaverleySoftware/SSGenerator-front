@@ -1,19 +1,14 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { AbstractControl, FormGroup, ValidationErrors } from '@angular/forms';
+import { FormGroup } from '@angular/forms';
 import { ChartBarDataInterface } from '../../interfaces/chart-bar.interface';
 import {
   ProposedDataInterface,
   ProposedSetupChartElements,
-  ProposedSetupChartIndex, ProposedSetupChartLabels, ProposedSetupInterface,
+  ProposedSetupChartIndex,
   SteamGeneratorInputsInterface
 } from '../../interfaces/steam-generation-form.interface';
-import {
-  map,
-  switchMap,
-  takeUntil,
-  tap
-} from 'rxjs/operators';
-import { of, Subject } from 'rxjs';
+import { filter, takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 import { SgaApiService } from '../../services/sga-api.service';
 import { SgaFormService } from '../../services/sga-form.service';
 import { horizontalChart, verticalChart, verticalChartLabels } from '../../utils/proposed-setup-def-data';
@@ -155,57 +150,13 @@ export class SgaProposedSetupComponent implements OnInit {
     if (this.form && this.form.setValue) { this.form.reset(); }
   }
 
-  private validateProposalForm() {
-    const form = this.form.get('proposedSetup') as FormGroup;
-
-    if (form && form.controls) {
-      for (const controlsKey in form.controls) {
-        if (controlsKey && controlsKey !== 'economiserRequired') {
-          const control = form.get(controlsKey);
-
-          if (control) {
-            control.valueChanges.pipe(
-              takeUntil(this.ngUnsubscribe),
-              tap(() => control.markAsPending({emitEvent: false})),
-              switchMap((value) => {
-                if (!value || value === 0) { return of({isValid: false, errors: [{errorMessage: 'REQUIRED_FIELD'}]}); }
-                return this.apiService.proposalValidate(controlsKey as keyof ProposedSetupInterface, form.getRawValue());
-              }),
-              map(res => {
-                if (!res || !res.hasOwnProperty('isValid') || res.isValid) { return null; }
-
-                let error = 'Some Error';
-
-                if (res.errors && Array.isArray(res.errors)) {
-                  error = res.errors[0].errorMessage;
-                }
-
-                return {
-                  error,
-                  message: res.errors[0] &&
-                    (res.errors[0].customState || res.errors[0].customState === 0) &&
-                    `(${res.errors[0].customState})`
-                };
-              }),
-            ).subscribe(
-              (error) => control.setErrors(error),
-              () => control.updateValueAndValidity({emitEvent: false})
-            );
-          }
-        }
-      }
-    }
-  }
-
   get isCondensateReturnDisable(): boolean {
     const fg: FormGroup = this.form.get('proposedSetup') as FormGroup;
     return fg.get('proposalCondensateReturnedPercentage').value === fg.get('benchmarkCondensateReturnedPercentage').value &&
       fg.get('benchmarkCondensateReturn').value === fg.get('proposalCondensateReturned').value;
   }
 
-  ngOnInit() {
-    this.validateProposalForm();
-  }
+  ngOnInit() {}
 
   onSubmit() {
     if (this.form.invalid) {
@@ -213,24 +164,43 @@ export class SgaProposedSetupComponent implements OnInit {
     }
 
     this.proposedFormPanel = false;
+    this.form.get('proposedSetup').markAsUntouched();
+    this.form.get('proposedSetup').markAsPristine();
     this.generateProposed.emit(this.form.getRawValue());
   }
 
   economizerChange(economiserRequired) {
-    const proposalBoilerEfficiencyControl = this.form.get('proposedSetup.proposalBoilerEfficiency');
-
-    this.apiService.calculateProposedBoilerEfficiency({
+    const proposal = this.form.get('proposedSetup.proposalBoilerEfficiency');
+    const current = this.form.get('proposedSetup.benchmarkBoilerEfficiency');
+    const params = {
       economiserRequired,
-      benchmarkBoilerEfficiency: this.form.get('proposedSetup.benchmarkBoilerEfficiency').value,
-      proposalBoilerEfficiency: proposalBoilerEfficiencyControl.value,
-    }).pipe(takeUntil(this.ngUnsubscribe)).subscribe(res => {
-      if (res && res.proposalBoilerEfficiency) {
-        proposalBoilerEfficiencyControl.patchValue(res.proposalBoilerEfficiency, { onlySelf: true, emitEvent: false });
+      benchmarkBoilerEfficiency: current.value || 0,
+      proposalBoilerEfficiency: proposal.value || 0,
+    };
+
+    if (proposal.invalid) {
+      params.proposalBoilerEfficiency = this.data.proposedSetup.proposalBoilerEfficiency;
+
+      if (!economiserRequired) {
+        proposal.markAsUntouched();
+        proposal.markAsPristine();
+        proposal.patchValue(params.proposalBoilerEfficiency, {emitEvent: false});
+        return;
       }
-    });
+    }
+
+    this.apiService.calculateProposedBoilerEfficiency(params)
+      .pipe(takeUntil(this.ngUnsubscribe), filter((res) => !!res && !!res.proposalBoilerEfficiency))
+      .subscribe(({proposalBoilerEfficiency}) => {
+        proposal.markAsUntouched();
+        proposal.markAsPristine();
+        proposal.patchValue(proposalBoilerEfficiency, {emitEvent: false});
+      });
   }
 
   changeFeature(changed?: Event) {
+    this.form.get('proposedSetup').markAsUntouched();
+    this.form.get('proposedSetup').markAsPristine();
     this.generateProposed.emit(this.form.getRawValue());
   }
 }

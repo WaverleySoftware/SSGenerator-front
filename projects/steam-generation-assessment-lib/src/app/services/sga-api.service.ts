@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { BenchmarkInputsInterface } from '../interfaces/benchmarkInputs.interface';
-import { InputParametersFormInterface } from '../interfaces/forms.interface';
+import { InputParametersFormInterface, ProposedSetupFormInterface } from '../interfaces/forms.interface';
 import {
   SgaCalcBoilerEfficiencyReqInterface,
   SgaCalcBoilerEfficiencyResInterface,
@@ -23,6 +23,7 @@ import {
 import { CalcBenchmarkResInterface } from '../interfaces/calc-benchmark-res.interface';
 import { tap } from 'rxjs/operators/tap';
 import { catchError } from 'rxjs/operators';
+import { ProposedSetupInterface } from '../interfaces/proposed-setup.interface';
 
 @Injectable()
 export class SgaApiService {
@@ -39,9 +40,9 @@ export class SgaApiService {
     }
 
     if (status && !this.requestLoading$.value) {
-      this.requestLoading$.next(status);
+      setTimeout(() => this.requestLoading$.next(status), 10);
     } else if (!status && this.requestLoading$.value && JSON.stringify(this.loadingTypes) === '{}') {
-      this.requestLoading$.next(!!status);
+      setTimeout(() => this.requestLoading$.next(!!status), 10);
     }
   }
 
@@ -58,7 +59,7 @@ export class SgaApiService {
     return this.post('validate-benchmark-input', data, name);
   }
 
-  proposalValidate(name: string, data: any): Observable<any> {
+  proposalValidate(name: string, data: ProposedSetupInterface): Observable<any> {
     return this.post('validate-proposal-input', data, name);
   }
 
@@ -104,7 +105,7 @@ export class SgaApiService {
     return this.post<CalcBenchmarkResInterface | SgaValidationErrorResInterface>(`calculate-benchmark`, data);
   }
 
-  calculateProposal(data): Observable<any> {
+  calculateProposal(data): Observable<{ messages: any[], proposal: any[] }> {
     return this.post<any>('calculate-proposal', data);
   }
 }

@@ -13,7 +13,7 @@ import { SgaApiService } from './sga-api.service';
 import { SgaProposedSetupComponent } from '../tabs';
 import { ProposedSetupInterface } from '../interfaces/proposed-setup.interface';
 import { ProposedFeaturesInterface } from '../interfaces/proposed-features.interface';
-import { disableControl } from '../validators/sga-proposed-setup.validator';
+import { disableControl, validateProposed } from '../validators/sga-proposed-setup.validator';
 
 
 @Injectable()
@@ -114,35 +114,44 @@ export class SgaFormService {
   private createProposedSetupForm(): TForm<ProposedSetupTFormInterface> {
     const data: ProposedSetupCreateFormInterface = {
       proposedSetup: {
-        benchmarkBoilerEfficiency: [0, Validators.required],
-        benchmarkCondensateReturn: [0, Validators.required],
-        benchmarkCondensateReturnedPercentage: [0, Validators.required],
-        benchmarkCondensateTemperature: [0, Validators.required],
-        benchmarkDsiPressure: [0, Validators.required],
-        benchmarkTemperatureOfFeedtank: [0, Validators.required],
-        benchmarkWaterRejectionRate: [0, Validators.required],
-        condensateReturnUnit: [0, Validators.required],
-        condensateTemperatureUnit: [0, Validators.required],
-        dsiPressureUnit: [0, Validators.required],
-        economiserRequired: [false],
-        proposalBoilerEfficiency: [0, Validators.required],
-        proposalCondensateReturned: [0, Validators.required],
-        proposalCondensateReturnedPercentage: [0, Validators.required],
-        proposalCondensateTemperature: [0, Validators.required],
-        proposalCostOfSodiumSulphite: [0, Validators.required],
-        proposalDsiPressure: [0, Validators.required],
-        proposalTemperatureOfFeedtank: [0, Validators.required],
-        proposalWaterRejectionRate: [0, Validators.required],
-        temperatureOfFeedtankUnit: [0, Validators.required],
+        benchmarkBoilerEfficiency: [0, Validators.required, validateProposed(this.apiService)],
+        benchmarkCondensateReturn: [0, Validators.required, validateProposed(this.apiService)],
+        benchmarkCondensateReturnedPercentage: [0, Validators.required, validateProposed(this.apiService)],
+        benchmarkCondensateTemperature: [0, Validators.required, validateProposed(this.apiService)],
+        benchmarkDsiPressure: [0, Validators.required, validateProposed(this.apiService)],
+        benchmarkTemperatureOfFeedtank: [0, Validators.required, validateProposed(this.apiService)],
+        benchmarkWaterRejectionRate: [0, Validators.required, validateProposed(this.apiService)],
+        condensateReturnUnit: [0, Validators.required, validateProposed(this.apiService)],
+        condensateTemperatureUnit: [0, Validators.required, validateProposed(this.apiService)],
+        dsiPressureUnit: [0, Validators.required, validateProposed(this.apiService)],
+        economiserRequired: [false, {updateOn: 'change'}],
+        proposalBoilerEfficiency: [0, Validators.required, validateProposed(this.apiService)],
+        proposalCondensateReturned: [0, Validators.required, validateProposed(this.apiService)],
+        proposalCondensateReturnedPercentage: [0, Validators.required, validateProposed(this.apiService)],
+        proposalCondensateTemperature: [0, Validators.required, validateProposed(this.apiService)],
+        proposalCostOfSodiumSulphite: [0, Validators.required, validateProposed(this.apiService)],
+        proposalDsiPressure: [0, Validators.required, validateProposed(this.apiService)],
+        proposalTemperatureOfFeedtank: [0, Validators.required, validateProposed(this.apiService)],
+        proposalWaterRejectionRate: [0, Validators.required, validateProposed(this.apiService)],
+        temperatureOfFeedtankUnit: [0, Validators.required, validateProposed(this.apiService)],
       },
       features: {
-        boilerEfficiencyImprovements: [false],
-        increaseCondensateReturn: [false],
-        addWaterTreatmentPlant: [false],
-        addAutoTdsControls: [false, disableControl(['addAutoTdsAndFlashRecovery', 'addAutoTdsAndFlashRecoveryPlusHearExchanger'])],
-        addAutoTdsAndFlashRecovery: [false, disableControl(['addAutoTdsControls', 'addAutoTdsAndFlashRecoveryPlusHearExchanger'])],
-        addAutoTdsAndFlashRecoveryPlusHearExchanger: [false, disableControl(['addAutoTdsControls', 'addAutoTdsAndFlashRecovery'])],
-        addDirectSteamInjectionToFeedtank: [false],
+        boilerEfficiencyImprovements: [false, {updateOn: 'change'}],
+        increaseCondensateReturn: [false, {updateOn: 'change'}],
+        addWaterTreatmentPlant: [false, {updateOn: 'change'}],
+        addAutoTdsControls: [false, {
+          updateOn: 'change',
+          validators: disableControl(['addAutoTdsAndFlashRecovery', 'addAutoTdsAndFlashRecoveryPlusHearExchanger'])
+        }],
+        addAutoTdsAndFlashRecovery: [false, {
+          updateOn: 'change',
+          validators: disableControl(['addAutoTdsControls', 'addAutoTdsAndFlashRecoveryPlusHearExchanger'])
+        }],
+        addAutoTdsAndFlashRecoveryPlusHearExchanger: [false, {
+          updateOn: 'change',
+          validators: disableControl(['addAutoTdsControls', 'addAutoTdsAndFlashRecovery'])
+        }],
+        addDirectSteamInjectionToFeedtank: [false, {updateOn: 'change'}],
       },
     };
 

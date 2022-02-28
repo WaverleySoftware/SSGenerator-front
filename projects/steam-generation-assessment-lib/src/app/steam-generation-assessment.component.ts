@@ -9,7 +9,9 @@ import {
   TranslationService,
   UnitConvert,
   UnitsService,
-  EnumerationDefinition
+  EnumerationDefinition,
+  SizingSuiteModalComponent,
+  TranslatePipe
 } from 'sizing-shared-lib';
 import { FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Params } from '@angular/router';
@@ -63,6 +65,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     .pipe(map((data) => data.reduce((obj, item) => ({...obj, [item.id]: item.units}), {})));
 
   @ViewChild('tabsRef', {static: true}) tabsRef: TabsetComponent;
+  @ViewChild('sgaModalRef', {static: true}) modal: SizingSuiteModalComponent;
 
   constructor(
     private preferenceService: PreferenceService,
@@ -74,6 +77,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     private adminService: AdminService,
     private formService: SgaFormService,
     private apiService: SgaApiService,
+    private translatePipe: TranslatePipe,
   ) {
     super();
     this.setBenchmarkInputValue = this.formService
@@ -140,6 +144,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
         isDsiPresent: false
       }
     }, {emitEvent: false, onlySelf: true});
+    this.sizingModuleForm.get('benchmarkInputs.costOfFuelPerYear').enable();
     this.onCalculateSizing(this.sizingModuleForm);
   }
   ngOnInit() {
@@ -393,11 +398,22 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   calculateProposedSetup(proposalInputs: ProposedDataInterface): void {
     if (!proposalInputs || !proposalInputs.proposedSetup || !proposalInputs.features) { return; }
 
-    this.apiService.calculateProposal({ ...this.sizingModuleForm.getRawValue(), proposalInputs })
-      .pipe(takeUntil(this.ngUnsubscribe))
+    this.apiService.calculateProposal({ ...this.sizingModuleForm.getRawValue(), proposalInputs }).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(res => {
-        if (res) {
-          this.proposedSetupResults = res;
+        if (res && res.messages && res.messages.length && this.modal && typeof this.modal.open === 'function') {
+          const messages = [];
+          for (const message of res.messages) {
+            messages.push(this.translatePipe.transform(message.code));
+          }
+
+          if (messages.length) {
+            this.modal.open();
+            this.modal.error(messages);
+          }
+        }
+
+        if (res && res.proposal) {
+          this.proposedSetupResults = res.proposal;
           this.setProposalSetupData(proposalInputs);
         }
       });
