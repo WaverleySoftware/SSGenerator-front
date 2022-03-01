@@ -33,14 +33,13 @@
                               [currency]="currency"
                               [results]="proposedSetupResults"
                               (generateProposed)="calculateProposedSetup($event)"
+                              (nextTabHandle)="setActiveTab(3)"
                               [inputData]="sizingModuleForm.get('benchmarkInputs').value"
                               [units]="units$ | async"></app-sga-proposed-setup>
     </tab>
-    <tab [heading]="'FINAL_PROPOSAL' | translate" [disabled]="true" (select)="setActiveTab($event)">
-      <app-sga-final-proposal *ngIf="tabsRef?.tabs[3]?.active"></app-sga-final-proposal>
+    <tab [heading]="'FINAL_PROPOSAL' | translate" [disabled]="!proposedSetupResults" (select)="setActiveTab($event)">
+      <app-sga-final-proposal [data]="proposedSetupResults"></app-sga-final-proposal>
     </tab>
   </tabset>
 
 </div>
-
-<sizing-suite-modal #sgaModalRef (on-container-click)="sgaModalRef.close()"></sizing-suite-modal>

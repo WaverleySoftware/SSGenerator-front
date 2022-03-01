@@ -1,24 +1,24 @@
 <tabset class="sgaFinalProposal">
   <tab>
-    <h5 class="sgaBaseTabs_title_md">Proposed setup</h5>
+    <h5 class="sgaBaseTabs_title_md">{{'PROPOSED_SETUP' | translate}}</h5>
     <ng-template tabHeading>
       <svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
         <path d="M1.6665 10.8333H6.6665V17.5H1.6665V10.8333ZM7.49984 2.5H12.4998V17.5H7.49984V2.5ZM13.3332 6.66667H18.3332V17.5H13.3332V6.66667Z" />
       </svg>
     </ng-template>
 
-    <p class="sgaBaseTabs_title_sm">Potential Boiler House Savings by Project</p>
-    <p class="sgaBaseTabs_title_xs">Saving £’000s / yr</p>
-    <app-chart-bar [style]="{'min-height': '400px'}" [data]="chartData" [labels]="chartLabels"></app-chart-bar>
+    <p class="sgaBaseTabs_title_sm">{{'POTENTIAL_BOILER_HOUSE_SAVINGS_BY_PROJECT' | translate}}</p>
+    <p class="sgaBaseTabs_title_xs">{{'SAVING' | translate}} £’000s / {{'YR' | translate}}</p>
+    <app-chart-bar [style]="{'min-height': '400px'}" [data]="verticalChartData" [labels]="chartLabels"></app-chart-bar>
     <hr>
-    <p class="sgaBaseTabs_title_sm">Cost of Steam Generation<i class="fa fa-info-circle"></i></p>
+    <p class="sgaBaseTabs_title_sm">{{'COST_OF_STEAM_GENERATION' | translate}}<i class="fa fa-info-circle"></i></p>
     <app-chart-bar type="horizontalBar"
                    [legend]="false"
-                   [data]="costSteamGenerationChart"
-                   [labels]="costSteamGenerationChartLabels"></app-chart-bar>
+                   [data]="horizontalChartData"
+                   [labels]="['POTENTIAL' | translate, 'CURRENT' | translate]"></app-chart-bar>
   </tab>
   <tab>
-    <h5 class="sgaBaseTabs_title_md">Proposed setup</h5>
+    <h5 class="sgaBaseTabs_title_md">{{'PROPOSED_SETUP' | translate}}</h5>
     <ng-template tabHeading>
       <svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
         <path d="M12.7 18H7.3V8.22222H12.7V18ZM14.5 18V8.22222H19V17.1111C19 17.3469 18.9052 17.573 18.7364 17.7397C18.5676 17.9064 18.3387 18 18.1 18H14.5ZM5.5 18H1.9C1.66131 18 1.43239 17.9064 1.2636 17.7397C1.09482 17.573 1 17.3469 1 17.1111V8.22222H5.5V18ZM19 6.44444H1V2.88889C1 2.65314 1.09482 2.42705 1.2636 2.26035C1.43239 2.09365 1.66131 2 1.9 2H18.1C18.3387 2 18.5676 2.09365 18.7364 2.26035C18.9052 2.42705 19 2.65314 19 2.88889V6.44444Z"/>

@@ -10,8 +10,8 @@ import {
   UnitConvert,
   UnitsService,
   EnumerationDefinition,
-  SizingSuiteModalComponent,
-  TranslatePipe
+  TranslatePipe,
+  MessagesService
 } from 'sizing-shared-lib';
 import { FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Params } from '@angular/router';
@@ -65,7 +65,6 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     .pipe(map((data) => data.reduce((obj, item) => ({...obj, [item.id]: item.units}), {})));
 
   @ViewChild('tabsRef', {static: true}) tabsRef: TabsetComponent;
-  @ViewChild('sgaModalRef', {static: true}) modal: SizingSuiteModalComponent;
 
   constructor(
     private preferenceService: PreferenceService,
@@ -78,6 +77,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     private formService: SgaFormService,
     private apiService: SgaApiService,
     private translatePipe: TranslatePipe,
+    private messagesService: MessagesService
   ) {
     super();
     this.setBenchmarkInputValue = this.formService
@@ -341,16 +341,8 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
 
     this.apiService.calculateProposal({ ...this.sizingModuleForm.getRawValue(), proposalInputs }).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(res => {
-        if (res && res.messages && res.messages.length && this.modal && typeof this.modal.open === 'function') {
-          const messages = [];
-          for (const message of res.messages) {
-            messages.push(this.translatePipe.transform(message.code));
-          }
-
-          if (messages.length) {
-            this.modal.open();
-            this.modal.error(messages);
-          }
+        if (res && res.messages && res.messages.length) {
+          this.messagesService.addMessage(res.messages.map(m => ({...m, messageKey: m.code})));
         }
 
         if (res && res.proposal) {
