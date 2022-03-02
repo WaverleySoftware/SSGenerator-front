@@ -1,12 +1,7 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { ChartBarDataInterface } from '../../interfaces/chart-bar.interface';
-import {
-  ProposedDataInterface,
-  ProposedSetupChartElements,
-  ProposedSetupChartIndex,
-  SteamGeneratorInputsInterface
-} from '../../interfaces/steam-generation-form.interface';
+import { ProposedDataInterface, SteamGeneratorInputsInterface } from '../../interfaces/steam-generation-form.interface';
 import { filter, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { SgaApiService } from '../../services/sga-api.service';
@@ -38,6 +33,10 @@ export class SgaProposedSetupComponent {
       savingsIncludingCondensateEffluent: total.savingsIncludingCondensateEffluent,
       steamGenerationSavings: total.steamGenerationSavings
     };
+
+    if (!data && !this.proposedFormPanel) {
+      this.proposedFormPanel = true;
+    }
   }
   get results() { return this.proposedResults; }
   private proposedData: ProposedDataInterface;
