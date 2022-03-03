@@ -87,7 +87,7 @@ export class SgaFormService {
         tdsOfMakeupWater: [null, Validators.required, validateBenchmarkInput(this.apiService)],
         isMakeUpWaterMonitored: [false],
         temperatureOfMakeupWater: [{value: null, disabled: true}, Validators.required, validateBenchmarkInput(this.apiService)],
-        makeupWaterAmountPerHour: [null, null, validateBenchmarkInput(this.apiService, true)],
+        makeupWaterAmountPerHour: [{value: null, disabled: true}, null, validateBenchmarkInput(this.apiService, true)],
         makeupWaterAmountPerYear: [{value: null, disabled: true}, null, validateBenchmarkInput(this.apiService, true)],
         atmosphericDeaerator: [true],
         pressurisedDeaerator: [false],

@@ -440,7 +440,7 @@
                   <div class="row" body>
                     <div class="col-md-6">
                       <spirax-toggle formControlName="isMakeUpWaterMonitored" label="IS_MAKE_UP_WATER_MONITORED"
-                                     (valueChange)="toggleInput($event && 'temperatureOfMakeupWater', !$event && 'temperatureOfMakeupWater', null)">
+                                     (valueChange)="toggleInput(['temperatureOfMakeupWater', 'makeupWaterAmountPerHour'], ['temperatureOfMakeupWater', 'makeupWaterAmountPerHour', 'makeupWaterAmountPerYear'], null, $event)">
                         <div yes>
                           <input [label]="'TEMPERATURE_OF_MAKE_UP_WATER' | translate"
                                  [unitsStr]="[sizingUnits['TemperatureUnit']?.unit]"
@@ -456,7 +456,7 @@
                     <div class="col-md-6 border-l-md">
                       <input [label]="'MAKE_UP_WATER_PER_HOUR' | translate"
                              [unitsStr]="[sizingUnits['BoilerHouseSmallVolumetricFlowUnits']?.unit]"
-                             (radioClick)="toggleInput('makeupWaterAmountPerHour', 'makeupWaterAmountPerYear', null)"
+                             (radioClick)="getValue('isMakeUpWaterMonitored') && toggleInput('makeupWaterAmountPerHour', 'makeupWaterAmountPerYear', null)"
                              [value]="getValue('makeupWaterAmountPerHour') | decimalPlace: sizingUnits['BoilerHouseSmallVolumetricFlowUnits']?.decimal"
                              [sga-decimal-places]="sizingUnits['BoilerHouseSmallVolumetricFlowUnits']?.decimal"
                              radio
@@ -465,7 +465,7 @@
                              spirax-input>
                       <input [label]="'MAKE_UP_WATER_PER_YEAR' | translate"
                              [unitsStr]="[sizingUnits['BoilerHouseVolumetricFlowUnits']?.unit]"
-                             (radioClick)="toggleInput('makeupWaterAmountPerYear', 'makeupWaterAmountPerHour', null)"
+                             (radioClick)="getValue('isMakeUpWaterMonitored') && toggleInput('makeupWaterAmountPerYear', 'makeupWaterAmountPerHour', null)"
                              [value]="getValue('makeupWaterAmountPerYear') | decimalPlace: sizingUnits['BoilerHouseVolumetricFlowUnits']?.decimal"
                              [sga-decimal-places]="sizingUnits['BoilerHouseVolumetricFlowUnits']?.decimal"
                              radio
