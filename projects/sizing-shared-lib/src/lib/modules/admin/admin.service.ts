@@ -15,6 +15,7 @@ import "rxjs/add/operator/catch";
 import { Manufacturer } from "../admin/module-preferences/manufacturer.model";
 import { Enumeration } from "../../shared/translation/translation.model";
 import { ModulePreferenceDetails } from "../../shared/module-preference/module-preference-details.model";
+import { map } from "rxjs/operators";
 
 
 @Injectable()
@@ -22,6 +23,7 @@ export class AdminService {
 
   vettedUsers: VettedUser[] = [];
   vettedUsersChange: Subject<VettedUser[]> = new Subject<VettedUser[]>();
+  currenciesPending: boolean;
 
   constructor(private http: HttpClient) {
     // When the class in constructed, initialise the subject so that whenever it is called, its subscriber resolves the result to the current vetted users object.
@@ -58,7 +60,13 @@ export class AdminService {
    * Gets all supported currencies.
    */
   getCurrencyData(): Observable<Array<Currency>> {
-    return this.http.get<Array<Currency>>(`./Api/Admin/GetCurrencyData`);
+    this.currenciesPending = true;
+    return this.http.get<Array<Currency>>(`./Api/Admin/GetCurrencyData`).pipe(
+      map((currencies) => {
+        this.currenciesPending = false;
+        return currencies;
+      })
+    );
   }
 
   /**

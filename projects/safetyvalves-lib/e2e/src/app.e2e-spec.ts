@@ -10,7 +10,7 @@ describe('workspace-project App', () => {
 
   it('should display welcome message', () => {
     page.navigateTo();
-    expect(page.getTitleText()).toEqual('safetyvalves-lib app is running!');
+    expect(page.getTitleText()).toEqual('safetyValves-lib app is running!');
   });
 
   afterEach(async () => {

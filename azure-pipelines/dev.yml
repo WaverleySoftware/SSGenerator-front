@@ -4,5 +4,5 @@ trigger:
 jobs:
   - template: templates/build-template.yml
     parameters:
-      ArtifactName: 'sg-ui-dev'
-      JobName: 'Build_dev'
+      ArtifactName: 'steam-generator-dev-ui'
+      JobName: 'steam_generator_dev_job'

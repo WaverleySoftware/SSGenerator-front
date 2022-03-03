@@ -1,0 +1,75 @@
+
+.formRadio {
+  display: flex;
+  flex-direction: column;
+  &-above {
+    margin-bottom: 25px;
+    &::ng-deep {
+      img {
+        cursor: pointer;
+        padding: 10px;
+        max-height: 100%;
+        max-width: 100%;
+        height: 180px;
+        width: 100%;
+        background-color: var(--color-white);
+        object-fit: contain;
+      }
+    }
+  }
+
+  &-row {
+    display: flex;
+    align-items: center;
+
+    input {
+      margin: 0 40px 20px 0;
+      width: 0;
+      height: 0;
+      outline: none;
+      position: relative;
+      align-self: center;
+      &:focus, &:active {
+        outline: none;
+      }
+
+      &:after {
+        content: '';
+        display: inline-block;
+        visibility: visible;
+        border: 1px solid var(--color-steel-80);
+        background-color: var(--color-white);
+        box-sizing: border-box;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        min-width: 20px;
+        min-height: 20px;
+      }
+
+      &:checked:after {
+        border-color: var(--color-blue);
+        background-color: var(--color-white);
+        border-width: 6px;
+      }
+
+      &:hover {
+        cursor: pointer;
+      }
+    }
+  }
+
+  &-label {
+    font-family: var(--font-proxima-nova);
+    font-style: normal;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 105%;
+    text-transform: uppercase;
+    color: var(--color-blue);
+    word-break: break-word;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}

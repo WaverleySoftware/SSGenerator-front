@@ -1,0 +1,19 @@
+<div *ngIf="data.length" [ngClass]="loading && 'loading'">
+  <ul *ngIf="!!legend && chartRef?.chart?.legend?.legendItems" class="sgaChartLegend">
+    <li *ngFor="let item of chartRef?.chart?.legend?.legendItems" [ngClass]="{unselected: item.hidden}" (click)="legendClick(item)">
+      <span [ngStyle]="{'background-color': item.fillStyle}"></span>
+      {{item.text}}
+    </li>
+  </ul>
+  <div class="chartBarComponent" [ngClass]="className" [ngStyle]="style">
+    <canvas baseChart
+            #chartBarRef="base-chart"
+            [datasets]="data"
+            [options]="options"
+            [colors]="colors"
+            [legend]="false"
+            [labels]="labels"
+            [chartType]="type">
+    </canvas>
+  </div>
+</div>

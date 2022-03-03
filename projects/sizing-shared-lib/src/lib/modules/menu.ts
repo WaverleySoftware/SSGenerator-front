@@ -36,7 +36,7 @@ function sizingModuleRoutes(type: string) {
     {
       text: "EASIHEAT",
       link: `${routePrefix}easiHeat`,
-      icon: "ssv2-easiheat-white",
+      icon: "ssv2-easiHeat-white",
       isHeaderItem: false,
       displayOperatingCompany: false
     },

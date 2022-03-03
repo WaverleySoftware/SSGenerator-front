@@ -6,3 +6,232 @@
 // @import '~@swimlane/ngx-datatable/assets/icons.css';
 
 @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,300;0,400;0,600;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap');
+
+@font-face {
+  font-family: Proxima Nova;
+  src: url("https://use.typekit.net/af/a727c9/00000000000000007735af8e/30/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3") format("woff2"),
+       url("https://use.typekit.net/af/a727c9/00000000000000007735af8e/30/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3") format("woff"),
+       url("https://use.typekit.net/af/a727c9/00000000000000007735af8e/30/a?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3") format("opentype");
+  font-display:auto;
+  font-style:normal;
+  font-weight:400;
+}
+
+:root {
+  --color-blue: #002D72;
+  --color-blue-80: #3b5287;
+  --color-blue-60: #626f9d;
+  --color-blue-40: #8b93b7;
+  --color-blue-20: #bcc0d6;
+  --color-steel: #6ba4b8;
+  --color-steel-80: #88b5c7;
+  --color-steel-60: #a6c7d5;
+  --color-steel-40: #c4dae3;
+  --color-steel-20: #e1edf1;
+  --color-steel-blue-200: #477D94;
+  --color-industrial: #3d5466;
+  --color-industrial-80: #5a6d7f;
+  --color-industrial-60: #8899a9;
+  --color-industrial-40: #9ea8b5;
+  --color-industrial-20: #c7cdd4;
+  --color-orange: #EC9231;
+  --color-orange-20: #FFEDD7;
+  --color-pink-20: #F0DAE7;
+  --color-pink-40: #E5C7D8;
+  --color-green-40: #BBD9C0;
+  --color-green-20: #D0E7D4;
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-background-panel: #EDF2F4;
+  --color-alarm-red: #D0021B;
+
+  --font-open-sans: Open Sans, sans-serif;
+  --font-proxima-nova: Proxima Nova, sans-serif;
+}
+
+
+.spiraxInput {
+  display: grid;
+  grid-template-areas: ". fieldLabel fieldLabel" "fieldRadioInput fieldInput fieldUnit" ". fieldMessage fieldMessage";
+  grid-template-columns: auto 1fr auto;
+  color: var(--color-blue);
+  font-family: var(--font-open-sans);
+  font-style: normal;
+  font-weight: normal;
+  font-size: 16px;
+  margin-bottom: 30px;
+  position: relative;
+
+  &_label {
+    grid-area: fieldLabel;
+    font-family: var(--font-proxima-nova);
+    font-weight: 600!important;
+    font-size: inherit;
+    color: inherit;
+    line-height: 105%;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    padding-left: 0;
+    word-break: break-word;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    &+.spiraxInput_control {
+      &.loading+*:after,
+      &.ng-pending+*:after {
+        top: 35px;
+      }
+    }
+  }
+
+  &_radio {
+    grid-area: fieldRadioInput;
+    margin: 15px 15px 0 0 !important;
+    display: inline-block;
+    visibility: visible;
+    border-style: solid;
+    box-sizing: border-box;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    min-height: 20px;
+    border-color: var(--color-blue);
+    background-color: var(--color-white);
+    border-width: 6px;
+  }
+
+  &_control {
+    grid-area: fieldInput;
+    width: 100%;
+    height: 50px;
+    max-height: 50px;
+    padding: 0 0 0 22px;
+    background-color: var(--color-white);
+    border-color: var(--color-steel-80);
+    border-width: 1px;
+    border-style: solid;
+    border-left: 1px solid var(--color-steel-80)!important;
+    -moz-appearance: textfield;
+    margin-bottom: 5px;
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+    }
+
+    &.loading,
+    &.ng-pending {
+      background-color: var(--color-steel-20);
+      pointer-events: none;
+      &+.spiraxInput_unit {
+        background-color: var(--color-steel-20);
+      }
+
+      @keyframes lds-dual-ring {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      &+:after {
+        content: " ";
+        display: block;
+        width: 15px;
+        height: 15px;
+        margin: 8px;
+        border-radius: 50%;
+        border-width: 1px;
+        border-style: solid;
+        border-color: var(--color-blue-80) transparent var(--color-blue-80) transparent;
+        animation: lds-dual-ring 1.2s linear infinite;
+        position: absolute;
+        left: -2px;
+        top: 10px;
+      }
+    }
+
+    &.ng-untouched, &.ng-pristine.ng-touched {
+      &~.spiraxInput_message {
+        display: none;
+      }
+    }
+
+    &.ng-invalid.ng-touched {
+      outline: 4px solid var(--color-alarm-red) !important;
+      &+.spiraxInput_unit {
+        outline: 4px solid var(--color-alarm-red) !important;
+      }
+    }
+
+    &.ng-invalid.ng-touched,
+    &.ng-invalid.focus-visible {
+      &~.spiraxInput_message {
+        color: var(--color-alarm-red);
+      }
+    }
+
+    &.focus-visible {
+      outline: 4px solid var(--color-steel-80) !important;
+      &+.spiraxInput_unit {
+        outline: 4px solid var(--color-steel-80) !important;
+      }
+    }
+
+    &:required {
+      border-left-width: 5px !important;
+      border-left-color: var(--color-orange) !important;
+    }
+
+    &.ng-pristine:not(:placeholder-shown) {
+      border-left-width: 5px !important;
+      border-left-color: var(--color-blue) !important;
+    }
+
+    &:disabled, &[ng-reflect-is-disabled="true"] {
+      opacity: .5;
+      pointer-events: initial !important;
+      outline: none !important;
+      &~* {
+        opacity: .5;
+        outline: none;
+      }
+
+      &~.spiraxInput_radio {
+        border-width: 1px;
+        border-color: var(--color-steel-80);
+        background-color: var(--color-white);
+      }
+    }
+  }
+
+  &_unit {
+    grid-area: fieldUnit;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+    background-color: var(--color-white);
+    border-color: var(--color-steel-80);
+    border-width: 1px;
+    border-style: solid;
+    border-left: none;
+    margin-bottom: 5px;
+  }
+
+  &_message {
+    grid-area: fieldMessage;
+    word-break: break-word;
+    margin: 0;
+  }
+}

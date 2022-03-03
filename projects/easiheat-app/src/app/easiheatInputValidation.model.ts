@@ -45,12 +45,12 @@ export class EasiheatProcessConditionsValidation {
    * Gets or sets the HTG check box.
   */
   HTGChecked: boolean;
-  
+
   /**
    * Gets or sets the InputCondensateControl.
   */
   InputCondensateControl: boolean;
-  
+
   /**
    * Gets or sets the InputPRV.
   */
@@ -121,7 +121,7 @@ export class EasiheatFlowRateValidation {
   TemperatureUnits: number;
 }
 
-export class EasiheatValidationMessage {  
+export class EasiheatValidationMessage {
   /**
    * Gets or sets the messageKey.
    */
@@ -154,7 +154,7 @@ export class EasiheatValidationErrorMessage {
 }
 
 /**
-* Container for the easiheat flow or load calc.
+* Container for the easiHeat flow or load calc.
 */
 export class EasiheatFlowOrLoad {
 /**
@@ -186,7 +186,7 @@ export class EasiheatFlowOrLoad {
 }
 
 /**
-* Container for the easiheat Process Conditions Validation.
+* Container for the easiHeat Process Conditions Validation.
 */
 export class EasiheatProcessConditions {
 

@@ -1,0 +1,83 @@
+$sm: 768px;
+$md: 992px;
+
+.border {
+  &-r {
+    border-right: 1px solid var(--color-steel-40);
+    @media screen and (min-width: $md) {
+      &-md {
+        border-right: 1px solid var(--color-steel-40);
+      }
+    }
+  }
+
+  &-l {
+    border-left: 1px solid var(--color-steel-40);
+    @media screen and (min-width: $md) {
+      &-md {
+        border-left: 1px solid var(--color-steel-40);
+      }
+    }
+  }
+}
+
+.sgaTabs {
+  &::ng-deep {
+    .nav {
+      background-color: var(--color-steel-20);
+      border-radius: 50px;
+      display: inline-block;
+      margin-bottom: 24px;
+      &-item {
+        a {
+          font-family: var(--font-proxima-nova);
+          font-style: normal;
+          font-weight: 600;
+          font-size: 12px;
+          line-height: 125%;
+          text-transform: uppercase;
+          padding: 14px 20px;
+        }
+
+        &.disabled {
+          a {
+            color: var(--color-blue);
+          }
+        }
+
+        &.active {
+          a {
+            background-color: var(--color-blue);
+            border-radius: 50px;
+            color: var(--color-white);
+          }
+        }
+
+        &.invalid {
+          a {
+            color: var(--color-white);
+            border-radius: 50px;
+            background-color: var(--color-alarm-red);
+          }
+        }
+      }
+
+      &-link {
+
+      }
+    }
+  }
+}
+
+.checkImage {
+  cursor: pointer;
+  padding: 10px;
+  max-height: 230px;
+  min-height: 230px;
+  max-width: 230px;
+  min-width: 230px;
+  height: 230px;
+  width: 230px;
+  background-color: var(--color-white);
+  object-fit: contain;
+}

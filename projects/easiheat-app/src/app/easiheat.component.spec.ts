@@ -19,13 +19,13 @@ describe('EasiHeatComponent', () => {
   it(`should have as title 'easiheat-app'`, () => {
     const fixture = TestBed.createComponent(EasiHeatComponent);
     const app = fixture.debugElement.componentInstance;
-    expect(app.title).toEqual('easiheat-app');
+    expect(app.title).toEqual('easiHeat-app');
   });
 
   it('should render title', () => {
     const fixture = TestBed.createComponent(EasiHeatComponent);
     fixture.detectChanges();
     const compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('.content span').textContent).toContain('easiheat-app app is running!');
+    expect(compiled.querySelector('.content span').textContent).toContain('easiHeat-app app is running!');
   });
 });

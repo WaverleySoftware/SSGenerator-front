@@ -1,0 +1,39 @@
+parameters:
+  - name: ArtifactName
+    default: 'sxs-ui'
+  - name: JobName
+    default: ''
+
+jobs:
+  - job: ${{ parameters.JobName }}
+    pool:
+      vmImage: 'windows-latest'
+    steps:
+      - task: NodeTool@0
+        inputs:
+          versionSpec: '10.24.1'
+        displayName: 'Install Node.js'
+
+      - script: |
+          npm ci
+        displayName: 'NPM install (CI mode, preserve strict package versions)'
+
+      - script: |
+          npm run build:shared
+        displayName: 'NPM build shared library'
+
+      - script: |
+          npm run build -- --base-href=/
+        displayName: 'NPM build application'
+
+      - task: CopyFiles@2
+        inputs:
+          contents: 'dist/ssv2/**'
+          targetFolder: $(Build.ArtifactStagingDirectory)
+        displayName: 'Copy build output'
+
+      - task: PublishBuildArtifacts@1
+        inputs:
+          PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+          ArtifactName: ${{ parameters.ArtifactName }}
+          publishLocation: 'Container'
