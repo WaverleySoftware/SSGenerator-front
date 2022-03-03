@@ -3,11 +3,18 @@
     <h4 class="sgaBaseTabs_heading__title">
       <span>{{'IMPROVING_STEAM_GENERATION_EFFICIENCY' | translate}}</span>
 
+<!--      <ng-container *ngIf="benchmarkData; else calculate">-->
       <ng-container *ngIf="benchmarkData">
-        <button class="sgaBaseTabs_heading__next" *ngIf="nextTab && !nextTab.disabled" (click)="nextTabHandle(tabsRef)">
+        <button class="sgaBaseTabs_nextBtn" *ngIf="nextTab && !nextTab.disabled" (click)="nextTabHandle(tabsRef)">
           {{nextTab?.heading || 'Next'}} <i class="fa fa-arrow-right"></i>
         </button>
       </ng-container>
+
+      <!--<ng-template #calculate>
+        <button class="sgaBaseTabs_nextBtn" (click)="testCalc()">
+          Calculate <i class="fa fa-arrow-right"></i>
+        </button>
+      </ng-template>-->
     </h4>
     <p class="sgaBaseTabs_heading__subtitle">
       {{('UNTITLED_PROJECT' | translate)+' - '+('UNTITLED_JOB' | translate)}}
@@ -33,12 +40,16 @@
                               [currency]="currency"
                               [results]="proposedSetupResults"
                               (generateProposed)="calculateProposedSetup($event)"
-                              (nextTabHandle)="setActiveTab(3)"
+                              (resetFinalProposal)="finalProposalResults ? finalProposalResults = null : null"
                               [inputData]="sizingModuleForm.get('benchmarkInputs').value"
                               [units]="units$ | async"></app-sga-proposed-setup>
+
+      <button class="sgaBaseTabs_nextBtn" *ngIf="!!finalProposalResults" (click)="setActiveTab(3)">
+        {{'FINAL_PROPOSAL' | translate}} <i class="fa fa-arrow-right"></i>
+      </button>
     </tab>
-    <tab [heading]="'FINAL_PROPOSAL' | translate" [disabled]="!proposedSetupResults" (select)="setActiveTab($event)">
-      <app-sga-final-proposal [data]="proposedSetupResults"></app-sga-final-proposal>
+    <tab [heading]="'FINAL_PROPOSAL' | translate" [disabled]="!finalProposalResults" (select)="setActiveTab($event)">
+      <app-sga-final-proposal [data]="finalProposalResults"></app-sga-final-proposal>
     </tab>
   </tabset>
 

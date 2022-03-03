@@ -45,26 +45,26 @@ $active-border-color: #002D72;
       align-items: center;
       color: var(--color-blue-40);
     }
+  }
 
-    &__next {
-      float: right;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 30px;
-      background-color: var(--color-white);
-      border: 1px solid var(--color-blue);
-      padding: 5px 15px;
-      text-transform: uppercase;
-      color: var(--color-blue);
-      transition: 250ms background-color ease-in-out;
-      &>i {
-        margin-left: 5px;
-      }
+  &_nextBtn {
+    float: right;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 30px;
+    background-color: var(--color-white);
+    border: 1px solid var(--color-blue);
+    padding: 5px 15px;
+    text-transform: uppercase;
+    color: var(--color-blue);
+    transition: 250ms background-color ease-in-out;
+    &>i {
+      margin-left: 5px;
+    }
 
-      &:hover {
-        background-color: var(--color-steel-20);
-      }
+    &:hover {
+      background-color: var(--color-steel-20);
     }
   }
 

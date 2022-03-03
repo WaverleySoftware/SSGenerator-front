@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { ChartBarDataInterface } from '../../interfaces/chart-bar.interface';
 import { ProposedDataInterface, SteamGeneratorInputsInterface } from '../../interfaces/steam-generation-form.interface';
-import { filter, takeUntil } from 'rxjs/operators';
+import { filter, takeUntil, pairwise } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { SgaApiService } from '../../services/sga-api.service';
 import { SgaFormService } from '../../services/sga-form.service';
@@ -19,8 +19,11 @@ export class SgaProposedSetupComponent {
   @Input() inputData: SteamGeneratorInputsInterface;
   @Input() currency: string;
   @Input() units: { [key: number]: string };
-  @Output() generateProposed: EventEmitter<{proposedSetup: any, features: any}> = new EventEmitter<{proposedSetup: any, features: any}>();
-  @Output() nextTabHandle: EventEmitter<any> = new EventEmitter<any>();
+  @Output() generateProposed: EventEmitter<{
+    proposalInputs: ProposedDataInterface,
+    isFinal?: boolean
+  }> = new EventEmitter<{proposalInputs: ProposedDataInterface, isFinal?: boolean}>();
+  @Output() resetFinalProposal = new EventEmitter<any>();
 
   // Setter / Getter
   private proposedResults: any[];
@@ -60,7 +63,13 @@ export class SgaProposedSetupComponent {
   public form = this.formService.getProposedSetupForm();
   public totalSaving: {steamGenerationSavings: number, savingsIncludingCondensateEffluent: number};
 
-  constructor(private apiService: SgaApiService, private formService: SgaFormService) {}
+  constructor(private apiService: SgaApiService, private formService: SgaFormService) {
+    this.form.get('proposedSetup').valueChanges.pipe(
+      takeUntil(this.ngUnsubscribe),
+      pairwise(),
+      filter(v => !!v && !!v[0] && !!v[1] && JSON.stringify(v[0]) !== JSON.stringify(v[1]))
+    ).subscribe((data) => this.resetFinalProposal.emit(data));
+  }
 
   private resetData() {
     this.verticalChartData = verticalChart;
@@ -82,7 +91,7 @@ export class SgaProposedSetupComponent {
     this.proposedFormPanel = false;
     this.form.get('proposedSetup').markAsUntouched();
     this.form.get('proposedSetup').markAsPristine();
-    this.generateProposed.emit(this.form.getRawValue());
+    this.generateProposed.emit({proposalInputs: this.form.getRawValue()});
   }
 
   economizerChange(economiserRequired) {
@@ -117,6 +126,6 @@ export class SgaProposedSetupComponent {
   changeFeature(changed?: Event) {
     this.form.get('proposedSetup').markAsUntouched();
     this.form.get('proposedSetup').markAsPristine();
-    this.generateProposed.emit(this.form.getRawValue());
+    this.generateProposed.emit({proposalInputs: this.form.getRawValue(), isFinal: true});
   }
 }

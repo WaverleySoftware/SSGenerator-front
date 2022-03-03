@@ -59,6 +59,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   benchmarkChartData: ChartBarDataInterface[];
   proposedSetupData: ProposedDataInterface;
   proposedSetupResults: any[];
+  finalProposalResults: any[];
   nextTab: TabDirective;
   currency: string;
   public units$: Observable<{ [key: number]: string }> = this.unitsService.unitsChange
@@ -88,6 +89,65 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(() => this.resetBenchmarkData());
   }
+  testCalc() { // TODO: For tet only
+    this.sizingModuleForm.patchValue({
+      "selectedUnits": {
+        "energyUnitSelected": 108,
+        "smallWeightUnitSelected": 26,
+        "emissionUnitSelected": 27,
+        "volumeUnitSelected": 16,
+        "smallVolumetricFlowUnitSelected": 76,
+        "massFlowUnitSelected": 230,
+        "smallMassFlowUnitSelected": 84,
+        "pressureUnitSelected": 50,
+        "temperatureUnitSelected": 146,
+        "tdsUnitSelected": 228,
+        "fuelUnitSelected": 108
+      },
+      "benchmarkInputs": {
+        "hoursOfOperation": 8736,
+        "isSteamFlowMeasured": false,
+        "isAutoTdsControlPResent": true,
+        "inputFuelId": "8c24c468-e50a-45ac-bc4c-8ebd60470c99",
+        "costOfFuelPerUnit": 0.0000849504,
+        "fuelQtyPerYearIsKnown": true,
+        "costOfFuelPerYear": 1,
+        "fuelEnergyPerUnit": 1,
+        "fuelCarbonContent": 0.184973,
+        "costOfWaterPerUnit": 0.326775872,
+        "costOfEffluentPerUnit": 0.2973264,
+        "boilerHouseWaterQtyPerYearIsKnown": false,
+        "boilerWaterTreatmentChemicalCostsIsKnown": false,
+        "isCo2OrCarbonEmissionsTaxed": false,
+        "isBlowdownVesselPresent": false,
+        "isCoolingWaterUsed": false,
+        "isSuperheatedSteam": false,
+        "boilerEfficiency": 84,
+        "isFeedWaterMeasured": false,
+        "boilerSteamPressure": 9,
+        "isEconomizerPresent": true,
+        "boilerAverageTds": 2000,
+        "boilerMaxTds": 3000,
+        "isFlashVesselPresent": false,
+        "waterTreatmentMethod": "aa5642a0-88a5-43e1-ba9d-367db3bb9df5",
+        "percentageWaterRejection": 4,
+        "tdsOfMakeupWater": 155,
+        "isMakeUpWaterMonitored": false,
+        "makeupWaterAmountPerHour": 1,
+        "atmosphericDeaerator": true,
+        "pressurisedDeaerator": false,
+        "temperatureOfFeedtank": 90,
+        "tdsOfFeedwaterInFeedtank": 75,
+        "tdsOfCondensateReturn": 10,
+        "temperatureOfCondensateReturn": 80,
+        "areChemicalsAddedDirectlyToFeedtank": false,
+        "isCondensateReturnKnown": false,
+        "isDsiPresent": false
+      }
+    }, {emitEvent: false});
+    this.sizingModuleForm.get('benchmarkInputs.costOfFuelPerYear').enable();
+    this.onCalculateSizing(this.sizingModuleForm);
+  }
   ngOnInit() {
     this.createOrUpdateSizingPref();
     this.convertUnits(this.getDefaultConvertedUnits());
@@ -111,7 +171,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       this.sizingModuleForm.get('benchmarkInputs.boilerSteamPressure').valueChanges,
     ]).pipe(
       takeUntil(this.ngUnsubscribe),
-      filter(([v1]) => v1 === 'VALID'),
+      filter((v) => v && v[0] === 'VALID'),
       distinctUntilChanged(([a1, a2], [b1, b2]) => JSON.stringify(a2) === JSON.stringify(b2)),
       map(() => this.getSizingFormValues({
         selectedUnits: ['temperatureUnitSelected', 'pressureUnitSelected'],
@@ -124,7 +184,10 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
         control.setValidators([Validators.required, Validators.min(Math.floor(boilerSteamTemperature * 100) / 100)]);
         return {next: boilerSteamTemperature, prev: control.value };
       }),
-      filter(({prev, next}) => !this.sizingModuleForm.get('benchmarkInputs.isSuperheatedSteam').value || prev < next)
+      filter((v) => {
+        const {prev, next} = v;
+        return !this.sizingModuleForm.get('benchmarkInputs.isSuperheatedSteam').value || prev < next
+      })
     ).subscribe(({next}) => this.setBenchmarkInputValue({boilerSteamTemperature: next}));
 
     // Calculate CO2 Emission
@@ -336,7 +399,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     }
   }
 
-  calculateProposedSetup(proposalInputs: ProposedDataInterface): void {
+  calculateProposedSetup({proposalInputs, isFinal}: {proposalInputs: ProposedDataInterface, isFinal?: boolean}): void {
     if (!proposalInputs || !proposalInputs.proposedSetup || !proposalInputs.features) { return; }
 
     this.apiService.calculateProposal({ ...this.sizingModuleForm.getRawValue(), proposalInputs }).pipe(takeUntil(this.ngUnsubscribe))
@@ -346,8 +409,12 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
         }
 
         if (res && res.proposal) {
-          this.proposedSetupResults = res.proposal;
-          this.setProposalSetupData(proposalInputs);
+          if (isFinal) {
+            this.finalProposalResults = res.proposal;
+          } else {
+            this.proposedSetupResults = res.proposal;
+            this.setProposalSetupData(proposalInputs);
+          }
         }
       });
   }
