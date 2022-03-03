@@ -218,29 +218,24 @@
                           [(expanded)]="structure?.utility_parameters.panels.water_treatment_chemicals.status"
                           [titleTooltip]="waterChemicalsTooltip" background="#EDF2F4">
               <spirax-toggle body formControlName="boilerWaterTreatmentChemicalCostsIsKnown"
-                             (valueChange)="toggleInput($event && 'totalChemicalCostPerYear', !$event && ['totalChemicalCostPerYear', 'o2ScavengingChemicalsCostSavings'], null)"
+                             (valueChange)="toggleInput( ['totalChemicalCostPerYear', 'o2ScavengingChemicalsCostSavings'], ['totalChemicalCostPerYear', 'o2ScavengingChemicalsCostSavings'], null, $event)"
                              label="ARE_CHEMICAL_COST_KNOWN">
                 <div yes>
                   <input [label]="'TOTAL_CHEMICAL_COSTS_PER_YEAR' | translate"
                          [unitsStr]="[sizingUnits['BHCurrency']?.unit, 'yr']"
-                         (radioClick)="toggleInput('totalChemicalCostPerYear', 'o2ScavengingChemicalsCostSavings', null)"
                          [value]="getValue('totalChemicalCostPerYear') | decimalPlace: sizingUnits['BHCurrency']?.decimal"
                          [sga-decimal-places]="sizingUnits['BHCurrency']?.decimal"
-                         radio
                          formControlName="totalChemicalCostPerYear"
                          type="number"
                          spirax-input
                          required>
                   <input [label]="'O2_SCAVENGING_CHEMICALS_COST_SAVINGS' | translate"
                          [unitsStr]="[sizingUnits['BHCurrency']?.unit, 'yr']"
-                         (radioClick)="toggleInput('o2ScavengingChemicalsCostSavings', 'totalChemicalCostPerYear', null)"
                          [value]="getValue('o2ScavengingChemicalsCostSavings') | decimalPlace: sizingUnits['BHCurrency']?.decimal"
                          [sga-decimal-places]="sizingUnits['BHCurrency']?.decimal"
-                         radio
                          formControlName="o2ScavengingChemicalsCostSavings"
                          type="number"
-                         spirax-input
-                         required>
+                         spirax-input>
                 </div>
               </spirax-toggle>
             </spirax-panel>

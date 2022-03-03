@@ -63,7 +63,7 @@ export class SgaFormService {
         waterConsumptionPerYear: [{value: null, disabled: true}, Validators.required, validateBenchmarkInput(this.apiService)],
         boilerWaterTreatmentChemicalCostsIsKnown: [false],
         totalChemicalCostPerYear: [{value: null, disabled: true}, Validators.required, validateBenchmarkInput(this.apiService)],
-        o2ScavengingChemicalsCostSavings: [{value: null, disabled: true}, Validators.required, validateBenchmarkInput(this.apiService)],
+        o2ScavengingChemicalsCostSavings: [{value: null, disabled: true}, null, validateBenchmarkInput(this.apiService)],
         isCo2OrCarbonEmissionsTaxed: [false],
         carbonTaxLevyCostPerUnit: [{value: null, disabled: true}, Validators.required, validateBenchmarkInput(this.apiService)],
         costOfCo2PerUnitMass: [{value: null, disabled: true}, Validators.required, validateBenchmarkInput(this.apiService)],
