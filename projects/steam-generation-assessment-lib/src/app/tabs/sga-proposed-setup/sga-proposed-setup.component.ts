@@ -1,13 +1,14 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { FormGroup } from '@angular/forms';
-import { ChartBarDataInterface } from '../../interfaces/chart-bar.interface';
-import { ProposedDataInterface, SteamGeneratorInputsInterface } from '../../interfaces/steam-generation-form.interface';
-import { filter, takeUntil, pairwise } from 'rxjs/operators';
-import { Subject } from 'rxjs';
-import { SgaApiService } from '../../services/sga-api.service';
-import { SgaFormService } from '../../services/sga-form.service';
-import { horizontalChart, verticalChart, verticalChartLabels } from '../../utils/proposed-setup-def-data';
-import generateChartsData from '../../utils/generate-charts-data';
+import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { FormGroup } from "@angular/forms";
+import { ChartBarDataInterface } from "../../interfaces/chart-bar.interface";
+import { ProposedDataInterface } from "../../interfaces/steam-generation-form.interface";
+import { filter, pairwise, takeUntil } from "rxjs/operators";
+import { Subject } from "rxjs";
+import { SgaApiService } from "../../services/sga-api.service";
+import { SgaFormService } from "../../services/sga-form.service";
+import { horizontalChart, verticalChart, verticalChartLabels } from "../../utils/proposed-setup-def-data";
+import { SgaTotalSavingInterface } from "../../interfaces/sga-chart-data.Interface";
+import { ProposedSetupTFormInterface, TForm } from "../../interfaces/forms.interface";
 
 @Component({
   selector: 'app-sga-proposed-setup',
@@ -15,53 +16,31 @@ import generateChartsData from '../../utils/generate-charts-data';
   styleUrls: ['./sga-proposed-setup.component.scss']
 })
 export class SgaProposedSetupComponent {
-  // Outer data
-  @Input() inputData: SteamGeneratorInputsInterface;
+  @Input() isEconomizerPresent: boolean;
+
+  @Input()
+  set data(v ) {
+    this.data_ = v;
+    if (!v.proposedSetup && !v.features && !this.proposedFormPanel) {
+      this.proposedFormPanel = true
+    }
+  };
+  private data_: ProposedDataInterface
+  get data(): ProposedDataInterface {
+    return this.data_;
+  }
+
   @Input() currency: string;
   @Input() units: { [key: number]: string };
-  @Output() generateProposed: EventEmitter<{
-    proposalInputs: ProposedDataInterface,
-    isFinal?: boolean
-  }> = new EventEmitter<{proposalInputs: ProposedDataInterface, isFinal?: boolean}>();
+	@Input('verticalChart') verticalChartData: ChartBarDataInterface[];
+	@Input('horizontalChart') horizontalChartData: ChartBarDataInterface[];
+	@Input() totalSaving: SgaTotalSavingInterface;
+  @Output() generateProposed: EventEmitter<any> = new EventEmitter<{proposalInputs: ProposedDataInterface, isFinal?: boolean}>();
   @Output() resetFinalProposal = new EventEmitter<any>();
-
-  // Setter / Getter
-  private proposedResults: any[];
-  @Input() set results(data: any[]) {
-    this.proposedResults = data;
-    const { verticalChartData, horizontalChartData, total } = generateChartsData(data);
-    this.verticalChartData = verticalChartData;
-    this.horizontalChartData = horizontalChartData;
-    this.totalSaving = {
-      savingsIncludingCondensateEffluent: total.savingsIncludingCondensateEffluent,
-      steamGenerationSavings: total.steamGenerationSavings
-    };
-
-    if (!data && !this.proposedFormPanel) {
-      this.proposedFormPanel = true;
-    }
-  }
-  get results() { return this.proposedResults; }
-  private proposedData: ProposedDataInterface;
-  @Input() set data(data: ProposedDataInterface) {
-    if (data && data.proposedSetup && data.features && this.form) {
-      this.form.patchValue({ proposedSetup: data.proposedSetup, features: data.features }, {emitEvent: false});
-    } else if (this.proposedData && !data) {
-      this.resetData();
-    }
-
-    this.proposedData = data;
-  }
-  get data(): ProposedDataInterface { return this.proposedData; }
-
-  // inner data
   private ngUnsubscribe = new Subject<void>();
-  public verticalChartData: ChartBarDataInterface[] = verticalChart;
-  public horizontalChartData: ChartBarDataInterface[] = horizontalChart;
-  public verticalChartLabels: string[] = verticalChartLabels;
-  public proposedFormPanel = true;
-  public form = this.formService.getProposedSetupForm();
-  public totalSaving: {steamGenerationSavings: number, savingsIncludingCondensateEffluent: number};
+  verticalChartLabels: string[] = verticalChartLabels;
+  proposedFormPanel = true;
+  form: TForm<ProposedSetupTFormInterface> = this.formService.getProposedSetupForm();
 
   constructor(private apiService: SgaApiService, private formService: SgaFormService) {
     this.form.get('proposedSetup').valueChanges.pipe(
@@ -69,12 +48,6 @@ export class SgaProposedSetupComponent {
       pairwise(),
       filter(v => !!v && !!v[0] && !!v[1] && JSON.stringify(v[0]) !== JSON.stringify(v[1]))
     ).subscribe((data) => this.resetFinalProposal.emit(data));
-  }
-
-  private resetData() {
-    this.verticalChartData = verticalChart;
-    this.horizontalChartData = horizontalChart;
-    if (this.form && this.form.setValue) { this.form.reset(); }
   }
 
   get isCondensateReturnDisable(): boolean {
@@ -104,7 +77,9 @@ export class SgaProposedSetupComponent {
     };
 
     if (proposal.invalid) {
-      params.proposalBoilerEfficiency = this.data.proposedSetup.proposalBoilerEfficiency;
+      params.proposalBoilerEfficiency = this.data
+        && this.data.proposedSetup
+        && this.data.proposedSetup.proposalBoilerEfficiency;
 
       if (!economiserRequired) {
         proposal.markAsUntouched();

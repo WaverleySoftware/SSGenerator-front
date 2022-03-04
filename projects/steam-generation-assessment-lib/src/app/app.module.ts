@@ -15,8 +15,9 @@ import { SgaFormService } from './services/sga-form.service';
 import { SgaApiService } from './services/sga-api.service';
 import { DecimalPlacePipe } from './pipes/decimal-place.pipe';
 import { SgaDecimalPlacesDirective } from './directives/sga-decimal-places.directive';
+import { SgaChartService } from "./services/sga-chart.service";
 
-const providers = [SteamGenerationAssessmentService, SgaFormService, SgaApiService];
+const providers = [SteamGenerationAssessmentService, SgaFormService, SgaApiService, SgaChartService];
 
 @NgModule({
   declarations: [

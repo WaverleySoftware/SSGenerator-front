@@ -17,7 +17,7 @@ import { FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Params } from '@angular/router';
 import { combineLatest, Observable, Subject } from 'rxjs';
 import { distinctUntilChanged, filter, map, switchMap, takeUntil } from 'rxjs/operators';
-import { BenchmarkDataInterface, ProposedDataInterface } from './interfaces/steam-generation-form.interface';
+import { ProposedDataInterface } from './interfaces/steam-generation-form.interface';
 import { TabsetComponent } from 'ngx-bootstrap';
 import { ChartBarDataInterface } from './interfaces/chart-bar.interface';
 import { TabDirective } from 'ngx-bootstrap/tabs/tab.directive';
@@ -33,11 +33,18 @@ import {
   SgaCalcWaterTreatmentReqInterface
 } from './interfaces/api-requests.interface';
 import { SgaApiService } from './services/sga-api.service';
-import { TFormBenchmarkValueSetterInterface, TFormValueGetterInterface } from './interfaces/forms.interface';
+import {
+  InputParametersTFormInterface, TForm,
+  TFormBenchmarkValueSetterInterface,
+  TFormValueGetterInterface
+} from "./interfaces/forms.interface";
 import sgaInputParametersFields from './utils/sga-input-parameters-fields';
 import { benchmarkCalculationValidator } from './validators/sga-benchmark.validator';
 import { SelectedUnitPreferenceEnum } from './interfaces/selectedUnits.interface';
 import sizingFormDefValues from './utils/sizing-form-def-values';
+import { SgaChartService } from "./services/sga-chart.service";
+import { SgaTotalSavingInterface } from "./interfaces/sga-chart-data.Interface";
+import { CalcBenchmarkResInterface } from "./interfaces/calc-benchmark-res.interface";
 
 
 @Component({
@@ -51,18 +58,20 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   private ngUnsubscribe = new Subject<void>();
   moduleId = 2;
   productName = 'Steam Generation Assessment';
-  sizingModuleForm: FormGroup = this.formService.getInputParamsFg();
-  requestLoading$ = this.apiService.requestLoading$;
+  nextTab: TabDirective;
+  sizingModuleForm: TForm<InputParametersTFormInterface> = this.formService.getInputParamsFg();
+  sizingModuleResults: CalcBenchmarkResInterface;
   setBenchmarkInputValue: TFormBenchmarkValueSetterInterface;
   getSizingFormValues: TFormValueGetterInterface;
-  benchmarkData: BenchmarkDataInterface;
+  proposalSetupTotal: SgaTotalSavingInterface;
   benchmarkChartData: ChartBarDataInterface[];
-  proposedSetupData: ProposedDataInterface;
-  proposedSetupResults: any[];
-  finalProposalResults: any[];
-  nextTab: TabDirective;
-  currency: string;
-  public units$: Observable<{ [key: number]: string }> = this.unitsService.unitsChange
+  proposalSetupHorizontalChart: ChartBarDataInterface[];
+  proposalVerticalChart: ChartBarDataInterface[];
+  finalProposalHorizontalChart: ChartBarDataInterface[];
+  requestLoading$ = this.apiService.requestLoading$;
+  currency$ = this.preferenceService.sizingUnitPreferencesUpdate
+    .pipe(map(({updated}) => updated.preference.unitName));
+  units$: Observable<{ [key: number]: string }> = this.unitsService.unitsChange
     .pipe(map((data) => data.reduce((obj, item) => ({...obj, [item.id]: item.units}), {})));
 
   @ViewChild('tabsRef', {static: true}) tabsRef: TabsetComponent;
@@ -78,7 +87,8 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     private formService: SgaFormService,
     private apiService: SgaApiService,
     private translatePipe: TranslatePipe,
-    private messagesService: MessagesService
+    private messagesService: MessagesService,
+    private chartService: SgaChartService,
   ) {
     super();
     this.setBenchmarkInputValue = this.formService
@@ -146,6 +156,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       }
     }, {emitEvent: false});
     this.sizingModuleForm.get('benchmarkInputs.costOfFuelPerYear').enable();
+    this.sizingModuleForm.get('benchmarkInputs.makeupWaterAmountPerHour').enable();
     this.onCalculateSizing(this.sizingModuleForm);
   }
   ngOnInit() {
@@ -239,9 +250,13 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
         filter((v) => !!v)
       )
       .subscribe((res) => {
+        this.showMessage(res && res.messages);
         this.sizingModuleForm.markAsUntouched();
-        this.setProposalSetupData(res);
-        this.setBenchmarkData(res.benchmark);
+        this.sizingModuleResults = res;
+        this.formService.getProposedSetupForm()
+          .patchValue({features: res.features, proposedSetup: res.proposedSetup}, {emitEvent: false});
+        this.benchmarkChartData = this.chartService
+          .generateBenchmark(this.sizingModuleResults.benchmark, 'benchmark');
         setTimeout(() => this.setActiveTab(1));
       });
     return true;
@@ -382,8 +397,9 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     if (tab instanceof TabDirective) {
       const tabIndex = this.tabsRef.tabs.indexOf(tab);
 
-      if (tabIndex !== -1 && this.tabsRef.tabs[tabIndex + 1]) {
-        this.nextTab = this.tabsRef.tabs[tabIndex + 1].disabled ? null : this.tabsRef.tabs[tabIndex + 1];
+      if (tabIndex !== -1) {
+        this.nextTab = this.tabsRef.tabs[tabIndex + 1] &&
+        this.tabsRef.tabs[tabIndex + 1].disabled ? null : this.tabsRef.tabs[tabIndex + 1];
       }
       return;
     }
@@ -402,18 +418,23 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   calculateProposedSetup({proposalInputs, isFinal}: {proposalInputs: ProposedDataInterface, isFinal?: boolean}): void {
     if (!proposalInputs || !proposalInputs.proposedSetup || !proposalInputs.features) { return; }
 
-    this.apiService.calculateProposal({ ...this.sizingModuleForm.getRawValue(), proposalInputs }).pipe(takeUntil(this.ngUnsubscribe))
+    this.apiService.calculateProposal({ ...this.sizingModuleForm.getRawValue(), proposalInputs })
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(res => {
-        if (res && res.messages && res.messages.length) {
-          this.messagesService.addMessage(res.messages.map(m => ({...m, messageKey: m.code})));
-        }
-
+        this.showMessage(res && res.messages);
         if (res && res.proposal) {
+          const chartName = isFinal ? 'final' : 'setup';
+          const {total, vertical, horizontal} = this.chartService.generateProposal(res.proposal, chartName);
+
+          this.sizingModuleResults.proposedSetup = proposalInputs.proposedSetup;
+          this.sizingModuleResults.features = proposalInputs.features;
+          this.proposalVerticalChart = vertical;
+
           if (isFinal) {
-            this.finalProposalResults = res.proposal;
+            this.finalProposalHorizontalChart = horizontal;
           } else {
-            this.proposedSetupResults = res.proposal;
-            this.setProposalSetupData(proposalInputs);
+            this.proposalSetupHorizontalChart = horizontal;
+            this.proposalSetupTotal = total;
           }
         }
       });
@@ -457,18 +478,43 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       .subscribe((res) => this.setBenchmarkInputValue(res));
   }
 
-  private resetBenchmarkData() {
-    if (this.benchmarkData) {
-      this.benchmarkData = null;
+  private showMessage(messages: any[]) {
+    if (messages && messages.length) {
+      const msg = messages.map(m => typeof m === 'string' ? {
+        messageKey: m,
+        value: null,
+        unitKey: null,
+        severity: '0',
+        displayValue: null
+      } : {
+        messageKey: m && m.code || m.messageKey,
+        value: m && m.value,
+        unitKey: m && m.unitKey,
+        severity: m && m.severity,
+        displayValue: m && m.displayValue,
+      });
+
+      if (msg && msg.length) {
+        this.messagesService.addMessage(msg);
+      }
     }
+  }
+
+  private resetBenchmarkData() {
     if (this.benchmarkChartData) {
       this.benchmarkChartData = null;
     }
-    if (this.proposedSetupData) {
-      this.proposedSetupData = null;
+    if (this.sizingModuleResults) {
+      this.sizingModuleResults = null;
     }
-    if (this.proposedSetupResults) {
-      this.proposedSetupResults = null;
+    if (this.proposalVerticalChart) {
+      this.proposalVerticalChart = null;
+    }
+    if (this.proposalSetupHorizontalChart) {
+      this.proposalSetupHorizontalChart = null;
+    }
+    if (this.finalProposalHorizontalChart) {
+      this.finalProposalHorizontalChart = null;
     }
     this.setActiveTab(0);
   }
@@ -726,44 +772,6 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
         undefined,
         currencies
       ));
-    }
-  }
-
-  private setBenchmarkData(data: any) {
-    if (!data) { return null; }
-
-    this.benchmarkData = data;
-
-    const {
-      costOfFuelPerYear = 0,
-      waterAndChemicalsCostTotalPerYear = 0,
-      costOfBoilerHouseEffluent = 0,
-      costOfCO2PerYear = 0
-    } = this.benchmarkData;
-
-    this.benchmarkChartData = [
-      { data: [costOfFuelPerYear], label: 'Fuel' },
-      { data: [waterAndChemicalsCostTotalPerYear], label: 'Water and chemicals' },
-      { data: [costOfBoilerHouseEffluent], label: 'Effluent' },
-      { data: [costOfCO2PerYear], label: 'Carbon Tax' },
-    ];
-
-    return this.benchmarkData;
-  }
-
-  private setProposalSetupData(data: any, objKey?: keyof ProposedDataInterface) {
-    if (!data) { return null; }
-
-    if (objKey) {
-      this.proposedSetupData = {
-        ...this.proposedSetupData,
-        [objKey]: { ...this.proposedSetupData[objKey], ...data }
-      };
-    } else {
-      this.proposedSetupData = {
-        features: data.features,
-        proposedSetup: data.proposedSetup
-      };
     }
   }
 

@@ -23,22 +23,21 @@ import { BenchmarkInputsInterface } from '../../interfaces/benchmarkInputs.inter
 })
 export class SgaInputParametersComponent {
   @Input() moduleGroupId: number;
+  @Input() formGroup: TForm<InputParametersTFormInterface>;
   @Output() changeFuelType = new EventEmitter<SgaCalcCalorificReqInterface>();
   @Output() calculateEfficiency = new EventEmitter<SgaCalcBoilerEfficiencyReqInterface>();
   @Output() calculateWaterTreatment = new EventEmitter<SgaCalcWaterTreatmentReqInterface>();
 
-  private readonly formValueGetter: TFormValueGetterInterface;
+  private readonly formValueGetter: TFormValueGetterInterface = this.formService
+    .createFormValueGetter(this.formService.getInputParamsFg());
   structure: SgFormStructureInterface = sgaFormStructure;
-  formGroup: TForm<InputParametersTFormInterface> = this.formService.getInputParamsFg();
   sizingUnits$: Observable<{ [key: string]: {decimal: number, unit: string} }> = this.preferenceService.sizingUnitPreferencesUpdate
     .pipe(map(({list, updated}) => list.reduce((obj, item) => ({
       ...obj,
       [item.preference.name]: { decimal: item.preference.decimalPlaces, unit: item.preference.unitName }
     }), {})));
 
-  constructor(private formService: SgaFormService, public preferenceService: PreferenceService) {
-    this.formValueGetter = this.formService.createFormValueGetter(this.formGroup);
-  }
+  constructor(private formService: SgaFormService, public preferenceService: PreferenceService) {}
 
   getInvalidBlock(structure): boolean {
     if (Array.isArray(structure)) {

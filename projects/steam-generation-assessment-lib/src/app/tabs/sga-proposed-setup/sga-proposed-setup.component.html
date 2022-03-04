@@ -119,7 +119,7 @@
             <div class="row">
               <div class="col-md-4"><p>{{'ECONOMISER_REQUIRED' | translate}}</p></div>
               <div class="col-md-8">
-                <spirax-toggle [disabled]="inputData?.isEconomizerPresent"
+                <spirax-toggle [disabled]="isEconomizerPresent"
                                (valueChange)="economizerChange($event)"
                                name="economiserRequired"
                                formControlName="economiserRequired"></spirax-toggle>
@@ -172,14 +172,15 @@
         </form>
       </spirax-panel>
 
-      <spirax-panel [expanded]="!proposedFormPanel && !!results"
-                 [disableToggle]="!results"
+      <spirax-panel [expanded]="!proposedFormPanel && !!verticalChartData && !!horizontalChartData"
+                 [disableToggle]="!verticalChartData || !horizontalChartData"
                  title="Proposed results"
                  id="SetupParametersResultsPanel">
         <ng-container body>
           <p class="sgaProposedSetup_title">{{'POTENTIAL_BOILER_HOUSE_SAVINGS_BY_PROJECT' | translate}}</p>
           <p class="sgaProposedSetup_subtitle mb-24">Saving {{currency}}’000s / {{'YR' | translate}}</p>
           <app-chart-bar className="sgaProposedSetup_chart"
+                         *ngIf="!!verticalChartData"
                          [data]="verticalChartData"
                          [labels]="verticalChartLabels"></app-chart-bar>
           <hr>
@@ -190,11 +191,12 @@
                 <i class="fa fa-info-circle"></i>
               </h5>
               <app-chart-bar type="horizontalBar"
+                             *ngIf="!!horizontalChartData"
                              [legend]="false"
                              [data]="horizontalChartData"
                              [labels]="['POTENTIAL', 'CURRENT']"></app-chart-bar>
-              <p>{{'STEAM_GENERATION_SAVINGS' | translate}}: <span class="text-bold">{{currency}}{{totalSaving.steamGenerationSavings | number: '0.0-2'}}</span></p>
-              <p>{{'SAVINGS_INCLUDING_CONDENSATE_EFFLUENT' | translate}}: <span class="text-bold">{{currency}}{{totalSaving.savingsIncludingCondensateEffluent | number: '0.0-2'}}</span> </p>
+              <p>{{'STEAM_GENERATION_SAVINGS' | translate}}: <span class="text-bold">{{currency}}{{totalSaving?.steamGenerationSavings || 0 | number: '0.0-2'}}</span></p>
+              <p>{{'SAVINGS_INCLUDING_CONDENSATE_EFFLUENT' | translate}}: <span class="text-bold">{{currency}}{{totalSaving?.savingsIncludingCondensateEffluent || 0 | number: '0.0-2'}}</span> </p>
             </div>
             <form class="col-md-5" [formGroup]="form">
               <h5 class="sgaProposedSetup_title mb-24">

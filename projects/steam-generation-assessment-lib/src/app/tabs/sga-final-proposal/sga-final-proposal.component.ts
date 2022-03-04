@@ -9,15 +9,11 @@ import generateChartsData from '../../utils/generate-charts-data';
   styleUrls: ['./sga-final-proposal.component.scss']
 })
 export class SgaFinalProposalComponent {
-  @Input() set data(v: any[]) {
-    if (v && v.length) {
-      const { verticalChartData, horizontalChartData, total } = generateChartsData(v);
-      this.verticalChartData = verticalChartData;
-      this.horizontalChartData = horizontalChartData;
-    }
-  }
-  verticalChartData: ChartBarDataInterface[] = verticalChart;
-  horizontalChartData: ChartBarDataInterface[] = horizontalChart;
+  @Input() currency: string;
+  @Input() units: { [key: number]: string };
+  @Input() verticalChart: ChartBarDataInterface[] = verticalChart;
+  @Input() horizontalChart: ChartBarDataInterface[] = horizontalChart;
+
   chartLabels: string[] = verticalChartLabels;
 
   constructor() { }

@@ -11,7 +11,7 @@ export class Message {
   /**
    * Gets or sets the value.
    */
-  value: number;
+    value: number;
 
   /**
    * Gets or sets the unitId.

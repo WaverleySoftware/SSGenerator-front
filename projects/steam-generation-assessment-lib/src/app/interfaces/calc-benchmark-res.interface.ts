@@ -1,7 +1,8 @@
+
 export interface CalcBenchmarkResInterface {
   benchmark: BenchmarkResBenchmarkInterface;
   features: BenchmarkResFeaturesInterface;
-  messages?: string[];
+  messages?: string[] | any[];
   proposedSetup: BenchmarkResProposedSetupInterface;
 }
 

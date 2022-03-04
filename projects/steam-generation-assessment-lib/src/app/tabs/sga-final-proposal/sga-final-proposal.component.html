@@ -9,12 +9,16 @@
 
     <p class="sgaBaseTabs_title_sm">{{'POTENTIAL_BOILER_HOUSE_SAVINGS_BY_PROJECT' | translate}}</p>
     <p class="sgaBaseTabs_title_xs">{{'SAVING' | translate}} £’000s / {{'YR' | translate}}</p>
-    <app-chart-bar [style]="{'min-height': '400px'}" [data]="verticalChartData" [labels]="chartLabels"></app-chart-bar>
+    <app-chart-bar *ngIf="verticalChart"
+                   [style]="{'min-height': '400px'}"
+                   [data]="verticalChart"
+                   [labels]="chartLabels"></app-chart-bar>
     <hr>
     <p class="sgaBaseTabs_title_sm">{{'COST_OF_STEAM_GENERATION' | translate}}<i class="fa fa-info-circle"></i></p>
     <app-chart-bar type="horizontalBar"
+                   *ngIf="horizontalChart"
                    [legend]="false"
-                   [data]="horizontalChartData"
+                   [data]="horizontalChart"
                    [labels]="['POTENTIAL' | translate, 'CURRENT' | translate]"></app-chart-bar>
   </tab>
   <tab>

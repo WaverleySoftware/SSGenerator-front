@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
-import { FormGroup } from '@angular/forms';
 import { ChartBarDataInterface } from '../../interfaces/chart-bar.interface';
-import { BenchmarkDataInterface } from '../../interfaces/steam-generation-form.interface';
+import { BenchmarkResBenchmarkInterface } from "../../interfaces/calc-benchmark-res.interface";
+import { InputParametersTFormInterface, TForm } from "../../interfaces/forms.interface";
 
 @Component({
   selector: 'app-sga-benchmark',
@@ -10,10 +10,10 @@ import { BenchmarkDataInterface } from '../../interfaces/steam-generation-form.i
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SgaBenchmarkComponent implements OnInit {
-  @Input() data: BenchmarkDataInterface;
+  @Input() data: BenchmarkResBenchmarkInterface;
   @Input() units: { [key: number]: string };
   @Input() currency: string;
-  @Input() formGroup: FormGroup;
+  @Input() formGroup: TForm<InputParametersTFormInterface>;
   @Input() chartData: ChartBarDataInterface[] = [
     { data: [0], label: 'Fuel' },
     { data: [0], label: 'Water and Chemicals' },
