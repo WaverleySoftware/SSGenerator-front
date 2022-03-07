@@ -39,7 +39,7 @@
     <tab [heading]="'PROPOSED_SETUP' | translate"
          [disabled]="!sizingModuleResults?.proposedSetup || !sizingModuleResults?.features"
          (select)="setActiveTab($event)">
-      <app-sga-proposed-setup [data]="{features: sizingModuleResults?.features, proposedSetup: sizingModuleResults?.proposedSetup}"
+      <app-sga-proposed-setup [data]="sizingModuleResults"
                               [currency]="currency$ | async"
                               [totalSaving]="proposalSetupTotal"
                               [verticalChart]="proposalVerticalChart"

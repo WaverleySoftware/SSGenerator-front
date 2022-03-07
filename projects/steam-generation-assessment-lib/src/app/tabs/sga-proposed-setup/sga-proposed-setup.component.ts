@@ -17,19 +17,26 @@ import { ProposedSetupTFormInterface, TForm } from "../../interfaces/forms.inter
 })
 export class SgaProposedSetupComponent {
   @Input() isEconomizerPresent: boolean;
-
-  @Input()
-  set data(v ) {
+  @Input() set data(v ) {
     this.data_ = v;
-    if (!v.proposedSetup && !v.features && !this.proposedFormPanel) {
+    if (!v || (!v.proposedSetup && !v.features && !this.proposedFormPanel)) {
       this.proposedFormPanel = true
+
+      if (this.initialTdsControls) {
+        this.initialTdsControls = null;
+      }
+    }
+
+    if (!this.initialTdsControls && v && v.features) {
+      this.initialTdsControls = {
+        addAutoTdsControls: v.features.addAutoTdsControls,
+        addAutoTdsAndFlashRecovery: v.features.addAutoTdsAndFlashRecovery,
+        addAutoTdsAndFlashRecoveryPlusHearExchanger: v.features.addAutoTdsAndFlashRecoveryPlusHearExchanger,
+      }
     }
   };
   private data_: ProposedDataInterface
-  get data(): ProposedDataInterface {
-    return this.data_;
-  }
-
+  get data(): ProposedDataInterface { return this.data_; }
   @Input() currency: string;
   @Input() units: { [key: number]: string };
 	@Input('verticalChart') verticalChartData: ChartBarDataInterface[];
@@ -41,6 +48,7 @@ export class SgaProposedSetupComponent {
   verticalChartLabels: string[] = verticalChartLabels;
   proposedFormPanel = true;
   form: TForm<ProposedSetupTFormInterface> = this.formService.getProposedSetupForm();
+  initialTdsControls: {[key: string]: boolean};
 
   constructor(private apiService: SgaApiService, private formService: SgaFormService) {
     this.form.get('proposedSetup').valueChanges.pipe(

@@ -5,7 +5,7 @@ import { Directive, Input } from '@angular/core';
   selector: '[disableControl]'
 })
 export class DisableControlDirective {
-
+  @Input() setValue: boolean = true;
   @Input() set disableControl(condition: boolean) {
     const action = condition ? 'disable' : 'enable';
 
@@ -13,7 +13,7 @@ export class DisableControlDirective {
       const control = this.ngControl.control;
       control[action]();
 
-      if (action === 'disable' && control.value) {
+      if (action === 'disable' && control.value && this.setValue) {
         control.patchValue(typeof control.value === 'boolean' ? false : 0);
       }
     }

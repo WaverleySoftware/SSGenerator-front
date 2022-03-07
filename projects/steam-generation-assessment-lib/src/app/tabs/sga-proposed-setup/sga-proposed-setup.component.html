@@ -234,11 +234,15 @@
                     <span>{{'ADD_WATER_TREATMENT_PLANT_RO' | translate}}</span>
                   </label>
                 </li>
+
                 <li>
                   <label>
                     <input type="checkbox"
                            formControlName="addAutoTdsControls"
+                           [disableControl]="initialTdsControls?.addAutoTdsControls"
+                           [class.v-hide]="initialTdsControls?.addAutoTdsControls"
                            (change)="changeFeature($event)"
+                           [setValue]="false"
                            [value]="true">
                     <span>{{'ADD_AUTO_TDS_CONTROLS' | translate}}</span>
                   </label>
@@ -247,7 +251,10 @@
                   <label>
                     <input type="checkbox"
                            formControlName="addAutoTdsAndFlashRecovery"
+                           [disableControl]="initialTdsControls?.addAutoTdsAndFlashRecovery"
+                           [class.v-hide]="initialTdsControls?.addAutoTdsAndFlashRecovery"
                            (change)="changeFeature($event)"
+                           [setValue]="false"
                            [value]="true">
                     <span>{{'ADD_AUTO_TDS_AND_FLASH_RECOVERY' | translate}}</span>
                   </label>
@@ -256,11 +263,15 @@
                   <label>
                     <input type="checkbox"
                            formControlName="addAutoTdsAndFlashRecoveryPlusHearExchanger"
+                           [disableControl]="initialTdsControls?.addAutoTdsAndFlashRecoveryPlusHearExchanger"
+                           [class.v-hide]="initialTdsControls?.addAutoTdsAndFlashRecoveryPlusHearExchanger"
                            (change)="changeFeature($event)"
+                           [setValue]="false"
                            [value]="true">
                     <span>{{'ADD_AUTO_TDS_FLASH_RECOVERY_HEAT_EXCHANGER' | translate}}</span>
                   </label>
                 </li>
+
                 <li>
                   <label>
                     <input type="checkbox"
