@@ -40,9 +40,9 @@ export class SgaApiService {
     }
 
     if (status && !this.requestLoading$.value) {
-      setTimeout(() => this.requestLoading$.next(status), 10);
+      setTimeout(() => this.requestLoading$.next(status), 0);
     } else if (!status && this.requestLoading$.value && JSON.stringify(this.loadingTypes) === '{}') {
-      setTimeout(() => this.requestLoading$.next(!!status), 10);
+      setTimeout(() => this.requestLoading$.next(!!status), 0);
     }
   }
 
