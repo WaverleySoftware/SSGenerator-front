@@ -2,10 +2,11 @@
   <ng-container body>
     <div class="sgaProposedSetup" *ngIf="units else noUnits">
       <spirax-panel [(expanded)]="proposedFormPanel"
-                 title="Setup parameters"
-                 titleTooltip="Some tooltip"
-                 id="SetupParametersPanel"
-                 background="#EDF2F4">
+                    [invalid]="form?.get('proposedSetup').invalid"
+                    [title]="'Setup parameters' | translate"
+                    titleTooltip="Some tooltip"
+                    id="SetupParametersPanel"
+                    background="#EDF2F4">
         <form body class="setupParameters" [formGroup]="form" (ngSubmit)="onSubmit()">
           <ng-container formGroupName="proposedSetup">
             <div class="row">

@@ -10,7 +10,6 @@ import { BenchmarkInputsInterface } from '../interfaces/benchmarkInputs.interfac
 import { SelectedUnitsInterface } from '../interfaces/selectedUnits.interface';
 import { validateBenchmarkInput } from '../validators/sga-benchmark.validator';
 import { SgaApiService } from './sga-api.service';
-import { SgaProposedSetupComponent } from '../tabs';
 import { ProposedSetupInterface } from '../interfaces/proposed-setup.interface';
 import { ProposedFeaturesInterface } from '../interfaces/proposed-features.interface';
 import { disableControl, validateProposed } from '../validators/sga-proposed-setup.validator';

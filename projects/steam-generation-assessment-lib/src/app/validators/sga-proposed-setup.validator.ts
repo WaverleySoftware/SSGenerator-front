@@ -3,6 +3,20 @@ import { SgaApiService } from '../services/sga-api.service';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ProposedSetupInterface } from '../interfaces/steam-generation-form.interface';
+import { SgaErrorInterface, SgaValidationErrorResInterface } from "../interfaces/api-requests.interface";
+import { FocusOnFirstErrorField } from "../utils/focusOnFirstErrorField";
+import sgaFormStructure from "../utils/sga-form-structure";
+
+const getControlNameFromReqError = (error: SgaErrorInterface): {name: string, error: string} => {
+  if (!error) { return null; }
+
+  const propertyName = error.propertyName;
+
+  return {
+    name: error.propertyName.charAt(0).toLocaleLowerCase() + propertyName.slice(1),
+    error: error.errorMessage || 'UNKNOWN_ERROR'
+  };
+};
 
 const disableControl = (fields: string[] | string) => (control: AbstractControl): ValidationErrors => {
   if (control && control.value) {
@@ -60,4 +74,26 @@ const validateProposed = (service: SgaApiService, isNull?: boolean): AsyncValida
       }));
 };
 
-export { disableControl, validateProposed };
+const validateProposedCalculation = (res, form: FormGroup): { messages: any[], proposal: any[] } => {
+  const err = res as SgaValidationErrorResInterface;
+
+  if (err && err.errors && err.errors.length) {
+
+    for (const error of err.errors) {
+      const controlError = getControlNameFromReqError(error);
+      const control = form.get(controlError.name);
+
+      if (control && control.status === 'VALID') {
+        control.setErrors({error: controlError.error, message: error.customState && `(${error.customState})`});
+        control.markAsTouched();
+        control.markAsDirty();
+      }
+    }
+
+    return null;
+  }
+
+  return res;
+}
+
+export { disableControl, validateProposed, validateProposedCalculation };

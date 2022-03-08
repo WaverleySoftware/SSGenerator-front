@@ -30,8 +30,8 @@ import {
   SgaCalcCalorificReqInterface,
   SgaCalcCarbonEmissionReqInterface, SgaCalcFeedtankTemperatureAndPressureReqInterface,
   SgaCalcSaturatedAndFreezingTemperatureReqInterface, SgaCalcWaterTemperatureExchangerReqInterface,
-  SgaCalcWaterTreatmentReqInterface
-} from './interfaces/api-requests.interface';
+  SgaCalcWaterTreatmentReqInterface, SgaErrorInterface
+} from "./interfaces/api-requests.interface";
 import { SgaApiService } from './services/sga-api.service';
 import {
   InputParametersTFormInterface, TForm,
@@ -45,6 +45,7 @@ import sizingFormDefValues from './utils/sizing-form-def-values';
 import { SgaChartService } from "./services/sga-chart.service";
 import { SgaTotalSavingInterface } from "./interfaces/sga-chart-data.Interface";
 import { CalcBenchmarkResInterface } from "./interfaces/calc-benchmark-res.interface";
+import { validateProposedCalculation } from "./validators/sga-proposed-setup.validator";
 
 
 @Component({
@@ -98,66 +99,6 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     this.sizingModuleForm.get('benchmarkInputs').valueChanges
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(() => this.resetBenchmarkData());
-  }
-  testCalc() { // TODO: For tet only
-    this.sizingModuleForm.patchValue({
-      "selectedUnits": {
-        "energyUnitSelected": 108,
-        "smallWeightUnitSelected": 26,
-        "emissionUnitSelected": 27,
-        "volumeUnitSelected": 16,
-        "smallVolumetricFlowUnitSelected": 76,
-        "massFlowUnitSelected": 230,
-        "smallMassFlowUnitSelected": 84,
-        "pressureUnitSelected": 50,
-        "temperatureUnitSelected": 146,
-        "tdsUnitSelected": 228,
-        "fuelUnitSelected": 108
-      },
-      "benchmarkInputs": {
-        "hoursOfOperation": 8736,
-        "isSteamFlowMeasured": false,
-        "isAutoTdsControlPResent": true,
-        "inputFuelId": "8c24c468-e50a-45ac-bc4c-8ebd60470c99",
-        "costOfFuelPerUnit": 0.0000849504,
-        "fuelQtyPerYearIsKnown": true,
-        "costOfFuelPerYear": 1,
-        "fuelEnergyPerUnit": 1,
-        "fuelCarbonContent": 0.184973,
-        "costOfWaterPerUnit": 0.326775872,
-        "costOfEffluentPerUnit": 0.2973264,
-        "boilerHouseWaterQtyPerYearIsKnown": false,
-        "boilerWaterTreatmentChemicalCostsIsKnown": false,
-        "isCo2OrCarbonEmissionsTaxed": false,
-        "isBlowdownVesselPresent": false,
-        "isCoolingWaterUsed": false,
-        "isSuperheatedSteam": false,
-        "boilerEfficiency": 84,
-        "isFeedWaterMeasured": false,
-        "boilerSteamPressure": 9,
-        "isEconomizerPresent": true,
-        "boilerAverageTds": 2000,
-        "boilerMaxTds": 3000,
-        "isFlashVesselPresent": false,
-        "waterTreatmentMethod": "aa5642a0-88a5-43e1-ba9d-367db3bb9df5",
-        "percentageWaterRejection": 4,
-        "tdsOfMakeupWater": 155,
-        "isMakeUpWaterMonitored": false,
-        "makeupWaterAmountPerHour": 1,
-        "atmosphericDeaerator": true,
-        "pressurisedDeaerator": false,
-        "temperatureOfFeedtank": 90,
-        "tdsOfFeedwaterInFeedtank": 75,
-        "tdsOfCondensateReturn": 10,
-        "temperatureOfCondensateReturn": 80,
-        "areChemicalsAddedDirectlyToFeedtank": false,
-        "isCondensateReturnKnown": false,
-        "isDsiPresent": false
-      }
-    }, {emitEvent: false});
-    this.sizingModuleForm.get('benchmarkInputs.costOfFuelPerYear').enable();
-    this.sizingModuleForm.get('benchmarkInputs.makeupWaterAmountPerHour').enable();
-    this.onCalculateSizing(this.sizingModuleForm);
   }
   ngOnInit() {
     this.createOrUpdateSizingPref();
@@ -418,10 +359,14 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   calculateProposedSetup({proposalInputs, isFinal}: {proposalInputs: ProposedDataInterface, isFinal?: boolean}): void {
     if (!proposalInputs || !proposalInputs.proposedSetup || !proposalInputs.features) { return; }
 
+    const fg = this.formService.getProposedSetupForm().get('proposedSetup') as FormGroup;
+
     this.apiService.calculateProposal({ ...this.sizingModuleForm.getRawValue(), proposalInputs })
-      .pipe(takeUntil(this.ngUnsubscribe))
+      .pipe(takeUntil(this.ngUnsubscribe), map(v  => validateProposedCalculation(v, fg)), filter((v) => !!v))
       .subscribe(res => {
         this.showMessage(res && res.messages);
+        fg.markAsUntouched();
+
         if (res && res.proposal) {
           const chartName = isFinal ? 'final' : 'setup';
           const {total, vertical, horizontal} = this.chartService.generateProposal(res.proposal, chartName);
@@ -487,11 +432,11 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
         severity: '0',
         displayValue: null
       } : {
-        messageKey: m && m.code || m.messageKey,
+        messageKey: m && m.code || m.messageKey || m.errorMessage,
         value: m && m.value,
         unitKey: m && m.unitKey,
         severity: m && m.severity,
-        displayValue: m && m.displayValue,
+        displayValue: m && m.displayValue || m.customState,
       });
 
       if (msg && msg.length) {

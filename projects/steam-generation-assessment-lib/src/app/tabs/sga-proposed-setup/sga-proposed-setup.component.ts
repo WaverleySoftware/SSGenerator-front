@@ -20,7 +20,7 @@ export class SgaProposedSetupComponent {
   @Input() set data(v ) {
     this.data_ = v;
     if (!v || (!v.proposedSetup && !v.features && !this.proposedFormPanel)) {
-      this.proposedFormPanel = true
+      this.proposedFormPanel = true;
 
       if (this.initialTdsControls) {
         this.initialTdsControls = null;
