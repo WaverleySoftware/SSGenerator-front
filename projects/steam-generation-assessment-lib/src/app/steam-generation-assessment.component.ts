@@ -374,12 +374,12 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
           this.sizingModuleResults.proposedSetup = proposalInputs.proposedSetup;
           this.sizingModuleResults.features = proposalInputs.features;
           this.proposalVerticalChart = vertical;
+          this.proposalSetupTotal = total;
 
           if (isFinal) {
             this.finalProposalHorizontalChart = horizontal;
           } else {
             this.proposalSetupHorizontalChart = horizontal;
-            this.proposalSetupTotal = total;
           }
         }
       });

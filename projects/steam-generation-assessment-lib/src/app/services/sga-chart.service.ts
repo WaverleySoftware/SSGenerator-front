@@ -106,7 +106,7 @@ export class SgaChartService {
       chartData[ProposedSetupChartElements['Carbon tax']].data[ProposedSetupChartIndex[key]] = col[key].propCO2emmissionsReducedValueSavings || 0;
     }
 
-    return chartData;
+    return [...chartData];
   }
 
   private static generateHorizontalAndTotal(col, horizontal: ChartBarDataInterface[] = horizontalChart): ChartBarDataInterface[] {
@@ -124,7 +124,7 @@ export class SgaChartService {
       horizontal[ProposedSetupChartElements['Carbon tax']].data[dataIndex] = dataObj.costOfCO2PerYear || 0;
     }
 
-    return horizontal
+    return [...horizontal]
   }
 
   private static generateTotal(data: any[]): SgaTotalSavingInterface {
