@@ -32,6 +32,7 @@ export class SgaProposedSetupComponent {
         addAutoTdsControls: v.features.addAutoTdsControls,
         addAutoTdsAndFlashRecovery: v.features.addAutoTdsAndFlashRecovery,
         addAutoTdsAndFlashRecoveryPlusHearExchanger: v.features.addAutoTdsAndFlashRecoveryPlusHearExchanger,
+        addWaterTreatmentPlant: !v.features.addWaterTreatmentPlant
       }
     }
   };

@@ -230,7 +230,8 @@
                     <input type="checkbox"
                            formControlName="addWaterTreatmentPlant"
                            (change)="changeFeature($event)"
-                           [disableControl]="!data?.features?.addWaterTreatmentPlant"
+                           [disableControl]="initialTdsControls?.addWaterTreatmentPlant"
+                           [class.v-hide]="initialTdsControls?.addWaterTreatmentPlant"
                            [value]="true">
                     <span>{{'ADD_WATER_TREATMENT_PLANT_RO' | translate}}</span>
                   </label>

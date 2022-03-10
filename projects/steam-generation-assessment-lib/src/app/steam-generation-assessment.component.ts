@@ -673,7 +673,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       .filter((key) => {
         const {initialUnitId, targetUnitId, initialValue} = obj[key];
 
-        if (!initialUnitId || !targetUnitId) { return false; }
+        if (!initialUnitId || !targetUnitId || !initialValue) { return false; }
 
         if (initialUnitId === targetUnitId) {
           this.setBenchmarkInputValue(key as keyof BenchmarkInputsInterface, initialValue);
