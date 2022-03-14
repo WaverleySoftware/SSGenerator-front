@@ -24,6 +24,7 @@ import { CalcBenchmarkResInterface } from '../interfaces/calc-benchmark-res.inte
 import { tap } from 'rxjs/operators/tap';
 import { catchError } from 'rxjs/operators';
 import { ProposedSetupInterface } from '../interfaces/proposed-setup.interface';
+import { SteamGeneratorSelectedUnitsInterface } from "../interfaces/steam-generation-form.interface";
 
 @Injectable()
 export class SgaApiService {
@@ -32,7 +33,7 @@ export class SgaApiService {
 
   constructor(private http: HttpClient) { }
 
-  private changeLoading(status: boolean, type: string) {
+  changeLoading(status: boolean, type: string) {
     if (status) {
       this.loadingTypes[type] = true;
     } else {
@@ -59,7 +60,10 @@ export class SgaApiService {
     return this.post('validate-benchmark-input', data, name);
   }
 
-  proposalValidate(name: string, data: ProposedSetupInterface): Observable<any> {
+  proposalValidate(
+    name: string,
+    data: { proposalSetup: ProposedSetupInterface, selectedUnits: SteamGeneratorSelectedUnitsInterface }
+  ): Observable<any> {
     return this.post('validate-proposal-input', data, name);
   }
 

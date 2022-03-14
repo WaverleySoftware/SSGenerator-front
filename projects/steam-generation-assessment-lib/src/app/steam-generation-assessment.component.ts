@@ -13,13 +13,12 @@ import {
   EnumerationDefinition,
   TranslatePipe,
   MessagesService,
-  ProjectsJobsService,
-  SizingData
+  ProjectsJobsService
 } from 'sizing-shared-lib';
 import { FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Params } from '@angular/router';
 import { combineLatest, Observable, Subject } from 'rxjs';
-import { distinctUntilChanged, filter, map, mergeMap, switchMap, takeUntil } from "rxjs/operators";
+import { distinctUntilChanged, filter, map, switchMap, takeUntil } from "rxjs/operators";
 import { ProposedDataInterface } from './interfaces/steam-generation-form.interface';
 import { TabsetComponent } from 'ngx-bootstrap';
 import { ChartBarDataInterface } from './interfaces/chart-bar.interface';
@@ -312,7 +311,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   }
 
   onSave(savedProjectDetails: Project): JobSizing {
-    console.log('-----onSAve-----');
+    console.log(savedProjectDetails, '-----onSAve-----');
     return undefined;
   }
 
@@ -813,9 +812,9 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
         this.job.id = jobId;
         this.job.moduleId = this.moduleId;
         this.project.id = projectId;
-        this.projectsJobsService.getProjectsAndJobs().subscribe(() => {
-          // are Projects And Jobs Loaded
-        });
+        this.apiService.changeLoading(true, 'getProjectsAndJobs');
+        this.projectsJobsService.getProjectsAndJobs()
+          .subscribe(() => this.apiService.changeLoading(false, 'getProjectsAndJobs'));
       });
 
     const projectJobsChangeSub = this.projectsJobsService.projectJobsChange
@@ -836,8 +835,8 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
 
         this.projectsJobsService.getJobSizing({jobId: this.job.id, projectId: this.project.id})
           .pipe(takeUntil(this.ngUnsubscribe))
-          .subscribe((res) => {
-            console.log(res, '-----res');
+          .subscribe((sizingData) => {
+            console.log(sizingData, '-----getJobSizing');
           });
       });
   }

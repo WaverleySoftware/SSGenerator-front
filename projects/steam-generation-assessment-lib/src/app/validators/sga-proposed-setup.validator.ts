@@ -41,19 +41,22 @@ const disableControl = (fields: string[] | string) => (control: AbstractControl)
   return null;
 };
 
-const validateProposed = (service: SgaApiService, isNull?: boolean): AsyncValidatorFn =>
+const validateProposed = (service: SgaApiService, selectedUnits: FormGroup): AsyncValidatorFn =>
   (control: AbstractControl): Observable<ValidationErrors> => {
     const fg: FormGroup = control && control.root as FormGroup;
     const name = control.parent && control.parent.controls && Object.keys(control.parent.controls)
       .find(v => control.parent.controls[v] === control);
 
-    if (!fg || !name || !service || !control || (control.pristine && !control.touched) || (isNull && !control.value)) {
+    if (!fg || !name || !service || !control || (control.pristine && !control.touched) || !selectedUnits || !selectedUnits.value) {
       return of(null);
     }
 
     const proposedResults = fg.get('proposedSetup') as FormGroup;
 
-    return service.proposalValidate(name as keyof ProposedSetupInterface, {...proposedResults.getRawValue(), [name]: control.value})
+    return service.proposalValidate(name as keyof ProposedSetupInterface, {
+      proposalSetup: {...proposedResults.getRawValue(), [name]: control.value},
+      selectedUnits: selectedUnits.value,
+    })
       .pipe(map(res => {
         if (!res || !res.hasOwnProperty('isValid') || res.isValid) { return null; }
 
@@ -67,7 +70,7 @@ const validateProposed = (service: SgaApiService, isNull?: boolean): AsyncValida
           error,
           message: res.errors[0] &&
             (res.errors[0].customState || res.errors[0].customState === 0) &&
-            `(${res.errors[0].customState})`
+            `(${Math.round(res.errors[0].customState * 100 ) / 100})`
         };
       }));
 };
