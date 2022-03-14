@@ -4,8 +4,6 @@ import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ProposedSetupInterface } from '../interfaces/steam-generation-form.interface';
 import { SgaErrorInterface, SgaValidationErrorResInterface } from "../interfaces/api-requests.interface";
-import { FocusOnFirstErrorField } from "../utils/focusOnFirstErrorField";
-import sgaFormStructure from "../utils/sga-form-structure";
 
 const getControlNameFromReqError = (error: SgaErrorInterface): {name: string, error: string} => {
   if (!error) { return null; }

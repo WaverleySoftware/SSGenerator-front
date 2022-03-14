@@ -6,17 +6,20 @@ import {
   ModulePreferenceService,
   PreferenceService,
   Project,
+  Job,
   TranslationService,
   UnitConvert,
   UnitsService,
   EnumerationDefinition,
   TranslatePipe,
-  MessagesService
+  MessagesService,
+  ProjectsJobsService,
+  SizingData
 } from 'sizing-shared-lib';
 import { FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Params } from '@angular/router';
 import { combineLatest, Observable, Subject } from 'rxjs';
-import { distinctUntilChanged, filter, map, switchMap, takeUntil } from 'rxjs/operators';
+import { distinctUntilChanged, filter, map, mergeMap, switchMap, takeUntil } from "rxjs/operators";
 import { ProposedDataInterface } from './interfaces/steam-generation-form.interface';
 import { TabsetComponent } from 'ngx-bootstrap';
 import { ChartBarDataInterface } from './interfaces/chart-bar.interface';
@@ -30,7 +33,7 @@ import {
   SgaCalcCalorificReqInterface,
   SgaCalcCarbonEmissionReqInterface, SgaCalcFeedtankTemperatureAndPressureReqInterface,
   SgaCalcSaturatedAndFreezingTemperatureReqInterface, SgaCalcWaterTemperatureExchangerReqInterface,
-  SgaCalcWaterTreatmentReqInterface, SgaErrorInterface
+  SgaCalcWaterTreatmentReqInterface
 } from "./interfaces/api-requests.interface";
 import { SgaApiService } from './services/sga-api.service';
 import {
@@ -46,6 +49,7 @@ import { SgaChartService } from "./services/sga-chart.service";
 import { SgaTotalSavingInterface } from "./interfaces/sga-chart-data.Interface";
 import { CalcBenchmarkResInterface } from "./interfaces/calc-benchmark-res.interface";
 import { validateProposedCalculation } from "./validators/sga-proposed-setup.validator";
+import swal from "sweetalert";
 
 
 @Component({
@@ -57,6 +61,8 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   readonly moduleGroupId: number = 9;
   readonly moduleName: string = 'steamGenerationAssessment';
   private ngUnsubscribe = new Subject<void>();
+  project: Project = new Project();
+  job: Job = new Job();
   moduleId = 2;
   productName = 'Steam Generation Assessment';
   nextTab: TabDirective;
@@ -90,8 +96,10 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     private translatePipe: TranslatePipe,
     private messagesService: MessagesService,
     private chartService: SgaChartService,
+    private projectsJobsService: ProjectsJobsService
   ) {
     super();
+    this.loadJob();
     this.setBenchmarkInputValue = this.formService
       .createFormValueSetter<BenchmarkInputsInterface>(this.sizingModuleForm, 'benchmarkInputs');
     this.getSizingFormValues = this.formService.createFormValueGetter(this.sizingModuleForm);
@@ -99,6 +107,64 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     this.sizingModuleForm.get('benchmarkInputs').valueChanges
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(() => this.resetBenchmarkData());
+  }
+  testCalculation() {
+    this.sizingModuleForm.patchValue({
+      "selectedUnits": {
+        "energyUnitSelected": 108,
+        "smallWeightUnitSelected": 26,
+        "emissionUnitSelected": 27,
+        "volumeUnitSelected": 16,
+        "smallVolumetricFlowUnitSelected": 76,
+        "massFlowUnitSelected": 230,
+        "smallMassFlowUnitSelected": 84,
+        "pressureUnitSelected": 50,
+        "temperatureUnitSelected": 146,
+        "tdsUnitSelected": 228,
+        "fuelUnitSelected": 108
+      },
+      "benchmarkInputs": {
+        "hoursOfOperation": 8736,
+        "isSteamFlowMeasured": true,
+        "isAutoTdsControlPResent": false,
+        "boilerSteamGeneratedPerHour": 11,
+        "inputFuelId": "8c24c468-e50a-45ac-bc4c-8ebd60470c99",
+        "costOfFuelPerUnit": 0.0000849504,
+        "fuelQtyPerYearIsKnown": false,
+        "fuelEnergyPerUnit": 1,
+        "fuelCarbonContent": 0.184973,
+        "costOfWaterPerUnit": 0.326775872,
+        "costOfEffluentPerUnit": 0.2973264,
+        "boilerHouseWaterQtyPerYearIsKnown": false,
+        "boilerWaterTreatmentChemicalCostsIsKnown": false,
+        "isCo2OrCarbonEmissionsTaxed": false,
+        "isBlowdownVesselPresent": false,
+        "isCoolingWaterUsed": false,
+        "isSuperheatedSteam": false,
+        "boilerEfficiency": 80,
+        "isFeedWaterMeasured": false,
+        "boilerSteamPressure": 10,
+        "isEconomizerPresent": false,
+        "boilerAverageTds": 2800,
+        "boilerMaxTds": 3500,
+        "waterTreatmentMethod": "aa5642a0-88a5-43e1-ba9d-367db3bb9df5",
+        "percentageWaterRejection": 4,
+        "tdsOfMakeupWater": 155,
+        "isMakeUpWaterMonitored": false,
+        "atmosphericDeaerator": true,
+        "pressurisedDeaerator": false,
+        "temperatureOfFeedtank": 90,
+        "tdsOfFeedwaterInFeedtank": 75,
+        "tdsOfCondensateReturn": 10,
+        "temperatureOfCondensateReturn": 80,
+        "areChemicalsAddedDirectlyToFeedtank": false,
+        "isCondensateReturnKnown": false,
+        "isDsiPresent": false
+      }
+    });
+    this.sizingModuleForm.get('benchmarkInputs.boilerSteamGeneratedPerHour').enable();
+
+    this.onCalculateSizing(this.sizingModuleForm);
   }
   ngOnInit() {
     this.createOrUpdateSizingPref();
@@ -739,13 +805,40 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     return item;
   }
 
-  private _loadJob(): void {
+  private loadJob(): void {
     this.activatedRoute.params
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe((params: Params) => {
-        const { projectId, jobId } = params;
-        // TODO: Create projects/jobs functionality
-        console.log(`projectId=${projectId}, jobId=${jobId}`);
+      .pipe(takeUntil(this.ngUnsubscribe), filter(({projectId, jobId}: Params) => !!projectId && !!jobId))
+      .subscribe(({projectId, jobId}: Params) => {
+        this.job.projectId = projectId;
+        this.job.id = jobId;
+        this.job.moduleId = this.moduleId;
+        this.project.id = projectId;
+        this.projectsJobsService.getProjectsAndJobs().subscribe(() => {
+          // are Projects And Jobs Loaded
+        });
+      });
+
+    const projectJobsChangeSub = this.projectsJobsService.projectJobsChange
+      .pipe(map(({projects}) => this.project.id && projects && projects.find(({id}) => id === this.project.id)))
+      .subscribe((project) => {
+        projectJobsChangeSub.unsubscribe();
+        this.project = project;
+        this.job = project && project.jobs && this.job.id  && project.jobs.find(({id}) => id === this.job.id);
+
+        if (!this.project || !this.job) {
+          return swal({
+            title: this.translatePipe.transform('ERROR'),
+            text: this.translatePipe.transform('SELECTED_JOB_WAS_NOT_FOUND_MESSAGE'),
+            icon: "error",
+            dangerMode: true
+          });
+        }
+
+        this.projectsJobsService.getJobSizing({jobId: this.job.id, projectId: this.project.id})
+          .pipe(takeUntil(this.ngUnsubscribe))
+          .subscribe((res) => {
+            console.log(res, '-----res');
+          });
       });
   }
 }

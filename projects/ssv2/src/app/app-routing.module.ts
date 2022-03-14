@@ -129,7 +129,7 @@ export const routes = [
             path: 'easiHeat/:projectId/:jobId',
             component: EasiHeatComponent,
             canDeactivate: [GenericChangesGuard],
-            ata: { moduleName: "EasiHeat", displayGroup: "EASIHEAT_SIZING", moduleId: "5" }
+            data: { moduleName: "EasiHeat", displayGroup: "EASIHEAT_SIZING", moduleId: "5" }
           },
           {
             path: 'steamGenerationAssessment',
@@ -141,6 +141,16 @@ export const routes = [
               moduleId: '2'
             },
           },
+          {
+            path: 'steamGenerationAssessment/:projectId/:jobId',
+            component: SteamGenerationAssessmentComponent,
+            canDeactivate: [GenericChangesGuard],
+            data: {
+              moduleName: 'Steam Generation Assessment',
+              displayGroup: 'STEAM_GENERATION_ASSESSMENT_SIZING',
+              moduleId: '2'
+            },
+          }
         ]
       },
       {
