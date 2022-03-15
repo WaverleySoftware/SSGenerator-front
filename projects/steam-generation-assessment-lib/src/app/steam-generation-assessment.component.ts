@@ -13,12 +13,15 @@ import {
   EnumerationDefinition,
   TranslatePipe,
   MessagesService,
-  ProjectsJobsService
+  ProjectsJobsService,
+  SizingData,
+  ProcessCondition,
+  ProcessInput
 } from 'sizing-shared-lib';
 import { FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Params } from '@angular/router';
 import { combineLatest, Observable, Subject } from 'rxjs';
-import { distinctUntilChanged, filter, map, switchMap, takeUntil } from "rxjs/operators";
+import { catchError, distinctUntilChanged, filter, map, switchMap, takeUntil } from "rxjs/operators";
 import { ProposedDataInterface } from './interfaces/steam-generation-form.interface';
 import { TabsetComponent } from 'ngx-bootstrap';
 import { ChartBarDataInterface } from './interfaces/chart-bar.interface';
@@ -46,9 +49,10 @@ import { SelectedUnitPreferenceEnum } from './interfaces/selectedUnits.interface
 import sizingFormDefValues from './utils/sizing-form-def-values';
 import { SgaChartService } from "./services/sga-chart.service";
 import { SgaTotalSavingInterface } from "./interfaces/sga-chart-data.Interface";
-import { CalcBenchmarkResInterface } from "./interfaces/calc-benchmark-res.interface";
+import { BenchmarkResBenchmarkInterface, CalcBenchmarkResInterface } from "./interfaces/calc-benchmark-res.interface";
 import { validateProposedCalculation } from "./validators/sga-proposed-setup.validator";
 import swal from "sweetalert";
+import { generateSavedData } from './utils/generate-saved-data';
 
 
 @Component({
@@ -60,6 +64,8 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   readonly moduleGroupId: number = 9;
   readonly moduleName: string = 'steamGenerationAssessment';
   private ngUnsubscribe = new Subject<void>();
+  projectId: string;
+  jobId: string;
   project: Project = new Project();
   job: Job = new Job();
   moduleId = 2;
@@ -107,64 +113,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(() => this.resetBenchmarkData());
   }
-  testCalculation() {
-    this.sizingModuleForm.patchValue({
-      "selectedUnits": {
-        "energyUnitSelected": 108,
-        "smallWeightUnitSelected": 26,
-        "emissionUnitSelected": 27,
-        "volumeUnitSelected": 16,
-        "smallVolumetricFlowUnitSelected": 76,
-        "massFlowUnitSelected": 230,
-        "smallMassFlowUnitSelected": 84,
-        "pressureUnitSelected": 50,
-        "temperatureUnitSelected": 146,
-        "tdsUnitSelected": 228,
-        "fuelUnitSelected": 108
-      },
-      "benchmarkInputs": {
-        "hoursOfOperation": 8736,
-        "isSteamFlowMeasured": true,
-        "isAutoTdsControlPResent": false,
-        "boilerSteamGeneratedPerHour": 11,
-        "inputFuelId": "8c24c468-e50a-45ac-bc4c-8ebd60470c99",
-        "costOfFuelPerUnit": 0.0000849504,
-        "fuelQtyPerYearIsKnown": false,
-        "fuelEnergyPerUnit": 1,
-        "fuelCarbonContent": 0.184973,
-        "costOfWaterPerUnit": 0.326775872,
-        "costOfEffluentPerUnit": 0.2973264,
-        "boilerHouseWaterQtyPerYearIsKnown": false,
-        "boilerWaterTreatmentChemicalCostsIsKnown": false,
-        "isCo2OrCarbonEmissionsTaxed": false,
-        "isBlowdownVesselPresent": false,
-        "isCoolingWaterUsed": false,
-        "isSuperheatedSteam": false,
-        "boilerEfficiency": 80,
-        "isFeedWaterMeasured": false,
-        "boilerSteamPressure": 10,
-        "isEconomizerPresent": false,
-        "boilerAverageTds": 2800,
-        "boilerMaxTds": 3500,
-        "waterTreatmentMethod": "aa5642a0-88a5-43e1-ba9d-367db3bb9df5",
-        "percentageWaterRejection": 4,
-        "tdsOfMakeupWater": 155,
-        "isMakeUpWaterMonitored": false,
-        "atmosphericDeaerator": true,
-        "pressurisedDeaerator": false,
-        "temperatureOfFeedtank": 90,
-        "tdsOfFeedwaterInFeedtank": 75,
-        "tdsOfCondensateReturn": 10,
-        "temperatureOfCondensateReturn": 80,
-        "areChemicalsAddedDirectlyToFeedtank": false,
-        "isCondensateReturnKnown": false,
-        "isDsiPresent": false
-      }
-    });
-    this.sizingModuleForm.get('benchmarkInputs.boilerSteamGeneratedPerHour').enable();
 
-    this.onCalculateSizing(this.sizingModuleForm);
-  }
   ngOnInit() {
     this.createOrUpdateSizingPref();
     this.convertUnits(this.getDefaultConvertedUnits());
@@ -249,7 +198,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   }
 
   onCalculateSizing(formGroup: FormGroup): any {
-    this.apiService.calculateBenchmark(formGroup.value)
+    this.apiService.calculateBenchmark(formGroup.getRawValue())
       .pipe(
         takeUntil(this.ngUnsubscribe),
         map(res => benchmarkCalculationValidator(res, this.sizingModuleForm, this.elRef)),
@@ -311,13 +260,78 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   }
 
   onSave(savedProjectDetails: Project): JobSizing {
-    console.log(savedProjectDetails, '-----onSAve-----');
-    return undefined;
+    const {selectedUnits, benchmarkInputs} = this.sizingModuleForm.getRawValue();
+    const processConditions: ProcessCondition[] = [{
+      name: 'selectedUnits',
+      processInputs: generateSavedData(selectedUnits),
+      unitPreferences: null
+    }, {
+      name: 'benchmarkInputs',
+      processInputs: generateSavedData(benchmarkInputs),
+      unitPreferences: null
+    }];
+
+    if (this.sizingModuleResults) {
+      if (this.sizingModuleResults.benchmark) {
+        processConditions.push({
+          name: 'benchmark',
+          processInputs: generateSavedData(this.sizingModuleResults.benchmark),
+          unitPreferences: null
+        })
+      }
+
+      if (this.sizingModuleResults.features) {
+        processConditions.push({
+          name: 'features',
+          processInputs: generateSavedData(this.sizingModuleResults.features),
+          unitPreferences: null
+        })
+      }
+
+      if (this.sizingModuleResults.proposedSetup) {
+        processConditions.push({
+          name: 'proposedSetup',
+          processInputs: generateSavedData(this.sizingModuleResults.proposedSetup),
+          unitPreferences: null
+        })
+      }
+    }
+
+    const sizingData: SizingData = {
+      sizingOutput: null,
+      processConditions
+    };
+
+    return { project: { ...savedProjectDetails, jobs: [this.job] }, sizingData };
   }
 
-  onSaveJob(): any {
-    console.log('-----onSaveJob-----');
-    return true;
+  onSaveJob(): boolean {
+    return !(this.project.id && this.job.id);
+  }
+
+  repackageSizing(): any {
+    const jobSizing = this.onSave(this.project);
+    this.apiService.changeLoading(true, 'updateJobSizing');
+    this.projectsJobsService.updateJobSizing(jobSizing)
+      .pipe(catchError((err, caught) => {
+        this.apiService.changeLoading(false, 'updateJobSizing');
+        swal({
+          title: 'ERROR',
+          text: 'Saving data error',
+          icon: "error",
+          dangerMode: true
+        });
+        return caught;
+      }))
+      .subscribe(() => {
+        this.apiService.changeLoading(false, 'updateJobSizing');
+        swal({
+          title: 'SAVE',
+          text: 'Saving complete',
+          icon: "warning",
+          dangerMode: false
+        });
+      });
   }
 
   onUnitsChanged(): any {
@@ -380,12 +394,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     return true;
   }
 
-  repackageSizing(): any {
-    console.log('-----repackageSizing-----');
-    return true;
-  }
-
-  nextTabHandle(tabsRef?: TabsetComponent): void {
+  public nextTabHandle(tabsRef?: TabsetComponent): void {
     if (tabsRef && tabsRef.tabs) {
       for (let i = 0; i <= tabsRef.tabs.length; i++) {
         const tab = tabsRef.tabs[i];
@@ -399,7 +408,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     }
   }
 
-  setActiveTab(tab: number | TabDirective): void {
+  public setActiveTab(tab: number | TabDirective): void {
     if (tab instanceof TabDirective) {
       const tabIndex = this.tabsRef.tabs.indexOf(tab);
 
@@ -421,7 +430,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     }
   }
 
-  calculateProposedSetup({proposalInputs, isFinal}: {proposalInputs: ProposedDataInterface, isFinal?: boolean}): void {
+  public calculateProposedSetup({proposalInputs, isFinal}: {proposalInputs: ProposedDataInterface, isFinal?: boolean}): void {
     if (!proposalInputs || !proposalInputs.proposedSetup || !proposalInputs.features) { return; }
 
     const fg = this.formService.getProposedSetupForm().get('proposedSetup') as FormGroup;
@@ -450,7 +459,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       });
   }
 
-  calculateBoilerEfficiency(data: SgaCalcBoilerEfficiencyReqInterface): void {
+  public calculateBoilerEfficiency(data: SgaCalcBoilerEfficiencyReqInterface): void {
     if (!data.inputFuelId || data.isEconomizerPresent === undefined || data.isEconomizerPresent === null) { return null; }
 
     this.apiService.calculateBoilerEfficiency(data)
@@ -458,7 +467,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       .subscribe(({ boilerEfficiency }) => this.setBenchmarkInputValue('boilerEfficiency', boilerEfficiency));
   }
 
-  calculateCarbonEmission(data: SgaCalcCarbonEmissionReqInterface): void {
+  public calculateCarbonEmission(data: SgaCalcCarbonEmissionReqInterface): void {
     if (!data.inputFuelId || !data.fuelUnitSelected || !data.fuelEnergyPerUnit || !data.fuelCarbonContent ||
       !data.energyUnitSelected || !data.smallWeightUnitSelected) { return null; }
 
@@ -467,7 +476,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       .subscribe(({fuelCarbonContent}) => this.setBenchmarkInputValue('fuelCarbonContent', fuelCarbonContent));
   }
 
-  calculateCalorificValue(data: SgaCalcCalorificReqInterface): void {
+  public calculateCalorificValue(data: SgaCalcCalorificReqInterface): void {
     if (!data.inputFuelId || !data.fuelUnitSelected || !data.energyUnitSelected || !data.smallWeightUnitSelected) {
       return null;
     }
@@ -480,7 +489,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       );
   }
 
-  calculateWaterTreatment(data: SgaCalcWaterTreatmentReqInterface): void {
+  public calculateWaterTreatment(data: SgaCalcWaterTreatmentReqInterface): void {
     if (!data.waterTreatmentMethodId || !data.tdsUnitSelected) { return null; }
 
     this.apiService.calculateWaterTreatment(data)
@@ -808,23 +817,21 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     this.activatedRoute.params
       .pipe(takeUntil(this.ngUnsubscribe), filter(({projectId, jobId}: Params) => !!projectId && !!jobId))
       .subscribe(({projectId, jobId}: Params) => {
-        this.job.projectId = projectId;
-        this.job.id = jobId;
-        this.job.moduleId = this.moduleId;
-        this.project.id = projectId;
+        this.projectId = projectId;
+        this.jobId = jobId;
         this.apiService.changeLoading(true, 'getProjectsAndJobs');
         this.projectsJobsService.getProjectsAndJobs()
           .subscribe(() => this.apiService.changeLoading(false, 'getProjectsAndJobs'));
       });
 
     const projectJobsChangeSub = this.projectsJobsService.projectJobsChange
-      .pipe(map(({projects}) => this.project.id && projects && projects.find(({id}) => id === this.project.id)))
+      .pipe(map(({projects}) => this.projectId && projects && projects.find((p) => p && p.id === this.projectId)))
       .subscribe((project) => {
         projectJobsChangeSub.unsubscribe();
         this.project = project;
-        this.job = project && project.jobs && this.job.id  && project.jobs.find(({id}) => id === this.job.id);
+        this.job = project && project.jobs && this.jobId  && project.jobs.find((j) => j && j.id === this.jobId);
 
-        if (!this.project || !this.job) {
+        if ((this.projectId && !this.project) || (this.jobId && !this.job)) {
           return swal({
             title: this.translatePipe.transform('ERROR'),
             text: this.translatePipe.transform('SELECTED_JOB_WAS_NOT_FOUND_MESSAGE'),
@@ -833,11 +840,70 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
           });
         }
 
-        this.projectsJobsService.getJobSizing({jobId: this.job.id, projectId: this.project.id})
-          .pipe(takeUntil(this.ngUnsubscribe))
-          .subscribe((sizingData) => {
-            console.log(sizingData, '-----getJobSizing');
-          });
+        if (this.project && this.job) {
+          const convertValue = (v: any) => v === 'false' ? false : v === 'true' ? true : isNaN(Number(v)) ? v : Number(v);
+          this.apiService.changeLoading(true, 'getJobSizing');
+          this.projectsJobsService.getJobSizing({jobId: this.job.id, projectId: this.project.id})
+            .pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe((sizingData) => {
+              if (sizingData && sizingData.processConditions && sizingData.processConditions.length) {
+                const data: {[key: string]: any} = sizingData.processConditions
+                  .reduce((accum, v) => ({
+                    ...accum,
+                    [v.name]: v.processInputs.reduce((acc, input) => ({...acc, [input.name]: convertValue(input.value)}), {})
+                  }), {});
+
+                if (data && data.benchmark && data.features && data.proposedSetup) {
+                  this.sizingModuleResults = {
+                    benchmark: data.benchmark,
+                    features: data.features,
+                    proposedSetup: data.proposedSetup
+                  } as CalcBenchmarkResInterface;
+
+                  this.formService.getProposedSetupForm()
+                    .patchValue({
+                      features: this.sizingModuleResults.features,
+                      proposedSetup: this.sizingModuleResults.proposedSetup
+                    }, {emitEvent: false});
+                  this.benchmarkChartData = this.chartService
+                    .generateBenchmark(this.sizingModuleResults.benchmark, 'benchmark');
+                }
+
+                if (data && data.selectedUnits && data.benchmarkInputs) {
+                  for (const key in data.selectedUnits) {
+                    const control = this.sizingModuleForm.get(`selectedUnits.${key}`);
+                    if (key && control && control.value !== data.selectedUnits[key]) {
+                      control.patchValue(data.selectedUnits[key], {onlySelf: true, emitEvent: false});
+                      if (control.disabled) {
+                        control.enable({emitEvent: false});
+                      }
+                    }
+                  }
+
+                  for (const key in data.benchmarkInputs) {
+                    const control = this.sizingModuleForm.get(`benchmarkInputs.${key}`);
+                    if (key && control && control.value !== data.benchmarkInputs[key]) {
+                      control.patchValue(data.benchmarkInputs[key], {onlySelf: true, emitEvent: false});
+                      if (control.disabled) {
+                        control.enable({emitEvent: false});
+                      }
+                    }
+                  }
+                }
+              }
+
+              this.apiService.changeLoading(false, 'getJobSizing');
+              console.log(sizingData, '-----getJobSizing');
+            }, () => {
+              this.apiService.changeLoading(false, 'getJobSizing');
+              swal({
+                title: this.translatePipe.transform('ERROR'),
+                text: this.translatePipe.transform('SELECTED_JOB_WAS_NOT_FOUND_MESSAGE'),
+                icon: "error",
+                dangerMode: true
+              });
+            });
+        }
       });
   }
 }

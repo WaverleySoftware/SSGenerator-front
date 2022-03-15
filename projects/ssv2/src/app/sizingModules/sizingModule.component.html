@@ -33,8 +33,8 @@
               <span class="fa fa-file-o"></span> {{'NEW_SIZING' | translate:true}}
             </a>
           </li>
-          <li [class.disabled]="false">
-            <a (click)="saveLoadModal.open()">
+          <li [class.disabled]="(!(childComponent?.sizingModuleForm?.valid && childComponent?.sizingModuleForm?.touched))">
+            <a (click)="save()">
               <span class="fa fa-save"></span> {{'SAVE' | translate:true}}
             </a>
           </li>
