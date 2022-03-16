@@ -34,7 +34,7 @@
             </a>
           </li>
           <li [class.disabled]="(!(childComponent?.sizingModuleForm?.valid && childComponent?.sizingModuleForm?.touched))">
-            <a (click)="save()">
+            <a (click)="!(!(childComponent.sizingModuleForm.valid && childComponent.sizingModuleForm.touched)) && save()">
               <span class="fa fa-save"></span> {{'SAVE' | translate:true}}
             </a>
           </li>

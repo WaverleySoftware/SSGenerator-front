@@ -258,6 +258,10 @@ export class SgaFormService {
     return this.inputParamsFg;
   }
 
+  resetInputParamsFg(): void {
+    this.inputParamsFg = this.createInputParamsForm();
+  }
+
   getProposedSetupForm(): TForm<ProposedSetupTFormInterface> {
     if (!this.proposedSetupFg) {
       this.proposedSetupFg = this.createProposedSetupForm();

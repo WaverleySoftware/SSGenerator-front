@@ -1,7 +1,8 @@
 import { Component, Input } from '@angular/core';
 import { ChartBarDataInterface } from '../../interfaces/chart-bar.interface';
 import { horizontalChart, verticalChart, verticalChartLabels } from '../../utils/proposed-setup-def-data';
-import generateChartsData from '../../utils/generate-charts-data';
+import { loadSgaUnits } from "../../utils/load-sga-units";
+import { UnitsService } from "sizing-shared-lib";
 
 @Component({
   selector: 'app-sga-final-proposal',
@@ -10,11 +11,13 @@ import generateChartsData from '../../utils/generate-charts-data';
 })
 export class SgaFinalProposalComponent {
   @Input() currency: string;
-  @Input() units: { [key: number]: string };
   @Input() verticalChart: ChartBarDataInterface[] = verticalChart;
   @Input() horizontalChart: ChartBarDataInterface[] = horizontalChart;
 
+	units: { [key: number]: string };
   chartLabels: string[] = verticalChartLabels;
 
-  constructor() { }
+  constructor(private unitsService: UnitsService) {
+	  loadSgaUnits(this.unitsService).then(units => this.units = units);
+  }
 }

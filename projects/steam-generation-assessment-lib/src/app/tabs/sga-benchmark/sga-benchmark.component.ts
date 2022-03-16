@@ -2,6 +2,8 @@ import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core
 import { ChartBarDataInterface } from '../../interfaces/chart-bar.interface';
 import { BenchmarkResBenchmarkInterface } from "../../interfaces/calc-benchmark-res.interface";
 import { InputParametersTFormInterface, TForm } from "../../interfaces/forms.interface";
+import { UnitsService } from 'sizing-shared-lib';
+import { loadSgaUnits } from "../../utils/load-sga-units";
 
 @Component({
   selector: 'app-sga-benchmark',
@@ -11,7 +13,6 @@ import { InputParametersTFormInterface, TForm } from "../../interfaces/forms.int
 })
 export class SgaBenchmarkComponent implements OnInit {
   @Input() data: BenchmarkResBenchmarkInterface;
-  @Input() units: { [key: number]: string };
   @Input() currency: string;
   @Input() formGroup: TForm<InputParametersTFormInterface>;
   @Input() chartData: ChartBarDataInterface[] = [
@@ -21,7 +22,11 @@ export class SgaBenchmarkComponent implements OnInit {
     { data: [0], label: 'Carbont tax' },
   ];
 
-  constructor() {}
+  units: { [key: number]: string };
 
-  ngOnInit() {}
+  constructor(private unitsService: UnitsService) {}
+
+  ngOnInit() {
+    loadSgaUnits(this.unitsService).then(units => this.units = units);
+  }
 }
