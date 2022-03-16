@@ -122,8 +122,8 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   }
 
   ngOnInit() {
+    this.createOrUpdateSizingPref();
     if (!this.jobId || !this.projectId) {
-      this.createOrUpdateSizingPref();
       this.convertUnits(this.getDefaultConvertedUnits());
     }
   }
