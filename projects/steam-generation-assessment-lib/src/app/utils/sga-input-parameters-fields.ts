@@ -102,7 +102,7 @@ export default {
   },
   o2ScavengingChemicalsCostSavings: {
     formControlName: 'o2ScavengingChemicalsCostSavings',
-    label: 'O2_SCAVENGING_CHEMICALS_COST_SAVINGS',
+    label: 'O2_SCAVENGING_CHEMICALS_COST',
     unitNames: ['BHCurrency'],
     translations: ['CURRENCY'],
   },

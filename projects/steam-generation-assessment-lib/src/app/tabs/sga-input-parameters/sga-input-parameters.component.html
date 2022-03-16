@@ -208,7 +208,7 @@
                 <h6>{{'TOTAL_CHEMICAL_COST_PER_YEAR' | translate}}</h6>
                 <p>{{'COST_OF_WATER_TREATMENT_CHEMICALS_FSLASH_UNIT_OF_BOILER_WATER_BEING_TREATED_FOR_EXAMPLE_0_15_FSLASH_M3_BOILER_WATER_THIS_HELP' | translate}}</p>
 
-                <h6>{{'O2_SCAVENGING_CHEMICALS_COST_SAVINGS' | translate}}</h6>
+                <h6>{{'O2_SCAVENGING_CHEMICALS_COST' | translate}}</h6>
                 <p>{{'THIS_IS_USED_TO_CALCULATE_ANY_CHEMICAL_SAVINGS_FROM_INCREASING_FEEDWATER_TEMPERATURE_USING_DIRECT_STEAM_INJECTION_HELP' | translate}}</p>
               </div>
             </ng-template>
@@ -229,7 +229,7 @@
                          type="number"
                          spirax-input
                          required>
-                  <input [label]="'O2_SCAVENGING_CHEMICALS_COST_SAVINGS' | translate"
+                  <input [label]="'O2_SCAVENGING_CHEMICALS_COST' | translate"
                          [unitsStr]="[sizingUnits['BHCurrency']?.unit, 'yr']"
                          [value]="getValue('o2ScavengingChemicalsCostSavings') | decimalPlace: sizingUnits['BHCurrency']?.decimal"
                          [sga-decimal-places]="sizingUnits['BHCurrency']?.decimal"
