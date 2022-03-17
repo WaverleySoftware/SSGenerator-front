@@ -9,8 +9,6 @@ import { SgaFormService } from "../../services/sga-form.service";
 import { horizontalChart, verticalChart, verticalChartLabels } from "../../utils/proposed-setup-def-data";
 import { SgaTotalSavingInterface } from "../../interfaces/sga-chart-data.Interface";
 import { ProposedSetupTFormInterface, TForm } from "../../interfaces/forms.interface";
-import { loadSgaUnits } from "../../utils/load-sga-units";
-import { UnitsService } from "sizing-shared-lib";
 
 @Component({
   selector: 'app-sga-proposed-setup',
@@ -21,12 +19,8 @@ export class SgaProposedSetupComponent implements OnInit {
   @Input() isEconomizerPresent: boolean;
   @Input() set data(v ) {
     this.data_ = v;
-    if (!v || (!v.proposedSetup && !v.features && !this.proposedFormPanel)) {
-      this.proposedFormPanel = true;
-
-      if (this.initialTdsControls) {
-        this.initialTdsControls = null;
-      }
+    if ((!v || (!v.proposedSetup && !v.features)) && this.initialTdsControls) {
+      this.initialTdsControls = null;
     }
 
     if (!this.initialTdsControls && v && v.features) {
@@ -46,17 +40,15 @@ export class SgaProposedSetupComponent implements OnInit {
 	@Input() totalSaving: SgaTotalSavingInterface;
   @Output() generateProposed: EventEmitter<any> = new EventEmitter<{proposalInputs: ProposedDataInterface, isFinal?: boolean}>();
   @Output() resetFinalProposal = new EventEmitter<any>();
+  @Input() units: { [key: number]: string };
   private ngUnsubscribe = new Subject<void>();
-  units: { [key: number]: string };
   verticalChartLabels: string[] = verticalChartLabels;
-  proposedFormPanel = true;
   form: TForm<ProposedSetupTFormInterface> = this.formService.getProposedSetupForm();
   initialTdsControls: {[key: string]: boolean};
 
   constructor(
     private apiService: SgaApiService,
     private formService: SgaFormService,
-    private unitsService: UnitsService
   ) {
     this.form.get('proposedSetup').valueChanges.pipe(
       takeUntil(this.ngUnsubscribe),
@@ -71,16 +63,13 @@ export class SgaProposedSetupComponent implements OnInit {
       fg.get('benchmarkCondensateReturn').value === fg.get('proposalCondensateReturned').value;
   }
 
-  ngOnInit() {
-    loadSgaUnits(this.unitsService).then(units => this.units = units);
-  }
+  ngOnInit() {}
 
   onSubmit() {
     if (this.form.invalid) {
       return;
     }
 
-    this.proposedFormPanel = false;
     this.form.get('proposedSetup').markAsUntouched();
     this.form.get('proposedSetup').markAsPristine();
     this.generateProposed.emit({proposalInputs: this.form.getRawValue()});
@@ -114,6 +103,7 @@ export class SgaProposedSetupComponent implements OnInit {
         proposal.markAsUntouched();
         proposal.markAsPristine();
         proposal.patchValue(proposalBoilerEfficiency, {emitEvent: false});
+        this.resetFinalProposal.emit({proposalBoilerEfficiency});
       });
   }
 

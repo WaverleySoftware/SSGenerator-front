@@ -8,10 +8,11 @@ import { SgaErrorInterface, SgaValidationErrorResInterface } from "../interfaces
 const getControlNameFromReqError = (error: SgaErrorInterface): {name: string, error: string} => {
   if (!error) { return null; }
 
-  const propertyName = error.propertyName;
+  const pathArr = error.propertyName.split('.');
+  const propertyName = pathArr[pathArr.length - 1];
 
   return {
-    name: error.propertyName.charAt(0).toLocaleLowerCase() + propertyName.slice(1),
+    name: propertyName && (propertyName.charAt(0).toLocaleLowerCase() + propertyName.slice(1)),
     error: error.errorMessage || 'UNKNOWN_ERROR'
   };
 };
@@ -77,6 +78,7 @@ const validateProposed = (service: SgaApiService, selectedUnits: FormGroup): Asy
 
 const validateProposedCalculation = (res, form: FormGroup): { messages: any[], proposal: any[] } => {
   const err = res as SgaValidationErrorResInterface;
+  console.log(err, '----err')
 
   if (err && err.errors && err.errors.length) {
 

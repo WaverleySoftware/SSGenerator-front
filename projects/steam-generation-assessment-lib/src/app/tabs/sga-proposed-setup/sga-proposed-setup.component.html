@@ -1,7 +1,7 @@
 <spirax-panel title="Proposed setup" [disableToggle]="true">
   <ng-container body>
     <div class="sgaProposedSetup" *ngIf="units else noUnits">
-      <spirax-panel [(expanded)]="proposedFormPanel"
+      <spirax-panel [expanded]="!verticalChartData || !horizontalChartData"
                     [invalid]="form?.get('proposedSetup').invalid"
                     [title]="'Setup parameters' | translate"
                     titleTooltip="Some tooltip"
@@ -173,7 +173,7 @@
         </form>
       </spirax-panel>
 
-      <spirax-panel [expanded]="!proposedFormPanel && !!verticalChartData && !!horizontalChartData"
+      <spirax-panel [expanded]="!!verticalChartData && !!horizontalChartData"
                  [disableToggle]="!verticalChartData || !horizontalChartData"
                  title="Proposed results"
                  id="SetupParametersResultsPanel">

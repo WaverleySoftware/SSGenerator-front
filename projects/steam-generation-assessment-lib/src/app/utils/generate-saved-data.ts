@@ -82,8 +82,13 @@ export const patchSavedDataToForm = (data: ProcessInput[], fg: FormGroup) => {
     const value = convertValue(processInput.value);
 
     if (processInput && control && control.value !== value) {
-      control.patchValue(value, {onlySelf: true, emitEvent: false});
-      if (control.disabled) {
+      control.patchValue(value, {onlySelf: false, emitEvent: false});
+      if (
+        control.disabled && (
+          processInput.name !== 'boilerSteamTemperature' ||
+          (processInput.name === 'boilerSteamTemperature' && fg.get('isSuperheatedSteam').value)
+        )
+      ) {
         control.enable({emitEvent: false});
       }
     }

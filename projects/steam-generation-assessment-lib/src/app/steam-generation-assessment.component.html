@@ -26,19 +26,21 @@
       <app-sga-benchmark [formGroup]="sizingModuleForm"
                          [data]="sizingModuleResults?.benchmark"
                          [currency]="currency$ | async"
+                         [units]="units"
                          [chartData]="benchmarkChartData"></app-sga-benchmark>
     </tab>
     <tab [heading]="'PROPOSED_SETUP' | translate"
          [disabled]="!sizingModuleResults?.proposedSetup || !sizingModuleResults?.features"
          (select)="setActiveTab($event)">
       <app-sga-proposed-setup [data]="sizingModuleResults"
+                              [units]="units"
                               [currency]="currency$ | async"
                               [totalSaving]="proposalSetupTotal"
                               [verticalChart]="proposalVerticalChart"
                               [horizontalChart]="proposalSetupHorizontalChart"
                               [isEconomizerPresent]="sizingModuleForm.get('benchmarkInputs.isEconomizerPresent')?.value"
                               (generateProposed)="calculateProposedSetup($event)"
-                              (resetFinalProposal)="finalProposalHorizontalChart = proposalVerticalChart = null"></app-sga-proposed-setup>
+                              (resetFinalProposal)="resetFinalProposal()"></app-sga-proposed-setup>
 
       <button class="sgaBaseTabs_nextBtn"
               *ngIf="!!finalProposalHorizontalChart && !!proposalVerticalChart"
@@ -48,6 +50,7 @@
          [disabled]="!finalProposalHorizontalChart || !proposalVerticalChart"
          (select)="setActiveTab($event)">
       <app-sga-final-proposal [currency]="currency$ | async"
+                              [units]="units"
                               [verticalChart]="proposalVerticalChart"
                               [horizontalChart]="finalProposalHorizontalChart"></app-sga-final-proposal>
     </tab>
