@@ -78,7 +78,6 @@ const validateProposed = (service: SgaApiService, selectedUnits: FormGroup): Asy
 
 const validateProposedCalculation = (res, form: FormGroup): { messages: any[], proposal: any[] } => {
   const err = res as SgaValidationErrorResInterface;
-  console.log(err, '----err')
 
   if (err && err.errors && err.errors.length) {
 

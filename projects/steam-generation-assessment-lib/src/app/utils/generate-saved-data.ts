@@ -72,17 +72,20 @@ export const parseSavedChartData = (data: ProcessInput[]): ChartBarDataInterface
   }))
 }
 
-export const patchSavedDataToForm = (data: ProcessInput[], fg: FormGroup) => {
+export const patchSavedDataToForm = (data: ProcessInput[], fg: FormGroup): any => {
   if (!data || !data.length) {
     return null;
   }
+
+  const result = {}
 
   for (const processInput of data) {
     const control = fg.get(processInput.name);
     const value = convertValue(processInput.value);
 
     if (processInput && control && control.value !== value) {
-      control.patchValue(value, {onlySelf: false, emitEvent: false});
+      result[processInput.name] = value;
+      control.patchValue(value, {emitEvent: false});
       if (
         control.disabled && (
           processInput.name !== 'boilerSteamTemperature' ||
@@ -93,4 +96,6 @@ export const patchSavedDataToForm = (data: ProcessInput[], fg: FormGroup) => {
       }
     }
   }
+
+  return result;
 }
