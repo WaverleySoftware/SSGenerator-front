@@ -4,6 +4,7 @@ export interface CalcBenchmarkResInterface {
   features: BenchmarkResFeaturesInterface;
   messages?: string[] | any[];
   proposedSetup: BenchmarkResProposedSetupInterface;
+  overallProposal?: Partial<BenchmarkResBenchmarkInterface>
 }
 
 export interface BenchmarkResBenchmarkInterface {

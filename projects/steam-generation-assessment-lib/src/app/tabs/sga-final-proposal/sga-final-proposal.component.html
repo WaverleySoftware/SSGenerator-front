@@ -1,4 +1,4 @@
-<tabset class="sgaFinalProposal">
+<tabset class="sgaFinalProposal" *ngIf="current && potential && units; else noData">
   <tab>
     <h5 class="sgaBaseTabs_title_md">{{'PROPOSED_SETUP' | translate}}</h5>
     <ng-template tabHeading>
@@ -21,7 +21,7 @@
                    [data]="horizontalChart"
                    [labels]="['POTENTIAL' | translate, 'CURRENT' | translate]"></app-chart-bar>
   </tab>
-  <tab>
+  <tab [active]="true">
     <h5 class="sgaBaseTabs_title_md">{{'PROPOSED_SETUP' | translate}}</h5>
     <ng-template tabHeading>
       <svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
@@ -32,7 +32,7 @@
     <div class="row">
       <div class="col-md-12">
         <p class="sgaBaseTabs_title_sm">
-          Major Steam generation Outputs and Potential Savings
+          {{'MAJOR_STEAM_GENERATION_OUTPUTS_AND_CONDENSATE_RETURN_SAVINGS' | translate}}
           <i class="fa fa-info-circle"></i>
         </p>
       </div>
@@ -40,111 +40,120 @@
         <table class="customTable">
           <thead>
           <tr>
-            <th rowspan="2">Cost of Steam Generated</th>
-            <th colspan="2">Benchmark Current Situation</th>
-            <th colspan="2">Potential</th>
-            <th colspan="2">Savings</th>
+            <th rowspan="2">{{'COST_OF_STEAM_GENERATED' | translate}}</th>
+            <th colspan="2">{{'BENCHMARK_CURRENT_SITUATION' | translate}}</th>
+            <th colspan="2">{{'POTENTIAL' | translate}}</th>
+            <th colspan="2">{{'SAVINGS' | translate}}</th>
           </tr>
           <tr>
-            <th class="text-center">quantity</th>
-            <th class="text-center">value</th>
+            <th class="text-center">{{'QUANTITY' | translate}}</th>
+            <th class="text-center">{{'VALUE' | translate}}</th>
 
-            <th class="text-center">quantity</th>
-            <th class="text-center">value</th>
+            <th class="text-center">{{'QUANTITY' | translate}}</th>
+            <th class="text-center">{{'VALUE' | translate}}</th>
 
-            <th class="text-center">Saving</th>
+            <th class="text-center">{{'SAVING' | translate}}</th>
             <th class="text-center">%</th>
           </tr>
           </thead>
           <tbody>
+          <ng-template #emptyCol><td>-</td></ng-template>
           <tr>
-            <td>Fuel quantity</td>
-            <td>53,500,000 kWh</td>
-            <td>1,335,500 £/yr</td>
-            <td>49,859,620 kWh</td>
-            <td>1,335,500 £/yr</td>
-            <td>1,335,500 £/yr</td>
-            <td>6,8%</td>
+            <td>{{'FUEL_QUANTITY' | translate}}</td>
+            <td *ngIf="current.fuelConsumptionPerYear; else emptyCol">{{current.fuelConsumptionPerYear | number: '0.0-2'}} {{units[current.fuelConsumptionPerYearUnit]}}</td>
+            <td *ngIf="current.costOfFuelPerYear; else emptyCol">{{current.costOfFuelPerYear | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
+            <td *ngIf="potential.fuelConsumptionPerYear; else emptyCol">{{potential.fuelConsumptionPerYear | number: '0.0-2'}} {{units[potential.fuelConsumptionPerYearUnit]}}</td>
+            <td *ngIf="potential.costOfFuelPerYear; else emptyCol">{{potential.costOfFuelPerYear | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
+            <td *ngIf="current.costOfFuelPerYear && potential.costOfFuelPerYear; else emptyCol">{{current.costOfFuelPerYear - potential.costOfFuelPerYear | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
+            <td *ngIf="current.costOfFuelPerYear && potential.costOfFuelPerYear; else emptyCol">{{savingPercent(current.costOfFuelPerYear, potential.costOfFuelPerYear) | number: '0.0-2'}}%</td>
           </tr>
           <tr>
-            <td>Fuel energy</td>
-            <td>50,000,000 kWh</td>
+            <td>{{'FUEL_ENERGY' | translate}}</td>
+            <td *ngIf="current.qfuel; else emptyCol">{{current.qfuel | number: '0.0-2'}} {{units[current.qfuelUnit]}}</td>
             <td>–</td>
-            <td>49,859,620 kWh</td>
-            <td>1,335,500 £/yr</td>
+            <td *ngIf="potential.qfuel; else emptyCol">{{potential.qfuel | number: '0.0-2'}} {{units[potential.qfuelUnit]}}</td>
+            <td>–</td>
             <td>–</td>
             <td>–</td>
           </tr>
           <tr>
-            <td>Boiler House water and Chemicals</td>
-            <td>36,595,63 m3</td>
-            <td>197,921 £/yr</td>
-            <td>49,859,620 kWh</td>
-            <td>–</td>
-            <td>197,921 £/yr</td>
-            <td>60,7%</td>
+            <td>{{'BOILER_HOUSE_WATER_AND_CHEMICALS' | translate}}</td>
+            <td *ngIf="current.boilerHouseWaterFlowTotal; else emptyCol">{{current.boilerHouseWaterFlowTotal | number: '0.0-2'}} {{units[current.boilerHouseWaterFlowTotalUnit]}}</td>
+            <td *ngIf="current.waterAndChemicalsCostTotalPerYear; else emptyCol">{{current.waterAndChemicalsCostTotalPerYear | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
+            <td *ngIf="potential.boilerHouseWaterFlowTotal; else emptyCol">{{potential.boilerHouseWaterFlowTotal | number: '0.0-2'}} {{units[potential.boilerHouseWaterFlowTotalUnit]}}</td>
+            <td *ngIf="potential.waterAndChemicalsCostTotalPerYear; else emptyCol">{{potential.waterAndChemicalsCostTotalPerYear | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
+            <td>{{(current.waterAndChemicalsCostTotalPerYear - potential.waterAndChemicalsCostTotalPerYear) | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
+            <td>{{savingPercent(current.waterAndChemicalsCostTotalPerYear, potential.waterAndChemicalsCostTotalPerYear) | number: '0.0-2'}}%</td>
           </tr>
           <tr>
-            <td>CO2 Emission</td>
-            <td>9,896 tonne/yr</td>
-            <td>16,873 £/yr</td>
-            <td>14,856,90 m3</td>
-            <td>197,921 £/yr</td>
-            <td>16,873 £/yr</td>
-            <td>6,8%</td>
+            <td>{{'CO2_EMISSIONS' | translate}}</td>
+            <td *ngIf="current.tonnesOfCO2; else emptyCol">{{current.tonnesOfCO2 | number: '0.0-2'}} {{units[current.tonnesOfCO2Unit]}}/{{'YR' | translate}}</td>
+            <td *ngIf="current.costOfCO2PerYear; else emptyCol">{{current.costOfCO2PerYear | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
+            <td *ngIf="potential.tonnesOfCO2; else emptyCol">{{potential.tonnesOfCO2 | number: '0.0-2'}} {{units[potential.tonnesOfCO2Unit]}}/{{'YR' | translate}}</td>
+            <td *ngIf="potential.costOfCO2PerYear; else emptyCol">{{potential.costOfCO2PerYear | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
+            <td *ngIf="current.costOfCO2PerYear && potential.costOfCO2PerYear; else emptyCol">{{(current.costOfCO2PerYear - potential.costOfCO2PerYear) | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
+            <td *ngIf="current.costOfCO2PerYear && potential.costOfCO2PerYear; else emptyCol">{{savingPercent(current.costOfCO2PerYear, potential.costOfCO2PerYear) | number: '0.0-2'}}%</td>
           </tr>
           <tr>
-            <td>Steam generation effluent</td>
-            <td>12,979 m3</td>
-            <td>54,732 £/yr</td>
-            <td>9,222 tonne/yr</td>
-            <td>16,873 £/yr</td>
-            <td>54,732 £/yr</td>
-            <td>60,7%</td>
+            <td>{{'STEAM_GENERATION_EFFLUENT'}}</td>
+            <td *ngIf="current.boilerHouseTotalVolumeOfWaterEffluent; else emptyCol">{{current.boilerHouseTotalVolumeOfWaterEffluent | number: '0.0-2'}} {{units[current.boilerHouseTotalVolumeOfWaterEffluentUnit]}}</td>
+            <td *ngIf="current.costOfBoilerHouseEffluent; else emptyCol">{{current.costOfBoilerHouseEffluent | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
+            <td *ngIf="potential.boilerHouseTotalVolumeOfWaterEffluent; else emptyCol">{{potential.boilerHouseTotalVolumeOfWaterEffluent | number: '0.0-2'}} {{units[potential.boilerHouseTotalVolumeOfWaterEffluentUnit]}}</td>
+            <td *ngIf="potential.costOfBoilerHouseEffluent; else emptyCol">{{potential.costOfBoilerHouseEffluent | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
+            <td *ngIf="current.costOfBoilerHouseEffluent && potential.costOfBoilerHouseEffluent; else emptyCol">{{(current.costOfBoilerHouseEffluent - potential.costOfBoilerHouseEffluent) | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
+            <td *ngIf="current.costOfBoilerHouseEffluent && potential.costOfBoilerHouseEffluent; else emptyCol">{{savingPercent(current.costOfBoilerHouseEffluent, potential.costOfBoilerHouseEffluent) | number: '0.0-2'}}%</td>
           </tr>
           <tr class="filled">
-            <td>Total Steam Generated</td>
-            <td>63,800 tonne/yr</td>
-            <td>1,607,026 £/yr</td>
-            <td>5,102 m3</td>
-            <td>54,732 £/yr</td>
-            <td>1,607,026 £/yr</td>
-            <td>9%</td>
+            <td>{{'TOTAL_STEAM_GENERATED' | translate}}</td>
+            <td *ngIf="current.mBoiler; else emptyCol">{{current.mBoiler | number: '0.0-2'}} {{units[current.mBoilerUnit]}}/{{'YR' | translate}}</td>
+            <td *ngIf="current.totalCostOfSteamPerYear; else emptyCol">{{current.totalCostOfSteamPerYear | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
+            <td *ngIf="potential.mBoiler; else emptyCol">{{potential.mBoiler | number: '0.0-2'}} {{units[potential.mBoilerUnit]}}/{{'YR' | translate}}</td>
+            <td *ngIf="potential.totalCostOfSteamPerYear; else emptyCol">{{potential.totalCostOfSteamPerYear | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
+            <td *ngIf="current.totalCostOfSteamPerYear && potential.totalCostOfSteamPerYear; else emptyCol">{{(current.totalCostOfSteamPerYear - potential.totalCostOfSteamPerYear) | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
+            <td *ngIf="current.totalCostOfSteamPerYear && potential.totalCostOfSteamPerYear; else emptyCol">{{savingPercent(current.totalCostOfSteamPerYear, potential.totalCostOfSteamPerYear) | number: '0.0-2'}}%</td>
           </tr>
           <tr>
-            <td>Total Cost of Steam / Unit Mass</td>
+            <td>{{'TOTAL_COST_OF_STEAM_FSLASH_UNIT_MASS' | translate}}</td>
             <td>–</td>
-            <td>25,19 £/tonne</td>
-            <td>63,800 tonne/yr</td>
-            <td>1,607,026 £/yr</td>
+            <td *ngIf="current.totalCostOfSteamPerTonne; else emptyCol">{{current.totalCostOfSteamPerTonne | number: '0.0-2'}} {{currency}}/{{units[current.totalCostOfSteamPerTonneUnit]}}</td>
+            <td>-</td>
+            <td *ngIf="potential.totalCostOfSteamPerTonne; else emptyCol">{{potential.totalCostOfSteamPerTonne | number: '0.0-2'}} {{currency}}/{{units[potential.totalCostOfSteamPerTonneUnit]}}</td>
             <td>–</td>
             <td>–</td>
           </tr>
           <tr>
-            <td>Total Cost of Steam / Unit Energy</td>
+            <td>{{'TOTAL_COST_OF_STEAM_FSLASH_UNIT_ENERGY' | translate}}</td>
             <td>–</td>
-            <td>0,0300 £/kWh</td>
+            <td *ngIf="current.totalCostOfSteamPerkWhOfFuel; else emptyCol">{{current.totalCostOfSteamPerkWhOfFuel | number: '0.0-2'}} {{currency}}/kWh</td>
             <td>–</td>
-            <td>25,19 £/tonne</td>
+            <td *ngIf="potential.totalCostOfSteamPerkWhOfFuel; else emptyCol">{{potential.totalCostOfSteamPerkWhOfFuel | number: '0.0-2'}} {{currency}}/kWh</td>
             <td>–</td>
             <td>–</td>
           </tr>
           <tr class="filled">
-            <td>Overall Steam Generation Efficiency</td>
-            <td>839 kWh/tonne</td>
+            <td>{{'OVERALL_STEAM_GENERATION_EFFICIENCY' | translate}}</td>
+            <td *ngIf="current.energyToGenerateUnitofSteam; else emptyCol">{{current.energyToGenerateUnitofSteam | number: '0.0-2'}} {{units[current.energyToGenerateUnitofSteamUnit]}}</td>
             <td>–</td>
-            <td>–</td>
-            <td>0,0300 £/kWh</td>
-            <td>–</td>
-            <td>6,8%</td>
+            <td *ngIf="potential.energyToGenerateUnitofSteam; else emptyCol">{{potential.energyToGenerateUnitofSteam | number: '0.0-2'}} {{units[potential.energyToGenerateUnitofSteamUnit]}}</td>
+            <td>-</td>
+            <td *ngIf="current.energyToGenerateUnitofSteam && potential.energyToGenerateUnitofSteam; else emptyCol">{{(current.energyToGenerateUnitofSteam - potential.energyToGenerateUnitofSteam) | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
+            <td *ngIf="current.energyToGenerateUnitofSteam && potential.energyToGenerateUnitofSteam; else emptyCol">{{savingPercent(current.totalCostOfSteamPerTonne, potential.totalCostOfSteamPerTonne) | number: '0.0-2'}}%</td>
           </tr>
           </tbody>
           <tfoot>
           <tr>
             <td colspan="4"></td>
-            <td>Total savings</td>
-            <td>1,607,026 £/yr</td>
-            <td>6,8%</td>
+            <td>{{'TOTAL_SAVINGS' | translate}}</td>
+            <td>
+              {{((current.costOfFuelPerYear || 0 - potential.costOfFuelPerYear || 0) +
+            (current.waterAndChemicalsCostTotalPerYear || 0 - potential.waterAndChemicalsCostTotalPerYear || 0) +
+            (current.costOfBoilerHouseEffluent || 0 - potential.costOfBoilerHouseEffluent || 0) +
+            (current.costOfCO2PerYear || 0 - potential.costOfCO2PerYear || 0) +
+            (current.mCondy || 0 - potential.mCondy || 0) * current.costOfEffm3) | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
+            <td>{{savingPercent(
+              (current.costOfFuelPerYear || 0) + (current.waterAndChemicalsCostTotalPerYear || 0) + (current.costOfBoilerHouseEffluent || 0) + (current.costOfCO2PerYear || 0) + (current.mCondy || 0),
+              (potential.costOfFuelPerYear || 0) + (potential.waterAndChemicalsCostTotalPerYear || 0) + (potential.costOfBoilerHouseEffluent || 0) + (potential.costOfCO2PerYear || 0) + (potential.mCondy || 0)
+            ) | number: '0.0-2'}}%</td>
           </tr>
           </tfoot>
         </table>
@@ -160,56 +169,56 @@
     </ng-template>
 
     <p class="sgaBaseTabs_title_sm">
-      Breakdown of Boiler House Esimated Costs and Savings
+      {{'BREAKDOWN_OF_BOILER_HOUSE_ESTIMATED_COSTS_AND_SAVINGS' | translate}}
       <i class="fa fa-info-circle"></i>
     </p>
     <table class="sgaFinalProposal_info orange mb">
       <caption>
-        <span>Total steam generation costs</span>
+        <span>{{'TOTAL_STEAM_GENERATION_COSTS' | translate}}</span>
         <i class="fa fa-info-circle"></i>
       </caption>
 
       <thead>
       <tr>
         <th></th>
-        <th>Existing Returns</th>
-        <th>PotentialReturns</th>
-        <th>Savings</th>
+        <th>{{'EXISTING_RETURNS' | translate}}</th>
+        <th>{{'POTENTIAL_RETURNS' | translate}}</th>
+        <th>{{'SAVINGS' | translate}}</th>
       </tr>
       </thead>
       <tbody>
       <tr>
-        <td>Mass flow / Yr</td>
+        <td>{{'MASS_FLOW_FSLASH_YR' | translate}}</td>
         <td>63,800 tonnes/yr</td>
         <td>-</td>
         <td>-</td>
       </tr>
       <tr>
-        <td>Mass Flow / h</td>
+        <td>{{'MASS_FLOW_FSLASH_HR' | translate}}</td>
         <td>7,303 kg/h</td>
         <td>-</td>
         <td>-</td>
       </tr>
       <tr>
-        <td>Cost / Unit Mass</td>
+        <td>{{'COST_FSLASH_UNIT_MASS' | translate}}</td>
         <td>25,19 £/tonne</td>
         <td>22,93 £/tonne</td>
         <td>2 £/tonne</td>
       </tr>
       <tr>
-        <td>Cost / Unit Energy</td>
+        <td>{{'COST_FSLASH_UNIT_ENERGY' | translate}}</td>
         <td>7,303 £/kWh</td>
         <td>0,0293 £/kWh</td>
         <td>0,0007 £/kWh</td>
       </tr>
       <tr>
-        <td>Energy / Unit Mass</td>
+        <td>{{'ENERGY_FSLASH_UNIT_MASS' | translate}}</td>
         <td>7,303 kWh/tonne</td>
         <td>781 kWh/tonne</td>
         <td>57 kWh/tonne</td>
       </tr>
       <tr class="text-bold">
-        <td>Cost / Yr</td>
+        <td>{{'COST_FSLASH_YR' | translate}}</td>
         <td>1,607,026 £/tonne</td>
         <td>1,463,113 £/tonne</td>
         <td>143,913 £/tonne</td>
@@ -218,49 +227,49 @@
     </table>
     <table class="sgaFinalProposal_info mb">
       <caption>
-        <span>Breakdown of steam generation costs</span>
+        <span>{{'BREAKDOWN_OF_BOILER_HOUSE_ESTIMATED_COSTS_AND_SAVINGS' | translate}}</span>
         <i class="fa fa-info-circle"></i>
       </caption>
       <ng-container>
         <thead>
         <tr>
-          <th>Fuel</th>
-          <th>Existing Returns</th>
-          <th>PotentialReturns</th>
-          <th>Savings</th>
+          <th>{{'Fuel' | translate}}</th>
+          <th>{{'EXISTING_RETURNS' | translate}}</th>
+          <th>{{'POTENTIAL_RETURNS' | translate}}</th>
+          <th>{{'SAVINGS' | translate}}</th>
         </tr>
         </thead>
         <tbody>
         <tr>
-          <td>Quatity</td>
+          <td>{{'QUANTITY' | translate}}</td>
           <td>53,500,000 kWh/yr</td>
           <td>-</td>
           <td>-</td>
         </tr>
 
         <tr>
-          <td>Cost / Unit Fuel</td>
+          <td>{{'COST_FSLASH_UNIT_FUEL' | translate}}</td>
           <td>0,025  £/kWh</td>
           <td>-</td>
           <td>-</td>
         </tr>
 
         <tr>
-          <td>Energy</td>
+          <td>{{'ENERGY' | translate}}</td>
           <td>53,500,000 kWh/yr</td>
           <td>22,93 £/tonne</td>
           <td>2 £/tonne</td>
         </tr>
 
         <tr>
-          <td>Cost / Unit Energy</td>
+          <td>{{'COST_FSLASH_UNIT_ENERGY' | translate}}</td>
           <td>0.025 £/kWh</td>
           <td>0,0293 £/kWh</td>
           <td>0,0007 £/kWh</td>
         </tr>
 
         <tr class="text-bold">
-          <td>Cost of Fule/ Yr</td>
+          <td>{{'COST_OF_FUEL_PER_YEAR' | translate}}</td>
           <td>1,337,500 £/yr</td>
           <td>1,463,113 £/tonne</td>
           <td>143,913 £/tonne</td>
@@ -270,29 +279,29 @@
       <ng-container>
         <thead>
         <tr>
-          <th>CO2 emissinons</th>
-          <th>Existing Returns</th>
-          <th>PotentialReturns</th>
-          <th>Savings</th>
+          <th>{{'COST_OF_FUEL_PER_YEAR' | translate}}</th>
+          <th>{{'EXISTING_RETURNS' | translate}}</th>
+          <th>{{'POTENTIAL_RETURNS' | translate}}</th>
+          <th>{{'SAVINGS' | translate}}</th>
         </tr>
         </thead>
         <tbody>
         <tr>
-          <td>Mass emitted</td>
+          <td>{{'MASS_EMITTED' | translate}}</td>
           <td>9,896 tonnes/yr</td>
           <td>-</td>
           <td>-</td>
         </tr>
 
         <tr>
-          <td>Cost / unit mass</td>
+          <td>{{'COST_FSLASH_UNIT_MASS' | translate}}</td>
           <td>20,00 £/tonne</td>
           <td>-</td>
           <td>-</td>
         </tr>
 
         <tr class="text-bold">
-          <td>Cost of CO2 emissins / year</td>
+          <td>{{"COST_OF_CO2_EMISSIONS_FSLASH_YEAR"}}</td>
           <td>197,921 £</td>
           <td>197,921 £</td>
           <td>197,921 £</td>
@@ -302,27 +311,27 @@
       <ng-container>
         <thead>
         <tr>
-          <th>Water</th>
-          <th>Existing Returns</th>
-          <th>PotentialReturns</th>
-          <th>Savings</th>
+          <th>{{'WATER' | translate}}</th>
+          <th>{{'EXISTING_RETURNS' | translate}}</th>
+          <th>{{'POTENTIAL_RETURNS' | translate}}</th>
+          <th>{{'SAVINGS' | translate}}</th>
         </tr>
         </thead>
         <tbody>
         <tr>
-          <td>Quantity</td>
+          <td>{{'QUANTITY' | translate}}</td>
           <td>36,596 m3/yr</td>
           <td>-</td>
           <td>-</td>
         </tr>
         <tr>
-          <td>Cost of water / unit volume</td>
+          <td>{{'COST_OF_WATER_UNIT_VOLUME' | translate}}</td>
           <td>1.10 £/m3</td>
           <td>-</td>
           <td>-</td>
         </tr>
         <tr class="text-bold">
-          <td>Cost of Boiler water / year</td>
+          <td>{{'COST_OF_BOILER_WATER_YEAR' | translate}}</td>
           <td>40,255 £</td>
           <td>40,255 £</td>
           <td>40,255 £</td>
@@ -332,21 +341,21 @@
       <ng-container>
         <thead>
         <tr>
-          <th>Water treatment</th>
-          <th>Existing Returns</th>
-          <th>PotentialReturns</th>
-          <th>Savings</th>
+          <th>{{'WATER_TREATMENT' | translate}}</th>
+          <th>{{'EXISTING_RETURNS' | translate}}</th>
+          <th>{{'POTENTIAL_RETURNS' | translate}}</th>
+          <th>{{'SAVINGS' | translate}}</th>
         </tr>
         </thead>
         <tbody>
         <tr>
-          <td>Cost of chemicals / unit of water</td>
+          <td>{{'COST_OF_CHEMICALS_FSLASH_UNIT_OF_WATER' | translate}}</td>
           <td>0.50 £/m3</td>
           <td>-</td>
           <td>-</td>
         </tr>
         <tr class="text-bold">
-          <td>Cost of Chemicals / year</td>
+          <td>{{'CHEMICALS_PER_YR' | translate}}</td>
           <td>14,476 £/yr</td>
           <td>14,476 £/yr</td>
           <td>14,476 £/yr</td>
@@ -356,27 +365,27 @@
       <ng-container>
         <thead>
         <tr>
-          <th>Effluent</th>
-          <th>Existing Returns</th>
-          <th>PotentialReturns</th>
-          <th>Savings</th>
+          <th>{{'EFFLUENT' | translate}}</th>
+          <th>{{'EXISTING_RETURNS' | translate}}</th>
+          <th>{{'POTENTIAL_RETURNS' | translate}}</th>
+          <th>{{'SAVINGS' | translate}}</th>
         </tr>
         </thead>
         <tbody>
         <tr>
-          <td>Quantity</td>
+          <td>{{'QUANTITY' | translate}}</td>
           <td>28,710 m3/yr</td>
           <td>-</td>
           <td>-</td>
         </tr>
         <tr>
-          <td>Cost / unit</td>
+          <td>{{'COST_FSLASH_UNIT' | translate}}</td>
           <td>1.30 £/m3</td>
           <td>-</td>
           <td>-</td>
         </tr>
         <tr class="text-bold">
-          <td>Cost of Effluent / year</td>
+          <td>{{'COST_OF_EFFLUENT_FSLASH_YEAR' | translate}}</td>
           <td>37,323 £/yr</td>
           <td>37,323 £/yr</td>
           <td>37,323 £/yr</td>
@@ -386,33 +395,33 @@
     </table>
     <table class="sgaFinalProposal_info pink mb">
       <caption>
-        <span>opportunities for boiler house savings</span>
+        <span>{{'OPPORTUNITIES_FOR_BOILER_HOUSE_SAVINGS' | translate}}</span>
         <i class="fa fa-info-circle"></i>
       </caption>
       <ng-container>
         <thead>
         <tr>
-          <th>Stack and radiation losses</th>
-          <th>Existing Returns</th>
-          <th>PotentialReturns</th>
-          <th>Savings</th>
+          <th>{{'STACK_AND_RADIATION_LOSSES' | translate}}</th>
+          <th>{{'EXISTING_RETURNS' | translate}}</th>
+          <th>{{'POTENTIAL_RETURNS' | translate}}</th>
+          <th>{{'SAVINGS' | translate}}</th>
         </tr>
         </thead>
         <tbody>
         <tr>
-          <td>% of lost fuel energy</td>
+          <td>{{'PERCENT_OF_LOST_FUEL_ENERGY' | translate}}</td>
           <td>16%</td>
           <td>-</td>
           <td>-</td>
         </tr>
         <tr>
-          <td>Fuel Energy</td>
+          <td>{{'FUEL_ENERGY' | translate}}</td>
           <td>8,560,000 kWh/yr</td>
           <td>8,560,000 kWh/yr</td>
           <td>8,560,000 kWh/yr</td>
         </tr>
         <tr class="text-bold">
-          <td>Cost of Fule/ Yr</td>
+          <td>{{'COST_OF_FUEL_PER_YEAR' | translate}}</td>
           <td>245,667 £/yr</td>
           <td>245,667 £/yr</td>
           <td>245,667 £/yr</td>
@@ -422,45 +431,45 @@
       <ng-container>
         <thead>
         <tr>
-          <th>Total cost of blowdown</th>
-          <th>Existing Returns</th>
-          <th>PotentialReturns</th>
-          <th>Savings</th>
+          <th>{{'TOTAL_COST_OF_BLOWDOWN' | translate}}</th>
+          <th>{{'EXISTING_RETURNS' | translate}}</th>
+          <th>{{'POTENTIAL_RETURNS' | translate}}</th>
+          <th>{{'SAVINGS' | translate}}</th>
         </tr>
         </thead>
         <tbody>
         <tr>
-          <td>% Blowdown</td>
+          <td>{{'PERCENT_BLOWDOWN' | translate}}</td>
           <td>6.18%</td>
           <td>-</td>
           <td>-</td>
         </tr>
         <tr>
-          <td>Effluent</td>
+          <td>{{'EFFLUENT' | translate}}</td>
           <td>11,995 m3/yr</td>
           <td>-</td>
           <td>-</td>
         </tr>
         <tr>
-          <td>Replacement Water / Chemicals</td>
+          <td>{{'REPLACEMENT_WATER_FSLASH_CHEMICALS' | translate}}</td>
           <td>11,995 m3/yr</td>
           <td>-</td>
           <td>-</td>
         </tr>
         <tr>
-          <td>Fuel Energy</td>
+          <td>{{'FUEL_ENERGY' | translate}}</td>
           <td>963,550 kWh/yr</td>
           <td>-</td>
           <td>-</td>
         </tr>
         <tr>
-          <td>CO2 Emission</td>
+          <td>{{"CO2_EMISSION" | translate}}</td>
           <td>178.23 tonne/yr</td>
           <td>-</td>
           <td>-</td>
         </tr>
         <tr class="text-bold">
-          <td>Cost / Yr</td>
+          <td>{{'COST_FSLASH_YR' | translate}}</td>
           <td>58,531 £/yr</td>
           <td>58,531 £/yr</td>
           <td>58,531 £/yr</td>
@@ -470,21 +479,21 @@
       <ng-container>
         <thead>
         <tr>
-          <th>Effluent From water treatment</th>
-          <th>Existing Returns</th>
-          <th>PotentialReturns</th>
-          <th>Savings</th>
+          <th>{{'EFFLUENT_FROM_WATER_TREATMENT' | translate}}</th>
+          <th>{{'EXISTING_RETURNS' | translate}}</th>
+          <th>{{'POTENTIAL_RETURNS' | translate}}</th>
+          <th>{{'SAVINGS' | translate}}</th>
         </tr>
         </thead>
         <tbody>
         <tr>
-          <td>Volume</td>
+          <td>{{'VOLUME' | translate}}</td>
           <td>1,148 m3/yr</td>
           <td>1,148 m3/yr</td>
           <td>1,148 m3/yr</td>
         </tr>
         <tr class="text-bold">
-          <td>Cost / Yr</td>
+          <td>{{'COST_FSLASH_YR' | translate}}</td>
           <td>1,493 £/tonne</td>
           <td>1,493 £/tonne</td>
           <td>1,493 £/tonne</td>
@@ -494,15 +503,15 @@
       <ng-container>
         <thead>
         <tr>
-          <th>02 scavenging chemicals</th>
-          <th>Existing Returns</th>
-          <th>PotentialReturns</th>
-          <th>Savings</th>
+          <th>{{'02_SCAVENGING_CHEMICALS' | translate}}</th>
+          <th>{{'EXISTING_RETURNS' | translate}}</th>
+          <th>{{'POTENTIAL_RETURNS' | translate}}</th>
+          <th>{{'SAVINGS' | translate}}</th>
         </tr>
         </thead>
         <tbody>
         <tr class="text-bold">
-          <td>Cost / Yr</td>
+          <td>{{'COST_FSLASH_YR' | translate}}</td>
           <td>6,000 £/tonne</td>
           <td>6,000 £/tonne</td>
           <td>6,000 £/tonne</td>
@@ -512,26 +521,26 @@
     </table>
     <table class="sgaFinalProposal_info green">
       <caption>
-        <span>Condensate return / savings</span>
+        <span>{{'CONDENSATE_RETURN_PER_SAVINGS' | translate}}</span>
         <i class="fa fa-info-circle"></i>
       </caption>
       <thead>
       <tr>
-        <th>Total savings from condensate returned</th>
-        <th>Existing Returns</th>
-        <th>PotentialReturns</th>
-        <th>Savings</th>
+        <th>{{'TOTAL_SAVINGS_FROM_CONDENSATE_RETURNED' | translate}}</th>
+        <th>{{'EXISTING_RETURNS' | translate}}</th>
+        <th>{{'POTENTIAL_RETURNS' | translate}}</th>
+        <th>{{'SAVINGS' | translate}}</th>
       </tr>
       </thead>
       <tbody>
       <tr>
-        <td>% Returned</td>
+        <td>{{'PERCENT_RETURNED' | translate}}</td>
         <td>65%</td>
         <td>-</td>
         <td>-</td>
       </tr>
       <tr>
-        <td>Water and Chemicals Saved</td>
+        <td>{{'WATER_AND_CHEMICALS_SAVED' | translate}}</td>
         <td>45,365 m3/yt</td>
         <td>45,365 m3/yt</td>
         <td>45,365 m3/yt</td>
@@ -596,7 +605,7 @@
             <td>8,560,000 <span>kWh/yr</span></td>
           </tr>
           <tr class="text-bold">
-            <td>Cost / Yr</td>
+            <td>{{'COST_FSLASH_YR' | translate}}</td>
             <td>245,667</td>
             <td>245,667 <span>£/yr</span></td>
           </tr>
@@ -628,7 +637,7 @@
             <td>9,896 tonne/yr</td>
           </tr>
           <tr class="text-bold">
-            <td>Cost / Yr</td>
+            <td>{{'COST_FSLASH_YR' | translate}}</td>
             <td>245,667</td>
             <td>245,667 £/yr</td>
           </tr>
@@ -665,7 +674,7 @@
             <td>kWh/yr</td>
           </tr>
           <tr class="text-bold">
-            <td>Cost of Fule/ Yr</td>
+            <td>{{'COST_OF_FUEL_PER_YEAR' | translate}}</td>
             <td>1,337,500</td>
             <td>1,337,500</td>
             <td>£/yr</td>
@@ -768,7 +777,7 @@
                 <td>7,303 kg/h</td>
               </tr>
               <tr class="text-bold">
-                <td>Cost / Yr</td>
+                <td>{{'COST_FSLASH_YR' | translate}}</td>
                 <td>1,607,026</td>
                 <td>1,607,026 £/tonne</td>
               </tr>
@@ -788,7 +797,7 @@
               </thead>
               <tbody>
               <tr>
-                <td>% Returned</td>
+                <td>{{'PERCENT_RETURNED' | translate}}</td>
                 <td>65%</td>
                 <td>65%</td>
               </tr>
@@ -815,12 +824,12 @@
                 <td>1,30 £/m3</td>
               </tr>
               <tr>
-                <td>Quantity</td>
+                <td>{{'QUANTITY' | translate}}</td>
                 <td>12,979</td>
                 <td>12,979 m3/yr</td>
               </tr>
               <tr class="text-bold">
-                <td>Cost / Yr</td>
+                <td>{{'COST_FSLASH_YR' | translate}}</td>
                 <td>245,667</td>
                 <td>245,667 £/yr</td>
               </tr>
@@ -831,4 +840,19 @@
       </div>
     </div>
   </tab>
+  <tab>
+    <h5 class="sgaBaseTabs_title_md">Final proposal</h5>
+    <ng-template tabHeading>
+      <svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" fill="none">
+        <path d="M18 0V2C18 11.627 12.627 16 6 16H4.098C4.31 12.988 5.248 11.165 7.696 8.999C8.9 7.934 8.798 7.319 8.205 7.672C4.121 10.102 2.093 13.386 2.003 18.63L2 19H0C0 17.637 0.116 16.4 0.346 15.268C0.116 13.974 0 12.218 0 10C0 4.477 4.477 0 10 0C12 0 14 1 18 0Z"/>
+      </svg>
+    </ng-template>
+    <div class="row mb">
+      <div class="col-md-12">
+        <p>Last tab</p>
+      </div>
+    </div>
+  </tab>
 </tabset>
+
+<ng-template #noData><h1>Loading... OR No data</h1></ng-template>

@@ -73,12 +73,15 @@ import swal from "sweetalert";
 export class SteamGenerationAssessmentComponent extends BaseSizingModule implements OnDestroy {
   readonly moduleGroupId: number = 9;
   readonly moduleName: string = 'steamGenerationAssessment';
+  readonly moduleId = 2;
   private ngUnsubscribe = new Subject<void>();
+  jobStatusId = 1;
   projectId: string;
+  projectName: string;
   jobId: string;
+  jobName: string;
   project: Project = new Project();
   job: Job = new Job();
-  moduleId = 2;
   productName = 'Steam Generation Assessment';
   nextTab: TabDirective;
   sizingModuleForm: TForm<InputParametersTFormInterface> = this.formService.getInputParamsFg();
@@ -120,14 +123,21 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     this.getSizingFormValues = this.formService.createFormValueGetter(this.sizingModuleForm);
     this.sizingModuleForm.get('benchmarkInputs').valueChanges.pipe(takeUntil(this.ngUnsubscribe)).subscribe(() => this.resetBenchmarkData());
     this.setSgaUnits(this.unitsService);
-    this.createSizingPref().subscribe(selectedUnits => {
-      this.loadJob().subscribe(data => console.log(data, '------loadJob------'));
-      if (!this.jobId) {
-        this.sizingModuleForm.get('selectedUnits').patchValue(selectedUnits);
-        this.loadDefaultValues();
-        this.convertUnits(this.getDefaultConvertedUnits());
-      }
-    });
+    this.createSizingPref().pipe(
+      map((selectedUnits) => {
+        if (!this.jobId) {
+          this.sizingModuleForm.get('selectedUnits').patchValue(selectedUnits);
+          this.loadDefaultValues();
+          this.convertUnits(this.getDefaultConvertedUnits());
+        }
+
+        return  selectedUnits;
+      }),
+      switchMap(() => this.loadJob())
+    ).subscribe(patchedFormData => console.log('------Load Job DATA------>', {
+      patchedFormData,
+      results: this.sizingModuleResults
+    }, '<------Load Job DATA------'));
     this.formFieldsChangesSubscribtions();
   }
 
@@ -237,6 +247,14 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
         processConditions.push({
           name: 'proposedSetup',
           processInputs: generateSavedData(this.sizingModuleResults.proposedSetup),
+          unitPreferences: null
+        });
+      }
+
+      if (this.sizingModuleResults.overallProposal) {
+        processConditions.push({
+          name: 'overallProposal',
+          processInputs: generateSavedData(this.sizingModuleResults.overallProposal),
           unitPreferences: null
         });
       }
@@ -423,17 +441,20 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
         fg.markAsUntouched();
 
         if (res && res.proposal) {
+          const overall = res.proposal.find(v => !!v && !!v.overallImpactOnProposalsSelectedOnBoilerHouse);
           const chartName = isFinal ? 'final' : 'setup';
           const {total, vertical, horizontal} = this.chartService.generateProposal(res.proposal, chartName);
 
           this.sizingModuleResults.proposedSetup = proposalInputs.proposedSetup;
           this.sizingModuleResults.features = proposalInputs.features;
+          this.sizingModuleResults.overallProposal = overall && overall.overallImpactOnProposalsSelectedOnBoilerHouse;
           this.proposalVerticalChart = vertical;
           this.proposalSetupTotal = total;
 
           if (isFinal) {
             this.finalProposalHorizontalChart = horizontal;
           } else {
+            this.finalProposalHorizontalChart = null;
             this.proposalSetupHorizontalChart = horizontal;
           }
 
@@ -850,10 +871,14 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
 
           return {project, job: this.job};
         }),
-        switchMap(({project, job}) => {
+        switchMap((v) => {
+          const project = v && v.project;
+          const job = v && v.job;
+
           if (project && job && job.id && project.id) {
             return this.projectsJobsService.getJobSizing({jobId: job.id, projectId: project.id});
           }
+
           return of(null);
         }),
         map(sizingData => {
@@ -917,6 +942,9 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     }
     if (data.finalProposalHorizontalChart) {
       this.finalProposalHorizontalChart = parseSavedChartData(data.finalProposalHorizontalChart);
+    }
+    if (data.overallProposal) {
+      this.sizingModuleResults.overallProposal = parseSavedData(data.overallProposal);
     }
 
     return patchedValues;
@@ -1007,5 +1035,14 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
         this.units = generateUnits(units);
       });
     }
+  }
+
+  get isActiveFinalProposal(): boolean {
+    return !!(this.finalProposalHorizontalChart &&
+      this.proposalVerticalChart &&
+      this.sizingModuleResults &&
+      this.sizingModuleResults.benchmark &&
+      this.sizingModuleResults.overallProposal &&
+      this.sizingModuleResults.proposedSetup);
   }
 }

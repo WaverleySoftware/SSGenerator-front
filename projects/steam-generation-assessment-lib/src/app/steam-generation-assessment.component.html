@@ -43,14 +43,16 @@
                               (resetFinalProposal)="resetFinalProposal()"></app-sga-proposed-setup>
 
       <button class="sgaBaseTabs_nextBtn"
-              *ngIf="!!finalProposalHorizontalChart && !!proposalVerticalChart"
+              *ngIf="isActiveFinalProposal"
               (click)="setActiveTab(3)">{{'FINAL_PROPOSAL' | translate}} <i class="fa fa-arrow-right"></i></button>
     </tab>
     <tab [heading]="'FINAL_PROPOSAL' | translate"
-         [disabled]="!finalProposalHorizontalChart || !proposalVerticalChart"
+         [disabled]="!isActiveFinalProposal"
          (select)="setActiveTab($event)">
       <app-sga-final-proposal [currency]="currency$ | async"
                               [units]="units"
+                              [current]="sizingModuleResults?.benchmark"
+                              [potential]="sizingModuleResults?.overallProposal"
                               [verticalChart]="proposalVerticalChart"
                               [horizontalChart]="finalProposalHorizontalChart"></app-sga-final-proposal>
     </tab>
