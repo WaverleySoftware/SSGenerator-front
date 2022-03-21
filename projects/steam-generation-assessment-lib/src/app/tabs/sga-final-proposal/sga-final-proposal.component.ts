@@ -9,8 +9,8 @@ import { BenchmarkResBenchmarkInterface } from "../../interfaces/calc-benchmark-
   styleUrls: ['./sga-final-proposal.component.scss']
 })
 export class SgaFinalProposalComponent {
-  @Input() current: Partial<BenchmarkResBenchmarkInterface>;
-  @Input() potential: Partial<BenchmarkResBenchmarkInterface>;
+  @Input() current: Partial<BenchmarkResBenchmarkInterface>; // Benchmark
+  @Input() potential: Partial<BenchmarkResBenchmarkInterface>; // Overall...
   @Input() currency: string;
   @Input() verticalChart: ChartBarDataInterface[] = verticalChart;
   @Input() horizontalChart: ChartBarDataInterface[] = horizontalChart;

@@ -3430,7 +3430,7 @@
       "translationText": "Cost of chemicals / unit"
     },
     {
-      "masterTextKey": "Cost of CHEMICALS_PER_YR",
+      "masterTextKey": "COST_OF_CHEMICALS_PER_YR",
       "translationText": "Cost of chemicals / Yr"
     },
     {

@@ -150,6 +150,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   }
 
   onCalculateSizing(formGroup: FormGroup): any {
+    this.resetBenchmarkData();
     this.apiService.calculateBenchmark(formGroup.getRawValue())
       .pipe(
         takeUntil(this.ngUnsubscribe),
