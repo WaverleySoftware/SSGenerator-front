@@ -440,18 +440,16 @@
                   <div class="row" body>
                     <div class="col-md-6">
                       <spirax-toggle formControlName="isMakeUpWaterMonitored" label="IS_MAKE_UP_WATER_MONITORED"
-                                     (valueChange)="toggleInput(['temperatureOfMakeupWater', 'makeupWaterAmountPerHour'], ['temperatureOfMakeupWater', 'makeupWaterAmountPerHour', 'makeupWaterAmountPerYear'], null, $event)">
-                        <div yes>
-                          <input [label]="'TEMPERATURE_OF_MAKE_UP_WATER' | translate"
-                                 [unitsStr]="[sizingUnits['TemperatureUnit']?.unit]"
-                                 [value]="getValue('temperatureOfMakeupWater') | decimalPlace: sizingUnits['TemperatureUnit']?.decimal"
-                                 [sga-decimal-places]="sizingUnits['TemperatureUnit']?.decimal"
-                                 formControlName="temperatureOfMakeupWater"
-                                 type="number"
-                                 spirax-input
-                                 required>
-                        </div>
-                      </spirax-toggle>
+                                     (valueChange)="toggleInput('makeupWaterAmountPerHour', ['makeupWaterAmountPerHour', 'makeupWaterAmountPerYear'], null, $event)"></spirax-toggle>
+
+                      <input [label]="'TEMPERATURE_OF_MAKE_UP_WATER' | translate"
+                             [unitsStr]="[sizingUnits['TemperatureUnit']?.unit]"
+                             [value]="getValue('temperatureOfMakeupWater') | decimalPlace: sizingUnits['TemperatureUnit']?.decimal"
+                             [sga-decimal-places]="sizingUnits['TemperatureUnit']?.decimal"
+                             formControlName="temperatureOfMakeupWater"
+                             type="number"
+                             spirax-input
+                             required>
                     </div>
                     <div class="col-md-6 border-l-md">
                       <input [label]="'MAKE_UP_WATER_PER_HOUR' | translate"
