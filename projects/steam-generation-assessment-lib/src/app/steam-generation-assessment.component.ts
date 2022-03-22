@@ -94,7 +94,10 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   proposalVerticalChart: ChartBarDataInterface[];
   finalProposalHorizontalChart: ChartBarDataInterface[];
   requestLoading$ = this.apiService.requestLoading$;
-  currency$ = this.preferenceService.sizingUnitPreferencesUpdate.pipe(map(({updated}) => updated.preference.unitName));
+  currency$ = this.preferenceService.sizingUnitPreferencesUpdate.pipe(
+    filter((v) => v.updated.preference.name === 'BHCurrency'),
+    map(({updated}) => updated.preference.unitName)
+  );
   units: { [key: number]: string };
 
   @ViewChild('tabsRef', {static: true}) tabsRef: TabsetComponent;
@@ -124,20 +127,32 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     this.sizingModuleForm.get('benchmarkInputs').valueChanges.pipe(takeUntil(this.ngUnsubscribe)).subscribe(() => this.resetBenchmarkData());
     this.setSgaUnits(this.unitsService);
     this.createSizingPref().pipe(
-      map((selectedUnits) => {
+      map(selectedUnits => {
+        const selectedControls = this.sizingModuleForm.get('selectedUnits') as FormGroup;
+
+        for (const controlsKey in selectedControls.controls) {
+          const selectedControl = selectedControls.get(controlsKey);
+
+          if (selectedUnits && selectedUnits[controlsKey] && selectedControl && !selectedControl.value) {
+            selectedControl.patchValue(selectedUnits[controlsKey], {emitEvent: false, onlySelf: true});
+          }
+        }
+
+        // Load default values for new Job
         if (!this.jobId) {
-          this.sizingModuleForm.get('selectedUnits').patchValue(selectedUnits);
           this.loadDefaultValues();
           this.convertUnits(this.getDefaultConvertedUnits());
         }
 
-        return  selectedUnits;
+        return selectedUnits;
       }),
-      switchMap(() => this.loadJob())
-    ).subscribe(patchedFormData => console.log('------Load Job DATA------>', {
-      patchedFormData,
-      results: this.sizingModuleResults
-    }, '<------Load Job DATA------'));
+      switchMap(() => this.loadJob()),
+      filter(patchedFormData => this.jobId && !patchedFormData)
+    ).subscribe(() => {
+      // Load default values is no Job Sizing
+      this.loadDefaultValues();
+      this.convertUnits(this.getDefaultConvertedUnits());
+    });
     this.formFieldsChangesSubscribtions();
   }
 
@@ -956,6 +971,8 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       selectedUnits: ['fuelUnitSelected', 'energyUnitSelected', 'tdsUnitSelected', 'smallWeightUnitSelected'],
       benchmarkInputs: ['waterTreatmentMethod', 'isEconomizerPresent', 'inputFuelId']
     });
+
+    console.log(val, '----val')
 
     this.calculateWaterTreatment({waterTreatmentMethodId: val.waterTreatmentMethod, tdsUnitSelected: val.tdsUnitSelected});
     this.calculateBoilerEfficiency({isEconomizerPresent: val.isEconomizerPresent, inputFuelId: val.inputFuelId});
