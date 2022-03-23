@@ -195,7 +195,7 @@
 
     &:disabled, &[ng-reflect-is-disabled="true"] {
       opacity: .5;
-      pointer-events: initial !important;
+      pointer-events: none !important;
       outline: none !important;
       &~* {
         opacity: .5;
