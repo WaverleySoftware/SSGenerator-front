@@ -16,9 +16,9 @@ import {
   TranslatePipe,
   MessagesService,
   ProjectsJobsService,
-  SizingData,
   ProcessCondition,
-  ProcessInput
+  ProcessInput,
+  OutputGridRow
 } from 'sizing-shared-lib';
 import { combineLatest, Subject, of, Observable } from "rxjs";
 import { tap } from "rxjs/operators/tap";
@@ -73,8 +73,8 @@ import swal from "sweetalert";
 export class SteamGenerationAssessmentComponent extends BaseSizingModule implements OnDestroy {
   readonly moduleGroupId: number = 9;
   readonly moduleName: string = 'steamGenerationAssessment';
-  readonly moduleId = 2;
   private ngUnsubscribe = new Subject<void>();
+  moduleId = 2;
   jobStatusId = 1;
   projectId: string;
   projectName: string;
@@ -127,6 +127,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     this.sizingModuleForm.get('benchmarkInputs').valueChanges.pipe(takeUntil(this.ngUnsubscribe)).subscribe(() => this.resetBenchmarkData());
     this.setSgaUnits(this.unitsService);
     this.createSizingPref().pipe(
+      takeUntil(this.ngUnsubscribe),
       map(selectedUnits => {
         const selectedControls = this.sizingModuleForm.get('selectedUnits') as FormGroup;
 
@@ -154,6 +155,86 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       this.convertUnits(this.getDefaultConvertedUnits());
     });
     this.formFieldsChangesSubscribtions();
+  }
+
+  setTestData() {
+    this.sizingModuleForm.patchValue({
+      "selectedUnits": {
+        "energyUnitSelected": 108,
+        "smallWeightUnitSelected": 26,
+        "emissionUnitSelected": 27,
+        "volumeUnitSelected": 16,
+        "smallVolumetricFlowUnitSelected": 76,
+        "massFlowUnitSelected": 230,
+        "smallMassFlowUnitSelected": 84,
+        "pressureUnitSelected": 50,
+        "temperatureUnitSelected": 146,
+        "tdsUnitSelected": 228,
+        "fuelUnitSelected": 108
+      },
+      "benchmarkInputs": {
+        "hoursOfOperation": 8736,
+        "isSteamFlowMeasured": true,
+        "isAutoTdsControlPResent": false,
+        "boilerSteamGeneratedPerYear": null,
+        "boilerSteamGeneratedPerHour": 1,
+        "inputFuelId": "8c24c468-e50a-45ac-bc4c-8ebd60470c99",
+        "costOfFuelPerUnit": 0.0000849504,
+        "fuelQtyPerYearIsKnown": false,
+        "costOfFuelPerYear": null,
+        "fuelConsumptionPerYear": null,
+        "fuelEnergyPerUnit": 1,
+        "fuelCarbonContent": 0.184973,
+        "costOfWaterPerUnit": 0.326775872,
+        "costOfEffluentPerUnit": 0.2973264,
+        "boilerHouseWaterQtyPerYearIsKnown": false,
+        "costOfWaterPerYear": null,
+        "waterConsumptionPerHour": null,
+        "waterConsumptionPerYear": null,
+        "boilerWaterTreatmentChemicalCostsIsKnown": false,
+        "totalChemicalCostPerYear": null,
+        "o2ScavengingChemicalsCostSavings": null,
+        "isCo2OrCarbonEmissionsTaxed": false,
+        "carbonTaxLevyCostPerUnit": null,
+        "costOfCo2PerUnitMass": null,
+        "isBlowdownVesselPresent": false,
+        "isCoolingWaterUsed": false,
+        "isSuperheatedSteam": false,
+        "boilerEfficiency": 80,
+        "isFeedWaterMeasured": false,
+        "boilerSteamPressure": 10,
+        "boilerSteamTemperature": 184.115270845302,
+        "isEconomizerPresent": false,
+        "boilerAverageTds": 200,
+        "boilerMaxTds": 300,
+        "boilerFeedwaterConsumptionPerHour": null,
+        "boilerFeedwaterConsumptionPerYear": null,
+        "isFlashVesselPresent": false,
+        "isHeatExchangerPresent": false,
+        "waterTemperatureLeavingHeatExchanger": null,
+        "waterTreatmentMethod": "aa5642a0-88a5-43e1-ba9d-367db3bb9df5",
+        "percentageWaterRejection": 4,
+        "tdsOfMakeupWater": 155,
+        "isMakeUpWaterMonitored": false,
+        "temperatureOfMakeupWater": 10,
+        "makeupWaterAmountPerHour": null,
+        "makeupWaterAmountPerYear": null,
+        "atmosphericDeaerator": true,
+        "pressurisedDeaerator": false,
+        "temperatureOfFeedtank": 80,
+        "tdsOfFeedwaterInFeedtank": 70,
+        "tdsOfCondensateReturn": 9,
+        "temperatureOfCondensateReturn": 20,
+        "areChemicalsAddedDirectlyToFeedtank": false,
+        "pressureOfFeedtank": null,
+        "pressureOfSteamSupplyingDsi": null,
+        "isCondensateReturnKnown": false,
+        "percentageOfCondensateReturn": null,
+        "volumeOfCondensateReturn": null,
+        "isDsiPresent": false
+      }
+    }, {emitEvent: false});
+    this.sizingModuleForm.get('benchmarkInputs.boilerSteamGeneratedPerHour').enable();
   }
 
   ngOnDestroy(): void {
@@ -231,23 +312,86 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   }
 
   onSave(savedProjectDetails: Project): JobSizing {
+    this.project = new Project();
+    this.job = new Job();
+
+    if (!savedProjectDetails) {
+      return null;
+    }
+
+    const processConditions = this.generateProcessConditions();
+    const job = new Job();
+    const project = new Project();
+    const {projectReference = null, customerName = '', id, jobs } = savedProjectDetails;
+    const savedJob = jobs && jobs[0];
+
+    job.id =  this.jobId || '';
+    job.name = this.jobName;
+    job.moduleId = this.moduleId;
+    job.productName = savedJob && savedJob.productName || this.productName || '';
+    job.jobStatusId = savedJob && savedJob.jobStatusId || this.jobStatusId || 1;
+    project.id = this.projectId;
+    project.name = this.projectName;
+    project.customerName = customerName;
+    project.projectReference = projectReference;
+
+    if (!job.id) {
+      job.plantOwner = savedJob && savedJob.plantOwner || '';
+    }
+    if (typeof id === 'undefined') {
+      project.id = '';
+      job.projectId = '';
+    } else {
+      job.projectId = this.projectId;
+    }
+
+
+    project.jobs = job && [job] || null;
+
+    this.job = job;
+    this.project = project;
+
+    return {
+      project: this.project,
+      sizingData: {
+        sizingOutput: {
+          outputItems: [{
+            name: 'IsResetEnabled',
+            value: (!this.sizingModuleForm.pristine).toString(),
+            unitId: null,
+            selected: false,
+            listItemId: null,
+            type: null
+          }],
+          outputGrid: { outputGridRows: new Array<OutputGridRow>() },
+        },
+        processConditions
+      }
+    };
+  }
+
+  private generateProcessConditions(): ProcessCondition[] {
+    const processConditions = new Array<ProcessCondition>();
+    const unitPreferences = this.preferenceService.sizingUnitPreferences.map(unit => unit.preference);
     const {selectedUnits, benchmarkInputs} = this.sizingModuleForm.getRawValue();
-    const processConditions: ProcessCondition[] = [{
+
+    processConditions.push({
       name: 'selectedUnits',
       processInputs: generateSavedData(selectedUnits),
-      unitPreferences: null
+      unitPreferences: unitPreferences
     }, {
       name: 'benchmarkInputs',
       processInputs: generateSavedData(benchmarkInputs),
-      unitPreferences: null
-    }];
+      unitPreferences: unitPreferences
+    });
 
     if (this.sizingModuleResults) {
       if (this.sizingModuleResults.benchmark) {
+        this.job.jobStatusId = this.jobStatusId = 2; // Calculated
         processConditions.push({
           name: 'benchmark',
           processInputs: generateSavedData(this.sizingModuleResults.benchmark),
-          unitPreferences: null
+          unitPreferences: unitPreferences
         })
       }
 
@@ -255,7 +399,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
         processConditions.push({
           name: 'features',
           processInputs: generateSavedData(this.sizingModuleResults.features),
-          unitPreferences: null
+          unitPreferences: unitPreferences
         })
       }
 
@@ -263,15 +407,16 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
         processConditions.push({
           name: 'proposedSetup',
           processInputs: generateSavedData(this.sizingModuleResults.proposedSetup),
-          unitPreferences: null
+          unitPreferences: unitPreferences
         });
       }
 
       if (this.sizingModuleResults.overallProposal) {
+        this.job.jobStatusId = this.jobStatusId = 3; // Proposal generated
         processConditions.push({
           name: 'overallProposal',
           processInputs: generateSavedData(this.sizingModuleResults.overallProposal),
-          unitPreferences: null
+          unitPreferences: unitPreferences
         });
       }
     }
@@ -280,7 +425,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       processConditions.push({
         name: 'finalProposalHorizontalChart',
         processInputs: generateSavedDataFromChart(this.finalProposalHorizontalChart),
-        unitPreferences: null
+        unitPreferences: unitPreferences
       });
     }
 
@@ -288,7 +433,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       processConditions.push({
         name: 'proposalSetupHorizontalChart',
         processInputs: generateSavedDataFromChart(this.proposalSetupHorizontalChart),
-        unitPreferences: null
+        unitPreferences: unitPreferences
       });
     }
 
@@ -296,7 +441,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       processConditions.push({
         name: 'proposalVerticalChart',
         processInputs: generateSavedDataFromChart(this.proposalVerticalChart),
-        unitPreferences: null
+        unitPreferences: unitPreferences
       });
     }
 
@@ -318,35 +463,46 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
           value2: null,
           childInputs: null,
         }],
-        unitPreferences: null
+        unitPreferences: unitPreferences
       });
     }
 
-    const sizingData: SizingData = {
-      sizingOutput: null,
-      processConditions
-    };
-
-    return { project: { ...savedProjectDetails, jobs: [this.job] }, sizingData };
+    return processConditions;
   }
 
   onSaveJob(): boolean {
-    return !(this.project && this.project.id && this.job && this.job.id);
+    return !(this.projectId && this.projectName && this.jobId && this.jobName);
   }
 
   repackageSizing(): any {
-    const jobSizing = this.onSave(this.project);
-    this.apiService.changeLoading(true, 'updateJobSizing');
-    this.projectsJobsService.updateJobSizing(jobSizing)
-      .pipe(tap(null, null, () => this.apiService.changeLoading(false, 'updateJobSizing')))
-      .subscribe(() => {
-        swal({
-          title: 'SAVE',
-          text: 'Saving complete',
-          icon: "warning",
-          dangerMode: false
+    let project = this.projectsJobsService.projectsJobs &&
+      this.projectsJobsService.projectsJobs.projects &&
+      this.projectsJobsService.projectsJobs.projects.find(({id}) => id === this.projectId);
+
+    if (!project && this.projectId) {
+      project = new Project();
+      project.id = this.projectId;
+      project.name = this.projectName;
+    }
+
+    const jobSizing = this.onSave(project);
+
+    if (jobSizing !== null) {
+      this.apiService.changeLoading(true, 'updateJobSizing');
+      this.projectsJobsService.updateJobSizing(jobSizing)
+        .pipe(
+          takeUntil(this.ngUnsubscribe),
+          tap(null, null, () => this.apiService.changeLoading(false, 'updateJobSizing'))
+        )
+        .subscribe(() => {
+          swal({
+            title: 'SAVE',
+            text: 'Saving complete',
+            icon: "warning",
+            dangerMode: false
+          });
         });
-      });
+    }
   }
 
   onUnitsChanged(): any {
@@ -607,7 +763,6 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
             default: {
               const unitType = name.slice(-1) === 's' ? name : name + 's';
 
-              // console.log(preference, fuelTypeName, '----preference')
               this.preferenceService.addSizingUnitPreference(preference, unitType, masterTextKey, this.moduleGroupId);
 
               if (unitControl && Number(preference.value)) {
@@ -885,17 +1040,25 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
             return null;
           }
 
-          return {project, job: this.job};
-        }),
-        switchMap((v) => {
-          const project = v && v.project;
-          const job = v && v.job;
-
-          if (project && job && job.id && project.id) {
-            return this.projectsJobsService.getJobSizing({jobId: job.id, projectId: project.id});
+          if (this.project) {
+            this.projectName = this.project.name;
           }
 
-          return of(null);
+          if (this.job) {
+            this.jobName = this.job.name;
+            this.productName = this.job.productName;
+            this.moduleId = this.job.moduleId;
+            this.jobStatusId = this.job.jobStatusId;
+          }
+
+          return {projectId: project && project.id, jobId: this.job && this.job.id};
+        }),
+        switchMap(({projectId, jobId}) => {
+          if (!projectId || !jobId) {
+            return of(null);
+          }
+
+          return this.projectsJobsService.getJobSizing({projectId, jobId});
         }),
         map(sizingData => {
           if (!sizingData || !sizingData.processConditions && !sizingData.processConditions.length) {
@@ -971,8 +1134,6 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       selectedUnits: ['fuelUnitSelected', 'energyUnitSelected', 'tdsUnitSelected', 'smallWeightUnitSelected'],
       benchmarkInputs: ['waterTreatmentMethod', 'isEconomizerPresent', 'inputFuelId']
     });
-
-    console.log(val, '----val')
 
     this.calculateWaterTreatment({waterTreatmentMethodId: val.waterTreatmentMethod, tdsUnitSelected: val.tdsUnitSelected});
     this.calculateBoilerEfficiency({isEconomizerPresent: val.isEconomizerPresent, inputFuelId: val.inputFuelId});

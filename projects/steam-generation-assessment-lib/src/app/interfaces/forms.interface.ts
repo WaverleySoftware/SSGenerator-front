@@ -10,6 +10,7 @@ export type FormControls<T> = {
 
 export type TForm<T> = FormGroup & {
   controls: FormControls<T>;
+  get?: (path: keyof T | string) => FormControls<T>
 };
 
 export interface InputParametersFormInterface {

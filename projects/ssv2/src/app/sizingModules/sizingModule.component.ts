@@ -255,6 +255,7 @@ export class SizingModuleComponent implements OnInit, AfterViewInit {
                   // need to display success message
                   this.childComponent.saveJobSuccess = true;
                   this.childComponent.jobId = response.jobId.toString();
+                  this.childComponent.projectId = response.projectId && response.projectId.toString();
 
                   this.childComponent.sizingModuleForm.markAsPristine();
                   this.childComponent.sizingModuleForm.markAsUntouched();

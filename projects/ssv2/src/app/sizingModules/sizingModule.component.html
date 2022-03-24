@@ -38,8 +38,8 @@
               <span class="fa fa-save"></span> {{'SAVE' | translate:true}}
             </a>
           </li>
-          <li [class.disabled]="false">
-            <a (click)="saveLoadModal.open()">
+          <li [class.disabled]="childComponent?.sizingModuleForm?.invalid">
+            <a (click)="childComponent?.sizingModuleForm?.valid && saveLoadModal.open()">
               <span class="fa fa-save"></span> {{'SAVE_AS' | translate:true}}
             </a>
           </li>
