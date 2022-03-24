@@ -11,7 +11,8 @@ import { Location } from '@angular/common';
 
 import swal from 'sweetalert';
 import * as cloneDeep_ from 'lodash/cloneDeep';
-import { BaseSizingModule } from "sizing-shared-lib"; // "./sizingModule.abstract";
+import { BaseSizingModule } from "sizing-shared-lib";
+import { GetSizingJobRequest } from "../../../../sizing-shared-lib/src/lib/modules/projects-jobs/projects-jobs.model"; // "./sizingModule.abstract";
 
 @Component({
   selector: 'sizing-module',
@@ -255,10 +256,17 @@ export class SizingModuleComponent implements OnInit, AfterViewInit {
                   // need to display success message
                   this.childComponent.saveJobSuccess = true;
                   this.childComponent.jobId = response.jobId.toString();
-                  this.childComponent.projectId = response.projectId && response.projectId.toString();
+                  this.childComponent.projectId = response.projectId && response.projectId.toString(); // TODO: Check is prev modules works fine
 
                   this.childComponent.sizingModuleForm.markAsPristine();
                   this.childComponent.sizingModuleForm.markAsUntouched();
+
+                  // @ts-ignore // TODO: Added "saveJobToNewProject" function to interface "ISizingModule" but not added to abstract class "BaseSizingModule"
+                  const doneFn: (data: GetSizingJobRequest) => void = this.childComponent && this.childComponent.saveJobToNewProject;
+
+                  if (doneFn && typeof doneFn === 'function') {
+                    doneFn.call(this.childComponent, response);
+                  }
 
                   // Close the modal manually, because we are handling promises.
                   this.saveLoadModal.close();

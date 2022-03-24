@@ -18,7 +18,8 @@ import {
   ProjectsJobsService,
   ProcessCondition,
   ProcessInput,
-  OutputGridRow
+  OutputGridRow,
+  GetSizingJobRequest
 } from 'sizing-shared-lib';
 import { combineLatest, Subject, of, Observable } from "rxjs";
 import { tap } from "rxjs/operators/tap";
@@ -147,7 +148,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
 
         return selectedUnits;
       }),
-      switchMap(() => this.loadJob()),
+      switchMap(() => this.loadJob({jobId: this.jobId, projectId: this.projectId})),
       filter(patchedFormData => this.jobId && !patchedFormData)
     ).subscribe(() => {
       // Load default values is no Job Sizing
@@ -471,37 +472,38 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   }
 
   onSaveJob(): boolean {
-    return !(this.projectId && this.projectName && this.jobId && this.jobName);
+    return !(this.project && this.project.id && this.projectName && this.job && this.job.id && this.jobName);
+  }
+
+  saveJobToNewProject(jobRequest: GetSizingJobRequest) {
+    if (jobRequest && jobRequest.jobId && jobRequest.projectId) {
+      this.redirectToJob(jobRequest.projectId, jobRequest.jobId);
+    }
   }
 
   repackageSizing(): any {
-    let project = this.projectsJobsService.projectsJobs &&
-      this.projectsJobsService.projectsJobs.projects &&
-      this.projectsJobsService.projectsJobs.projects.find(({id}) => id === this.projectId);
+    let project = this.project;
 
     if (!project && this.projectId) {
-      project = new Project();
-      project.id = this.projectId;
-      project.name = this.projectName;
+      project = this.projectsJobsService.projectsJobs &&
+        this.projectsJobsService.projectsJobs.projects &&
+        this.projectsJobsService.projectsJobs.projects.find(({id}) => id === this.projectId);
+
+      if (!project) {
+        project = new Project();
+        project.id = this.projectId;
+        project.name = this.projectName;
+      }
     }
 
     const jobSizing = this.onSave(project);
 
     if (jobSizing !== null) {
       this.apiService.changeLoading(true, 'updateJobSizing');
-      this.projectsJobsService.updateJobSizing(jobSizing)
-        .pipe(
-          takeUntil(this.ngUnsubscribe),
-          tap(null, null, () => this.apiService.changeLoading(false, 'updateJobSizing'))
-        )
-        .subscribe(() => {
-          swal({
-            title: 'SAVE',
-            text: 'Saving complete',
-            icon: "warning",
-            dangerMode: false
-          });
-        });
+      this.projectsJobsService.updateJobSizing(jobSizing).pipe(
+        takeUntil(this.ngUnsubscribe),
+        tap(null, null, () => this.apiService.changeLoading(false, 'updateJobSizing'))
+      ).subscribe(() => this.redirectToJob(this.projectId, this.jobId));
     }
   }
 
@@ -1010,16 +1012,24 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     return item;
   }
 
-  private loadJob(): Observable<any> {
-    this.activatedRoute.params
-      .pipe(takeUntil(this.ngUnsubscribe), filter(({projectId, jobId}: Params) => !!projectId && !!jobId))
-      .subscribe(({projectId, jobId}: Params) => {
-        this.projectId = projectId;
-        this.jobId = jobId;
-        this.apiService.changeLoading(true, 'getProjectsAndJobs');
-        this.projectsJobsService.getProjectsAndJobs()
-          .subscribe(() => this.apiService.changeLoading(false, 'getProjectsAndJobs'));
-      });
+  private loadJob(data?: {projectId?: string, jobId?: string}): Observable<any> {
+
+    if (data && data.jobId && data.projectId) {
+      this.apiService.changeLoading(true, 'getProjectsAndJobs');
+      this.projectsJobsService.getProjectsAndJobs()
+        .pipe(takeUntil(this.ngUnsubscribe))
+        .subscribe(() => this.apiService.changeLoading(false, 'getProjectsAndJobs'));
+    }
+
+    // this.activatedRoute.params
+    //   .pipe(takeUntil(this.ngUnsubscribe), filter(({projectId, jobId}: Params) => !!projectId && !!jobId))
+    //   .subscribe(({projectId, jobId}: Params) => {
+    //     this.projectId = projectId;
+    //     this.jobId = jobId;
+    //     this.apiService.changeLoading(true, 'getProjectsAndJobs');
+    //     this.projectsJobsService.getProjectsAndJobs()
+    //       .subscribe(() => this.apiService.changeLoading(false, 'getProjectsAndJobs'));
+    //   });
 
     return this.projectsJobsService.projectJobsChange
       .pipe(
@@ -1053,12 +1063,12 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
 
           return {projectId: project && project.id, jobId: this.job && this.job.id};
         }),
-        switchMap(({projectId, jobId}) => {
-          if (!projectId || !jobId) {
+        switchMap((data) => {
+          if (!data || !data.projectId || !data.jobId) {
             return of(null);
           }
 
-          return this.projectsJobsService.getJobSizing({projectId, jobId});
+          return this.projectsJobsService.getJobSizing({projectId: data.projectId, jobId: data.jobId});
         }),
         map(sizingData => {
           if (!sizingData || !sizingData.processConditions && !sizingData.processConditions.length) {
@@ -1212,6 +1222,30 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       const subscription = unitsService.getAllUnitsByAllTypes().subscribe(units => {
         subscription.unsubscribe();
         this.units = generateUnits(units);
+      });
+    }
+  }
+
+  private redirectToJob(projectId: string, jobId: string): void {
+    const params = this.activatedRoute &&  this.activatedRoute.snapshot && this.activatedRoute.snapshot.params;
+    if (projectId && jobId) {
+      if (params && params.projectId && params.jobId && params.projectId === projectId && params.jobId === jobId) {
+        swal({ title: 'SAVE', text: 'Saving complete', icon: "warning", dangerMode: false });
+        return null;
+      }
+
+      swal({ title: 'SAVE', text: 'Saving complete', icon: "warning", dangerMode: false }).then(() => {
+        if (this.jobId !== jobId) {
+          this.jobId = jobId;
+        }
+
+        if (this.projectId !== projectId) {
+          this.projectId = projectId;
+        }
+
+        this.router.navigate(['sizingModules/steamGenerationAssessment', projectId, jobId]).then(() => {
+          console.log('-----NAVIGATED----', {projectId, jobId});
+        });
       });
     }
   }
