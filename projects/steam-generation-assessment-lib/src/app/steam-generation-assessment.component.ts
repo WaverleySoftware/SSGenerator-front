@@ -86,6 +86,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   job: Job = new Job();
   productName = 'Steam Generation Assessment';
   nextTab: TabDirective;
+  hasUnsavedDataChanges: boolean = false; // to drive GenericChangesGuard
   sizingModuleForm: TForm<InputParametersTFormInterface> = this.formService.getInputParamsFg();
   sizingModuleResults: CalcBenchmarkResInterface;
   setBenchmarkInputValue: TFormBenchmarkValueSetterInterface;
@@ -126,7 +127,13 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     this.projectId = this.activatedRoute.snapshot.params['projectId'];
     this.setBenchmarkInputValue = this.formService.createFormValueSetter<BenchmarkInputsInterface>(this.sizingModuleForm, 'benchmarkInputs');
     this.getSizingFormValues = this.formService.createFormValueGetter(this.sizingModuleForm);
-    this.sizingModuleForm.get('benchmarkInputs').valueChanges.pipe(takeUntil(this.ngUnsubscribe)).subscribe(() => this.resetBenchmarkData());
+    this.sizingModuleForm.get('benchmarkInputs').valueChanges.pipe(takeUntil(this.ngUnsubscribe)).subscribe(() => {
+      this.resetBenchmarkData();
+
+      if (this.sizingModuleForm && this.sizingModuleForm.touched && this.sizingModuleForm.dirty) {
+        this.setDiscardModal(true);
+      }
+    });
     this.setSgaUnits(this.unitsService);
 
     this.loadJob({jobId: this.jobId, projectId: this.projectId}).pipe(
@@ -149,11 +156,16 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     this.ngUnsubscribe.complete();
     this.preferenceService.clearUnitPreferences();
     this.formService.resetInputParamsFg();
+    const proposedSetupForm =  this.formService.getProposedSetupForm();
+    proposedSetupForm.reset();
+    proposedSetupForm.markAsUntouched();
+    proposedSetupForm.markAsPristine();
     this.resetBenchmarkData();
   }
 
   onCalculateSizing(formGroup: FormGroup): any {
     this.resetBenchmarkData();
+    this.setDiscardModal(true);
     this.apiService.calculateBenchmark(formGroup.getRawValue())
       .pipe(
         takeUntil(this.ngUnsubscribe),
@@ -199,6 +211,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   onResetModuleForm(): any {
     this.preferenceService.clearUnitPreferences();
     this.resetBenchmarkData();
+    this.setDiscardModal(false);
     this.createSizingPref().pipe(takeUntil(this.ngUnsubscribe)).subscribe((selectedUnits) => {
       // Set Water Treatment Method
       const {id} = this.getEnumerationDefinition('WaterTreatmentMethodList_BoilerHouseInput');
@@ -249,6 +262,10 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
 
     this.job = job;
     this.project = project;
+
+    if (this.hasUnsavedDataChanges) {
+      this.hasUnsavedDataChanges = false;
+    }
 
     return {
       project: this.project,
@@ -360,6 +377,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
 
     if (data.length) {
       this.resetBenchmarkData();
+      this.setDiscardModal(true);
     }
 
     return true;
@@ -621,6 +639,12 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       this.finalProposalHorizontalChart = null;
     }
     this.setActiveTab(0);
+  }
+
+  private setDiscardModal(isShown?: boolean) {
+    if (!this.hasUnsavedDataChanges !== !isShown) {
+      this.hasUnsavedDataChanges = !!isShown;
+    }
   }
 
   private createSizingPref(): Observable<SelectedUnitsInterface> {
@@ -1117,6 +1141,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     if (projectId && jobId) {
       if (params && params.projectId && params.jobId && params.projectId === projectId && params.jobId === jobId) {
         swal({ title: 'SAVE', text: 'Saving complete', icon: "warning", dangerMode: false });
+        this.setDiscardModal();
         return null;
       }
 
@@ -1131,6 +1156,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
 
         this.router.navigate(['sizingModules/steamGenerationAssessment', projectId, jobId]).then(() => {
           console.log('-----NAVIGATED----', {projectId, jobId});
+          this.setDiscardModal();
         });
       });
     }
