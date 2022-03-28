@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Params, Router } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import {
   AdminService,
   BaseSizingModule,
@@ -19,11 +19,12 @@ import {
   ProcessCondition,
   ProcessInput,
   OutputGridRow,
-  GetSizingJobRequest
+  GetSizingJobRequest,
+  Preference
 } from 'sizing-shared-lib';
-import { combineLatest, Subject, of, Observable } from "rxjs";
+import { Subject, of, Observable, combineLatest } from "rxjs";
 import { tap } from "rxjs/operators/tap";
-import { distinctUntilChanged, filter, map, switchMap, takeUntil, first } from "rxjs/operators";
+import { distinctUntilChanged, filter, map, switchMap, takeUntil, first, mergeMap } from "rxjs/operators";
 import { TabsetComponent } from 'ngx-bootstrap';
 import { TabDirective } from 'ngx-bootstrap/tabs/tab.directive';
 import { SgaFormService } from './services/sga-form.service';
@@ -48,7 +49,7 @@ import {
 } from "./interfaces/forms.interface";
 import sgaInputParametersFields from './utils/sga-input-parameters-fields';
 import { benchmarkCalculationValidator } from './validators/sga-benchmark.validator';
-import { SelectedUnitPreferenceEnum } from './interfaces/selectedUnits.interface';
+import { SelectedUnitPreferenceEnum, SelectedUnitsInterface } from "./interfaces/selectedUnits.interface";
 import { ProposedDataInterface } from "./interfaces/steam-generation-form.interface";
 import { ChartBarDataInterface } from './interfaces/chart-bar.interface';
 import { SgaChartService } from "./services/sga-chart.service";
@@ -127,115 +128,20 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     this.getSizingFormValues = this.formService.createFormValueGetter(this.sizingModuleForm);
     this.sizingModuleForm.get('benchmarkInputs').valueChanges.pipe(takeUntil(this.ngUnsubscribe)).subscribe(() => this.resetBenchmarkData());
     this.setSgaUnits(this.unitsService);
-    this.createSizingPref().pipe(
+
+    this.loadJob({jobId: this.jobId, projectId: this.projectId}).pipe(
       takeUntil(this.ngUnsubscribe),
-      map(selectedUnits => {
-        const selectedControls = this.sizingModuleForm.get('selectedUnits') as FormGroup;
+      switchMap((v) => v ? of(null) : this.createSizingPref()),
+      filter(v => !!v)
+    ).subscribe((selectedUnits: SelectedUnitsInterface | null) => {
+      const selectedFg = this.sizingModuleForm.get('selectedUnits') as FormGroup;
 
-        for (const controlsKey in selectedControls.controls) {
-          const selectedControl = selectedControls.get(controlsKey);
-
-          if (selectedUnits && selectedUnits[controlsKey] && selectedControl && !selectedControl.value) {
-            selectedControl.patchValue(selectedUnits[controlsKey], {emitEvent: false, onlySelf: true});
-          }
-        }
-
-        // Load default values for new Job
-        if (!this.jobId) {
-          this.loadDefaultValues();
-          this.convertUnits(this.getDefaultConvertedUnits());
-        }
-
-        return selectedUnits;
-      }),
-      switchMap(() => this.loadJob({jobId: this.jobId, projectId: this.projectId})),
-      filter(patchedFormData => this.jobId && !patchedFormData)
-    ).subscribe(() => {
-      // Load default values is no Job Sizing
+      selectedFg.patchValue(selectedUnits, {emitEvent: false, onlySelf: true});
       this.loadDefaultValues();
       this.convertUnits(this.getDefaultConvertedUnits());
     });
-    this.formFieldsChangesSubscribtions();
-  }
 
-  setTestData() {
-    this.sizingModuleForm.patchValue({
-      "selectedUnits": {
-        "energyUnitSelected": 108,
-        "smallWeightUnitSelected": 26,
-        "emissionUnitSelected": 27,
-        "volumeUnitSelected": 16,
-        "smallVolumetricFlowUnitSelected": 76,
-        "massFlowUnitSelected": 230,
-        "smallMassFlowUnitSelected": 84,
-        "pressureUnitSelected": 50,
-        "temperatureUnitSelected": 146,
-        "tdsUnitSelected": 228,
-        "fuelUnitSelected": 108
-      },
-      "benchmarkInputs": {
-        "hoursOfOperation": 8736,
-        "isSteamFlowMeasured": true,
-        "isAutoTdsControlPResent": false,
-        "boilerSteamGeneratedPerYear": null,
-        "boilerSteamGeneratedPerHour": 1,
-        "inputFuelId": "8c24c468-e50a-45ac-bc4c-8ebd60470c99",
-        "costOfFuelPerUnit": 0.0000849504,
-        "fuelQtyPerYearIsKnown": false,
-        "costOfFuelPerYear": null,
-        "fuelConsumptionPerYear": null,
-        "fuelEnergyPerUnit": 1,
-        "fuelCarbonContent": 0.184973,
-        "costOfWaterPerUnit": 0.326775872,
-        "costOfEffluentPerUnit": 0.2973264,
-        "boilerHouseWaterQtyPerYearIsKnown": false,
-        "costOfWaterPerYear": null,
-        "waterConsumptionPerHour": null,
-        "waterConsumptionPerYear": null,
-        "boilerWaterTreatmentChemicalCostsIsKnown": false,
-        "totalChemicalCostPerYear": null,
-        "o2ScavengingChemicalsCostSavings": null,
-        "isCo2OrCarbonEmissionsTaxed": false,
-        "carbonTaxLevyCostPerUnit": null,
-        "costOfCo2PerUnitMass": null,
-        "isBlowdownVesselPresent": false,
-        "isCoolingWaterUsed": false,
-        "isSuperheatedSteam": false,
-        "boilerEfficiency": 80,
-        "isFeedWaterMeasured": false,
-        "boilerSteamPressure": 10,
-        "boilerSteamTemperature": 184.115270845302,
-        "isEconomizerPresent": false,
-        "boilerAverageTds": 200,
-        "boilerMaxTds": 300,
-        "boilerFeedwaterConsumptionPerHour": null,
-        "boilerFeedwaterConsumptionPerYear": null,
-        "isFlashVesselPresent": false,
-        "isHeatExchangerPresent": false,
-        "waterTemperatureLeavingHeatExchanger": null,
-        "waterTreatmentMethod": "aa5642a0-88a5-43e1-ba9d-367db3bb9df5",
-        "percentageWaterRejection": 4,
-        "tdsOfMakeupWater": 155,
-        "isMakeUpWaterMonitored": false,
-        "temperatureOfMakeupWater": 10,
-        "makeupWaterAmountPerHour": null,
-        "makeupWaterAmountPerYear": null,
-        "atmosphericDeaerator": true,
-        "pressurisedDeaerator": false,
-        "temperatureOfFeedtank": 80,
-        "tdsOfFeedwaterInFeedtank": 70,
-        "tdsOfCondensateReturn": 9,
-        "temperatureOfCondensateReturn": 20,
-        "areChemicalsAddedDirectlyToFeedtank": false,
-        "pressureOfFeedtank": null,
-        "pressureOfSteamSupplyingDsi": null,
-        "isCondensateReturnKnown": false,
-        "percentageOfCondensateReturn": null,
-        "volumeOfCondensateReturn": null,
-        "isDsiPresent": false
-      }
-    }, {emitEvent: false});
-    this.sizingModuleForm.get('benchmarkInputs.boilerSteamGeneratedPerHour').enable();
+    this.formFieldsChangesSubscribtions();
   }
 
   ngOnDestroy(): void {
@@ -283,7 +189,6 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   }
 
   onNewSizingForm(): any {
-    console.log('-----onNewSizingForm----');
     return true;
   }
 
@@ -292,24 +197,17 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   }
 
   onResetModuleForm(): any {
-    setTimeout(() => {
+    this.preferenceService.clearUnitPreferences();
+    this.resetBenchmarkData();
+    this.createSizingPref().pipe(takeUntil(this.ngUnsubscribe)).subscribe((selectedUnits) => {
+      // Set Water Treatment Method
+      const {id} = this.getEnumerationDefinition('WaterTreatmentMethodList_BoilerHouseInput');
+      this.formService.resetInputParamsFg(selectedUnits, {waterTreatmentMethod: id as string});
+      this.loadDefaultValues();
       this.convertUnits(this.getDefaultConvertedUnits());
+    });
 
-      this.calculateCalorificValue({
-        energyUnitSelected: this.getSizingValue('BoilerHouseEnergyUnits'),
-        smallWeightUnitSelected: this.getSizingValue('WeightUnit'),
-        ...this.getSizingFormValues({
-          selectedUnits: 'fuelUnitSelected',
-          benchmarkInputs: 'inputFuelId'
-        }) as { inputFuelId: string; fuelUnitSelected: number; }
-      });
-      const data = this.getSizingFormValues({selectedUnits: 'tdsUnitSelected', benchmarkInputs: 'waterTreatmentMethod'});
-      this.calculateWaterTreatment({waterTreatmentMethodId: data.waterTreatmentMethod, tdsUnitSelected: data.tdsUnitSelected});
-    }, 0);
-
-    this.resetCurrencies();
-
-    return true;
+    return false;
   }
 
   onSave(savedProjectDetails: Project): JobSizing {
@@ -369,106 +267,6 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
         processConditions
       }
     };
-  }
-
-  private generateProcessConditions(): ProcessCondition[] {
-    const processConditions = new Array<ProcessCondition>();
-    const unitPreferences = this.preferenceService.sizingUnitPreferences.map(unit => unit.preference);
-    const {selectedUnits, benchmarkInputs} = this.sizingModuleForm.getRawValue();
-
-    processConditions.push({
-      name: 'selectedUnits',
-      processInputs: generateSavedData(selectedUnits),
-      unitPreferences: unitPreferences
-    }, {
-      name: 'benchmarkInputs',
-      processInputs: generateSavedData(benchmarkInputs),
-      unitPreferences: unitPreferences
-    });
-
-    if (this.sizingModuleResults) {
-      if (this.sizingModuleResults.benchmark) {
-        this.job.jobStatusId = this.jobStatusId = 2; // Calculated
-        processConditions.push({
-          name: 'benchmark',
-          processInputs: generateSavedData(this.sizingModuleResults.benchmark),
-          unitPreferences: unitPreferences
-        })
-      }
-
-      if (this.sizingModuleResults.features) {
-        processConditions.push({
-          name: 'features',
-          processInputs: generateSavedData(this.sizingModuleResults.features),
-          unitPreferences: unitPreferences
-        })
-      }
-
-      if (this.sizingModuleResults.proposedSetup) {
-        processConditions.push({
-          name: 'proposedSetup',
-          processInputs: generateSavedData(this.sizingModuleResults.proposedSetup),
-          unitPreferences: unitPreferences
-        });
-      }
-
-      if (this.sizingModuleResults.overallProposal) {
-        this.job.jobStatusId = this.jobStatusId = 3; // Proposal generated
-        processConditions.push({
-          name: 'overallProposal',
-          processInputs: generateSavedData(this.sizingModuleResults.overallProposal),
-          unitPreferences: unitPreferences
-        });
-      }
-    }
-
-    if (this.finalProposalHorizontalChart) {
-      processConditions.push({
-        name: 'finalProposalHorizontalChart',
-        processInputs: generateSavedDataFromChart(this.finalProposalHorizontalChart),
-        unitPreferences: unitPreferences
-      });
-    }
-
-    if (this.proposalSetupHorizontalChart) {
-      processConditions.push({
-        name: 'proposalSetupHorizontalChart',
-        processInputs: generateSavedDataFromChart(this.proposalSetupHorizontalChart),
-        unitPreferences: unitPreferences
-      });
-    }
-
-    if (this.proposalVerticalChart) {
-      processConditions.push({
-        name: 'proposalVerticalChart',
-        processInputs: generateSavedDataFromChart(this.proposalVerticalChart),
-        unitPreferences: unitPreferences
-      });
-    }
-
-    if (this.proposalSetupTotal) {
-      processConditions.push({
-        name: 'proposalSetupTotal',
-        processInputs: [{
-          name: 'steamGenerationSavings',
-          value: this.proposalSetupTotal.steamGenerationSavings.toString(),
-          unitId: null,
-          listItemId: null,
-          value2: null,
-          childInputs: null,
-        }, {
-          name: 'savingsIncludingCondensateEffluent',
-          value: this.proposalSetupTotal.savingsIncludingCondensateEffluent.toString(),
-          unitId: null,
-          listItemId: null,
-          value2: null,
-          childInputs: null,
-        }],
-        unitPreferences: unitPreferences
-      });
-    }
-
-    return processConditions;
   }
 
   onSaveJob(): boolean {
@@ -680,6 +478,107 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     this.sizingModuleForm.markAllAsTouched(); // Enable save changes btn
   }
 
+  private generateProcessConditions(): ProcessCondition[] {
+    const processConditions = new Array<ProcessCondition>();
+    const {selectedUnits, benchmarkInputs} = this.sizingModuleForm.getRawValue();
+
+    processConditions.push({
+      name: 'selectedUnits',
+      processInputs: generateSavedData(selectedUnits),
+      unitPreferences: this.preferenceService &&
+        this.preferenceService.sizingUnitPreferences &&
+        this.preferenceService.sizingUnitPreferences.map(v => ({...v.preference, label: v.masterTextKey}))
+    }, {
+      name: 'benchmarkInputs',
+      processInputs: generateSavedData(benchmarkInputs),
+      unitPreferences: null
+    });
+
+    if (this.sizingModuleResults) {
+      if (this.sizingModuleResults.benchmark) {
+        this.job.jobStatusId = this.jobStatusId = 2; // Calculated
+        processConditions.push({
+          name: 'benchmark',
+          processInputs: generateSavedData(this.sizingModuleResults.benchmark),
+          unitPreferences: null
+        })
+      }
+
+      if (this.sizingModuleResults.features) {
+        processConditions.push({
+          name: 'features',
+          processInputs: generateSavedData(this.sizingModuleResults.features),
+          unitPreferences: null
+        })
+      }
+
+      if (this.sizingModuleResults.proposedSetup) {
+        processConditions.push({
+          name: 'proposedSetup',
+          processInputs: generateSavedData(this.sizingModuleResults.proposedSetup),
+          unitPreferences: null
+        });
+      }
+
+      if (this.sizingModuleResults.overallProposal) {
+        this.job.jobStatusId = this.jobStatusId = 3; // Proposal generated
+        processConditions.push({
+          name: 'overallProposal',
+          processInputs: generateSavedData(this.sizingModuleResults.overallProposal),
+          unitPreferences: null
+        });
+      }
+    }
+
+    if (this.finalProposalHorizontalChart) {
+      processConditions.push({
+        name: 'finalProposalHorizontalChart',
+        processInputs: generateSavedDataFromChart(this.finalProposalHorizontalChart),
+        unitPreferences: null
+      });
+    }
+
+    if (this.proposalSetupHorizontalChart) {
+      processConditions.push({
+        name: 'proposalSetupHorizontalChart',
+        processInputs: generateSavedDataFromChart(this.proposalSetupHorizontalChart),
+        unitPreferences: null
+      });
+    }
+
+    if (this.proposalVerticalChart) {
+      processConditions.push({
+        name: 'proposalVerticalChart',
+        processInputs: generateSavedDataFromChart(this.proposalVerticalChart),
+        unitPreferences: null
+      });
+    }
+
+    if (this.proposalSetupTotal) {
+      processConditions.push({
+        name: 'proposalSetupTotal',
+        processInputs: [{
+          name: 'steamGenerationSavings',
+          value: this.proposalSetupTotal.steamGenerationSavings.toString(),
+          unitId: null,
+          listItemId: null,
+          value2: null,
+          childInputs: null,
+        }, {
+          name: 'savingsIncludingCondensateEffluent',
+          value: this.proposalSetupTotal.savingsIncludingCondensateEffluent.toString(),
+          unitId: null,
+          listItemId: null,
+          value2: null,
+          childInputs: null,
+        }],
+        unitPreferences: null
+      });
+    }
+
+    return processConditions;
+  }
+
   private showMessage(messages: any[]) {
     if (messages && messages.length) {
       const msg = messages.map(m => typeof m === 'string' ? {
@@ -724,7 +623,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     this.setActiveTab(0);
   }
 
-  private createSizingPref(): Observable<any> {
+  private createSizingPref(): Observable<SelectedUnitsInterface> {
     const creationFn = (units?: Unit[], isLoadJob?: boolean): any => {
       const newValues = {};
       const fuelControl = this.sizingModuleForm.get('benchmarkInputs.inputFuelId');
@@ -972,27 +871,6 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     });
   }
 
-  private getSizingValue(name: string): any {
-    const sizingPreference = this.preferenceService.sizingUnitPreferences
-      .find(({ preference }) => preference.name === name);
-
-    return sizingPreference && sizingPreference.preference && parseInt(sizingPreference.preference.value, 10);
-  }
-
-  private resetCurrencies(): void {
-    const preference = this.preferenceService.sizingUnitPreferences.find(({ unitType }) => unitType === 'BHCurrency');
-    if (preference) {
-      this.adminService.getCurrencyData().subscribe((currencies) => this.preferenceService.addSizingUnitPreference(
-        preference.preference,
-        preference.unitType,
-        'CURRENCY',
-        this.moduleGroupId,
-        undefined,
-        currencies
-      ));
-    }
-  }
-
   private getEnumerationDefinition(name: string, value?: Partial<{ [key in keyof EnumerationDefinition]: any }>): EnumerationDefinition {
     const enumerations = this.translationService.displayGroup.enumerations
       .find(({enumerationName, opCoOverride}) => enumerationName === name && opCoOverride === false);
@@ -1012,75 +890,83 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     return item;
   }
 
-  private loadJob(data?: {projectId?: string, jobId?: string}): Observable<any> {
+  private redirectToHome(title?: string, text?: string, icon?: string) {
+    swal({
+      title: title || this.translatePipe.transform('ERROR'),
+      text: text || this.translatePipe.transform('SELECTED_JOB_WAS_NOT_FOUND_MESSAGE'),
+      icon: icon || "error",
+      dangerMode: true
+    }).then(() => this.router.navigate(['/home']));
+  }
 
-    if (data && data.jobId && data.projectId) {
-      this.apiService.changeLoading(true, 'getProjectsAndJobs');
-      this.projectsJobsService.getProjectsAndJobs()
-        .pipe(takeUntil(this.ngUnsubscribe))
-        .subscribe(() => this.apiService.changeLoading(false, 'getProjectsAndJobs'));
+  private loadJob(data?: {projectId?: string, jobId?: string}): Observable<{ values: any, preferences: Preference[] } | null> {
+    if (!data || !data.jobId || !data.projectId) {
+      return of(null);
     }
 
-    // this.activatedRoute.params
-    //   .pipe(takeUntil(this.ngUnsubscribe), filter(({projectId, jobId}: Params) => !!projectId && !!jobId))
-    //   .subscribe(({projectId, jobId}: Params) => {
-    //     this.projectId = projectId;
-    //     this.jobId = jobId;
-    //     this.apiService.changeLoading(true, 'getProjectsAndJobs');
-    //     this.projectsJobsService.getProjectsAndJobs()
-    //       .subscribe(() => this.apiService.changeLoading(false, 'getProjectsAndJobs'));
-    //   });
+    this.apiService.changeLoading(true, 'getProjectsAndJobs');
+    this.projectsJobsService.getProjectsAndJobs()
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(() => this.apiService.changeLoading(false, 'getProjectsAndJobs'));
 
     return this.projectsJobsService.projectJobsChange
       .pipe(
         first(),
         tap(() => this.apiService.changeLoading(true, 'projectJobsChange', true)),
-        map(({projects}) => this.projectId && projects && projects.find((p) => p && p.id === this.projectId)),
+        map(({projects}) => projects && projects.find((p) => p && p.id === data.projectId)),
         map(project => {
           this.project = project;
-          this.job = project && project.jobs && this.jobId  && project.jobs.find((j) => j && j.id === this.jobId);
+          this.job = project && project.jobs && project.jobs.find((job) => job && job.id === data.jobId);
 
-          if ((this.projectId && !this.project) || (this.jobId && !this.job)) {
-            swal({
-              title: this.translatePipe.transform('ERROR'),
-              text: this.translatePipe.transform('SELECTED_JOB_WAS_NOT_FOUND_MESSAGE'),
-              icon: "error",
-              dangerMode: true
-            }).then(() => this.router.navigate(['/home']));
+          if (!this.project || !this.job) {
+            this.redirectToHome();
             return null;
           }
 
-          if (this.project) {
-            this.projectName = this.project.name;
-          }
+          this.projectName = this.project.name;
+          this.jobName = this.job.name;
+          this.productName = this.job.productName;
+          this.moduleId = this.job.moduleId;
+          this.jobStatusId = this.job.jobStatusId;
 
-          if (this.job) {
-            this.jobName = this.job.name;
-            this.productName = this.job.productName;
-            this.moduleId = this.job.moduleId;
-            this.jobStatusId = this.job.jobStatusId;
-          }
-
-          return {projectId: project && project.id, jobId: this.job && this.job.id};
+          return {projectId: this.project.id, jobId: this.job.id};
         }),
-        switchMap((data) => {
-          if (!data || !data.projectId || !data.jobId) {
-            return of(null);
-          }
-
-          return this.projectsJobsService.getJobSizing({projectId: data.projectId, jobId: data.jobId});
-        }),
-        map(sizingData => {
+        mergeMap((v) => v && v.projectId && v.jobId ?
+          this.projectsJobsService.getJobSizing({projectId: v.projectId, jobId: v.jobId}) :
+          of(null)),
+        switchMap((sizingData) => sizingData ?
+          this.adminService.getCurrencyData()
+            .pipe(map((currencies) => ({sizingData, currencies})))
+          : of({sizingData: null, currencies: null})),
+        map(({sizingData, currencies}) => {
           if (!sizingData || !sizingData.processConditions && !sizingData.processConditions.length) {
             return null;
           }
 
-          const data = sizingData.processConditions.reduce((acc, v) => ({
-            ...acc, [v.name]: v.processInputs
-          }), {})
-          return this.setLoadedJobData(data);
+          const formattedProcessInputs = sizingData.processConditions.reduce((acc, v) => ({...acc, [v.name]: v.processInputs}), {})
+          const unitPreferences: Preference[] = sizingData.processConditions.find(v => v.name === 'selectedUnits').unitPreferences;
+
+          if (unitPreferences && unitPreferences.length) {
+            for (const preference of unitPreferences) {
+              const unitType = preference.name.slice(-1) === 's' ? preference.name : `${preference.name}s`;
+
+              this.preferenceService.addSizingUnitPreference(
+                preference,
+                unitType,
+                preference.label,
+                this.moduleGroupId,
+                undefined,
+                preference.name === 'BHCurrency' && currencies
+              );
+            }
+          }
+
+          return {values: this.setLoadedJobData(formattedProcessInputs), preferences: unitPreferences};
         }),
-        tap(()=>{}, ()=>{}, () => this.apiService.changeLoading(false, 'projectJobsChange', true))
+        tap(()=>{}, ()=>{
+          console.log('------projectsJobsService.projectJobsChange ERROR---------');
+          this.redirectToHome();
+        }, () => this.apiService.changeLoading(false, 'projectJobsChange', true))
       );
   }
 

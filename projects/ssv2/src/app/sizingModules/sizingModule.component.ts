@@ -94,8 +94,10 @@ export class SizingModuleComponent implements OnInit, AfterViewInit {
     // but without any members, so check for the function as well.
     if (!!this.childComponent && !!this.childComponent.sizingModuleForm) {
 
-      this.childComponent.onResetModuleForm();
-      this.childComponent.sizingModuleForm.reset();
+      const isInsideReset = this.childComponent.onResetModuleForm();
+      if (isInsideReset || isInsideReset === undefined) {
+        this.childComponent.sizingModuleForm.reset();
+      }
       this.childComponent.sizingModuleForm.markAsPristine();
 
 

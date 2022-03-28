@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { AbstractControl, AbstractControlOptions, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {
-  InputParametersCreateFormInterface,
+  InputParametersCreateFormInterface, InputParametersFormInterface,
   InputParametersTFormInterface, ProposedSetupCreateFormInterface, ProposedSetupTFormInterface,
   TForm,
   TFormValueGetterInterface
-} from '../interfaces/forms.interface';
+} from "../interfaces/forms.interface";
 import { BenchmarkInputsInterface } from '../interfaces/benchmarkInputs.interface';
 import { SelectedUnitsInterface } from '../interfaces/selectedUnits.interface';
 import { validateBenchmarkInput } from '../validators/sga-benchmark.validator';
@@ -258,8 +258,38 @@ export class SgaFormService {
     return this.inputParamsFg;
   }
 
-  resetInputParamsFg(): void {
-    this.inputParamsFg = this.createInputParamsForm();
+  resetInputParamsFg(
+    selectedUnits?: Partial<SelectedUnitsInterface>,
+    benchmark?: Partial<BenchmarkInputsInterface>
+  ): TForm<InputParametersTFormInterface> {
+
+    const benchmarkInputs = {
+      ...benchmark,
+      hoursOfOperation: 8736,
+      isSteamFlowMeasured: false,
+      isAutoTdsControlPResent: false,
+      fuelQtyPerYearIsKnown: false,
+      boilerHouseWaterQtyPerYearIsKnown: false,
+      boilerWaterTreatmentChemicalCostsIsKnown: false,
+      isCo2OrCarbonEmissionsTaxed: false,
+      isBlowdownVesselPresent: false,
+      isCoolingWaterUsed: false,
+      isSuperheatedSteam: false,
+      isFeedWaterMeasured: false,
+      isEconomizerPresent: false,
+      isFlashVesselPresent: false,
+      isHeatExchangerPresent: false,
+      isMakeUpWaterMonitored: false,
+      atmosphericDeaerator: true,
+      pressurisedDeaerator: false,
+      areChemicalsAddedDirectlyToFeedtank: false,
+      isCondensateReturnKnown: false,
+      isDsiPresent: false,
+    };
+
+    this.inputParamsFg.reset({benchmarkInputs, selectedUnits}, {onlySelf: true, emitEvent: false});
+
+    return this.inputParamsFg;
   }
 
   getProposedSetupForm(): TForm<ProposedSetupTFormInterface> {

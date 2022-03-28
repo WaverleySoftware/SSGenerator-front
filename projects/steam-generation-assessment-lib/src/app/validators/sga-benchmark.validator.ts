@@ -26,30 +26,33 @@ const getControlNameFromReqError = (error: SgaErrorInterface): {name: string, er
 
 export const validateBenchmarkInput = (service: SgaApiService, isNull?: boolean): AsyncValidatorFn =>
   (control: AbstractControl): Observable<ValidationErrors> => {
-  const fg: FormGroup = control && control.root as FormGroup;
-  const name = getNameFomControl(control);
+    const fg: FormGroup = control && control.root as FormGroup;
+    const name = getNameFomControl(control);
 
-  if (!fg || !name || !service || !control || (control.pristine && !control.touched) || (isNull && !control.value)) {
-    return of(null);
-  }
+    if (!fg || !name || !service || !control || (control.pristine && !control.touched) || (isNull && !control.value)) {
+      return of(null);
+    }
 
-  return service.benchmarkValidate(name as keyof BenchmarkInputsInterface, {
-    selectedUnits: fg.get('selectedUnits').value,
-    benchmarkInputs: { ...fg.get('benchmarkInputs').value, [name]: control.value },
-  }).pipe(
-    map(res => {
-      if (res && !res.isValid) {
-        const error = res.errors && res.errors[0] && res.errors[0].errorMessage;
-        const customState = res.errors && res.errors[0] && res.errors[0].customState;
-        const message = customState && Math.round(customState * 100) / 100 || res.error && res.error.title || 'Unknown error';
-        return { error, message };
-      } else {
-        return null;
-      }
-    }),
-    catchError((err: HttpErrorResponse) => err && of({message: err.error && err.error.title || 'Unknown error'})),
-  );
-};
+
+    const {selectedUnits, benchmarkInputs} = fg.getRawValue();
+
+    return service.benchmarkValidate(name as keyof BenchmarkInputsInterface, {
+      selectedUnits: selectedUnits,
+      benchmarkInputs: { ...benchmarkInputs, [name]: control.value },
+    }).pipe(
+      map(res => {
+        if (res && !res.isValid) {
+          const error = res.errors && res.errors[0] && res.errors[0].errorMessage;
+          const customState = res.errors && res.errors[0] && res.errors[0].customState;
+          const message = customState && Math.round(customState * 100) / 100 || res.error && res.error.title || 'Unknown error';
+          return { error, message };
+        } else {
+          return null;
+        }
+      }),
+      catchError((err: HttpErrorResponse) => err && of({message: err.error && err.error.title || 'Unknown error'})),
+    );
+  };
 
 export const benchmarkCalculationValidator = (res, form: FormGroup, {nativeElement}: ElementRef): CalcBenchmarkResInterface => {
   const err = res as SgaValidationErrorResInterface;
