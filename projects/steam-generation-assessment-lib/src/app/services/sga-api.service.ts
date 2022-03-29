@@ -55,12 +55,12 @@ export class SgaApiService {
     }
   }
 
-  private post<T>(link, data, name?: string): Observable<T> {
-    this.changeLoading(true, link);
+  private post<T>(link, data, name?: string, isSyncLoading?: boolean): Observable<T> {
+    this.changeLoading(true, link, isSyncLoading);
     return this.http.post<T>(`./Api/SteamGenerator/${link}${name ? '/' + name : ''}`, data)
       .pipe(
-        tap(null, null, () => this.changeLoading(false, link)),
-        catchError((err) => { this.changeLoading(false, link); return of(err); })
+        tap(()=>{}, ()=>{}, () => this.changeLoading(false, link, isSyncLoading)),
+        catchError((err) => { this.changeLoading(false, link, isSyncLoading); return of(err); })
       );
   }
 
@@ -88,7 +88,7 @@ export class SgaApiService {
   }
 
   calculateBoilerEfficiency(data: SgaCalcBoilerEfficiencyReqInterface): Observable<SgaCalcBoilerEfficiencyResInterface> {
-    return this.post<SgaCalcBoilerEfficiencyResInterface>('calculate-boiler-efficiency', data);
+    return this.post<SgaCalcBoilerEfficiencyResInterface>('calculate-boiler-efficiency', data, null, true);
   }
 
   calculateProposedBoilerEfficiency(data: SgaCalcProposalEfficiencyReqInterface): Observable<SgaCalcProposalEfficiencyResInterface> {
@@ -110,7 +110,7 @@ export class SgaApiService {
   calculateWaterTemperatureLeaving(
     data: SgaCalcWaterTemperatureExchangerReqInterface
   ): Observable<SgaCalcWaterTemperatureExchangerResInterface> {
-    return this.post<SgaCalcWaterTemperatureExchangerResInterface>('calculate-water-temperature-leaving-heat-exchanger', data);
+    return this.post<SgaCalcWaterTemperatureExchangerResInterface>('calculate-water-temperature-leaving-heat-exchanger', data, null, true);
   }
 
   calculateBenchmark(data: InputParametersFormInterface): Observable<CalcBenchmarkResInterface | SgaValidationErrorResInterface> {

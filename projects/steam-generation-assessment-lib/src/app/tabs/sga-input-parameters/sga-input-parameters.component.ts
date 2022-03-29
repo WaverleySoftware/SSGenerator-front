@@ -27,6 +27,7 @@ export class SgaInputParametersComponent {
   @Output() changeFuelType = new EventEmitter<SgaCalcCalorificReqInterface>();
   @Output() calculateEfficiency = new EventEmitter<SgaCalcBoilerEfficiencyReqInterface>();
   @Output() calculateWaterTreatment = new EventEmitter<SgaCalcWaterTreatmentReqInterface>();
+  @Output() setTab: EventEmitter<number> = new EventEmitter<number>();
 
   private readonly formValueGetter: TFormValueGetterInterface = this.formService
     .createFormValueGetter(this.formService.getInputParamsFg());
@@ -164,5 +165,14 @@ export class SgaInputParametersComponent {
       waterTreatmentMethodId: selectedValue,
       tdsUnitSelected: this.formGroup.get('selectedUnits.tdsUnitSelected').value
     });
+  }
+
+  setBoilerParamsTab(tabIndex: number, el: HTMLElement) {
+    this.structure.boiler_house_parameters.panels.boiler.status = tabIndex === 1;
+    this.structure.boiler_house_parameters.panels.tds_blowdown.status = tabIndex === 2;
+    this.structure.boiler_house_parameters.panels.water_treatment.status = tabIndex === 3;
+    this.structure.boiler_house_parameters.panels.feedwater_and_condensate.status = tabIndex === 4;
+
+    el && typeof el.scrollIntoView === 'function' && el.scrollIntoView({behavior: 'smooth'});
   }
 }

@@ -1,4 +1,15 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+
+interface BoilerSchemeInterface {
+  isEconomizerPresent?: boolean;
+  isBlowdownVesselPresent?: boolean;
+  isCoolingWaterUsed?: boolean;
+  isAutoTdsControlPResent?: boolean;
+  isFlashVesselPresent?: boolean;
+  isHeatExchangerPresent?: boolean;
+  pressurisedDeaerator?: boolean;
+  isDsiPresent?: boolean;
+}
 
 @Component({
   selector: 'app-boiler-scheme',
@@ -6,23 +17,26 @@ import { Component, Input, OnInit } from "@angular/core";
   styleUrls: ['./boiler-scheme.component.scss']
 })
 export class BoilerSchemeComponent implements OnInit {
-  @Input() showControls: boolean;
-  @Input() feedWater: string = 'main';
-  public boiler: any = 'main';
-  public tdsControl: any = 'main';
-  public treatment: any = 'main';
-  public flashWessel: any = 'main';
-  public heatExchanger = true;
-  public tdsPipe = true;
-  public dsi = true;
-  public bdv = true;
-  public economiser = true;
-  public bdvCooling = true;
+  @Input() state: BoilerSchemeInterface = {
+    isEconomizerPresent: false, //
+    isBlowdownVesselPresent: false,
+    isCoolingWaterUsed: false,
+    isAutoTdsControlPResent: false,
+    isFlashVesselPresent: false,
+    isHeatExchangerPresent: false,
+    pressurisedDeaerator: false,
+    isDsiPresent: false,
+  };
+  @Output() setTab: EventEmitter<number> = new EventEmitter<number>();
 
   constructor() { }
 
   ngOnInit() {
 
+  }
+
+  blockClick(e: Event, tabNumber: number): void {
+    this.setTab.emit(tabNumber);
   }
 
 }

@@ -33,16 +33,13 @@ label  {
     bottom: 0;
     left: 0;
   }
+}
 
-  .main {
-
-  }
-
-  .selected {
-    //display: none;
-  }
-
-  .highlight {
-    //display: none;
+svg {
+  &>g {
+    &:hover * {
+      cursor: pointer;
+      filter: invert(0.17) sepia(0.5) saturate(3.3) hue-rotate(320deg) brightness(0.79);
+    }
   }
 }

@@ -272,7 +272,7 @@
                 [invalid]="getInvalidBlock(structure.boiler_house_parameters.panels)"
                 id="BoilerHouseParameters"
                 titleSize="24px">
-    <form body [formGroup]="formGroup">
+    <form body [formGroup]="formGroup" #boilerParamsFormEl>
       <div class="container-fluid" formGroupName="benchmarkInputs">
         <div class="row">
           <div class="col-md-12">
@@ -693,7 +693,18 @@
 
           <div class="col-md-2"></div>
           <div class="col-md-8">
-            <app-boiler-scheme></app-boiler-scheme>
+            <app-boiler-scheme (setTab)="setBoilerParamsTab($event, boilerParamsFormEl)"
+                               [state]="{
+                                isEconomizerPresent: formGroup.get('benchmarkInputs.isEconomizerPresent')?.value,
+                                isBlowdownVesselPresent: formGroup.get('benchmarkInputs.isBlowdownVesselPresent')?.value,
+                                isCoolingWaterUsed: formGroup.get('benchmarkInputs.isCoolingWaterUsed')?.value,
+                                isAutoTdsControlPResent: formGroup.get('benchmarkInputs.isAutoTdsControlPResent')?.value,
+                                isFlashVesselPresent: formGroup.get('benchmarkInputs.isFlashVesselPresent')?.value,
+                                isHeatExchangerPresent: formGroup.get('benchmarkInputs.isHeatExchangerPresent')?.value,
+                                pressurisedDeaerator: formGroup.get('benchmarkInputs.pressurisedDeaerator')?.value,
+                                isDsiPresent: formGroup.get('benchmarkInputs.isDsiPresent')?.value
+                              }"
+            ></app-boiler-scheme>
           </div>
         </div>
       </div>
