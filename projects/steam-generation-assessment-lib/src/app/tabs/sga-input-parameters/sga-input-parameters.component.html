@@ -278,6 +278,7 @@
           <div class="col-md-12">
             <tabset type="pills" class="sgaTabs">
               <tab [heading]="'BOILER' | translate"
+                   (select)="setBoilerParamsTab($event)"
                    [customClass]="getInvalidBlock(structure.boiler_house_parameters.panels.boiler) && ' invalid'"
                    [active]="structure.boiler_house_parameters.panels.boiler.status">
                 <spirax-panel id="boilerParametersPanel"
@@ -352,6 +353,7 @@
                 </spirax-panel>
               </tab>
               <tab [heading]="'TDS_BLOWDOWN' | translate"
+                   (select)="setBoilerParamsTab($event)"
                    [customClass]="getInvalidBlock(structure.boiler_house_parameters.panels.tds_blowdown) && ' invalid'"
                    [active]="structure.boiler_house_parameters.panels.tds_blowdown.status">
                 <spirax-panel id="blowdownEquipmentPanel"
@@ -431,6 +433,7 @@
                 </spirax-panel>
               </tab>
               <tab [heading]="'WATER_TREATMENT' | translate"
+                   (select)="setBoilerParamsTab($event)"
                    [customClass]="getInvalidBlock(structure.boiler_house_parameters.panels.water_treatment) && ' invalid'"
                    [active]="structure.boiler_house_parameters.panels.water_treatment.status">
                 <spirax-panel id="makeUpWaterPanel"
@@ -509,6 +512,7 @@
                 </spirax-panel>
               </tab>
               <tab [heading]="'FEEDWATER_AND_CONDENSATE' | translate"
+                   (select)="setBoilerParamsTab($event)"
                    [customClass]="getInvalidBlock(structure.boiler_house_parameters.panels.feedwater_and_condensate) && ' invalid'"
                    [active]="structure.boiler_house_parameters.panels.feedwater_and_condensate.status">
                 <spirax-panel id="deaeratorTypePanel"
@@ -694,16 +698,8 @@
           <div class="col-md-2"></div>
           <div class="col-md-8">
             <app-boiler-scheme (setTab)="setBoilerParamsTab($event, boilerParamsFormEl)"
-                               [state]="{
-                                isEconomizerPresent: formGroup.get('benchmarkInputs.isEconomizerPresent')?.value,
-                                isBlowdownVesselPresent: formGroup.get('benchmarkInputs.isBlowdownVesselPresent')?.value,
-                                isCoolingWaterUsed: formGroup.get('benchmarkInputs.isCoolingWaterUsed')?.value,
-                                isAutoTdsControlPResent: formGroup.get('benchmarkInputs.isAutoTdsControlPResent')?.value,
-                                isFlashVesselPresent: formGroup.get('benchmarkInputs.isFlashVesselPresent')?.value,
-                                isHeatExchangerPresent: formGroup.get('benchmarkInputs.isHeatExchangerPresent')?.value,
-                                pressurisedDeaerator: formGroup.get('benchmarkInputs.pressurisedDeaerator')?.value,
-                                isDsiPresent: formGroup.get('benchmarkInputs.isDsiPresent')?.value
-                              }"
+                               [activePanel]="structure.boiler_house_parameters.panels"
+                               [state]="getBoilerSchemeState"
             ></app-boiler-scheme>
           </div>
         </div>

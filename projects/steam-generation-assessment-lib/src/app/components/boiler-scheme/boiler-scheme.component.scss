@@ -37,9 +37,21 @@ label  {
 
 svg {
   &>g {
-    &:hover * {
+    &.active {
+      filter: drop-shadow(0 0 2px var(--color-orange))
+              drop-shadow(0 0 2px var(--color-orange))
+              drop-shadow(0 0 2px var(--color-orange))
+              drop-shadow(0 0 2px var(--color-orange))
+              drop-shadow(0 0 5px var(--color-orange));
+    }
+
+    &:hover {
       cursor: pointer;
-      filter: invert(0.17) sepia(0.5) saturate(3.3) hue-rotate(320deg) brightness(0.79);
+      filter: drop-shadow(0 0 2px var(--color-steel-blue-200))
+              drop-shadow(0 0 2px var(--color-steel-blue-200))
+              drop-shadow(0 0 2px var(--color-steel-blue-200))
+              drop-shadow(0 0 2px var(--color-steel-blue-200))
+              drop-shadow(0 0 5px var(--color-steel-blue-200));
     }
   }
 }

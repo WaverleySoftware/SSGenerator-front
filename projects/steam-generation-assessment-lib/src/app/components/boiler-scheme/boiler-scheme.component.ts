@@ -1,23 +1,13 @@
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
-
-interface BoilerSchemeInterface {
-  isEconomizerPresent?: boolean;
-  isBlowdownVesselPresent?: boolean;
-  isCoolingWaterUsed?: boolean;
-  isAutoTdsControlPResent?: boolean;
-  isFlashVesselPresent?: boolean;
-  isHeatExchangerPresent?: boolean;
-  pressurisedDeaerator?: boolean;
-  isDsiPresent?: boolean;
-}
+import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { SgaBoilerSchemeInterface, SgaBoilerSchemeTabsInterface } from "../../interfaces/sga-boiler-scheme.interface";
 
 @Component({
   selector: 'app-boiler-scheme',
   templateUrl: './boiler-scheme.component.html',
   styleUrls: ['./boiler-scheme.component.scss']
 })
-export class BoilerSchemeComponent implements OnInit {
-  @Input() state: BoilerSchemeInterface = {
+export class BoilerSchemeComponent {
+  @Input() state: SgaBoilerSchemeInterface = {
     isEconomizerPresent: false, //
     isBlowdownVesselPresent: false,
     isCoolingWaterUsed: false,
@@ -27,13 +17,10 @@ export class BoilerSchemeComponent implements OnInit {
     pressurisedDeaerator: false,
     isDsiPresent: false,
   };
+  @Input() activePanel: SgaBoilerSchemeTabsInterface;
   @Output() setTab: EventEmitter<number> = new EventEmitter<number>();
 
   constructor() { }
-
-  ngOnInit() {
-
-  }
 
   blockClick(e: Event, tabNumber: number): void {
     this.setTab.emit(tabNumber);

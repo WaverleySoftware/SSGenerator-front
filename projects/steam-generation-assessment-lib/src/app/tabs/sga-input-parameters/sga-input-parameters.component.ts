@@ -14,6 +14,9 @@ import { map } from 'rxjs/operators';
 import sgaFormStructure from '../../utils/sga-form-structure';
 import { SgFormStructureInterface } from '../../interfaces/steam-generation-form.interface';
 import { BenchmarkInputsInterface } from '../../interfaces/benchmarkInputs.interface';
+import { TabDirective } from "ngx-bootstrap/tabs/tab.directive";
+import { SgaBoilerSchemeInterface } from "../../interfaces/sga-boiler-scheme.interface";
+import { FormGroup } from "@angular/forms";
 
 
 @Component({
@@ -39,6 +42,25 @@ export class SgaInputParametersComponent {
     }), {})));
 
   constructor(private formService: SgaFormService, public preferenceService: PreferenceService) {}
+
+  get getBoilerSchemeState(): SgaBoilerSchemeInterface {
+    const fg = this.formGroup.get('benchmarkInputs') as FormGroup;
+    const {
+      isEconomizerPresent = false,
+      isBlowdownVesselPresent = false,
+      isCoolingWaterUsed = false,
+      isAutoTdsControlPResent = false,
+      isFlashVesselPresent = false,
+      isHeatExchangerPresent = false,
+      pressurisedDeaerator = false,
+      isDsiPresent = false,
+    } = fg && fg.getRawValue();
+
+    return {
+      isEconomizerPresent, isBlowdownVesselPresent,
+      isCoolingWaterUsed, isAutoTdsControlPResent, isFlashVesselPresent,
+      isHeatExchangerPresent, pressurisedDeaerator, isDsiPresent };
+  }
 
   getInvalidBlock(structure): boolean {
     if (Array.isArray(structure)) {
@@ -167,12 +189,23 @@ export class SgaInputParametersComponent {
     });
   }
 
-  setBoilerParamsTab(tabIndex: number, el: HTMLElement) {
-    this.structure.boiler_house_parameters.panels.boiler.status = tabIndex === 1;
-    this.structure.boiler_house_parameters.panels.tds_blowdown.status = tabIndex === 2;
-    this.structure.boiler_house_parameters.panels.water_treatment.status = tabIndex === 3;
-    this.structure.boiler_house_parameters.panels.feedwater_and_condensate.status = tabIndex === 4;
+  setBoilerParamsTab(tab: number | TabDirective, el?: HTMLElement) {
+    let tabIndex: number;
 
-    el && typeof el.scrollIntoView === 'function' && el.scrollIntoView({behavior: 'smooth'});
+    if (typeof tab === 'number') {
+      tabIndex = tab;
+      el && typeof el.scrollIntoView === 'function' && el.scrollIntoView({behavior: 'smooth'});
+    } else if (tab && tab instanceof TabDirective) {
+      if (tab.tabset && tab.tabset.tabs) {
+        tabIndex = tab.tabset.tabs.indexOf(tab) + 1;
+      }
+    }
+
+    if (tabIndex && tabIndex !== -1) {
+      this.structure.boiler_house_parameters.panels.boiler.status = tabIndex === 1;
+      this.structure.boiler_house_parameters.panels.tds_blowdown.status = tabIndex === 2;
+      this.structure.boiler_house_parameters.panels.water_treatment.status = tabIndex === 3;
+      this.structure.boiler_house_parameters.panels.feedwater_and_condensate.status = tabIndex === 4;
+    }
   }
 }
