@@ -362,7 +362,9 @@
                               [title]="'BLOWDOWN_EQUIPMENT' | translate" background="#EDF2F4">
                   <div class="row" body>
                     <div class="col-md-4 border-r-md">
-                      <spirax-toggle formControlName="isBlowdownVesselPresent" label="IS_BLOWDOWN_VESSEL_PRESENT"></spirax-toggle>
+                      <spirax-toggle formControlName="isBlowdownVesselPresent"
+                                     (valueChange)="toggleInput('isCoolingWaterUsed', 'isCoolingWaterUsed', false, $event)"
+                                     label="IS_BLOWDOWN_VESSEL_PRESENT"></spirax-toggle>
 
                       <spirax-toggle formControlName="isCoolingWaterUsed" label="IS_COOLING_WATER_USED"></spirax-toggle>
                     </div>

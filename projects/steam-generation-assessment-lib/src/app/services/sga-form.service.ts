@@ -67,7 +67,7 @@ export class SgaFormService {
         carbonTaxLevyCostPerUnit: [{value: null, disabled: true}, Validators.required, validateBenchmarkInput(this.apiService)],
         costOfCo2PerUnitMass: [{value: null, disabled: true}, Validators.required, validateBenchmarkInput(this.apiService)],
         isBlowdownVesselPresent: [false, { updateOn: 'change' }],
-        isCoolingWaterUsed: [false, { updateOn: 'change' }],
+        isCoolingWaterUsed: [{value: false, disabled: true}, { updateOn: 'change' }],
         isSuperheatedSteam: [false, { updateOn: 'change' }],
         boilerEfficiency: [null, Validators.required, validateBenchmarkInput(this.apiService)],
         isFeedWaterMeasured: [false, { updateOn: 'change' }],
