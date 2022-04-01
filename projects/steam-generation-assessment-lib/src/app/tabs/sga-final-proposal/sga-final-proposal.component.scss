@@ -1,3 +1,65 @@
+@font-face {
+  font-family: 'sga-icons';
+  src:  url('./icons/sga-icons.eot?melp2o');
+  src:  url('./icons/sga-icons.eot?melp2o#iefix') format('embedded-opentype'),
+  url('./icons/sga-icons.ttf?melp2o') format('truetype'),
+  url('./icons/sga-icons.woff?melp2o') format('woff'),
+  url('./icons/sga-icons.svg?melp2o#sga-icons') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+i[class^="sga-"] {
+  font-family: 'sga-icons', sans-serif !important;
+  speak: never;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid;
+  font-size: 21px;
+  margin-right: 19px;
+
+  &.sga-water-effluent {
+    color: var(--color-blue);
+    border-color: var(--color-blue);
+    &:before {
+      content: "\e903";
+    }
+  }
+  &.sga-co2-emissions {
+    color: var(--color-orange);
+    border-color: var(--color-orange);
+    &:before {
+      content: "\e900";
+    }
+  }
+  &.sga-thermal-energy {
+    color: var(--color-green);
+    border-color: var(--color-green);
+    &:before {
+    content: "\e901";
+  }
+  }
+  &.sga-water-consumption {
+    color: var(--color-steel);
+    border-color: var(--color-steel);
+    &:before {
+    content: "\e902";
+  }
+  }
+}
+
 .sgaFinalProposal {
   @media screen and (max-width: 1200px){
     zoom: .6;
@@ -46,6 +108,7 @@
         background-color: transparent;
         border: none;
         text-decoration: none;
+        color: var(--color-blue);
         svg {
           fill: var(--color-blue);
         }
@@ -243,4 +306,70 @@
       }
     }
   }
+
+  .card {
+    width: 100%;
+    font-family: var(--font-proxima-nova);
+    font-style: normal;
+    font-weight: 600;
+    &-img {
+      height: 300px;
+      width: 100%;
+      object-fit: cover;
+      background: #000;
+      @media screen and (max-width: 1400px){
+        height: 220px;
+      }
+      @media screen and (max-width: 980px){
+        height: 300px;
+      }
+    }
+
+    &-body {
+      margin-top: 16px;
+    }
+
+    &-badge {
+      text-transform: uppercase;
+      font-size: 16px;
+      line-height: 105%;
+      margin-bottom: 8px;
+      &>i {
+        margin-right: 7px;
+      }
+    }
+
+    &-title {
+      font-size: 24px;
+      line-height: 115%;
+      color: var(--color-blue);
+      margin-bottom: 4px;
+    }
+
+    &-text {
+      font-family: var(--font-open-sans);
+      font-style: normal;
+      font-weight: 400;
+      font-size: 14px;
+      line-height: 200%;
+      color: var(--color-black);
+      margin: 0;
+      padding: 0;
+    }
+  }
+
+  // Colors
+  .orange {
+    color: var(--color-orange);
+  }
+  .green {
+    color: var(--color-green);
+  }
+  .steel {
+    color: var(--color-steel);
+  }
+  .blue {
+    color: var(--color-blue);
+  }
 }
+

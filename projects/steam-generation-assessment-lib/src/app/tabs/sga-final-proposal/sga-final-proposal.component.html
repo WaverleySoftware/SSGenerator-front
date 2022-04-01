@@ -778,17 +778,183 @@
   </tab>
   <tab>
     <h5 class="sgaBaseTabs_title_md">{{'FINAL_PROPOSAL' | translate}}</h5>
-    <ng-template tabHeading>
-      <svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" fill="none">
-        <path d="M18 0V2C18 11.627 12.627 16 6 16H4.098C4.31 12.988 5.248 11.165 7.696 8.999C8.9 7.934 8.798 7.319 8.205 7.672C4.121 10.102 2.093 13.386 2.003 18.63L2 19H0C0 17.637 0.116 16.4 0.346 15.268C0.116 13.974 0 12.218 0 10C0 4.477 4.477 0 10 0C12 0 14 1 18 0Z"/>
-      </svg>
-    </ng-template>
-    <div class="row mb">
+    <ng-template tabHeading><i class="fa fa-leaf"></i></ng-template>
+
+    <div class="row">\
+      <div class="col-md-12 mb">
+        <table class="customTable mb">
+          <caption><p class="sgaBaseTabs_title_sm">{{'SUMMARY_OF_COST_FSLESH_SAVINGS' | translate}}<i class="fa fa-info-circle"></i></p></caption>
+          <thead>
+          <tr>
+            <th>{{"PARAMETER" | translate}}</th>
+            <th class="text-center">{{"CURRENT_SITUATION" | translate}}</th>
+            <th class="text-center">{{"PROPOSED_SITUATION" | translate}}</th>
+            <th class="text-center">{{"POTENTIAL_SAVINGS" | translate}}</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td>Hours operation</td>
+            <td>8736 hrs/yr</td>
+            <td>8736 hrs/yr</td>
+            <td>–</td>
+          </tr>
+          <tr>
+            <td>Steam Generated</td>
+            <td>63,800 tonnes/yr</td>
+            <td>63,800 tonnes/yr</td>
+            <td>–</td>
+          </tr>
+          <tr>
+            <td>Fuel</td>
+            <td>Natural Gas</td>
+            <td>Natural Gas</td>
+            <td>–</td>
+          </tr>
+          <tr>
+            <td>Cost of steam / year</td>
+            <td>£1,628,212 /yr</td>
+            <td>£1,530,157 /yr</td>
+            <td>£98,055 /yr</td>
+          </tr>
+          <tr>
+            <td>Cost of steam / tonne</td>
+            <td>£25.52 /tonne</td>
+            <td>£23.98 /tonne</td>
+            <td>£1,54 /tonne</td>
+          </tr>
+          <tr>
+            <td>Cost of steam / kWh</td>
+            <td>£0.030 /kWh</td>
+            <td>£0.029 /kWh</td>
+            <td>£0,001 /kWh</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="col-md-12 mb">
+        <table class="customTable mb">
+          <caption><p class="sgaBaseTabs_title_sm">{{'ENVIROMENTAL_IMPACT' | translate}}<i class="fa fa-info-circle"></i></p></caption>
+          <thead>
+          <tr>
+            <th rowspan="2">{{'PARAMETER' | translate}}</th>
+            <th class="text-center" colspan="2">{{'CURRENT' | translate}}</th>
+            <th class="text-center" colspan="2">{{'POTENTIAL' | translate}}</th>
+            <th class="text-center">{{'ANNUAL_SAVINGS' | translate}}</th>
+          </tr>
+          <tr>
+            <th class="text-center">{{'PER_TONNE_STEAM' | translate}}</th>
+            <th class="text-center">{{'PER_YEAR' | translate}}</th>
+            <th class="text-center">{{'PER_TONNE_STEAM' | translate}}</th>
+            <th class="text-center">{{'PER_YEAR' | translate}}</th>
+            <th class="text-center">{{'PER_YEAR' | translate}}</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td>Fuel cunsumed</td>
+            <td>3.02 Gj/tonne</td>
+            <td>192,702 Gj/yr</td>
+            <td>2.95 Gj/tonne</td>
+            <td>187,878 Gj/yr</td>
+            <td>4,828 Gj/yr</td>
+          </tr>
+          <tr>
+            <td>CO2 emitted</td>
+            <td>0.16 tonne/tonne</td>
+            <td>9,896 tonne/yr</td>
+            <td>0,15 tonne/tonne</td>
+            <td>9,649 tonne/yr</td>
+            <td>247 tonnes/yr</td>
+          </tr>
+          <tr>
+            <td>Water Consumed</td>
+            <td>0.57 m3/tonne</td>
+            <td>36,596 m3/yr</td>
+            <td>0,18 m3/tonne</td>
+            <td>11,639 m3/yr</td>
+            <td>24,957 m3/yr</td>
+          </tr>
+          <tr>
+            <td>Effluent Consumed</td>
+            <td>0.46 m3/tonne</td>
+            <td>29,277 m3/yr</td>
+            <td>0.25 m3/tonne</td>
+            <td>9,311 m3/yr</td>
+            <td>19,966 m3/yr</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+
       <div class="col-md-12">
-        <h1>Try it later...</h1>
+        <table class="customTable">
+          <thead>
+          <tr>
+            <th>{{'ANNUAL_SAVINGS' | translate}}</th>
+            <th class="text-center">{{'VALUE' | translate}}</th>
+            <th>{{'EQUIVALENT_SAVINGS' | translate}}</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td class="orange text-uppercase">
+              <i class="sga-co2-emissions"></i>
+              co2 emissions
+            </td>
+            <td>3.02 Gj/tonne</td>
+            <td class="text-left">
+              <img class="thumb-img"
+                   src="/assets/img/steam_generation/energy_saving/co2-emissions.png"
+                   alt="co2 emissions">
+              1,341,111 kWh
+            </td>
+          </tr>
+          <tr>
+            <td class="green text-uppercase">
+              <i class="sga-thermal-energy"></i>
+              Thermal energy
+            </td>
+            <td>0.16 tonne/yr</td>
+            <td class="text-left">
+              <img class="thumb-img"
+                   src="/assets/img/steam_generation/energy_saving/thermal-energy.png"
+                   alt="Thermal energy">
+              11,227 trees
+            </td>
+          </tr>
+          <tr>
+            <td class="steel text-uppercase">
+              <i class="sga-water-consumption"></i>
+              water consumption
+            </td>
+            <td>0.57 m3/tonne</td>
+            <td class="text-left">
+              <img class="thumb-img"
+                   src="/assets/img/steam_generation/energy_saving/water-consumption.png"
+                   alt="water consumption">
+              10 Olympic pools
+            </td>
+          </tr>
+          <tr>
+            <td class="blue text-uppercase">
+              <i class="sga-water-effluent"></i>
+              water effluent
+            </td>
+            <td>0.46 m3/tonne</td>
+            <td class="text-left">
+              <img class="thumb-img"
+                   src="/assets/img/steam_generation/energy_saving/water-effluent.png"
+                   alt="water effluent">
+              8 Olympic pools
+            </td>
+          </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </tab>
 </tabset>
 
-<ng-template #noData><h1>Loading... OR No data</h1></ng-template>
+<ng-template #noData><h1>{{'LOADING' | translate}}</h1></ng-template>

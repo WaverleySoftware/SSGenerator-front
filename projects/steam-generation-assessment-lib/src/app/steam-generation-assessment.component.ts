@@ -60,10 +60,12 @@ import {
   generateSavedData,
   generateSavedDataFromChart,
   parseSavedChartData,
-  parseSavedData, patchSavedDataToForm
+  parseSavedData,
+  patchSavedDataToForm
 } from "./utils/generate-saved-data";
 import { Unit } from 'sizing-shared-lib/lib/shared/units/unit.model';
 import { SGA_SIZING_UNITS_LIST } from "./utils/sga-sizing-units-list";
+import { simpleSgaDebounce } from "./utils/sga-debounce";
 import swal from "sweetalert";
 
 
@@ -127,14 +129,22 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     this.projectId = this.activatedRoute.snapshot.params['projectId'];
     this.setBenchmarkInputValue = this.formService.createFormValueSetter<BenchmarkInputsInterface>(this.sizingModuleForm, 'benchmarkInputs');
     this.getSizingFormValues = this.formService.createFormValueGetter(this.sizingModuleForm);
-    this.sizingModuleForm.get('benchmarkInputs').valueChanges.pipe(takeUntil(this.ngUnsubscribe)).subscribe(() => {
-      this.resetBenchmarkData();
 
-      if (this.sizingModuleForm && this.sizingModuleForm.touched && this.sizingModuleForm.dirty) {
+    const benchmarkInputsForm = this.sizingModuleForm.get('benchmarkInputs');
+    benchmarkInputsForm.markAsUntouched();
+    benchmarkInputsForm.markAsDirty();
+
+    const debouncedFunc = simpleSgaDebounce(() => {
+      if (benchmarkInputsForm && benchmarkInputsForm.touched && benchmarkInputsForm.dirty) {
+        console.log(benchmarkInputsForm, '-----form touched')
         this.setDiscardModal(true);
       }
+    }, 500);
+
+    benchmarkInputsForm.valueChanges.pipe(takeUntil(this.ngUnsubscribe)).subscribe(() => {
+      this.resetBenchmarkData();
+      debouncedFunc();
     });
-    this.setSgaUnits(this.unitsService);
 
     this.loadJob({jobId: this.jobId, projectId: this.projectId}).pipe(
       takeUntil(this.ngUnsubscribe),
@@ -147,8 +157,9 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       this.loadDefaultValues();
       this.convertUnits(this.getDefaultConvertedUnits());
     });
-
+    this.setSgaUnits(this.unitsService);
     this.formFieldsChangesSubscribtions();
+    this.setDiscardModal(false);
   }
 
   ngOnDestroy(): void {
@@ -642,6 +653,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   }
 
   private setDiscardModal(isShown?: boolean) {
+    console.log(isShown, '------isShown')
     if (!this.hasUnsavedDataChanges !== !isShown) {
       this.hasUnsavedDataChanges = !!isShown;
     }

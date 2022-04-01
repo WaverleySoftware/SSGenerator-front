@@ -316,6 +316,21 @@ $active-border-color: #002D72;
             &:last-child {
               border-right: 0;
             }
+
+            &.text-left {
+              text-align: left !important;
+            }
+          }
+
+          .thumb-img {
+            max-width: 48px;
+            max-height: 48px;
+            min-height: 48px;
+            min-width: 48px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 5px;
+            display: inline-block;
           }
         }
       }
