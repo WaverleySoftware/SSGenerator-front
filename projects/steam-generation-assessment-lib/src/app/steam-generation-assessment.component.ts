@@ -665,7 +665,9 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       const fuelControl = this.sizingModuleForm.get('benchmarkInputs.inputFuelId');
       const fuelId = fuelControl && fuelControl.value;
       const enumerationDefinition = this.getEnumerationDefinition('FuelTypeList_BoilerHouseInput', fuelId && {id: fuelId});
-      const fuelTypeName = FuelTypesEnumerationLetter[enumerationDefinition.value.charAt(0).toUpperCase()];
+      const fuelTypeName = enumerationDefinition &&
+        enumerationDefinition.value &&
+        FuelTypesEnumerationLetter[enumerationDefinition.value.charAt(0).toUpperCase()];
 
       for (const {selectedUnitName, name, masterTextKey} of SGA_SIZING_UNITS_LIST) {
         const preference = this.preferenceService.allPreferences.find((p) => p.name === name || p.name === name + 's');

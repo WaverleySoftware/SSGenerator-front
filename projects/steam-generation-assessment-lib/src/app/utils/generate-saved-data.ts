@@ -13,7 +13,7 @@ export const generateSavedData = (data: {[key: string]: any}): ProcessInput[] =>
     for (const key of keys) {
       const elem = data[key];
 
-      if (elem && (typeof elem === 'string' || typeof elem === 'number' || typeof elem === 'boolean')) {
+      if ((elem || elem === 0) && (typeof elem === 'string' || typeof elem === 'number' || typeof elem === 'boolean')) {
         results.push({
           name: key,
           value: elem as string,

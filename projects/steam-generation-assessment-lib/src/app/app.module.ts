@@ -16,6 +16,7 @@ import { SgaApiService } from './services/sga-api.service';
 import { DecimalPlacePipe } from './pipes/decimal-place.pipe';
 import { SgaDecimalPlacesDirective } from './directives/sga-decimal-places.directive';
 import { SgaChartService } from "./services/sga-chart.service";
+import { TooltipModule } from "ngx-bootstrap";
 
 const providers = [SteamGenerationAssessmentService, SgaFormService, SgaApiService, SgaChartService];
 
@@ -42,7 +43,8 @@ const providers = [SteamGenerationAssessmentService, SgaFormService, SgaApiServi
     ReactiveFormsModule,
     BlockUIModule,
     TabsModule.forRoot(),
-    ChartsModule
+    ChartsModule,
+    TooltipModule
   ],
   providers,
   entryComponents: [SteamGenerationAssessmentComponent],
