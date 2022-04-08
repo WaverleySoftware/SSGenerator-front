@@ -54,7 +54,7 @@ import { ProposedDataInterface } from "./interfaces/steam-generation-form.interf
 import { ChartBarDataInterface } from './interfaces/chart-bar.interface';
 import { SgaChartService } from "./services/sga-chart.service";
 import { SgaTotalSavingInterface } from "./interfaces/sga-chart-data.Interface";
-import { CalcBenchmarkResInterface } from "./interfaces/calc-benchmark-res.interface";
+import { BenchmarkResBenchmarkInterface, CalcBenchmarkResInterface } from "./interfaces/calc-benchmark-res.interface";
 import { validateProposedCalculation } from "./validators/sga-proposed-setup.validator";
 import {
   generateSavedData,
@@ -653,7 +653,6 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   }
 
   private setDiscardModal(isShown?: boolean) {
-    console.log(isShown, '------isShown')
     if (!this.hasUnsavedDataChanges !== !isShown) {
       this.hasUnsavedDataChanges = !!isShown;
     }
@@ -725,7 +724,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     }
 
     if (!this.unitsService.units || !this.unitsService.units.length) {
-      return this.unitsService.getAllUnitsByAllTypes().pipe(first(), map(units => creationFn(units, !!this.jobId)));
+      return this.unitsService.getAllUnitsByAllTypes().pipe(first(), map((units: Unit[]) => creationFn(units, !!this.jobId)));
     } else {
       return of(creationFn(this.unitsService.units, !!this.jobId));
     }
@@ -953,7 +952,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
         tap(() => this.apiService.changeLoading(true, 'projectJobsChange', true)),
         map(({projects}) => projects && projects.find((p) => p && p.id === data.projectId)),
         map(project => {
-          this.project = project;
+          this.project = project as Project;
           this.job = project && project.jobs && project.jobs.find((job) => job && job.id === data.jobId);
 
           if (!this.project || !this.job) {
@@ -1057,7 +1056,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       this.finalProposalHorizontalChart = parseSavedChartData(data.finalProposalHorizontalChart);
     }
     if (data.overallProposal) {
-      this.sizingModuleResults.overallProposal = parseSavedData(data.overallProposal);
+      this.sizingModuleResults.overallProposal = parseSavedData(data.overallProposal) as Partial<BenchmarkResBenchmarkInterface>;
     }
 
     return patchedValues;

@@ -26,6 +26,7 @@ import { CleanSteamGeneratorModulePreferencesComponent } from '../../sizingModul
 import { TranslationResolver } from '../../shared/translation/translation.resolver';
 import { ProductSelectionAdminComponent } from '../../sizingModules/safetyValves/modulePreference/productSelectionAdmin/productSelectionAdmin.component';
 import { EasiHeatPreferencesComponent } from '../../sizingModules/easiHeat/modulePreference/easiHeat.component';
+import { SteamGenerationAssessmentModulePreferencesComponent } from "../../sizingModules/seamGenerationAssessment/modulePreference/steamGenerationAssessment.component";
 
 //import { EasiheatModulePreferencesComponent } from 'src/app/sizingModules/easiHeat/modulePreference/easiHeat.component';
 //import { SteamGenerationAssessmentModulePreferencesComponent } from 'src/app/sizingModules/steamGenerationAssessment/modulePreference/steamGenerationAssessment.component';
@@ -38,6 +39,13 @@ const modulePreferencesRoutes = [
   { path: 'cleanSteamGenerator', canDeactivate: [GenericChangesGuard], component: CleanSteamGeneratorModulePreferencesComponent, data: { moduleName: "Clean Steam Generator",  displayGroup: "CLEAN_STEAM_GENERATOR_MODULE_PREFERENCES" } },
   { path: 'cleanSteamGeneratorFB', canDeactivate: [GenericChangesGuard], component: CleanSteamGeneratorFBMiniModulePreferencesComponent, resolve: { resolver: TranslationResolver }, data: { moduleName: "Clean Steam Generator FB", displayGroup: "CLEAN_STEAM_GENERATOR_FB_MODULE_PREFERENCES" } },
   { path: 'easiHeat', canDeactivate: [GenericChangesGuard], component: EasiHeatPreferencesComponent, resolve: { resolver: TranslationResolver }, data: { moduleName: "EasiHeat", displayGroup: "EASIHEAT_MODULE_PREFERENCES" } },
+  {
+    path: 'steamGenerationAssessment',
+    canDeactivate: [GenericChangesGuard],
+    component: SteamGenerationAssessmentModulePreferencesComponent,
+    resolve: { resolver: TranslationResolver },
+    data: { moduleName: "Steam Generation Assessment", displayGroup: "STEAM_GENERATION_ASSESSMENT_MODULE_PREFERENCES" }
+  }
 ];
 
 // Route definitions for the Angular Admin Module
@@ -83,7 +91,7 @@ const routes = [
     CleanSteamGeneratorModulePreferencesComponent,
     CleanSteamGeneratorFBMiniModulePreferencesComponent,
     EasiHeatPreferencesComponent,
-
+    SteamGenerationAssessmentModulePreferencesComponent,
   ]
 })
 export class AdminModule { }

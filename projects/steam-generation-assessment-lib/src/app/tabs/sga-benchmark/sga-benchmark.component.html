@@ -252,7 +252,7 @@
           <tr>
             <td>{{'CO2_EMISSIONS' | translate}}</td>
             <td *ngIf="data?.tonnesOfCO2; else emptyCol">
-              {{data.tonnesOfCO2 | number : '0.0-2'}} {{units[data.tonnesOfCO2Unit]}}
+              {{data.tonnesOfCO2 | number : '0.0-2'}} {{units[data.tonnesOfCO2Unit]}}/{{'YR' | translate}}
             </td>
             <td *ngIf="data?.costOfCO2PerYear; else emptyCol">
               {{data.costOfCO2PerYear | number : '0.0-2'}} {{currency}}/{{'YR' | translate}}
@@ -261,7 +261,7 @@
           <tr>
             <td>{{'STEAM_GENERATION_EFFLUENT' | translate}}</td>
             <td *ngIf="data?.boilerHouseTotalVolumeOfWaterEffluent; else emptyCol">
-              {{data.boilerHouseTotalVolumeOfWaterEffluent | number : '0.0-2'}} {{units[data.boilerHouseTotalVolumeOfWaterEffluentUnit]}}
+              {{data.boilerHouseTotalVolumeOfWaterEffluent | number : '0.0-2'}} {{units[data.boilerHouseTotalVolumeOfWaterEffluentUnit]}}/{{'YR' | translate}}
             </td>
             <td *ngIf="data?.costOfBoilerHouseEffluent; else emptyCol">
               {{data.costOfBoilerHouseEffluent | number : '0.0-2'}} {{currency}}/{{'YR' | translate}}
