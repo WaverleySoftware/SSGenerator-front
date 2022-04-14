@@ -906,7 +906,7 @@
             <td *ngIf="current?.fuelConsumptionPerYear && potential?.fuelConsumptionPerYear">{{(current.fuelConsumptionPerYear * 0.0036) - (potential.fuelConsumptionPerYear * 0.0036) | number: '0.0-6'}} Gj/{{'YR' | translate}}</td>
             <td class="text-left">
               <img class="thumb-img" src="/assets/img/steam_generation/energy_saving/co2-emissions.png" alt="co2 emissions">
-              {{current?.fuelConsumptionPerYear ? (current.fuelConsumptionPerYear | number: '0.0-2') : 0}} {{units[current?.fuelConsumptionPerYearUnit]}}
+              {{current?.fuelConsumptionPerYear ? (current.fuelConsumptionPerYear - (potential?.fuelConsumptionPerYear || 0) | number: '0.0-2') : 0}} {{units[current?.fuelConsumptionPerYearUnit]}}
             </td>
           </tr>
           <tr>
