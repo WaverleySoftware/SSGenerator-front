@@ -153,11 +153,15 @@
   }
 
   .sgaBenchmarkSchemeGrid {
-    @media screen and (max-width: 1300px){
-      zoom: .6;
+    @media screen and (max-width: 1300px) and (min-width: 980px){
+      .customTable  {
+        zoom: .6;
+      }
     }
     @media screen and (max-width: 980px){
-      zoom: .4;
+      .customTable  {
+        zoom: .4;
+      }
     }
 
     .flex {

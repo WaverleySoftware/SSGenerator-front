@@ -61,11 +61,15 @@ i[class^="sga-"] {
 }
 
 .sgaFinalProposal {
-  @media screen and (max-width: 1200px){
-    zoom: .6;
+  @media screen and (max-width: 1200px) and (min-width: 920px){
+    .customTable  {
+      zoom: .6;
+    }
   }
   @media screen and (max-width: 920px){
-    zoom: .4;
+    .customTable  {
+      zoom: .4;
+    }
   }
 
   &::ng-deep {
@@ -154,7 +158,6 @@ i[class^="sga-"] {
     color: var(--color-black);
     font-style: normal;
     font-weight: normal;
-    font-size: .8rem;
     line-height: 150%;
     letter-spacing: 0.02em;
     position: relative;

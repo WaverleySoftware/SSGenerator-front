@@ -106,9 +106,9 @@
             </tr>
             <tr class="filled">
               <td>{{'TOTAL_STEAM_GENERATED' | translate}}</td>
-              <td *ngIf="current.mBoiler; else emptyCol">{{current.mBoiler | number: '0.0-2'}} {{units[current.mBoilerUnit]}}/{{'YR' | translate}}</td>
+              <td *ngIf="current.mBoiler; else emptyCol">{{current.mBoiler | number: '0.0-2'}} {{units[current.mBoilerUnit]}}</td>
               <td *ngIf="current.totalCostOfSteamPerYear; else emptyCol">{{current.totalCostOfSteamPerYear | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
-              <td *ngIf="potential.mBoiler; else emptyCol">{{potential.mBoiler | number: '0.0-2'}} {{units[potential.mBoilerUnit]}}/{{'YR' | translate}}</td>
+              <td *ngIf="potential.mBoiler; else emptyCol">{{potential.mBoiler | number: '0.0-2'}} {{units[potential.mBoilerUnit]}}</td>
               <td *ngIf="potential.totalCostOfSteamPerYear; else emptyCol">{{potential.totalCostOfSteamPerYear | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
               <td *ngIf="current.totalCostOfSteamPerYear && potential.totalCostOfSteamPerYear; else emptyCol">{{(current.totalCostOfSteamPerYear - potential.totalCostOfSteamPerYear) | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
               <td *ngIf="current.totalCostOfSteamPerYear && potential.totalCostOfSteamPerYear; else emptyCol">{{savingPercent(current.totalCostOfSteamPerYear, potential.totalCostOfSteamPerYear) | number: '0.0-2'}}%</td>
@@ -226,7 +226,7 @@
       </tr>
       <tr>
         <td>{{'COST_FSLASH_UNIT_MASS' | translate}}</td>
-        <ng-container [ngTemplateOutletContext]="{key: 'steamGeneratedkgPerHour', isCosts: true, unit: 'tonne'}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
+        <ng-container [ngTemplateOutletContext]="{key: 'totalCostOfSteamPerTonne', isCosts: true, unit: 'tonne'}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
       </tr>
       <tr>
         <td>{{'COST_FSLASH_UNIT_ENERGY' | translate}}</td>
@@ -261,22 +261,18 @@
           <td>{{'QUANTITY' | translate}}</td>
           <ng-container [ngTemplateOutletContext]="{key: 'fuelConsumptionPerYear', isPerYear: true, unit: units[current.fuelConsumptionPerYearUnit]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
         </tr>
-
         <tr>
           <td>{{'COST_FSLASH_UNIT_FUEL' | translate}}</td>
           <ng-container [ngTemplateOutletContext]="{key: 'costOfFuelPerUnit', isCosts: true, unit: 'kWh'}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
         </tr>
-
         <tr>
           <td>{{'ENERGY' | translate}}</td>
           <ng-container [ngTemplateOutletContext]="{key: 'qfuel', isPerYear: true, unit: units[current.qfuelUnit]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
         </tr>
-
         <tr>
           <td>{{'COST_FSLASH_UNIT_ENERGY' | translate}}</td>
           <ng-container [ngTemplateOutletContext]="{key: 'costOfFuelPerkWh', isCosts: true, unit: 'kWh'}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
         </tr>
-
         <tr class="text-bold">
           <td>{{'COST_OF_FUEL_PER_YEAR' | translate}}</td>
           <ng-container [ngTemplateOutletContext]="{key: 'costOfFuelPerYear', isCosts: true, isPerYear: true}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
@@ -286,7 +282,7 @@
       <ng-container>
         <thead>
         <tr>
-          <th>{{'COST_OF_FUEL_PER_YEAR' | translate}}</th>
+          <th>{{'CO2_EMISSIONS' | translate}}</th>
           <th>{{'EXISTING_RETURNS' | translate}}</th>
           <th>{{'POTENTIAL_RETURNS' | translate}}</th>
           <th>{{'SAVINGS' | translate}}</th>
@@ -297,12 +293,10 @@
           <td>{{'MASS_EMITTED' | translate}}</td>
           <ng-container [ngTemplateOutletContext]="{key: 'tonnesOfCO2', isCosts: false, isPerYear: true, unit: units[current.tonnesOfCO2Unit]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
         </tr>
-
         <tr>
           <td>{{'COST_FSLASH_UNIT_MASS' | translate}}</td>
           <ng-container [ngTemplateOutletContext]="{key: 'costOfCO2PerTonne', isCosts: true, isPerYear: false, unit: units[current.costOfCO2PerTonneUnit]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
         </tr>
-
         <tr class="text-bold">
           <td>{{"COST_OF_CO2_EMISSIONS_FSLASH_YEAR"}}</td>
           <ng-container [ngTemplateOutletContext]="{key: 'costOfCO2PerYear', isCosts: true, isPerYear: true, unit: null}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
@@ -321,11 +315,11 @@
         <tbody>
         <tr>
           <td>{{'QUANTITY' | translate}}</td>
-          <ng-container [ngTemplateOutletContext]="{key: 'boilerHouseWaterFlowTotal', isCosts: true, isPerYear: true, unit: units[current.boilerHouseWaterFlowTotalUnit]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
+          <ng-container [ngTemplateOutletContext]="{key: 'boilerHouseWaterFlowTotal', isCosts: false, isPerYear: true, unit: units[current.boilerHouseWaterFlowTotalUnit]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
         </tr>
         <tr>
           <td>{{'COST_OF_WATER_UNIT_VOLUME' | translate}}</td>
-          <ng-container [ngTemplateOutletContext]="{key: 'waterCostPerUnit', isCosts: true, isPerYear: true, unit: units[current.waterCostPerUnitUnit]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
+          <ng-container [ngTemplateOutletContext]="{key: 'waterCostPerUnit', isCosts: true, isPerYear: false, unit: units[current.waterCostPerUnitUnit]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
         </tr>
         <tr class="text-bold">
           <td>{{'COST_OF_BOILER_WATER_YEAR' | translate}}</td>
@@ -365,7 +359,7 @@
         <tbody>
         <tr>
           <td>{{'QUANTITY' | translate}}</td>
-          <ng-container [ngTemplateOutletContext]="{key: 'boilerHouseTotalVolumeOfWaterEffluent', isCosts: true, isPerYear: true, unit: units[current.boilerHouseTotalVolumeOfWaterEffluentUnit]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
+          <ng-container [ngTemplateOutletContext]="{key: 'boilerHouseTotalVolumeOfWaterEffluent', isCosts: false, isPerYear: true, unit: units[current.boilerHouseTotalVolumeOfWaterEffluentUnit]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
         </tr>
         <tr>
           <td>{{'COST_FSLASH_UNIT' | translate}}</td>
@@ -552,6 +546,7 @@
             <th>{{'POSITION_NAME' | translate}}</th>
             <th>{{'CURRENT' | translate}}</th>
             <th>{{'POTENTIAL' | translate}}</th>
+            <th></th>
           </tr>
           </thead>
           <tbody>
@@ -581,6 +576,7 @@
            <th>{{'POSITION_NAME' | translate}}</th>
            <th>{{'CURRENT' | translate}}</th>
            <th>{{'POTENTIAL' | translate}}</th>
+            <th></th>
           </tr>
           </thead>
           <tbody>
@@ -613,6 +609,7 @@
             <th>{{'POSITION_NAME' | translate}}</th>
             <th>{{'CURRENT' | translate}}</th>
             <th>{{'POTENTIAL' | translate}}</th>
+            <th></th>
           </tr>
           </thead>
           <tbody>
@@ -690,7 +687,7 @@
               <i class="sga-arrow arrow-left green"></i>
             </div>
             <i class="sga-arrow pink arrow-down"></i>
-          </div>s
+          </div>
           <div class="col-lg-8 col-md-10 col-sm-12 mb">
             <table class="sgaFinalProposal_info orange mb">
               <caption>
@@ -702,6 +699,7 @@
                 <th>{{'POSITION_NAME' | translate}}</th>
                 <th>{{'CURRENT' | translate}}</th>
                 <th>{{'POTENTIAL' | translate}}</th>
+                <th></th>
               </tr>
               </thead>
               <tbody>
@@ -719,7 +717,7 @@
               </tr>
               <tr class="text-bold">
                 <td>{{'COST_FSLASH_YR' | translate}}</td>
-                <ng-container [ngTemplateOutletContext]="{key: 'totalCostOfSteamPerYear', unit: 'tonne', isPerYear: false, isCosts: true}" [ngTemplateOutlet]="finalTableColumns"></ng-container>
+                <ng-container [ngTemplateOutletContext]="{key: 'totalCostOfSteamPerYear', unit: null, isPerYear: true, isCosts: true}" [ngTemplateOutlet]="finalTableColumns"></ng-container>
               </tr>
               </tbody>
             </table>
@@ -754,6 +752,7 @@
                 <th>{{'POSITION_NAME' | translate}}</th>
                 <th>{{'CURRENT' | translate}}</th>
                 <th>{{'POTENTIAL' | translate}}</th>
+                <th></th>
               </tr>
               </thead>
               <tbody>
@@ -794,40 +793,40 @@
           </thead>
           <tbody>
           <tr>
-            <td>Hours operation</td>
-            <td>8736 hrs/yr</td>
-            <td>8736 hrs/yr</td>
+            <td>{{'HOURS_OF_OPERATION' | translate}}</td>
+            <td *ngIf="current?.thPerY; else emptyCol">{{current?.thPerY | number: '0.0-0'}} {{'HRS_FSLASH_YEAR' | translate}}</td>
+            <td *ngIf="potential?.thPerY; else emptyCol">{{potential?.thPerY | number: '0.0-0'}} {{'HRS_FSLASH_YEAR' | translate}}</td>
             <td>–</td>
           </tr>
           <tr>
-            <td>Steam Generated</td>
-            <td>63,800 tonnes/yr</td>
-            <td>63,800 tonnes/yr</td>
+            <td>{{'STEAM_GENERATED' | translate}}</td>
+            <td *ngIf="current.mBoiler; else emptyCol">{{current.mBoiler | number: '0.0-2'}} {{units[current.mBoilerUnit]}}</td>
+            <td *ngIf="potential.mBoiler; else emptyCol">{{potential.mBoiler | number: '0.0-2'}} {{units[potential.mBoilerUnit]}}</td>
             <td>–</td>
           </tr>
           <tr>
-            <td>Fuel</td>
-            <td>Natural Gas</td>
-            <td>Natural Gas</td>
+            <td>{{'FUEL' | translate}}</td>
+            <td>{{fuelTypeList[current?.fuelId] | translate}}</td>
+            <td>{{fuelTypeList[potential?.fuelId] | translate}}</td>
             <td>–</td>
           </tr>
           <tr>
-            <td>Cost of steam / year</td>
-            <td>£1,628,212 /yr</td>
-            <td>£1,530,157 /yr</td>
-            <td>£98,055 /yr</td>
+            <td>{{'COST_OF_STEAM_FSLASH_YEAR' | translate}}</td>
+            <td *ngIf="current.totalCostOfSteamPerYear; else emptyCol">{{currency}}{{current.totalCostOfSteamPerYear | number: '0.0-2'}} /{{'YR' | translate}}</td>
+            <td *ngIf="potential.totalCostOfSteamPerYear; else emptyCol">{{currency}}{{potential.totalCostOfSteamPerYear | number: '0.0-2'}} /{{'YR' | translate}}</td>
+            <td *ngIf="current.totalCostOfSteamPerYear && potential.totalCostOfSteamPerYear; else emptyCol">{{currency}}{{(current.totalCostOfSteamPerYear - potential.totalCostOfSteamPerYear) | number: '0.0-2'}} /{{'YR' | translate}}</td>
           </tr>
           <tr>
-            <td>Cost of steam / tonne</td>
-            <td>£25.52 /tonne</td>
-            <td>£23.98 /tonne</td>
-            <td>£1,54 /tonne</td>
+            <td>{{'COST_OF_STEAM_FSLASH_TONNE' | translate}}</td>
+            <td *ngIf="current.totalCostOfSteamPerTonne; else emptyCol">{{currency}}{{current.totalCostOfSteamPerTonne | number: '0.0-2'}} /{{units[current.totalCostOfSteamPerTonneUnit]}}</td>
+            <td *ngIf="potential.totalCostOfSteamPerTonne; else emptyCol">{{currency}}{{potential.totalCostOfSteamPerTonne | number: '0.0-2'}} /{{units[potential.totalCostOfSteamPerTonneUnit]}}</td>
+            <td *ngIf="current.totalCostOfSteamPerTonne && potential.totalCostOfSteamPerTonne; else emptyCol">{{currency}}{{(current.totalCostOfSteamPerTonne - potential.totalCostOfSteamPerTonne) | number: '0.0-2'}} /{{units[potential.totalCostOfSteamPerTonneUnit]}}</td>
           </tr>
           <tr>
-            <td>Cost of steam / kWh</td>
-            <td>£0.030 /kWh</td>
-            <td>£0.029 /kWh</td>
-            <td>£0,001 /kWh</td>
+            <td>{{'COST_OF_STEAM_FSLASH_KWH' | translate}}</td>
+            <td *ngIf="current.totalCostOfSteamPerkWhOfFuel; else emptyCol">{{currency}}{{current.totalCostOfSteamPerkWhOfFuel | number: '0.0-3'}} /{{'UNIT_KWH' | translate}}</td>
+            <td *ngIf="potential.totalCostOfSteamPerkWhOfFuel; else emptyCol">{{currency}}{{potential.totalCostOfSteamPerkWhOfFuel | number: '0.0-3'}} /{{'UNIT_KWH' | translate}}</td>
+            <td *ngIf="current.totalCostOfSteamPerkWhOfFuel && potential.totalCostOfSteamPerkWhOfFuel; else emptyCol">{{currency}}{{(current.totalCostOfSteamPerkWhOfFuel - potential.totalCostOfSteamPerkWhOfFuel) | number: '0.0-3'}} /{{'UNIT_KWH' | translate}}</td>
           </tr>
           </tbody>
         </table>
@@ -853,36 +852,40 @@
           </thead>
           <tbody>
           <tr>
-            <td>Fuel cunsumed</td>
-            <td>3.02 Gj/tonne</td>
-            <td>192,702 Gj/yr</td>
-            <td>2.95 Gj/tonne</td>
-            <td>187,878 Gj/yr</td>
-            <td>4,828 Gj/yr</td>
+            <td>{{'FUEL_CONSUMED' | translate}}</td>
+            <td *ngIf="current?.fuelConsumptionPerYear && current?.mBoiler; else emptyCol">{{(current.fuelConsumptionPerYear * 0.0036) / current.mBoiler | number: '0.0-7'}} Gj/tonne</td>
+            <td *ngIf="current?.fuelConsumptionPerYear; else emptyCol">{{current.fuelConsumptionPerYear * 0.0036 | number: '0.0-7'}} Gj/{{'YR' | translate}}</td>
+            <td *ngIf="potential?.fuelConsumptionPerYear && potential?.mBoiler; else emptyCol">{{(potential.fuelConsumptionPerYear * 0.0036) / potential.mBoiler | number: '0.0-7'}} Gj/tonne</td>
+            <td *ngIf="potential?.fuelConsumptionPerYear; else emptyCol">{{potential.fuelConsumptionPerYear * 0.0036 | number: '0.0-7'}} Gj/{{'YR' | translate}}</td>
+            <td *ngIf="current?.fuelConsumptionPerYear && potential?.fuelConsumptionPerYear">{{(current.fuelConsumptionPerYear * 0.0036) - (potential.fuelConsumptionPerYear * 0.0036) | number: '0.0-7'}} Gj/{{'YR' | translate}}</td>
           </tr>
           <tr>
-            <td>CO2 emitted</td>
-            <td>0.16 tonne/tonne</td>
-            <td>9,896 tonne/yr</td>
-            <td>0,15 tonne/tonne</td>
-            <td>9,649 tonne/yr</td>
-            <td>247 tonnes/yr</td>
+            <td>{{'CO2_EMITTED' | translate}}</td>
+            <td *ngIf="current?.tonnesOfCO2 && current?.mBoiler; else emptyCol">{{(current.tonnesOfCO2 / current.mBoiler) | number: '0.0-2'}} {{units[current.tonnesOfCO2Unit]}}/tonne</td>
+            <td *ngIf="current?.tonnesOfCO2; else emptyCol">{{current.tonnesOfCO2 | number: '0.0-2'}} {{units[current?.tonnesOfCO2Unit]}}/{{'YR' | translate}}</td>
+            <td *ngIf="potential?.tonnesOfCO2 && potential?.mBoiler; else emptyCol">{{(potential.tonnesOfCO2 / potential.mBoiler) | number: '0.0-2'}} {{units[potential.tonnesOfCO2Unit]}}/tonne</td>
+            <td *ngIf="potential?.tonnesOfCO2; else emptyCol">{{potential.tonnesOfCO2 | number: '0.0-2'}} {{units[current?.tonnesOfCO2Unit]}}/{{'YR' | translate}}</td>
+            <td *ngIf="current?.tonnesOfCO2; else emptyCol">{{(current.tonnesOfCO2 - potential?.tonnesOfCO2 || 0) | number: '0.0-2'}} {{units[current?.tonnesOfCO2Unit]}}/{{'YR' | translate}}</td>
           </tr>
           <tr>
-            <td>Water Consumed</td>
-            <td>0.57 m3/tonne</td>
-            <td>36,596 m3/yr</td>
-            <td>0,18 m3/tonne</td>
-            <td>11,639 m3/yr</td>
-            <td>24,957 m3/yr</td>
+            <td>{{'WATER_CONSUMED' | translate}}</td>
+            <td *ngIf="current?.boilerHouseWaterFlowTotal && current.mBoiler; else emptyCol">{{(current.boilerHouseWaterFlowTotal / current.mBoiler) | number: '0.0-2'}} {{units[current.boilerHouseWaterFlowTotalUnit]}}/tonne</td>
+            <td *ngIf="current?.boilerHouseWaterFlowTotal; else emptyCol">{{current.boilerHouseWaterFlowTotal | number: '0.0-2'}} {{units[current.boilerHouseWaterFlowTotalUnit]}}/{{'YR' | translate}}</td>
+            <td *ngIf="potential?.boilerHouseWaterFlowTotal && potential?.mBoiler; else emptyCol">{{(potential.boilerHouseWaterFlowTotal / potential.mBoiler) | number: '0.0-2'}} {{units[potential.boilerHouseWaterFlowTotalUnit]}}/tonne</td>
+            <td *ngIf="potential?.boilerHouseWaterFlowTotal; else emptyCol">{{potential.boilerHouseWaterFlowTotal | number: '0.0-2'}} {{units[potential.boilerHouseWaterFlowTotalUnit]}}/{{'YR' | translate}}</td>
+            <td *ngIf="current?.boilerHouseWaterFlowTotal && current.mBoiler && potential.mBoiler; else emptyCol">
+              {{(current.boilerHouseWaterFlowTotal - potential.boilerHouseWaterFlowTotal || 0) | number: '0.0-2'}} {{units[potential?.boilerHouseWaterFlowTotalUnit]}}/{{'YR' | translate}}
+            </td>
           </tr>
           <tr>
-            <td>Effluent Consumed</td>
-            <td>0.46 m3/tonne</td>
-            <td>29,277 m3/yr</td>
-            <td>0.25 m3/tonne</td>
-            <td>9,311 m3/yr</td>
-            <td>19,966 m3/yr</td>
+            <td>{{'EFFLUENT_CONSUMED' | translate}}</td>
+            <td *ngIf="current?.boilerHouseTotalVolumeOfWaterEffluent && current.mBoiler; else emptyCol">{{(current.boilerHouseTotalVolumeOfWaterEffluent / current.mBoiler) | number: '0.0-2'}} {{units[current.boilerHouseTotalVolumeOfWaterEffluentUnit]}}/tonne</td>
+            <td *ngIf="current?.boilerHouseTotalVolumeOfWaterEffluent; else emptyCol">{{current.boilerHouseTotalVolumeOfWaterEffluent | number: '0.0-2'}} {{units[current.boilerHouseTotalVolumeOfWaterEffluentUnit]}}/{{'YR' | translate}}</td>
+            <td *ngIf="potential?.boilerHouseTotalVolumeOfWaterEffluent && potential?.mBoiler; else emptyCol">{{(potential.boilerHouseTotalVolumeOfWaterEffluent / potential.mBoiler) | number: '0.0-2'}} {{units[potential.boilerHouseTotalVolumeOfWaterEffluentUnit]}}/tonne</td>
+            <td *ngIf="potential?.boilerHouseTotalVolumeOfWaterEffluent; else emptyCol">{{potential.boilerHouseTotalVolumeOfWaterEffluent | number: '0.0-2'}} {{units[potential.boilerHouseTotalVolumeOfWaterEffluentUnit]}}/{{'YR' | translate}}</td>
+            <td *ngIf="current?.boilerHouseTotalVolumeOfWaterEffluent; else emptyCol">
+              {{(current.boilerHouseTotalVolumeOfWaterEffluent - potential.boilerHouseTotalVolumeOfWaterEffluent || 0) | number: '0.0-2'}} {{units[potential?.boilerHouseTotalVolumeOfWaterEffluentUnit]}}/{{'YR' | translate}}
+            </td>
           </tr>
           </tbody>
         </table>
@@ -899,55 +902,35 @@
           </thead>
           <tbody>
           <tr>
-            <td class="orange text-uppercase">
-              <i class="sga-co2-emissions"></i>
-              co2 emissions
-            </td>
-            <td>3.02 Gj/tonne</td>
+            <td class="orange text-uppercase"><i class="sga-co2-emissions"></i>{{'CO2_EMISSIONS' | translate}}</td>
+            <td *ngIf="current?.tonnesOfCO2 && current?.mBoiler; else emptyCol">{{(current.tonnesOfCO2 / current.mBoiler) | number: '0.0-2'}} {{units[current.tonnesOfCO2Unit]}}/{{'YR' | translate}}</td>
             <td class="text-left">
-              <img class="thumb-img"
-                   src="/assets/img/steam_generation/energy_saving/co2-emissions.png"
-                   alt="co2 emissions">
-              1,341,111 kWh
+              <img class="thumb-img" src="/assets/img/steam_generation/energy_saving/thermal-energy.png" alt="Thermal energy">
+              {{current?.tonnesOfCO2 ? ((current.tonnesOfCO2 - potential.tonnesOfCO2 || 0) * 45.46 | number: '0.0-0') : 0}} {{'TREES' | translate}}
             </td>
           </tr>
           <tr>
-            <td class="green text-uppercase">
-              <i class="sga-thermal-energy"></i>
-              Thermal energy
-            </td>
-            <td>0.16 tonne/yr</td>
+            <td class="green text-uppercase"><i class="sga-thermal-energy"></i>{{'THERMAL_ENERGY' | translate}}</td>
+            <td *ngIf="current?.fuelConsumptionPerYear && current?.mBoiler; else emptyCol">{{(current.fuelConsumptionPerYear * 0.0036) / current.mBoiler | number: '0.0-7'}} Gj/tonne</td>
             <td class="text-left">
-              <img class="thumb-img"
-                   src="/assets/img/steam_generation/energy_saving/thermal-energy.png"
-                   alt="Thermal energy">
-              11,227 trees
+              <img class="thumb-img" src="/assets/img/steam_generation/energy_saving/co2-emissions.png" alt="co2 emissions">
+              {{current?.fuelConsumptionPerYear ? (current.fuelConsumptionPerYear | number: '0.0-2') : 0}} {{units[current?.fuelConsumptionPerYearUnit]}}
             </td>
           </tr>
           <tr>
-            <td class="steel text-uppercase">
-              <i class="sga-water-consumption"></i>
-              water consumption
-            </td>
-            <td>0.57 m3/tonne</td>
+            <td class="steel text-uppercase"><i class="sga-water-consumption"></i>{{'WATER_CONSUMPTION' | translate}}</td>
+            <td *ngIf="current?.boilerHouseWaterFlowTotal && current?.mBoiler; else emptyCol">{{(current.boilerHouseWaterFlowTotal / current.mBoiler) | number: '0.0-2'}} {{units[current.boilerHouseWaterFlowTotalUnit]}}/tonne</td>
             <td class="text-left">
-              <img class="thumb-img"
-                   src="/assets/img/steam_generation/energy_saving/water-consumption.png"
-                   alt="water consumption">
-              10 Olympic pools
+              <img class="thumb-img" src="/assets/img/steam_generation/energy_saving/water-consumption.png" alt="water consumption">
+              {{current?.boilerHouseWaterFlowTotal / 2500 | number: '0.0-2'}} {{'OLYMPIC_POOLS' | translate}}
             </td>
           </tr>
           <tr>
-            <td class="blue text-uppercase">
-              <i class="sga-water-effluent"></i>
-              water effluent
-            </td>
-            <td>0.46 m3/tonne</td>
+            <td class="blue text-uppercase"><i class="sga-water-effluent"></i>{{'WATER_EFFLUENT' | translate}}</td>
+            <td *ngIf="current?.boilerHouseTotalVolumeOfWaterEffluent && current?.mBoiler; else emptyCol">{{(current.boilerHouseTotalVolumeOfWaterEffluent / current.mBoiler) | number: '0.0-2'}} {{units[current.boilerHouseTotalVolumeOfWaterEffluentUnit]}}/tonne</td>
             <td class="text-left">
-              <img class="thumb-img"
-                   src="/assets/img/steam_generation/energy_saving/water-effluent.png"
-                   alt="water effluent">
-              8 Olympic pools
+              <img class="thumb-img" src="/assets/img/steam_generation/energy_saving/water-effluent.png" alt="water effluent">
+              {{current?.boilerHouseTotalVolumeOfWaterEffluent / 2500 | number: '0.0-2'}} {{'OLYMPIC_POOLS' | translate}}
             </td>
           </tr>
           </tbody>
