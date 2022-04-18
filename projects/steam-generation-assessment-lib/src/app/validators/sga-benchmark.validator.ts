@@ -44,13 +44,18 @@ export const validateBenchmarkInput = (service: SgaApiService, isNull?: boolean)
         if (res && !res.isValid) {
           const error = res.errors && res.errors[0] && res.errors[0].errorMessage;
           const customState = res.errors && res.errors[0] && res.errors[0].customState;
-          const message = customState && Math.round(customState * 100) / 100 || res.error && res.error.title || 'Unknown error';
+          let message = res.error && res.error.title || '';
+
+          if (customState || customState === 0) {
+            message = `${Math.round(customState * 100) / 100}`;
+          }
+
           return { error, message };
-        } else {
-          return null;
         }
+
+        return null;
       }),
-      catchError((err: HttpErrorResponse) => err && of({message: err.error && err.error.title || 'Unknown error'})),
+      catchError((err: HttpErrorResponse) => err && of({message: err.error && err.error.title || ''})),
     );
   };
 
@@ -69,6 +74,7 @@ export const benchmarkCalculationValidator = (res, form: FormGroup, {nativeEleme
           firstErrorFieldName = controlError.name;
         }
         control.setErrors({error: controlError.error});
+        control.markAsTouched({onlySelf: true});
       }
     }
 

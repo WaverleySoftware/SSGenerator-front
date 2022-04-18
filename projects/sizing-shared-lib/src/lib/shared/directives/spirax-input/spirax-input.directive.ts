@@ -142,20 +142,42 @@ export class SpiraxInputDirective implements OnInit, OnChanges, OnDestroy {
     const errors = control && control.errors || this.error;
 
     if (!errors) { return null; }
-
     if (typeof errors === 'string') { return errors; }
+    if (errors  && errors.required) { return null; }
 
-    if (errors.required) {
-      return this.translatePipe.transform('REQUIRED');
-    }
+    let error: string;
+    let attemptValue: any;
+    let errorMessage: string = null;
+
     if (errors.min) {
-      return this.translatePipe.transform(errors.message || 'THE_VALUE_IS_BELOW_THE_MINIMUM_ALLOWED_MESSAGE') + ` ${errors.min.min || ''}`;
+      error = errors.message || 'THE_VALUE_IS_BELOW_THE_MINIMUM_ALLOWED_MESSAGE';
+      attemptValue =  errors.min && errors.min.min;
     }
     if (errors.max) {
-      return this.translatePipe.transform(errors.message || 'THE_VALUE_IS_BELOW_THE_MAXIMUM_ALLOWED_MESSAGE') + ` ${errors.max.max || ''}`;
+      error = errors.message || 'THE_VALUE_IS_BELOW_THE_MAXIMUM_ALLOWED_MESSAGE';
+      attemptValue =  errors.max && errors.max.max;
+    }
+    if (errors.error) {
+      error = errors.error;
+    }
+    if (errors.message) {
+      attemptValue = errors.message;
     }
 
-    return errors.error ? this.translatePipe.transform(errors.error) + ' ' + (errors.message || '') : (errors.message || '');
+    if (error) {
+      errorMessage = this.translatePipe.transform(error);
+
+      if (attemptValue) {
+        if (!isNaN(attemptValue) && this.unitsStr && this.unitsStr[0]) {
+          const units = this.unitsStr[1] ? `${this.unitsStr[0]}/${this.unitsStr[1]}` : this.unitsStr[0];
+          errorMessage += ` ${attemptValue} ${units || ''}`
+        } else {
+          errorMessage += ` ${attemptValue}`
+        }
+      }
+    }
+
+    return errorMessage;
   }
 
   private generateUnits(leftUnit: string, rightUnit: string, wrapper?: HTMLElement): HTMLElement {

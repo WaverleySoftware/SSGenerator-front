@@ -94,11 +94,11 @@ export class SgaInputParametersComponent {
     if (isChange || isChange === undefined) {
       if (typeof enable === 'string') {
         const control = this.formGroup.get(`benchmarkInputs.${enable}`);
-        if (control && control.disabled) { control.enable({onlySelf: true}); }
+        if (control && control.disabled) { control.enable(); }
       } else if (Array.isArray(enable)) {
         for (const field of enable) {
           const control = this.formGroup.get(`benchmarkInputs.${field}`);
-          if (control && control.disabled) { control.enable({onlySelf: true}); }
+          if (control && control.disabled) { control.enable(); }
         }
       }
     }
@@ -206,6 +206,26 @@ export class SgaInputParametersComponent {
       this.structure.boiler_house_parameters.panels.tds_blowdown.status = tabIndex === 2;
       this.structure.boiler_house_parameters.panels.water_treatment.status = tabIndex === 3;
       this.structure.boiler_house_parameters.panels.feedwater_and_condensate.status = tabIndex === 4;
+    }
+  }
+
+  clearFieldsError(fields: string | string[]) {
+    const clearErrFn = (name: string) => {
+      const control = this.formGroup.get(`benchmarkInputs.${name}`);
+
+      if (control && control.errors) {
+        control.setErrors(null);
+      }
+    }
+
+    if (typeof fields === 'string') {
+      clearErrFn(fields);
+    }
+
+    if (Array.isArray(fields)) {
+      for (const field of fields) {
+        clearErrFn(field);
+      }
     }
   }
 }

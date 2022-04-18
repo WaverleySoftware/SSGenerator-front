@@ -67,7 +67,7 @@
                        required>
 
                 <spirax-toggle formControlName="fuelQtyPerYearIsKnown"
-                               (valueChange)="toggleInput($event && 'costOfFuelPerYear', !$event && ['costOfFuelPerYear', 'fuelConsumptionPerYear'])"
+                               (valueChange)="toggleInput('costOfFuelPerYear', ['costOfFuelPerYear', 'fuelConsumptionPerYear'], null, $event)"
                                label="IS_FUEL_CONSUMPTION_MEASURED">
                   <div yes>
                     <input [label]="'FUEL_COSTS_PER_YEAR' | translate"
@@ -107,7 +107,7 @@
                           [titleTooltip]="cO2EmissionTooltip" background="#EDF2F4">
               <spirax-toggle body
                              formControlName="isCo2OrCarbonEmissionsTaxed"
-                             (valueChange)="toggleInput($event && ['carbonTaxLevyCostPerUnit'], !$event && ['carbonTaxLevyCostPerUnit', 'costOfCo2PerUnitMass'])"
+                             (valueChange)="toggleInput('carbonTaxLevyCostPerUnit', ['carbonTaxLevyCostPerUnit', 'costOfCo2PerUnitMass'], null, $event)"
                              label="ARE_CO2_OR_CARBON_EMISSIONS_TAXED">
                 <div yes>
                   <input [label]="'CARBON_TAX_LEVY_COST_PER_UNIT' | translate"
@@ -425,6 +425,7 @@
                       <input [label]="'MAXIMUM_ALLOWABLE_BOILER_TDS' | translate"
                              [unitsStr]="[sizingUnits['BoilerHouseTDSUnits']?.unit]"
                              [value]="getValue('boilerMaxTds') | decimalPlace: sizingUnits['BoilerHouseTDSUnits']?.decimal"
+                             (ngModelChange)="clearFieldsError('boilerAverageTds')"
                              [sga-decimal-places]="sizingUnits['BoilerHouseTDSUnits']?.decimal"
                              formControlName="boilerMaxTds"
                              type="number"
@@ -450,6 +451,7 @@
                       <input [label]="'TEMPERATURE_OF_MAKE_UP_WATER' | translate"
                              [unitsStr]="[sizingUnits['TemperatureUnit']?.unit]"
                              [value]="getValue('temperatureOfMakeupWater') | decimalPlace: sizingUnits['TemperatureUnit']?.decimal"
+                             (ngModelChange)="clearFieldsError('temperatureOfCondensateReturn')"
                              [sga-decimal-places]="sizingUnits['TemperatureUnit']?.decimal"
                              formControlName="temperatureOfMakeupWater"
                              type="number"
@@ -504,6 +506,7 @@
                       <input [label]="'TDS_OF_MAKEUP_WATER' | translate"
                              [unitsStr]="[sizingUnits['BoilerHouseTDSUnits']?.unit]"
                              [value]="getValue('tdsOfMakeupWater') | decimalPlace: sizingUnits['BoilerHouseTDSUnits']?.decimal"
+                             (ngModelChange)="clearFieldsError('boilerAverageTds')"
                              [sga-decimal-places]="sizingUnits['BoilerHouseTDSUnits']?.decimal"
                              formControlName="tdsOfMakeupWater"
                              type="number"
@@ -685,6 +688,7 @@
                       <input [label]="'TDS_OF_CONDENSATE_RETURN' | translate"
                              [unitsStr]="[sizingUnits['BoilerHouseTDSUnits']?.unit]"
                              [value]="getValue('tdsOfCondensateReturn') | decimalPlace: sizingUnits['BoilerHouseTDSUnits']?.decimal"
+                             (ngModelChange)="clearFieldsError('boilerAverageTds')"
                              [sga-decimal-places]="sizingUnits['BoilerHouseTDSUnits']?.decimal"
                              formControlName="tdsOfCondensateReturn"
                              type="number"

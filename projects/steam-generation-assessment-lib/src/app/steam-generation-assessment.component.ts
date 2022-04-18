@@ -20,11 +20,13 @@ import {
   ProcessInput,
   OutputGridRow,
   GetSizingJobRequest,
-  Preference
+  Preference,
+  User,
+  UserProfileService
 } from 'sizing-shared-lib';
 import { Subject, of, Observable, combineLatest } from "rxjs";
 import { tap } from "rxjs/operators/tap";
-import { distinctUntilChanged, filter, map, switchMap, takeUntil, first, mergeMap } from "rxjs/operators";
+import { distinctUntilChanged, filter, map, switchMap, takeUntil, first, mergeMap, catchError } from "rxjs/operators";
 import { TabsetComponent } from 'ngx-bootstrap';
 import { TabDirective } from 'ngx-bootstrap/tabs/tab.directive';
 import { SgaFormService } from './services/sga-form.service';
@@ -67,6 +69,7 @@ import { Unit } from 'sizing-shared-lib/lib/shared/units/unit.model';
 import { SGA_SIZING_UNITS_LIST } from "./utils/sga-sizing-units-list";
 import { simpleSgaDebounce } from "./utils/sga-debounce";
 import swal from "sweetalert";
+import { SgaSpecSheetInterface } from "./interfaces/sga-spec-sheet.interface";
 
 
 @Component({
@@ -78,6 +81,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   readonly moduleGroupId: number = 9;
   readonly moduleName: string = 'steamGenerationAssessment';
   private ngUnsubscribe = new Subject<void>();
+  public user: User;
   moduleId = 2;
   jobStatusId = 1;
   projectId: string;
@@ -99,11 +103,19 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   proposalVerticalChart: ChartBarDataInterface[];
   finalProposalHorizontalChart: ChartBarDataInterface[];
   requestLoading$ = this.apiService.requestLoading$;
+  currency: string;
   currency$ = this.preferenceService.sizingUnitPreferencesUpdate.pipe(
     filter((v) => v.updated.preference.name === 'BHCurrency'),
-    map(({updated}) => updated.preference.unitName)
+    map(({updated}) => {
+      this.currency = updated.preference.unitName;
+      return this.currency;
+    })
   );
   units: { [key: number]: string };
+  isSpecSheetEnabled: boolean = true; // Enable sidebar dropdown EXPORT_SPECIFICATION_SHEET
+  isTiEnabled: boolean; // Enable sidebar dropdown PRODUCT_TECHNICAL_INFORMATION_SHEET
+  showJobExportBtn: boolean; // Show sidebar dropdown btn EXPORT_JOB
+  userPreferences: Array<Preference>; // Language from user preferences
 
   @ViewChild('tabsRef', {static: true}) tabsRef: TabsetComponent;
 
@@ -121,7 +133,8 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     private translatePipe: TranslatePipe,
     private messagesService: MessagesService,
     private chartService: SgaChartService,
-    private projectsJobsService: ProjectsJobsService
+    private projectsJobsService: ProjectsJobsService,
+    private userProfileService: UserProfileService,
   ) {
     super();
 
@@ -136,7 +149,6 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
 
     const debouncedFunc = simpleSgaDebounce(() => {
       if (benchmarkInputsForm && benchmarkInputsForm.touched && benchmarkInputsForm.dirty) {
-        console.log(benchmarkInputsForm, '-----form touched')
         this.setDiscardModal(true);
       }
     }, 500);
@@ -145,7 +157,12 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       this.resetBenchmarkData();
       debouncedFunc();
     });
-
+    this.preferenceService.getUserPreferences().pipe(
+      mergeMap((preferences: Array<Preference>) => {
+        this.userPreferences = preferences;
+        return this.userProfileService.getUserDetails();
+      })
+    ).subscribe(user => this.user = user);
     this.loadJob({jobId: this.jobId, projectId: this.projectId}).pipe(
       takeUntil(this.ngUnsubscribe),
       switchMap((v) => v ? of(null) : this.createSizingPref()),
@@ -207,15 +224,67 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     return true;
   }
 
+  onPdfSubmit(): any {
+    // click on sidebar dropdown 'EXPORT_SPECIFICATION_SHEET'. Will work if 'isSpecSheetEnabled' = true
+    const langPref = this.userPreferences && this.userPreferences.find(m => m.name === 'SpecLanguage');
+    const request: SgaSpecSheetInterface = {
+      currency: this.currency,
+      userLanguage: langPref && langPref.value,
+      moduleId: this.moduleId,
+      customer: this.project.customerName || '-',
+      projectName: this.project.name || '-',
+      projectRef: this.project.projectReference || '-',
+      jobName: this.job.name || '-',
+      date: new Date().toDateString(),
+      sheet: 'No Sheet',
+      revisionNo: 'No Revision',
+      preparedBy: this.user.firstname + ' ' + this.user.lastname,
+      email: this.user.email,
+      telephone: this.user.telephone,
+      selectedUnits: {
+        yearUnit: "yr",
+        currencyUnit: this.currency,
+        energyUnit: "kWh",
+        smallWeightUnit: "kg",
+        weightUnit: "tonne",
+        emissionUnit: "tonne",
+        volumeUnit: "m³",
+        smallVolumetricFlowUnit: "m³/h",
+        smallVolumetricFlowUnitSelected: 76,
+        massFlowUnit: "tonne/h",
+        smallMassFlowUnit: "kg/h",
+        pressureUnit: "bar gauge",
+        temperatureUnit: "°C",
+        tdsUnit: "ppm",
+        fuelUnitSelected: "kWh",
+        specificEnergyUnit: "kcal/g",
+        fuelCalorificUnit: "kWh/kWh",
+      },
+      keyParametersChanged: null,
+      inputParameters: (this.sizingModuleForm.get('benchmarkInputs') as FormGroup).getRawValue(),
+      benchmarkCalculation: this.sizingModuleResults.benchmark,
+      proposalCalculation: null,
+    };
+
+    console.log({
+      user: this.user,
+      userPreferences: this.userPreferences,
+      request,
+      results: this.sizingModuleResults
+    }, '---onPdfSubmit---');
+
+    // this.apiService.getSgaSpecSheet(request).subscribe(response => {
+    //   window.open(`Api/reports/${this.moduleName}/DocGen/ReportViewer?id=` + response && response.sessionId);
+    // });
+  }
+
   onGetTiSheet(): any {
+    // click on sidebar dropdown 'PRODUCT_TECHNICAL_INFORMATION_SHEET'
+    // will work if 'isTiEnabled' = true
     return true;
   }
 
   onNewSizingForm(): any {
-    return true;
-  }
-
-  onPdfSubmit(): any {
     return true;
   }
 

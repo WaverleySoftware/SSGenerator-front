@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { BenchmarkInputsInterface } from '../interfaces/benchmarkInputs.interface';
-import { InputParametersFormInterface, ProposedSetupFormInterface } from '../interfaces/forms.interface';
+import { InputParametersFormInterface } from '../interfaces/forms.interface';
 import {
   SgaCalcBoilerEfficiencyReqInterface,
   SgaCalcBoilerEfficiencyResInterface,
@@ -119,5 +119,13 @@ export class SgaApiService {
 
   calculateProposal(data): Observable<{ messages: any[], proposal: any[] }> {
     return this.post<any>('calculate-proposal', data);
+  }
+
+  getSgaSpecSheet(docGen: any): Observable<any> {
+    this.changeLoading(true, 'getSgaSpecSheet', true);
+    return this.http.post<any>('Api/reports/steamGenerationAssessment/DocGen/CacheModel', docGen, {
+      headers: {"Content-Type": "application/json", Accept: "application/octet-stream"},
+      responseType: 'json' as 'json'
+    }).pipe(tap(()=>{},()=>{},()=>this.changeLoading(false, 'getSgaSpecSheet', true)));
   }
 }
