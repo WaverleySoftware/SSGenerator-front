@@ -73,7 +73,7 @@ export const benchmarkCalculationValidator = (res, form: FormGroup, {nativeEleme
         if (!firstErrorFieldName) {
           firstErrorFieldName = controlError.name;
         }
-        control.setErrors({error: controlError.error});
+        control.setErrors({error: controlError.error, message: error && error.customState});
         control.markAsTouched({onlySelf: true});
       }
     }

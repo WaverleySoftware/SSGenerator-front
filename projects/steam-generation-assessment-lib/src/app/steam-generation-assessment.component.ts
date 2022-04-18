@@ -70,6 +70,8 @@ import { SGA_SIZING_UNITS_LIST } from "./utils/sga-sizing-units-list";
 import { simpleSgaDebounce } from "./utils/sga-debounce";
 import swal from "sweetalert";
 import { SgaSpecSheetInterface } from "./interfaces/sga-spec-sheet.interface";
+import { generateKeyParametersChange } from "./utils/generate-keyParametersChange";
+import { SteamGenerationAssessmentService } from "./services/steam-generation-assessment.service";
 
 
 @Component({
@@ -135,6 +137,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     private chartService: SgaChartService,
     private projectsJobsService: ProjectsJobsService,
     private userProfileService: UserProfileService,
+    private sgaService: SteamGenerationAssessmentService,
   ) {
     super();
 
@@ -244,23 +247,23 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       selectedUnits: {
         yearUnit: "yr",
         currencyUnit: this.currency,
-        energyUnit: "kWh",
-        smallWeightUnit: "kg",
-        weightUnit: "tonne",
-        emissionUnit: "tonne",
-        volumeUnit: "m³",
-        smallVolumetricFlowUnit: "m³/h",
-        smallVolumetricFlowUnitSelected: 76,
-        massFlowUnit: "tonne/h",
-        smallMassFlowUnit: "kg/h",
-        pressureUnit: "bar gauge",
-        temperatureUnit: "°C",
-        tdsUnit: "ppm",
-        fuelUnitSelected: "kWh",
+        energyUnit: this.sgaService.getPreferenceStrUnit('BoilerHouseEnergyUnits'),
+        smallWeightUnit: this.sgaService.getPreferenceStrUnit('WeightUnit'),
+        weightUnit: this.sgaService.getPreferenceStrUnit('BoilerHouseWeightUnits'),
+        emissionUnit: this.sgaService.getPreferenceStrUnit('BoilerHouseEmissionUnits'),
+        volumeUnit: this.sgaService.getPreferenceStrUnit('BoilerHouseVolumeUnits'),
+        smallVolumetricFlowUnit: this.sgaService.getPreferenceStrUnit('BoilerHouseSmallVolumetricFlowUnits'),
+        smallVolumetricFlowUnitSelected: this.sizingModuleForm.get('selectedUnits.smallVolumetricFlowUnitSelected').value,
+        massFlowUnit: this.sgaService.getPreferenceStrUnit('BoilerHouseMassFlowUnits'),
+        smallMassFlowUnit: this.sgaService.getPreferenceStrUnit('BoilerHouseSmallMassFlowUnits'),
+        pressureUnit: this.sgaService.getPreferenceStrUnit('PressureUnit'),
+        temperatureUnit: this.sgaService.getPreferenceStrUnit('TemperatureUnit'),
+        tdsUnit: this.sgaService.getPreferenceStrUnit('BoilerHouseTDSUnits'),
+        fuelUnitSelected: 'kWh',
         specificEnergyUnit: "kcal/g",
         fuelCalorificUnit: "kWh/kWh",
       },
-      keyParametersChanged: null,
+      keyParametersChanged: generateKeyParametersChange(this.sizingModuleForm.get('benchmarkInputs') as FormGroup),
       inputParameters: (this.sizingModuleForm.get('benchmarkInputs') as FormGroup).getRawValue(),
       benchmarkCalculation: this.sizingModuleResults.benchmark,
       proposalCalculation: null,
@@ -270,7 +273,8 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       user: this.user,
       userPreferences: this.userPreferences,
       request,
-      results: this.sizingModuleResults
+      results: this.sizingModuleResults,
+      sizingUnitPreferences: this.preferenceService.sizingUnitPreferences
     }, '---onPdfSubmit---');
 
     // this.apiService.getSgaSpecSheet(request).subscribe(response => {

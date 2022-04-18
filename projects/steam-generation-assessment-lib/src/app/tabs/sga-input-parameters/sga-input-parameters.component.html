@@ -506,7 +506,7 @@
                       <input [label]="'TDS_OF_MAKEUP_WATER' | translate"
                              [unitsStr]="[sizingUnits['BoilerHouseTDSUnits']?.unit]"
                              [value]="getValue('tdsOfMakeupWater') | decimalPlace: sizingUnits['BoilerHouseTDSUnits']?.decimal"
-                             (ngModelChange)="clearFieldsError('boilerAverageTds')"
+                             (ngModelChange)="clearFieldsError(['boilerAverageTds', 'tdsOfFeedwaterInFeedtank'])"
                              [sga-decimal-places]="sizingUnits['BoilerHouseTDSUnits']?.decimal"
                              formControlName="tdsOfMakeupWater"
                              type="number"
