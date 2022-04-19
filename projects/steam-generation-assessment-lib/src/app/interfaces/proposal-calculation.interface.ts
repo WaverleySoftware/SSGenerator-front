@@ -1,24 +1,45 @@
 import { ProposedFeaturesInterface } from "./proposed-features.interface";
 import { ProposedSetupInterface } from "./proposed-setup.interface";
+import { BenchmarkResBenchmarkInterface } from "./calc-benchmark-res.interface";
 
 export interface ProposalCalculationInterface {
-  "increaseBoilerEfficiency": ProposalCalculationItemInterface,
-  "increaseCondensateReturn": ProposalCalculationItemInterface,
-  "addWaterTreatmentPlant": ProposalCalculationItemInterface,
-  "addTdsInstalled": ProposalCalculationItemInterface,
-  "flashRecoveryAndTdsControlsInstalled": ProposalCalculationItemInterface,
-  "heatExchangerFlashRecoveryAndTdsControlsInstalled": ProposalCalculationItemInterface,
-  "addDirectSteamInjectionToFeedtank": ProposalCalculationItemInterface,
-  "overallImpactOnProposal": ProposalCalculationItemInterface,
-  "proposalSetup": ProposedSetupInterface,
-  "proposalFeatures": ProposedFeaturesInterface,
-  "finalImpactOfIncreasingBoilerEfficiency": ProposalCalculationItemInterface,
-  "finalImpactOfIncreasingCondensateReturned": ProposalCalculationItemInterface,
-  "finalImpactOfChangingWaterTreatment": ProposalCalculationItemInterface,
-  "finalImpactOfAddingAutoTds": ProposalCalculationItemInterface,
-  "finalImpactOfAddingAutoTDSAndFlashRecovery": ProposalCalculationItemInterface,
-  "finalImpactOfAddingAutoTDSFlashRecoveryAndHeatWxchanger": ProposalCalculationItemInterface,
-  "finalImpactOfAddingDsiToFeedtank": ProposalCalculationItemInterface
+  increaseBoilerEfficiency: ProposalCalculationItemInterface, // improvedBoilerEfficiency
+  increaseCondensateReturn: ProposalCalculationItemInterface, // condensateReturnPlusCondensateTemperature
+  addWaterTreatmentPlant: ProposalCalculationItemInterface, // changingWaterTreatment
+  addTdsInstalled: ProposalCalculationItemInterface, // addingAutomaticTdsControl
+  flashRecoveryAndTdsControlsInstalled: ProposalCalculationItemInterface, // addingFlashHeatRecoveryToAutoTdsControl
+  heatExchangerFlashRecoveryAndTdsControlsInstalled: ProposalCalculationItemInterface, // addingHeatExchangerToHeatRecoveryToTdsBlowdown
+  addDirectSteamInjectionToFeedtank: ProposalCalculationItemInterface, // effectOfDsiOnHotwell
+  overallImpactOnProposal: BenchmarkResBenchmarkInterface, // overallImpactOnProposalsSelectedOnBoilerHouse
+  proposalSetup: ProposedSetupInterface, // results.proposalInputs
+  proposalFeatures: ProposedFeaturesInterface, // results.features
+  finalImpactOfIncreasingBoilerEfficiency: ProposalCalculationItemInterface, // finalImpactOfIncreasingBoilerEfficiency
+  finalImpactOfIncreasingCondensateReturned: ProposalCalculationItemInterface, // finalImpactOfIncreasingCondensateReturned
+  finalImpactOfChangingWaterTreatment: ProposalCalculationItemInterface, // finalImpactOfChangingWaterTreatment
+  finalImpactOfAddingAutoTds: ProposalCalculationItemInterface, // finalImpactOfAddingAutoTds
+  finalImpactOfAddingAutoTDSAndFlashRecovery: ProposalCalculationItemInterface, // finalImpactOfAddingAutoTDSAndFlashRecovery
+  finalImpactOfAddingAutoTDSFlashRecoveryAndHeatWxchanger: ProposalCalculationItemInterface, // finalImpactOfAddingAutoTDSFlashRecoveryAndHeatWxchanger
+  finalImpactOfAddingDsiToFeedtank: ProposalCalculationItemInterface // finalImpactOfAddingDsiToFeedtank
+}
+
+export interface ProposalCalculationReducedResponseInterface {
+  addingAutomaticTdsControl: ProposalCalculationItemInterface;
+  addingFlashHeatRecoveryToAutoTdsControl: ProposalCalculationItemInterface;
+  addingHeatExchangerToHeatRecoveryToTdsBlowdown: ProposalCalculationItemInterface;
+  benchmark: BenchmarkResBenchmarkInterface;
+  changingWaterTreatment: ProposalCalculationItemInterface;
+  condensateReturnPlusCondensateTemperature: ProposalCalculationItemInterface;
+  effectOfDsiOnHotwell: ProposalCalculationItemInterface;
+  finalImpactOfAddingAutoTds: ProposalCalculationItemInterface;
+  finalImpactOfAddingAutoTDSAndFlashRecovery: ProposalCalculationItemInterface;
+  finalImpactOfAddingAutoTDSFlashRecoveryAndHeatWxchanger: ProposalCalculationItemInterface;
+  finalImpactOfAddingDsiToFeedtank: ProposalCalculationItemInterface;
+  finalImpactOfChangingWaterTreatment: ProposalCalculationItemInterface;
+  finalImpactOfIncreasingBoilerEfficiency: ProposalCalculationItemInterface;
+  finalImpactOfIncreasingCondensateReturned: ProposalCalculationItemInterface;
+  impactOfProposalsCombined: ProposalCalculationItemInterface;
+  improvedBoilerEfficiency: ProposalCalculationItemInterface;
+  overallImpactOnProposalsSelectedOnBoilerHouse: BenchmarkResBenchmarkInterface;
 }
 
 export interface ProposalCalculationItemInterface {

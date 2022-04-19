@@ -25,6 +25,7 @@ import { tap } from 'rxjs/operators/tap';
 import { catchError } from 'rxjs/operators';
 import { ProposedSetupInterface } from '../interfaces/proposed-setup.interface';
 import { SteamGeneratorSelectedUnitsInterface } from "../interfaces/steam-generation-form.interface";
+import { SgaSpecSheetInterface } from "../interfaces/sga-spec-sheet.interface";
 
 @Injectable()
 export class SgaApiService {
@@ -121,9 +122,9 @@ export class SgaApiService {
     return this.post<any>('calculate-proposal', data);
   }
 
-  getSgaSpecSheet(docGen: any): Observable<any> {
+  getSgaSpecSheet(data: SgaSpecSheetInterface): Observable<any> {
     this.changeLoading(true, 'getSgaSpecSheet', true);
-    return this.http.post<any>('Api/reports/steamGenerationAssessment/DocGen/CacheModel', docGen, {
+    return this.http.post<any>('SteamGenerator/DocGen/CacheModel', data, {
       headers: {"Content-Type": "application/json", Accept: "application/octet-stream"},
       responseType: 'json' as 'json'
     }).pipe(tap(()=>{},()=>{},()=>this.changeLoading(false, 'getSgaSpecSheet', true)));

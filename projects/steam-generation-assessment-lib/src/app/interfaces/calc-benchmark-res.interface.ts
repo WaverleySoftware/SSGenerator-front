@@ -1,10 +1,12 @@
+import { ProposalCalculationInterface } from "./proposal-calculation.interface";
 
 export interface CalcBenchmarkResInterface {
   benchmark: BenchmarkResBenchmarkInterface;
   features: BenchmarkResFeaturesInterface;
   messages?: string[] | any[];
   proposedSetup: BenchmarkResProposedSetupInterface;
-  overallProposal?: Partial<BenchmarkResBenchmarkInterface>
+  overallProposal?: BenchmarkResBenchmarkInterface;
+  proposalCalculation?: ProposalCalculationInterface;
 }
 
 export interface BenchmarkResBenchmarkInterface {

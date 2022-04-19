@@ -1,6 +1,7 @@
 import { ProcessInput } from "sizing-shared-lib";
 import { ChartBarDataInterface } from "../interfaces/chart-bar.interface";
 import { FormGroup } from "@angular/forms";
+import { ProposalCalculationInterface } from "../interfaces/proposal-calculation.interface";
 
 const convertValue = (v: any) => v === 'false' ? false : v === 'true' ? true : isNaN(Number(v)) ? v : Number(v);
 
@@ -44,6 +45,22 @@ export const parseSavedData = (data: ProcessInput[]): {[key: string]: any} => {
   }
 
   return data.reduce((acc, v) => ({...acc, [v.name]: convertValue(v.value)}), {});
+}
+
+export const parseProposalCalcSavedData = (data: {[key: string]: ProcessInput[]}, baseKey = 'proposalCalculation'): ProposalCalculationInterface => {
+  let result = null;
+
+  for (const key of Object.keys(data)) {
+    if (key.includes('.')) {
+      const [parentKey, childKey] = key.split('.');
+
+      if (parentKey === baseKey && childKey) {
+        result = { ...result, [childKey]: parseSavedData(data[key]) };
+      }
+    }
+  }
+
+  return result as ProposalCalculationInterface;
 }
 
 export const generateSavedDataFromChart = (data: ChartBarDataInterface[]): ProcessInput[] => {

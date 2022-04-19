@@ -60,7 +60,7 @@ import { BenchmarkResBenchmarkInterface, CalcBenchmarkResInterface } from "./int
 import { validateProposedCalculation } from "./validators/sga-proposed-setup.validator";
 import {
   generateSavedData,
-  generateSavedDataFromChart,
+  generateSavedDataFromChart, parseProposalCalcSavedData,
   parseSavedChartData,
   parseSavedData,
   patchSavedDataToForm
@@ -72,6 +72,10 @@ import swal from "sweetalert";
 import { SgaSpecSheetInterface } from "./interfaces/sga-spec-sheet.interface";
 import { generateKeyParametersChange } from "./utils/generate-keyParametersChange";
 import { SteamGenerationAssessmentService } from "./services/steam-generation-assessment.service";
+import {
+  ProposalCalculationInterface,
+  ProposalCalculationReducedResponseInterface
+} from "./interfaces/proposal-calculation.interface";
 
 
 @Component({
@@ -114,7 +118,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     })
   );
   units: { [key: number]: string };
-  isSpecSheetEnabled: boolean = true; // Enable sidebar dropdown EXPORT_SPECIFICATION_SHEET
+  isSpecSheetEnabled: boolean; // Enable sidebar dropdown EXPORT_SPECIFICATION_SHEET
   isTiEnabled: boolean; // Enable sidebar dropdown PRODUCT_TECHNICAL_INFORMATION_SHEET
   showJobExportBtn: boolean; // Show sidebar dropdown btn EXPORT_JOB
   userPreferences: Array<Preference>; // Language from user preferences
@@ -230,7 +234,12 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   onPdfSubmit(): any {
     // click on sidebar dropdown 'EXPORT_SPECIFICATION_SHEET'. Will work if 'isSpecSheetEnabled' = true
     const langPref = this.userPreferences && this.userPreferences.find(m => m.name === 'SpecLanguage');
-    const request: SgaSpecSheetInterface = {
+    const fuelUnitSelected: number = this.sizingModuleForm.get('selectedUnits.fuelUnitSelected').value;
+    const fuelUnitSelectedSPref = this.preferenceService.sizingUnitPreferences
+      .find(({preference}) => preference && preference.value === fuelUnitSelected.toString());
+    const fuelUnitSelectedStr = fuelUnitSelectedSPref && fuelUnitSelectedSPref.preference.unitName;
+
+    this.apiService.getSgaSpecSheet({
       currency: this.currency,
       userLanguage: langPref && langPref.value,
       moduleId: this.moduleId,
@@ -259,27 +268,17 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
         pressureUnit: this.sgaService.getPreferenceStrUnit('PressureUnit'),
         temperatureUnit: this.sgaService.getPreferenceStrUnit('TemperatureUnit'),
         tdsUnit: this.sgaService.getPreferenceStrUnit('BoilerHouseTDSUnits'),
-        fuelUnitSelected: 'kWh',
+        fuelUnitSelected: fuelUnitSelectedStr,
         specificEnergyUnit: "kcal/g",
-        fuelCalorificUnit: "kWh/kWh",
+        fuelCalorificUnit: `${this.sgaService.getPreferenceStrUnit('BoilerHouseEnergyUnits')}/${fuelUnitSelectedStr}`,
       },
       keyParametersChanged: generateKeyParametersChange(this.sizingModuleForm.get('benchmarkInputs') as FormGroup),
       inputParameters: (this.sizingModuleForm.get('benchmarkInputs') as FormGroup).getRawValue(),
       benchmarkCalculation: this.sizingModuleResults.benchmark,
-      proposalCalculation: null,
-    };
-
-    console.log({
-      user: this.user,
-      userPreferences: this.userPreferences,
-      request,
-      results: this.sizingModuleResults,
-      sizingUnitPreferences: this.preferenceService.sizingUnitPreferences
-    }, '---onPdfSubmit---');
-
-    // this.apiService.getSgaSpecSheet(request).subscribe(response => {
-    //   window.open(`Api/reports/${this.moduleName}/DocGen/ReportViewer?id=` + response && response.sessionId);
-    // });
+      proposalCalculation: this.sizingModuleResults.proposalCalculation,
+    }).pipe(takeUntil(this.ngUnsubscribe)).subscribe(response => {
+      window.open(`Api/reports/SteamGenerator/DocGen/ReportViewer?id=${response && response.sessionId}`);
+    });
   }
 
   onGetTiSheet(): any {
@@ -515,13 +514,19 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
         fg.markAsUntouched();
 
         if (res && res.proposal) {
-          const overall = res.proposal.find(v => !!v && !!v.overallImpactOnProposalsSelectedOnBoilerHouse);
+          const resObj: ProposalCalculationReducedResponseInterface = res.proposal.reduce((acc, item) => {
+            const key = Object.keys(item)[0];
+            return { ...acc, [key]: item[key] }
+          }, {});
+
           const chartName = isFinal ? 'final' : 'setup';
           const {total, vertical, horizontal} = this.chartService.generateProposal(res.proposal, chartName);
 
           this.sizingModuleResults.proposedSetup = proposalInputs.proposedSetup;
           this.sizingModuleResults.features = proposalInputs.features;
-          this.sizingModuleResults.overallProposal = overall && overall.overallImpactOnProposalsSelectedOnBoilerHouse;
+          this.sizingModuleResults.overallProposal = resObj.overallImpactOnProposalsSelectedOnBoilerHouse;
+          this.sizingModuleResults.proposalCalculation = this.setProposalCalculation(resObj);
+          this.isSpecSheetEnabled = !!this.sizingModuleResults.proposalCalculation;
           this.proposalVerticalChart = vertical;
           this.proposalSetupTotal = total;
 
@@ -580,6 +585,30 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     this.sizingModuleForm.markAllAsTouched(); // Enable save changes btn
   }
 
+  private setProposalCalculation(data: ProposalCalculationReducedResponseInterface): ProposalCalculationInterface {
+    if (!data) { return null; }
+
+    return {
+      increaseBoilerEfficiency: data.improvedBoilerEfficiency,
+      increaseCondensateReturn: data.condensateReturnPlusCondensateTemperature,
+      addWaterTreatmentPlant: data.changingWaterTreatment,
+      addTdsInstalled: data.addingAutomaticTdsControl,
+      flashRecoveryAndTdsControlsInstalled: data.addingFlashHeatRecoveryToAutoTdsControl,
+      heatExchangerFlashRecoveryAndTdsControlsInstalled: data.addingHeatExchangerToHeatRecoveryToTdsBlowdown,
+      addDirectSteamInjectionToFeedtank: data.effectOfDsiOnHotwell,
+      overallImpactOnProposal: data.overallImpactOnProposalsSelectedOnBoilerHouse,
+      proposalSetup: this.sizingModuleResults.proposedSetup,
+      proposalFeatures: this.sizingModuleResults.features,
+      finalImpactOfIncreasingBoilerEfficiency: data.finalImpactOfIncreasingBoilerEfficiency,
+      finalImpactOfIncreasingCondensateReturned: data.finalImpactOfIncreasingCondensateReturned,
+      finalImpactOfChangingWaterTreatment: data.finalImpactOfChangingWaterTreatment,
+      finalImpactOfAddingAutoTds: data.finalImpactOfAddingAutoTds,
+      finalImpactOfAddingAutoTDSAndFlashRecovery: data.finalImpactOfAddingAutoTDSAndFlashRecovery,
+      finalImpactOfAddingAutoTDSFlashRecoveryAndHeatWxchanger: data.finalImpactOfAddingAutoTDSFlashRecoveryAndHeatWxchanger,
+      finalImpactOfAddingDsiToFeedtank: data.finalImpactOfAddingDsiToFeedtank,
+    }
+  }
+
   private generateProcessConditions(): ProcessCondition[] {
     const processConditions = new Array<ProcessCondition>();
     const {selectedUnits, benchmarkInputs} = this.sizingModuleForm.getRawValue();
@@ -629,6 +658,128 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
           processInputs: generateSavedData(this.sizingModuleResults.overallProposal),
           unitPreferences: null
         });
+      }
+
+      if (this.sizingModuleResults.proposalCalculation) {
+        if (this.sizingModuleResults.proposalCalculation.increaseBoilerEfficiency) {
+          processConditions.push({
+            name: 'proposalCalculation.increaseBoilerEfficiency',
+            processInputs: generateSavedData(this.sizingModuleResults.proposalCalculation.increaseBoilerEfficiency),
+            unitPreferences: null,
+          });
+        }
+        if (this.sizingModuleResults.proposalCalculation.increaseCondensateReturn) {
+          processConditions.push({
+            name: 'proposalCalculation.increaseCondensateReturn',
+            processInputs: generateSavedData(this.sizingModuleResults.proposalCalculation.increaseCondensateReturn),
+            unitPreferences: null,
+          });
+        }
+        if (this.sizingModuleResults.proposalCalculation.addWaterTreatmentPlant) {
+          processConditions.push({
+            name: 'proposalCalculation.addWaterTreatmentPlant',
+            processInputs: generateSavedData(this.sizingModuleResults.proposalCalculation.addWaterTreatmentPlant),
+            unitPreferences: null,
+          });
+        }
+        if (this.sizingModuleResults.proposalCalculation.addTdsInstalled) {
+          processConditions.push({
+            name: 'proposalCalculation.addTdsInstalled',
+            processInputs: generateSavedData(this.sizingModuleResults.proposalCalculation.addTdsInstalled),
+            unitPreferences: null,
+          });
+        }
+        if (this.sizingModuleResults.proposalCalculation.flashRecoveryAndTdsControlsInstalled) {
+          processConditions.push({
+            name: 'proposalCalculation.flashRecoveryAndTdsControlsInstalled',
+            processInputs: generateSavedData(this.sizingModuleResults.proposalCalculation.flashRecoveryAndTdsControlsInstalled),
+            unitPreferences: null,
+          });
+        }
+        if (this.sizingModuleResults.proposalCalculation.heatExchangerFlashRecoveryAndTdsControlsInstalled) {
+          processConditions.push({
+            name: 'proposalCalculation.heatExchangerFlashRecoveryAndTdsControlsInstalled',
+            processInputs: generateSavedData(this.sizingModuleResults.proposalCalculation.heatExchangerFlashRecoveryAndTdsControlsInstalled),
+            unitPreferences: null,
+          });
+        }
+        if (this.sizingModuleResults.proposalCalculation.addDirectSteamInjectionToFeedtank) {
+          processConditions.push({
+            name: 'proposalCalculation.addDirectSteamInjectionToFeedtank',
+            processInputs: generateSavedData(this.sizingModuleResults.proposalCalculation.addDirectSteamInjectionToFeedtank),
+            unitPreferences: null,
+          });
+        }
+        if (this.sizingModuleResults.proposalCalculation.overallImpactOnProposal) {
+          processConditions.push({
+            name: 'proposalCalculation.overallImpactOnProposal',
+            processInputs: generateSavedData(this.sizingModuleResults.proposalCalculation.overallImpactOnProposal),
+            unitPreferences: null,
+          });
+        }
+        if (this.sizingModuleResults.proposalCalculation.proposalSetup) {
+          processConditions.push({
+            name: 'proposalCalculation.proposalSetup',
+            processInputs: generateSavedData(this.sizingModuleResults.proposalCalculation.proposalSetup),
+            unitPreferences: null,
+          });
+        }
+        if (this.sizingModuleResults.proposalCalculation.proposalFeatures) {
+          processConditions.push({
+            name: 'proposalCalculation.proposalFeatures',
+            processInputs: generateSavedData(this.sizingModuleResults.proposalCalculation.proposalFeatures),
+            unitPreferences: null,
+          });
+        }
+        if (this.sizingModuleResults.proposalCalculation.finalImpactOfIncreasingBoilerEfficiency) {
+          processConditions.push({
+            name: 'proposalCalculation.finalImpactOfIncreasingBoilerEfficiency',
+            processInputs: generateSavedData(this.sizingModuleResults.proposalCalculation.finalImpactOfIncreasingBoilerEfficiency),
+            unitPreferences: null,
+          });
+        }
+        if (this.sizingModuleResults.proposalCalculation.finalImpactOfIncreasingCondensateReturned) {
+          processConditions.push({
+            name: 'proposalCalculation.finalImpactOfIncreasingCondensateReturned',
+            processInputs: generateSavedData(this.sizingModuleResults.proposalCalculation.finalImpactOfIncreasingCondensateReturned),
+            unitPreferences: null,
+          });
+        }
+        if (this.sizingModuleResults.proposalCalculation.finalImpactOfChangingWaterTreatment) {
+          processConditions.push({
+            name: 'proposalCalculation.finalImpactOfChangingWaterTreatment',
+            processInputs: generateSavedData(this.sizingModuleResults.proposalCalculation.finalImpactOfChangingWaterTreatment),
+            unitPreferences: null,
+          });
+        }
+        if (this.sizingModuleResults.proposalCalculation.finalImpactOfAddingAutoTds) {
+          processConditions.push({
+            name: 'proposalCalculation.finalImpactOfAddingAutoTds',
+            processInputs: generateSavedData(this.sizingModuleResults.proposalCalculation.finalImpactOfAddingAutoTds),
+            unitPreferences: null,
+          });
+        }
+        if (this.sizingModuleResults.proposalCalculation.finalImpactOfAddingAutoTDSAndFlashRecovery) {
+          processConditions.push({
+            name: 'proposalCalculation.finalImpactOfAddingAutoTDSAndFlashRecovery',
+            processInputs: generateSavedData(this.sizingModuleResults.proposalCalculation.finalImpactOfAddingAutoTDSAndFlashRecovery),
+            unitPreferences: null,
+          });
+        }
+        if (this.sizingModuleResults.proposalCalculation.finalImpactOfAddingAutoTDSFlashRecoveryAndHeatWxchanger) {
+          processConditions.push({
+            name: 'proposalCalculation.finalImpactOfAddingAutoTDSFlashRecoveryAndHeatWxchanger',
+            processInputs: generateSavedData(this.sizingModuleResults.proposalCalculation.finalImpactOfAddingAutoTDSFlashRecoveryAndHeatWxchanger),
+            unitPreferences: null,
+          });
+        }
+        if (this.sizingModuleResults.proposalCalculation.finalImpactOfAddingDsiToFeedtank) {
+          processConditions.push({
+            name: 'proposalCalculation.finalImpactOfAddingDsiToFeedtank',
+            processInputs: generateSavedData(this.sizingModuleResults.proposalCalculation.finalImpactOfAddingDsiToFeedtank),
+            unitPreferences: null,
+          });
+        }
       }
     }
 
@@ -721,6 +872,9 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     }
     if (this.finalProposalHorizontalChart) {
       this.finalProposalHorizontalChart = null;
+    }
+    if (this.isSpecSheetEnabled) {
+      this.isSpecSheetEnabled = false;
     }
     this.setActiveTab(0);
   }
@@ -1129,7 +1283,13 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       this.finalProposalHorizontalChart = parseSavedChartData(data.finalProposalHorizontalChart);
     }
     if (data.overallProposal) {
-      this.sizingModuleResults.overallProposal = parseSavedData(data.overallProposal) as Partial<BenchmarkResBenchmarkInterface>;
+      this.sizingModuleResults.overallProposal = parseSavedData(data.overallProposal) as BenchmarkResBenchmarkInterface;
+    }
+
+    const proposalCalculation = parseProposalCalcSavedData(data);
+    this.isSpecSheetEnabled = !!proposalCalculation;
+    if (proposalCalculation) {
+      this.sizingModuleResults.proposalCalculation = proposalCalculation;
     }
 
     return patchedValues;
