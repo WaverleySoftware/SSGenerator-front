@@ -124,7 +124,7 @@ export class SgaApiService {
 
   getSgaSpecSheet(data: SgaSpecSheetInterface): Observable<any> {
     this.changeLoading(true, 'getSgaSpecSheet', true);
-    return this.http.post<any>('SteamGenerator/DocGen/CacheModel', data, {
+    return this.http.post<any>('Api/web-reports/SteamGenerator/DocGen/CacheModel', data, {
       headers: {"Content-Type": "application/json", Accept: "application/octet-stream"},
       responseType: 'json' as 'json'
     }).pipe(tap(()=>{},()=>{},()=>this.changeLoading(false, 'getSgaSpecSheet', true)));

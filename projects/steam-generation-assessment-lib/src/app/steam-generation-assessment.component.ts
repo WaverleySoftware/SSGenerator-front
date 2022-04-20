@@ -239,10 +239,10 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       .find(({preference}) => preference && preference.value === fuelUnitSelected.toString());
     const fuelUnitSelectedStr = fuelUnitSelectedSPref && fuelUnitSelectedSPref.preference.unitName;
 
-    this.apiService.getSgaSpecSheet({
+    const body: SgaSpecSheetInterface = {
       currency: this.currency,
       userLanguage: langPref && langPref.value,
-      moduleId: this.moduleId,
+      moduleId: this.moduleGroupId,
       customer: this.project.customerName || '-',
       projectName: this.project.name || '-',
       projectRef: this.project.projectReference || '-',
@@ -251,8 +251,8 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       sheet: 'No Sheet',
       revisionNo: 'No Revision',
       preparedBy: this.user.firstname + ' ' + this.user.lastname,
-      email: this.user.email,
-      telephone: this.user.telephone,
+      email: this.user.email || '-',
+      telephone: this.user.telephone || '-',
       selectedUnits: {
         yearUnit: "yr",
         currencyUnit: this.currency,
@@ -276,8 +276,10 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       inputParameters: (this.sizingModuleForm.get('benchmarkInputs') as FormGroup).getRawValue(),
       benchmarkCalculation: this.sizingModuleResults.benchmark,
       proposalCalculation: this.sizingModuleResults.proposalCalculation,
-    }).pipe(takeUntil(this.ngUnsubscribe)).subscribe(response => {
-      window.open(`Api/reports/SteamGenerator/DocGen/ReportViewer?id=${response && response.sessionId}`);
+    };
+
+    this.apiService.getSgaSpecSheet(body).pipe(takeUntil(this.ngUnsubscribe)).subscribe(response => {
+      window.open(`Api/web-reports/SteamGenerator/DocGen/ReportViewer?id=${response && response.sessionId}`);
     });
   }
 
@@ -529,6 +531,9 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
           this.isSpecSheetEnabled = !!this.sizingModuleResults.proposalCalculation;
           this.proposalVerticalChart = vertical;
           this.proposalSetupTotal = total;
+          if (resObj.benchmark) {
+            this.sizingModuleResults.benchmark = resObj.benchmark;
+          }
 
           if (isFinal) {
             this.finalProposalHorizontalChart = horizontal;
