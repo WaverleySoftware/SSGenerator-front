@@ -8,7 +8,7 @@ import { SgaApiService } from "../../services/sga-api.service";
 import { SgaFormService } from "../../services/sga-form.service";
 import { horizontalChart, verticalChart, verticalChartLabels } from "../../utils/proposed-setup-def-data";
 import { SgaTotalSavingInterface } from "../../interfaces/sga-chart-data.Interface";
-import { ProposedSetupTFormInterface, TForm } from "../../interfaces/forms.interface";
+import { InputParametersTFormInterface, ProposedSetupTFormInterface, TForm } from "../../interfaces/forms.interface";
 
 @Component({
   selector: 'app-sga-proposed-setup',
@@ -16,24 +16,9 @@ import { ProposedSetupTFormInterface, TForm } from "../../interfaces/forms.inter
   styleUrls: ['./sga-proposed-setup.component.scss']
 })
 export class SgaProposedSetupComponent implements OnInit {
+  private readonly reverseOsmosisId = 'fb8d5710-4b05-44d9-a21e-a3d5c697d7ce';
   @Input() isEconomizerPresent: boolean;
-  @Input() set data(v ) {
-    this.data_ = v;
-    if ((!v || (!v.proposedSetup && !v.features)) && this.initialTdsControls) {
-      this.initialTdsControls = null;
-    }
-
-    if (!this.initialTdsControls && v && v.features) {
-      this.initialTdsControls = {
-        addAutoTdsControls: v.features.addAutoTdsControls,
-        addAutoTdsAndFlashRecovery: v.features.addAutoTdsAndFlashRecovery,
-        addAutoTdsAndFlashRecoveryPlusHearExchanger: v.features.addAutoTdsAndFlashRecoveryPlusHearExchanger,
-        addWaterTreatmentPlant: !v.features.addWaterTreatmentPlant
-      }
-    }
-  };
-  private data_: ProposedDataInterface
-  get data(): ProposedDataInterface { return this.data_; }
+  @Input() data: ProposedDataInterface
   @Input() currency: string;
 	@Input('verticalChart') verticalChartData: ChartBarDataInterface[];
 	@Input('horizontalChart') horizontalChartData: ChartBarDataInterface[];
@@ -44,12 +29,9 @@ export class SgaProposedSetupComponent implements OnInit {
   private ngUnsubscribe = new Subject<void>();
   verticalChartLabels: string[] = verticalChartLabels;
   form: TForm<ProposedSetupTFormInterface> = this.formService.getProposedSetupForm();
-  initialTdsControls: {[key: string]: boolean};
+  inputParamsFg: TForm<InputParametersTFormInterface> = this.formService.getInputParamsFg();
 
-  constructor(
-    private apiService: SgaApiService,
-    private formService: SgaFormService,
-  ) {
+  constructor(private apiService: SgaApiService, private formService: SgaFormService) {
     this.form.get('proposedSetup').valueChanges.pipe(
       takeUntil(this.ngUnsubscribe),
       pairwise(),
@@ -61,6 +43,20 @@ export class SgaProposedSetupComponent implements OnInit {
     const fg: FormGroup = this.form.get('proposedSetup') as FormGroup;
     return fg.get('proposalCondensateReturnedPercentage').value === fg.get('benchmarkCondensateReturnedPercentage').value &&
       fg.get('benchmarkCondensateReturn').value === fg.get('proposalCondensateReturned').value;
+  }
+
+  get isTdsControlPresent(): {
+    isAutoTds: boolean;
+    isFlashVessel: boolean;
+    isHeatExchanger: boolean;
+    isWaterTreatmentPlant: boolean
+  } {
+    return {
+      isAutoTds: this.inputParamsFg.get('benchmarkInputs.isAutoTdsControlPResent').value,
+      isFlashVessel: this.inputParamsFg.get('benchmarkInputs.isFlashVesselPresent').value,
+      isHeatExchanger: this.inputParamsFg.get('benchmarkInputs.isHeatExchangerPresent').value,
+      isWaterTreatmentPlant: this.inputParamsFg.get('benchmarkInputs.waterTreatmentMethod').value === this.reverseOsmosisId
+    }
   }
 
   ngOnInit() {}

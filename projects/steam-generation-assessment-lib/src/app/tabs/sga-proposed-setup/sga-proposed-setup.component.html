@@ -230,8 +230,8 @@
                     <input type="checkbox"
                            formControlName="addWaterTreatmentPlant"
                            (change)="changeFeature($event)"
-                           [disableControl]="initialTdsControls?.addWaterTreatmentPlant"
-                           [class.v-hide]="initialTdsControls?.addWaterTreatmentPlant"
+                           [disableControl]="isTdsControlPresent.isWaterTreatmentPlant"
+                           [class.v-hide]="isTdsControlPresent.isWaterTreatmentPlant"
                            [value]="true">
                     <span>{{'ADD_WATER_TREATMENT_PLANT_RO' | translate}}</span>
                   </label>
@@ -241,8 +241,8 @@
                   <label>
                     <input type="checkbox"
                            formControlName="addAutoTdsControls"
-                           [disableControl]="initialTdsControls?.addAutoTdsControls"
-                           [class.v-hide]="initialTdsControls?.addAutoTdsControls"
+                           [disableControl]="isTdsControlPresent.isAutoTds"
+                           [class.v-hide]="isTdsControlPresent.isAutoTds"
                            (change)="changeFeature($event)"
                            [setValue]="false"
                            [value]="true">
@@ -253,8 +253,8 @@
                   <label>
                     <input type="checkbox"
                            formControlName="addAutoTdsAndFlashRecovery"
-                           [disableControl]="initialTdsControls?.addAutoTdsAndFlashRecovery"
-                           [class.v-hide]="initialTdsControls?.addAutoTdsAndFlashRecovery"
+                           [disableControl]="isTdsControlPresent.isFlashVessel"
+                           [class.v-hide]="isTdsControlPresent.isFlashVessel"
                            (change)="changeFeature($event)"
                            [setValue]="false"
                            [value]="true">
@@ -265,8 +265,8 @@
                   <label>
                     <input type="checkbox"
                            formControlName="addAutoTdsAndFlashRecoveryPlusHearExchanger"
-                           [disableControl]="initialTdsControls?.addAutoTdsAndFlashRecoveryPlusHearExchanger"
-                           [class.v-hide]="initialTdsControls?.addAutoTdsAndFlashRecoveryPlusHearExchanger"
+                           [disableControl]="isTdsControlPresent.isHeatExchanger"
+                           [class.v-hide]="isTdsControlPresent.isHeatExchanger"
                            (change)="changeFeature($event)"
                            [setValue]="false"
                            [value]="true">
