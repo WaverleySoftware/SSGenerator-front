@@ -363,22 +363,25 @@
                   <div class="row" body>
                     <div class="col-md-4 border-r-md">
                       <spirax-toggle formControlName="isBlowdownVesselPresent"
-                                     (valueChange)="toggleInput('isCoolingWaterUsed', 'isCoolingWaterUsed', false, $event)"
                                      label="IS_BLOWDOWN_VESSEL_PRESENT"></spirax-toggle>
 
-                      <spirax-toggle formControlName="isCoolingWaterUsed" label="IS_COOLING_WATER_USED"></spirax-toggle>
+                      <spirax-toggle formControlName="isCoolingWaterUsed"
+                                     [disabled]="!formGroup.get('benchmarkInputs.isBlowdownVesselPresent').value"
+                                     label="IS_COOLING_WATER_USED"></spirax-toggle>
                     </div>
                     <div class="col-md-4 border-r-md">
                       <spirax-toggle formControlName="isAutoTdsControlPResent"
-                                     (valueChange)="toggleInput('isFlashVesselPresent', ['isFlashVesselPresent', 'isHeatExchangerPresent', 'waterTemperatureLeavingHeatExchanger'], false, $event)"
+                                     (valueChange)="toggleInput(null, 'waterTemperatureLeavingHeatExchanger', null, $event)"
                                      label="IS_AUTO_TDS_PRESENT"></spirax-toggle>
 
                       <spirax-toggle formControlName="isFlashVesselPresent"
-                                     (valueChange)="toggleInput('isHeatExchangerPresent', ['isHeatExchangerPresent', 'waterTemperatureLeavingHeatExchanger'], false, $event)"
+                                     [disabled]="!formGroup.get('benchmarkInputs.isAutoTdsControlPResent').value"
+                                     (valueChange)="toggleInput(null, 'waterTemperatureLeavingHeatExchanger', null, $event)"
                                      label="IS_FLASH_VESSEL_PRESENT"></spirax-toggle>
                     </div>
                     <div class="col-md-4">
                       <spirax-toggle formControlName="isHeatExchangerPresent"
+                                     [disabled]="!formGroup.get('benchmarkInputs.isFlashVesselPresent').value"
                                      (valueChange)="toggleInput('waterTemperatureLeavingHeatExchanger', 'waterTemperatureLeavingHeatExchanger', null, $event)"
                                      label="IS_HEAT_EXCHANGER_PRESENT">
                         <div yes>
@@ -386,6 +389,7 @@
                                  [unitsStr]="[sizingUnits['TemperatureUnit']?.unit]"
                                  [value]="getValue('waterTemperatureLeavingHeatExchanger') | decimalPlace: sizingUnits['TemperatureUnit']?.decimal"
                                  [sga-decimal-places]="sizingUnits['TemperatureUnit']?.decimal"
+                                 [disabled]="!formGroup.get('benchmarkInputs.isHeatExchangerPresent').value"
                                  formControlName="waterTemperatureLeavingHeatExchanger"
                                  type="number"
                                  spirax-input
