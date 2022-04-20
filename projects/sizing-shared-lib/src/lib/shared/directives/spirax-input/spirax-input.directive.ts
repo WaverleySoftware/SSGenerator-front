@@ -10,8 +10,8 @@ import {
   Output,
   SimpleChanges
 } from '@angular/core';
-import { Subject } from 'rxjs';
-import { distinctUntilChanged, takeUntil } from 'rxjs/operators';
+import { Subject, combineLatest } from 'rxjs';
+import { distinctUntilChanged, takeUntil, debounceTime } from 'rxjs/operators';
 import { AbstractControl, NgControl, ValidationErrors } from '@angular/forms';
 import { UnitsService } from '../../units/units.service';
 import { TranslatePipe } from '../../translation/translate.pipe';
@@ -40,8 +40,8 @@ export class SpiraxInputDirective implements OnInit, OnChanges, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.generateInputWrapper();
-    this.fieldMessageChange();
+    this.generateInputWrapper(); // Call first
+    this.fieldMessageChange(); // Call second
 
     if (this.unitsStr && this.unitsStr.length) {
       this.generateUnits(this.unitsStr[0], this.unitsStr[1]);
@@ -124,12 +124,16 @@ export class SpiraxInputDirective implements OnInit, OnChanges, OnDestroy {
 
   private fieldMessageChange(c?: AbstractControl) {
     const control: AbstractControl = c || this.control && this.control.control;
+    const errorNode = this.el && this.el.nativeElement &&
+      this.el.nativeElement.parentNode &&
+      this.el.nativeElement.parentNode.querySelector('.spiraxInput_message');
 
-    if (control && control.statusChanges) {
-      control.statusChanges.pipe(distinctUntilChanged()).subscribe((status) => {
-        const errorNode = this.el.nativeElement.parentNode.querySelector('.spiraxInput_message');
-
-        if (status === 'VALID') {
+    if (control && errorNode && control.statusChanges && control.valueChanges) {
+      combineLatest([
+        control.statusChanges,
+        control.valueChanges
+      ]).pipe(debounceTime(400), distinctUntilChanged()).subscribe(([status, value]) => {
+        if (control.valid) {
           errorNode.innerHTML = '';
         } else {
           errorNode.innerHTML = this.generateMessage(control);

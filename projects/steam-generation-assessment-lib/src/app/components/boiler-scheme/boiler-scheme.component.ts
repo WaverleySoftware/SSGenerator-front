@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from "@angular/core";
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from "@angular/core";
 import { SgaBoilerSchemeInterface, SgaBoilerSchemeTabsInterface } from "../../interfaces/sga-boiler-scheme.interface";
 import { SteamGenerationAssessmentService } from "../../services/steam-generation-assessment.service";
 
@@ -7,7 +7,7 @@ import { SteamGenerationAssessmentService } from "../../services/steam-generatio
   templateUrl: './boiler-scheme.component.html',
   styleUrls: ['./boiler-scheme.component.scss']
 })
-export class BoilerSchemeComponent {
+export class BoilerSchemeComponent implements AfterViewInit {
   @Input() state: SgaBoilerSchemeInterface = {
     isEconomizerPresent: false, //
     isBlowdownVesselPresent: false,
@@ -23,6 +23,10 @@ export class BoilerSchemeComponent {
   @ViewChild('svg', { static: false, read: ElementRef }) svg: ElementRef;
 
   constructor(private sgaService: SteamGenerationAssessmentService) { }
+
+  ngAfterViewInit() {
+    // this.getBase64Scheme();
+  }
 
   blockClick(e: Event, tabNumber: number): void {
     this.setTab.emit(tabNumber);
