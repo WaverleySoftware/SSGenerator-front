@@ -527,7 +527,7 @@
                     <div class="col-md-4">
                       <spirax-form-radio-group [inputValue]="true"
                                                formControlName="atmosphericDeaerator"
-                                               label="AUTMOSPHERIC_DEAERATOR"
+                                               label="ATMOSPHERIC_DEAERATOR"
                                                [defaultChecked]="formGroup.get('benchmarkInputs.atmosphericDeaerator').value"
                                                (valueChange)="setFormValue({pressurisedDeaerator: false, atmosphericDeaerator: true}); setFormValue('temperatureOfFeedtank', null); toggleInput('isDsiPresent', 'pressureOfFeedtank', null)"
                                                name="deaeratorType">
