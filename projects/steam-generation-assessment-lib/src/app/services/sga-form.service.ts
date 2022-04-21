@@ -80,7 +80,7 @@ export class SgaFormService {
         boilerFeedwaterConsumptionPerYear: [{value: null, disabled: true}, Validators.required, validateBenchmarkInput(this.apiService)],
         isFlashVesselPresent: [false, { updateOn: 'change' }],
         isHeatExchangerPresent: [false, { updateOn: 'change' }],
-        waterTemperatureLeavingHeatExchanger: [null, Validators.required, validateBenchmarkInput(this.apiService)],
+        waterTemperatureLeavingHeatExchanger: [{value: null, disabled: true}, Validators.required, validateBenchmarkInput(this.apiService)],
         waterTreatmentMethod: [null],
         percentageWaterRejection: [null, Validators.required, validateBenchmarkInput(this.apiService)],
         tdsOfMakeupWater: [null, Validators.required, validateBenchmarkInput(this.apiService)],
