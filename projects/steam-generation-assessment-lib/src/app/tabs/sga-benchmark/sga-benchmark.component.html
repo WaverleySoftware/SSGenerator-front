@@ -56,19 +56,19 @@
               <li>
                 <span>{{'COST_FSLASH_UNIT' | translate}}</span>
                 <span *ngIf="data?.costOfFuelPerUnit; else emptyDash">
-                  {{data.costOfFuelPerUnit | number}} {{currency}}/{{units[data.fuelConsumptionUnitId]}}
+                  {{data.costOfFuelPerUnit | number: '0.0-2'}} {{currency}}/{{units[data.fuelConsumptionUnitId]}}
                 </span>
               </li>
               <li>
                 <span>{{'QUANTITY' | translate}}</span>
                 <span *ngIf="data?.fuelConsumptionPerYear; else emptyDash">
-                  {{data.fuelConsumptionPerYear | number}} {{units[data.fuelConsumptionUnitId]}}/{{'YR' | translate}}
+                  {{data.fuelConsumptionPerYear | number: '0.0-2'}} {{units[data.fuelConsumptionUnitId]}}/{{'YR' | translate}}
                 </span>
               </li>
               <li class="text-bold">
                 <span>{{'COST_OF_FUEL_PER_YEAR' | translate}}</span>
                 <span *ngIf="data?.costOfFuelPerYear; else emptyDash">
-                  {{data.costOfFuelPerYear | number}} {{currency}}/{{'YR' | translate}}
+                  {{data.costOfFuelPerYear | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}
                 </span>
               </li>
             </ul>
@@ -139,12 +139,12 @@
               </li>
               <li>
                 <span>{{'MASS_FLOW_FSLASH_YR' | translate}}</span>
-                <span *ngIf="data?.mBoiler; else emptyDash">{{data.mBoiler | number}} {{units[data.mBoilerUnit]}}</span>
+                <span *ngIf="data?.mBoiler; else emptyDash">{{data.mBoiler | number: '0.0-2'}} {{units[data.mBoilerUnit]}}</span>
               </li>
               <li>
                 <span>{{'MASS_FLOW' | translate}}</span>
                 <span *ngIf="data?.steamGeneratedkgPerHourUnit; else emptyDash">
-                  {{data.steamGeneratedkgPerHourUnit | number}} {{units[data.steamGeneratedkgPerHourUnit]}}
+                  {{data.steamGeneratedkgPerHour | number: '0.0-2'}} {{units[data.steamGeneratedkgPerHourUnit]}}
                 </span>
               </li>
               <li class="text-bold">
@@ -227,7 +227,7 @@
           <tr>
             <td>{{'FUEL_QUANTITY' | translate}}</td>
             <td *ngIf="data?.fuelConsumptionPerYear; else emptyCol">
-              {{data.fuelConsumptionPerYear | number : '0.0-2'}} {{units[data.fuelConsumptionPerYearUnit]}}
+              {{data.fuelConsumptionPerYear | number : '0.0-2'}} {{units[data.fuelConsumptionUnitId]}}
             </td>
             <td *ngIf="data?.costOfFuelPerYear; else emptyCol">
               {{data.costOfFuelPerYear | number : '0.0-2'}} {{currency}}/{{'YR' | translate}}
@@ -366,7 +366,7 @@
             <li class="listTitle">{{'FUEL' | translate}}</li>
             <li>
               <span>{{'QUANTITY' | translate}}</span>
-              <span *ngIf="data?.fuelConsumptionPerYear; else emptyDash">{{data.fuelConsumptionPerYear | number : '0.0-2'}} {{units[data.fuelConsumptionPerYearUnit]}}/{{'YR' | translate}}</span>
+              <span *ngIf="data?.fuelConsumptionPerYear; else emptyDash">{{data.fuelConsumptionPerYear | number : '0.0-2'}} {{units[data.fuelConsumptionUnitId]}}/{{'YR' | translate}}</span>
             </li>
             <li>
               <span>{{'COST_PER_UNIT_FUEL' | translate}}</span>

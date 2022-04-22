@@ -160,7 +160,7 @@
                        required>
 
                 <spirax-toggle formControlName="boilerHouseWaterQtyPerYearIsKnown"
-                               (valueChange)="toggleInput($event && 'costOfWaterPerYear', !$event && ['costOfWaterPerYear', 'waterConsumptionPerHour', 'waterConsumptionPerYear'])"
+                               (valueChange)="toggleInput('costOfWaterPerYear', ['costOfWaterPerYear', 'waterConsumptionPerHour', 'waterConsumptionPerYear'], null, $event)"
                                label="IS_WATER_ENTERING_THE_BOILER_HOUSE_MEASURED">
                   <div yes>
                     <input [label]="'COST_OF_WATER_PER_YEAR' | translate"
