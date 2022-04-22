@@ -333,6 +333,7 @@
                              [unitsStr]="[sizingUnits['PressureUnit']?.unit]"
                              [value]="getValue('boilerSteamPressure') | decimalPlace: sizingUnits['PressureUnit']?.decimal"
                              [sga-decimal-places]="sizingUnits['PressureUnit']?.decimal"
+                             (ngModelChange)="clearFieldsError('pressureOfSteamSupplyingDsi')"
                              formControlName="boilerSteamPressure"
                              type="number"
                              spirax-input

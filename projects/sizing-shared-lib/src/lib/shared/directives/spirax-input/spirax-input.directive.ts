@@ -10,7 +10,7 @@ import {
   Output,
   SimpleChanges
 } from '@angular/core';
-import { Subject, combineLatest } from 'rxjs';
+import { Subject, concat } from "rxjs";
 import { distinctUntilChanged, takeUntil, debounceTime } from 'rxjs/operators';
 import { AbstractControl, NgControl, ValidationErrors } from '@angular/forms';
 import { UnitsService } from '../../units/units.service';
@@ -129,16 +129,10 @@ export class SpiraxInputDirective implements OnInit, OnChanges, OnDestroy {
       this.el.nativeElement.parentNode.querySelector('.spiraxInput_message');
 
     if (control && errorNode && control.statusChanges && control.valueChanges) {
-      combineLatest([
-        control.statusChanges,
-        control.valueChanges
-      ]).pipe(debounceTime(400), distinctUntilChanged()).subscribe(([status, value]) => {
-        if (control.valid) {
-          errorNode.innerHTML = '';
-        } else {
-          errorNode.innerHTML = this.generateMessage(control);
-        }
-      });
+      const updateMsgFn = () => errorNode.innerHTML = control.valid ? '' : this.generateMessage(control);
+
+      control.statusChanges.pipe(debounceTime(400), distinctUntilChanged()).subscribe(updateMsgFn);
+      control.valueChanges.pipe(debounceTime(400), distinctUntilChanged()).subscribe(updateMsgFn);
     }
   }
 
