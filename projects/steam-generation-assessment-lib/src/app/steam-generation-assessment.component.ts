@@ -1421,4 +1421,13 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       this.sizingModuleResults.overallProposal &&
       this.sizingModuleResults.proposedSetup);
   }
+
+  get specificEnergyUnitId(): number {
+    if (!this.preferenceService.sizingUnitPreferences) {
+      return null;
+    }
+    const specificEnergyUnitsPreference = this.preferenceService.sizingUnitPreferences.find(({unitType}) => unitType === 'BoilerHouseSpecificEnergyUnits');
+
+    return specificEnergyUnitsPreference && specificEnergyUnitsPreference.preference && Number(specificEnergyUnitsPreference.preference.value);
+  }
 }

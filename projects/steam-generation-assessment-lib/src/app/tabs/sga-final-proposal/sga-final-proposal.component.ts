@@ -3,6 +3,8 @@ import { ChartBarDataInterface } from '../../interfaces/chart-bar.interface';
 import { horizontalChart, verticalChart, verticalChartLabels } from '../../utils/proposed-setup-def-data';
 import { BenchmarkResBenchmarkInterface } from "../../interfaces/calc-benchmark-res.interface";
 import { TranslationService, Enumeration } from "sizing-shared-lib";
+import { InputParametersTFormInterface, TForm } from "../../interfaces/forms.interface";
+import { SelectedUnitsInterface } from "../../interfaces/selectedUnits.interface";
 
 @Component({
   selector: 'app-sga-final-proposal',
@@ -12,7 +14,9 @@ import { TranslationService, Enumeration } from "sizing-shared-lib";
 export class SgaFinalProposalComponent implements OnInit {
   @Input() current: Partial<BenchmarkResBenchmarkInterface>; // Benchmark
   @Input() potential: Partial<BenchmarkResBenchmarkInterface>; // Overall...
+  @Input() formGroup: TForm<InputParametersTFormInterface>;
   @Input() currency: string;
+  @Input() specificEnergyUnitId: number;
   @Input() verticalChart: ChartBarDataInterface[] = verticalChart;
   @Input() horizontalChart: ChartBarDataInterface[] = horizontalChart;
   @Input() units: { [key: number]: string };
@@ -28,6 +32,10 @@ export class SgaFinalProposalComponent implements OnInit {
   }
 
   constructor(protected translationService: TranslationService) {}
+
+  get selectedUnits(): SelectedUnitsInterface {
+    return this.formGroup.get('selectedUnits') && this.formGroup.get('selectedUnits').value;
+  }
 
   ngOnInit() {}
 

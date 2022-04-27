@@ -40,6 +40,15 @@
       </div>
       <div class="col-md-12">
         <table class="customTable">
+          <ng-template #majorSteamOutputs let-quantity="quantity" let-value="value" let-unit="unit" let-name="name">
+            <td>{{name | translate}}</td>
+            <td *ngIf="current[quantity]; else emptyCol">{{current[quantity] | number: '0.0-2'}} {{unit}}</td>
+            <td *ngIf="current[value]; else emptyCol">{{current[value] | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
+            <td *ngIf="potential[quantity]; else emptyCol">{{potential[quantity] | number: '0.0-2'}} {{unit}}</td>
+            <td *ngIf="potential[value]; else emptyCol">{{potential[value] | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
+            <td *ngIf="current[value] && potential[value]; else emptyCol">{{current[value] - potential[value] | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
+            <td *ngIf="current[value] && potential[value]; else emptyCol">{{savingPercent(current[value], potential[value]) | number: '0.0-2'}}%</td>
+          </ng-template>
           <thead>
             <tr>
               <th rowspan="2">{{'COST_OF_STEAM_GENERATED' | translate}}</th>
@@ -60,58 +69,28 @@
           </thead>
           <tbody>
             <tr>
-              <td>{{'FUEL_QUANTITY' | translate}}</td>
-              <td *ngIf="current.fuelConsumptionPerYear; else emptyCol">{{current.fuelConsumptionPerYear | number: '0.0-2'}} {{units[current.fuelConsumptionUnitId]}}</td>
-              <td *ngIf="current.costOfFuelPerYear; else emptyCol">{{current.costOfFuelPerYear | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
-              <td *ngIf="potential.fuelConsumptionPerYear; else emptyCol">{{potential.fuelConsumptionPerYear | number: '0.0-2'}} {{units[potential.fuelConsumptionUnitId]}}</td>
-              <td *ngIf="potential.costOfFuelPerYear; else emptyCol">{{potential.costOfFuelPerYear | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
-              <td *ngIf="current.costOfFuelPerYear && potential.costOfFuelPerYear; else emptyCol">{{current.costOfFuelPerYear - potential.costOfFuelPerYear | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
-              <td *ngIf="current.costOfFuelPerYear && potential.costOfFuelPerYear; else emptyCol">{{savingPercent(current.costOfFuelPerYear, potential.costOfFuelPerYear) | number: '0.0-2'}}%</td>
+              <ng-container [ngTemplateOutlet]="majorSteamOutputs"
+                            [ngTemplateOutletContext]="{name: 'FUEL_QUANTITY', quantity: 'fuelConsumptionPerYear',value: 'costOfFuelPerYear',unit: units[selectedUnits?.fuelUnitSelected]}"></ng-container>
             </tr>
             <tr>
-              <td>{{'FUEL_ENERGY' | translate}}</td>
-              <td *ngIf="current.qfuel; else emptyCol">{{current.qfuel | number: '0.0-2'}} {{units[current.qfuelUnit]}}</td>
-              <td>–</td>
-              <td *ngIf="potential.qfuel; else emptyCol">{{potential.qfuel | number: '0.0-2'}} {{units[potential.qfuelUnit]}}</td>
-              <td>–</td>
-              <td>–</td>
-              <td>–</td>
+              <ng-container [ngTemplateOutlet]="majorSteamOutputs"
+                            [ngTemplateOutletContext]="{name: 'FUEL_ENERGY', quantity: 'qfuel',value: null,unit: units[selectedUnits?.energyUnitSelected]}"></ng-container>
             </tr>
             <tr>
-              <td>{{'BOILER_HOUSE_WATER_AND_CHEMICALS' | translate}}</td>
-              <td *ngIf="current.boilerHouseWaterFlowTotal; else emptyCol">{{current.boilerHouseWaterFlowTotal | number: '0.0-2'}} {{units[current.boilerHouseWaterFlowTotalUnit]}}</td>
-              <td *ngIf="current.waterAndChemicalsCostTotalPerYear; else emptyCol">{{current.waterAndChemicalsCostTotalPerYear | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
-              <td *ngIf="potential.boilerHouseWaterFlowTotal; else emptyCol">{{potential.boilerHouseWaterFlowTotal | number: '0.0-2'}} {{units[potential.boilerHouseWaterFlowTotalUnit]}}</td>
-              <td *ngIf="potential.waterAndChemicalsCostTotalPerYear; else emptyCol">{{potential.waterAndChemicalsCostTotalPerYear | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
-              <td>{{(current.waterAndChemicalsCostTotalPerYear - potential.waterAndChemicalsCostTotalPerYear) | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
-              <td>{{savingPercent(current.waterAndChemicalsCostTotalPerYear, potential.waterAndChemicalsCostTotalPerYear) | number: '0.0-2'}}%</td>
+              <ng-container [ngTemplateOutlet]="majorSteamOutputs"
+                            [ngTemplateOutletContext]="{name: 'BOILER_HOUSE_WATER_AND_CHEMICALS', quantity: 'boilerHouseWaterFlowTotal',value: 'waterAndChemicalsCostTotalPerYear',unit: units[selectedUnits?.volumeUnitSelected]}"></ng-container>
             </tr>
             <tr>
-              <td>{{'CO2_EMISSIONS' | translate}}</td>
-              <td *ngIf="current.tonnesOfCO2; else emptyCol">{{current.tonnesOfCO2 | number: '0.0-2'}} {{units[current.tonnesOfCO2Unit]}}/{{'YR' | translate}}</td>
-              <td *ngIf="current.costOfCO2PerYear; else emptyCol">{{current.costOfCO2PerYear | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
-              <td *ngIf="potential.tonnesOfCO2; else emptyCol">{{potential.tonnesOfCO2 | number: '0.0-2'}} {{units[potential.tonnesOfCO2Unit]}}/{{'YR' | translate}}</td>
-              <td *ngIf="potential.costOfCO2PerYear; else emptyCol">{{potential.costOfCO2PerYear | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
-              <td *ngIf="current.costOfCO2PerYear && potential.costOfCO2PerYear; else emptyCol">{{(current.costOfCO2PerYear - potential.costOfCO2PerYear) | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
-              <td *ngIf="current.costOfCO2PerYear && potential.costOfCO2PerYear; else emptyCol">{{savingPercent(current.costOfCO2PerYear, potential.costOfCO2PerYear) | number: '0.0-2'}}%</td>
+              <ng-container [ngTemplateOutlet]="majorSteamOutputs"
+                            [ngTemplateOutletContext]="{name: 'CO2_EMISSIONS', quantity: 'tonnesOfCO2',value: 'costOfCO2PerYear',unit: units[selectedUnits?.emissionUnitSelected]}"></ng-container>
             </tr>
             <tr>
-              <td>{{'STEAM_GENERATION_EFFLUENT'}}</td>
-              <td *ngIf="current.boilerHouseTotalVolumeOfWaterEffluent; else emptyCol">{{current.boilerHouseTotalVolumeOfWaterEffluent | number: '0.0-2'}} {{units[current.boilerHouseTotalVolumeOfWaterEffluentUnit]}}</td>
-              <td *ngIf="current.costOfBoilerHouseEffluent; else emptyCol">{{current.costOfBoilerHouseEffluent | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
-              <td *ngIf="potential.boilerHouseTotalVolumeOfWaterEffluent; else emptyCol">{{potential.boilerHouseTotalVolumeOfWaterEffluent | number: '0.0-2'}} {{units[potential.boilerHouseTotalVolumeOfWaterEffluentUnit]}}</td>
-              <td *ngIf="potential.costOfBoilerHouseEffluent; else emptyCol">{{potential.costOfBoilerHouseEffluent | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
-              <td *ngIf="current.costOfBoilerHouseEffluent && potential.costOfBoilerHouseEffluent; else emptyCol">{{(current.costOfBoilerHouseEffluent - potential.costOfBoilerHouseEffluent) | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
-              <td *ngIf="current.costOfBoilerHouseEffluent && potential.costOfBoilerHouseEffluent; else emptyCol">{{savingPercent(current.costOfBoilerHouseEffluent, potential.costOfBoilerHouseEffluent) | number: '0.0-2'}}%</td>
+              <ng-container [ngTemplateOutlet]="majorSteamOutputs"
+                            [ngTemplateOutletContext]="{name: 'STEAM_GENERATION_EFFLUENT', quantity: 'boilerHouseTotalVolumeOfWaterEffluent',value: 'costOfBoilerHouseEffluent',unit: units[selectedUnits?.volumeUnitSelected]}"></ng-container>
             </tr>
             <tr class="filled">
-              <td>{{'TOTAL_STEAM_GENERATED' | translate}}</td>
-              <td *ngIf="current.mBoiler; else emptyCol">{{current.mBoiler | number: '0.0-2'}} {{units[current.mBoilerUnit]}}</td>
-              <td *ngIf="current.totalCostOfSteamPerYear; else emptyCol">{{current.totalCostOfSteamPerYear | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
-              <td *ngIf="potential.mBoiler; else emptyCol">{{potential.mBoiler | number: '0.0-2'}} {{units[potential.mBoilerUnit]}}</td>
-              <td *ngIf="potential.totalCostOfSteamPerYear; else emptyCol">{{potential.totalCostOfSteamPerYear | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
-              <td *ngIf="current.totalCostOfSteamPerYear && potential.totalCostOfSteamPerYear; else emptyCol">{{(current.totalCostOfSteamPerYear - potential.totalCostOfSteamPerYear) | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
-              <td *ngIf="current.totalCostOfSteamPerYear && potential.totalCostOfSteamPerYear; else emptyCol">{{savingPercent(current.totalCostOfSteamPerYear, potential.totalCostOfSteamPerYear) | number: '0.0-2'}}%</td>
+              <ng-container [ngTemplateOutlet]="majorSteamOutputs"
+                            [ngTemplateOutletContext]="{name: 'TOTAL_STEAM_GENERATED', quantity: 'mBoiler',value: 'totalCostOfSteamPerYear',unit: units[selectedUnits?.massFlowUnitSelected]}"></ng-container>
             </tr>
             <tr>
               <td>{{'TOTAL_COST_OF_STEAM_FSLASH_UNIT_MASS' | translate}}</td>
@@ -125,17 +104,17 @@
             <tr>
               <td>{{'TOTAL_COST_OF_STEAM_FSLASH_UNIT_ENERGY' | translate}}</td>
               <td>–</td>
-              <td *ngIf="current.totalCostOfSteamPerkWhOfFuel; else emptyCol">{{current.totalCostOfSteamPerkWhOfFuel | number: '0.0-2'}} {{currency}}/kWh</td>
+              <td *ngIf="current.totalCostOfSteamPerkWhOfFuel; else emptyCol">{{current.totalCostOfSteamPerkWhOfFuel | number: '0.0-2'}} {{currency}}/{{units[selectedUnits?.energyUnitSelected]}}</td>
               <td>–</td>
-              <td *ngIf="potential.totalCostOfSteamPerkWhOfFuel; else emptyCol">{{potential.totalCostOfSteamPerkWhOfFuel | number: '0.0-2'}} {{currency}}/kWh</td>
+              <td *ngIf="potential.totalCostOfSteamPerkWhOfFuel; else emptyCol">{{potential.totalCostOfSteamPerkWhOfFuel | number: '0.0-2'}} {{currency}}/{{units[selectedUnits?.energyUnitSelected]}}</td>
               <td>–</td>
               <td>–</td>
             </tr>
             <tr class="filled">
               <td>{{'OVERALL_STEAM_GENERATION_EFFICIENCY' | translate}}</td>
-              <td *ngIf="current.energyToGenerateUnitofSteam; else emptyCol">{{current.energyToGenerateUnitofSteam | number: '0.0-2'}} {{units[current.energyToGenerateUnitofSteamUnit]}}</td>
+              <td *ngIf="current.energyToGenerateUnitofSteam; else emptyCol">{{current.energyToGenerateUnitofSteam | number: '0.0-2'}} {{units[specificEnergyUnitId]}}</td>
               <td>–</td>
-              <td *ngIf="potential.energyToGenerateUnitofSteam; else emptyCol">{{potential.energyToGenerateUnitofSteam | number: '0.0-2'}} {{units[potential.energyToGenerateUnitofSteamUnit]}}</td>
+              <td *ngIf="potential.energyToGenerateUnitofSteam; else emptyCol">{{potential.energyToGenerateUnitofSteam | number: '0.0-2'}} {{units[specificEnergyUnitId]}}</td>
               <td>-</td>
               <td *ngIf="current.energyToGenerateUnitofSteam && potential.energyToGenerateUnitofSteam; else emptyCol">{{(current.energyToGenerateUnitofSteam - potential.energyToGenerateUnitofSteam) | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
               <td *ngIf="current.energyToGenerateUnitofSteam && potential.energyToGenerateUnitofSteam; else emptyCol">{{savingPercent(current.totalCostOfSteamPerTonne, potential.totalCostOfSteamPerTonne) | number: '0.0-2'}}%</td>
@@ -218,11 +197,11 @@
       <tbody>
       <tr>
         <td>{{'MASS_FLOW_FSLASH_YR' | translate}}</td>
-        <ng-container [ngTemplateOutletContext]="{key: 'mBoiler', unit: units[current.mBoilerUnit]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
+        <ng-container [ngTemplateOutletContext]="{key: 'mBoiler', unit: units[selectedUnits?.massFlowUnitSelected]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
       </tr>
       <tr>
         <td>{{'MASS_FLOW_FSLASH_HR' | translate}}</td>
-        <ng-container [ngTemplateOutletContext]="{key: 'steamGeneratedkgPerHour', unit: units[current.steamGeneratedkgPerHourUnit]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
+        <ng-container [ngTemplateOutletContext]="{key: 'steamGeneratedkgPerHour', unit: units[selectedUnits?.smallMassFlowUnitSelected]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
       </tr>
       <tr>
         <td>{{'COST_FSLASH_UNIT_MASS' | translate}}</td>
@@ -230,11 +209,11 @@
       </tr>
       <tr>
         <td>{{'COST_FSLASH_UNIT_ENERGY' | translate}}</td>
-        <ng-container [ngTemplateOutletContext]="{key: 'totalCostOfSteamPerkWhOfFuel', isCosts: true, unit: units[current.fuelUnitId]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
+        <ng-container [ngTemplateOutletContext]="{key: 'totalCostOfSteamPerkWhOfFuel', isCosts: true, unit: units[selectedUnits?.energyUnitSelected]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
       </tr>
       <tr>
         <td>{{'ENERGY_FSLASH_UNIT_MASS' | translate}}</td>
-        <ng-container [ngTemplateOutletContext]="{key: 'energyToGenerateUnitofSteam', unit: units[current.energyToGenerateUnitofSteamUnit]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
+        <ng-container [ngTemplateOutletContext]="{key: 'energyToGenerateUnitofSteam', unit: units[specificEnergyUnitId]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
       </tr>
       <tr class="text-bold">
         <td>{{'COST_FSLASH_YR' | translate}}</td>
@@ -259,19 +238,19 @@
         <tbody>
         <tr>
           <td>{{'QUANTITY' | translate}}</td>
-          <ng-container [ngTemplateOutletContext]="{key: 'fuelConsumptionPerYear', isPerYear: true, unit: units[current.fuelConsumptionUnitId]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
+          <ng-container [ngTemplateOutletContext]="{key: 'fuelConsumptionPerYear', isPerYear: true, unit: units[selectedUnits?.fuelUnitSelected]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
         </tr>
         <tr>
           <td>{{'COST_FSLASH_UNIT_FUEL' | translate}}</td>
-          <ng-container [ngTemplateOutletContext]="{key: 'costOfFuelPerUnit', isCosts: true, unit: units[current.fuelConsumptionUnitId]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
+          <ng-container [ngTemplateOutletContext]="{key: 'costOfFuelPerUnit', isCosts: true, unit: units[selectedUnits?.fuelUnitSelected]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
         </tr>
         <tr>
           <td>{{'ENERGY' | translate}}</td>
-          <ng-container [ngTemplateOutletContext]="{key: 'qfuel', isPerYear: true, unit: units[current.qfuelUnit]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
+          <ng-container [ngTemplateOutletContext]="{key: 'qfuel', isPerYear: true, unit: units[selectedUnits?.energyUnitSelected]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
         </tr>
         <tr>
           <td>{{'COST_FSLASH_UNIT_ENERGY' | translate}}</td>
-          <ng-container [ngTemplateOutletContext]="{key: 'costOfFuelPerkWh', isCosts: true, unit: units[current.fuelUnitId]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
+          <ng-container [ngTemplateOutletContext]="{key: 'costOfFuelPerkWh', isCosts: true, unit: units[selectedUnits?.energyUnitSelected]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
         </tr>
         <tr class="text-bold">
           <td>{{'COST_OF_FUEL_PER_YEAR' | translate}}</td>
@@ -291,11 +270,11 @@
         <tbody>
         <tr>
           <td>{{'MASS_EMITTED' | translate}}</td>
-          <ng-container [ngTemplateOutletContext]="{key: 'tonnesOfCO2', isCosts: false, isPerYear: true, unit: units[current.tonnesOfCO2Unit]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
+          <ng-container [ngTemplateOutletContext]="{key: 'tonnesOfCO2', isCosts: false, isPerYear: true, unit: units[selectedUnits?.emissionUnitSelected]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
         </tr>
         <tr>
           <td>{{'COST_FSLASH_UNIT_MASS' | translate}}</td>
-          <ng-container [ngTemplateOutletContext]="{key: 'costOfCO2PerTonne', isCosts: true, isPerYear: false, unit: units[current.costOfCO2PerTonneUnit]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
+          <ng-container [ngTemplateOutletContext]="{key: 'costOfCO2PerTonne', isCosts: true, isPerYear: false, unit: units[selectedUnits?.emissionUnitSelected]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
         </tr>
         <tr class="text-bold">
           <td>{{"COST_OF_CO2_EMISSIONS_FSLASH_YEAR"}}</td>
@@ -315,11 +294,11 @@
         <tbody>
         <tr>
           <td>{{'QUANTITY' | translate}}</td>
-          <ng-container [ngTemplateOutletContext]="{key: 'boilerHouseWaterFlowTotal', isCosts: false, isPerYear: true, unit: units[current.boilerHouseWaterFlowTotalUnit]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
+          <ng-container [ngTemplateOutletContext]="{key: 'boilerHouseWaterFlowTotal', isCosts: false, isPerYear: true, unit: units[selectedUnits?.volumeUnitSelected]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
         </tr>
         <tr>
           <td>{{'COST_OF_WATER_UNIT_VOLUME' | translate}}</td>
-          <ng-container [ngTemplateOutletContext]="{key: 'waterCostPerUnit', isCosts: true, isPerYear: false, unit: units[current.waterCostPerUnitUnit]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
+          <ng-container [ngTemplateOutletContext]="{key: 'waterCostPerUnit', isCosts: true, isPerYear: false, unit: units[selectedUnits?.volumeUnitSelected]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
         </tr>
         <tr class="text-bold">
           <td>{{'COST_OF_BOILER_WATER_YEAR' | translate}}</td>
@@ -339,7 +318,7 @@
         <tbody>
         <tr>
           <td>{{'COST_OF_CHEMICALS_FSLASH_UNIT_OF_WATER' | translate}}</td>
-          <ng-container [ngTemplateOutletContext]="{key: 'costChemM3', isCosts: true, isPerYear: true, unit: 'm3'}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
+          <ng-container [ngTemplateOutletContext]="{key: 'costChemM3', isCosts: true, isPerYear: false, unit: units[selectedUnits?.volumeUnitSelected]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
         </tr>
         <tr class="text-bold">
           <td>{{'CHEMICALS_PER_YR' | translate}}</td>
@@ -359,11 +338,11 @@
         <tbody>
         <tr>
           <td>{{'QUANTITY' | translate}}</td>
-          <ng-container [ngTemplateOutletContext]="{key: 'boilerHouseTotalVolumeOfWaterEffluent', isCosts: false, isPerYear: true, unit: units[current.boilerHouseTotalVolumeOfWaterEffluentUnit]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
+          <ng-container [ngTemplateOutletContext]="{key: 'boilerHouseTotalVolumeOfWaterEffluent', isCosts: false, isPerYear: true, unit: units[selectedUnits?.volumeUnitSelected]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
         </tr>
         <tr>
           <td>{{'COST_FSLASH_UNIT' | translate}}</td>
-          <ng-container [ngTemplateOutletContext]="{key: 'costOfEffm3', isCosts: true, isPerYear: false, unit: 'm3'}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
+          <ng-container [ngTemplateOutletContext]="{key: 'costOfEffm3', isCosts: true, isPerYear: false, unit: units[selectedUnits?.volumeUnitSelected]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
         </tr>
         <tr class="text-bold">
           <td>{{'COST_OF_EFFLUENT_FSLASH_YEAR' | translate}}</td>
@@ -393,7 +372,7 @@
         </tr>
         <tr>
           <td>{{'FUEL_ENERGY' | translate}}</td>
-          <ng-container [ngTemplateOutletContext]="{key: 'radiationLosses', isCosts: false, isPerYear: true, unit: units[current.radiationLossesUnit]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
+          <ng-container [ngTemplateOutletContext]="{key: 'radiationLosses', isCosts: false, isPerYear: true, unit: units[selectedUnits?.energyUnitSelected]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
         </tr>
         <tr class="text-bold">
           <td>{{'COST_OF_FUEL_PER_YEAR' | translate}}</td>
@@ -417,19 +396,19 @@
         </tr>
         <tr>
           <td>{{'EFFLUENT' | translate}}</td>
-          <ng-container [ngTemplateOutletContext]="{key: 'volTdsAndBdv', isCosts: false, isPerYear: true, unit: units[current.volTdsAndBdvUnit]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
+          <ng-container [ngTemplateOutletContext]="{key: 'volTdsAndBdv', isCosts: false, isPerYear: true, unit: units[selectedUnits?.volumeUnitSelected]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
         </tr>
         <tr>
           <td>{{'REPLACEMENT_WATER_FSLASH_CHEMICALS' | translate}}</td>
-          <ng-container [ngTemplateOutletContext]="{key: 'volTdsAndBdv', isCosts: false, isPerYear: true, unit: units[current.volTdsAndBdvUnit]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
+          <ng-container [ngTemplateOutletContext]="{key: 'volTdsAndBdv', isCosts: false, isPerYear: true, unit: units[selectedUnits?.volumeUnitSelected]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
         </tr>
         <tr>
           <td>{{'FUEL_ENERGY' | translate}}</td>
-          <ng-container [ngTemplateOutletContext]="{key: 'energyInTdsBlowdown', isCosts: true, isPerYear: false, unit: units[current.energyInTdsBlowdownUnit]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
+          <ng-container [ngTemplateOutletContext]="{key: 'energyInTdsBlowdown', isCosts: false, isPerYear: true, unit: units[selectedUnits?.energyUnitSelected]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
         </tr>
         <tr>
           <td>{{"CO2_EMISSION" | translate}}</td>
-          <ng-container [ngTemplateOutletContext]="{key: 'tonnesOfCO2fromTds', isCosts: false, isPerYear: true, unit: units[current.tonnesOfCO2fromTdsUnit]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
+          <ng-container [ngTemplateOutletContext]="{key: 'tonnesOfCO2fromTds', isCosts: false, isPerYear: true, unit: units[selectedUnits?.emissionUnitSelected]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
         </tr>
         <tr class="text-bold">
           <td>{{'COST_FSLASH_YR' | translate}}</td>
@@ -448,11 +427,11 @@
         </thead>
         <tbody>
         <tr>
-          <ng-container [ngTemplateOutletContext]="{key: 'waterTreatmentEffluent', isCosts: false, isPerYear: true, unit: units[current.waterTreatmentEffluentUnit]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
+          <ng-container [ngTemplateOutletContext]="{key: 'waterTreatmentEffluent', isCosts: false, isPerYear: true, unit: units[selectedUnits?.volumeUnitSelected]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
         </tr>
         <tr class="text-bold">
           <td>{{'COST_FSLASH_YR' | translate}}</td>
-          <ng-container [ngTemplateOutletContext]="{key: 'waterTreatmentCostEffluent', isCosts: true, isPerYear: false, unit: 'tonne'}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
+          <ng-container [ngTemplateOutletContext]="{key: 'waterTreatmentCostEffluent', isCosts: true, isPerYear: true, unit: null}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
         </tr>
         </tbody>
       </ng-container>
@@ -493,19 +472,19 @@
       </tr>
       <tr>
         <td>{{'WATER_AND_CHEMICALS_SAVED' | translate}}</td>
-        <ng-container [ngTemplateOutletContext]="{key: 'mCondyWater', isCosts: false, isPerYear: true, unit: units[current.mCondyWaterUnit]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
+        <ng-container [ngTemplateOutletContext]="{key: 'mCondyWater', isCosts: false, isPerYear: true, unit: units[selectedUnits?.volumeUnitSelected]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
       </tr>
       <tr>
         <td>{{'EFFLUENT_REDUCED' | translate}}</td>
-        <ng-container [ngTemplateOutletContext]="{key: 'mCondyWater', isCosts: false, isPerYear: true, unit: units[current.mCondyWaterUnit]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
+        <ng-container [ngTemplateOutletContext]="{key: 'mCondyWater', isCosts: false, isPerYear: true, unit: units[selectedUnits?.volumeUnitSelected]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
       </tr>
       <tr>
         <td>{{'FUEL_SAVED' | translate}}</td>
-        <ng-container [ngTemplateOutletContext]="{key: 'condyFuelAmount', isCosts: false, isPerYear: true, unit: units[current.condyFuelAmountUnit]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
+        <ng-container [ngTemplateOutletContext]="{key: 'condyFuelAmount', isCosts: false, isPerYear: true, unit: units[selectedUnits?.emissionUnitSelected]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
       </tr>
       <tr>
         <td>{{'CO2_EMISSION_REDUCED' | translate}}</td>
-        <ng-container [ngTemplateOutletContext]="{key: 'mCondyCO2', isCosts: false, isPerYear: true, unit: units[current.mCondyCO2Unit]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
+        <ng-container [ngTemplateOutletContext]="{key: 'mCondyCO2', isCosts: false, isPerYear: true, unit: units[selectedUnits?.emissionUnitSelected]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
       </tr>
       <tr class="text-bold">
         <td>{{'TOTAL_VALUE_SAVED' | translate}}</td>
@@ -556,7 +535,7 @@
           </tr>
           <tr>
             <td>{{'FUEL_ENERGY' | translate}}</td>
-            <ng-container [ngTemplateOutletContext]="{key: 'radiationLosses', unit: units[current.radiationLossesUnit], isPerYear: true, isCosts: false}" [ngTemplateOutlet]="finalTableColumns"></ng-container>
+            <ng-container [ngTemplateOutletContext]="{key: 'radiationLosses', unit: units[selectedUnits?.energyUnitSelected], isPerYear: true, isCosts: false}" [ngTemplateOutlet]="finalTableColumns"></ng-container>
           </tr>
           <tr class="text-bold">
             <td>{{'COST_FSLASH_YR' | translate}}</td>
@@ -582,11 +561,11 @@
           <tbody>
           <tr>
             <td>{{'COST_FSLASH_UNIT_MASS' | translate}}</td>
-            <ng-container [ngTemplateOutletContext]="{key: 'costOfCO2PerTonne', unit: 'tonne', isPerYear: false, isCosts: true}" [ngTemplateOutlet]="finalTableColumns"></ng-container>
+            <ng-container [ngTemplateOutletContext]="{key: 'costOfCO2PerTonne', unit: units[selectedUnits?.emissionUnitSelected], isPerYear: false, isCosts: true}" [ngTemplateOutlet]="finalTableColumns"></ng-container>
           </tr>
           <tr>
             <td>{{'MASS_EMITTED' | translate}}</td>
-            <ng-container [ngTemplateOutletContext]="{key: 'totalCostOfSteamPerTonne', unit: units[current.totalCostOfSteamPerTonneUnit], isPerYear: true, isCosts: false}" [ngTemplateOutlet]="finalTableColumns"></ng-container>
+            <ng-container [ngTemplateOutletContext]="{key: 'totalCostOfSteamPerTonne', unit: units[selectedUnits?.emissionUnitSelected], isPerYear: true, isCosts: false}" [ngTemplateOutlet]="finalTableColumns"></ng-container>
           </tr>
           <tr class="text-bold">
             <td>{{'COST_FSLASH_YR' | translate}}</td>
@@ -615,11 +594,11 @@
           <tbody>
           <tr>
             <td>{{'COST_FSLASH_UNIT' | translate}}</td>
-            <ng-container [ngTemplateOutletContext]="{key: 'costOfFuelPerUnit', unit: 'kWh', isPerYear: false, isCosts: true}" [ngTemplateOutlet]="finalTableColumns"></ng-container>
+            <ng-container [ngTemplateOutletContext]="{key: 'costOfFuelPerUnit', unit: units[selectedUnits?.fuelUnitSelected], isPerYear: false, isCosts: true}" [ngTemplateOutlet]="finalTableColumns"></ng-container>
           </tr>
           <tr>
             <td>{{'QUANTITY' | translate}}</td>
-            <ng-container [ngTemplateOutletContext]="{key: 'fuelConsumptionPerYear', unit: units[current.fuelConsumptionUnitId], isPerYear: true, isCosts: false}" [ngTemplateOutlet]="finalTableColumns"></ng-container>
+            <ng-container [ngTemplateOutletContext]="{key: 'fuelConsumptionPerYear', unit: units[selectedUnits?.fuelUnitSelected], isPerYear: true, isCosts: false}" [ngTemplateOutlet]="finalTableColumns"></ng-container>
           </tr>
           <tr class="text-bold">
             <td>{{'COST_OF_FUEL_PER_YEAR' | translate}}</td>
@@ -643,19 +622,19 @@
           <tbody>
           <tr>
             <td>{{'COST_OF_WATER_UNIT_VOLUME' | translate}}</td>
-            <ng-container [ngTemplateOutletContext]="{key: 'waterCostPerUnit', unit: units[current.waterCostPerUnitUnit], isPerYear: false, isCosts: true}" [ngTemplateOutlet]="finalTableColumns"></ng-container>
+            <ng-container [ngTemplateOutletContext]="{key: 'waterCostPerUnit', unit: units[selectedUnits?.volumeUnitSelected], isPerYear: false, isCosts: true}" [ngTemplateOutlet]="finalTableColumns"></ng-container>
           </tr>
           <tr>
             <td>{{'QUANTITY' | translate}}</td>
-            <ng-container [ngTemplateOutletContext]="{key: 'boilerHouseWaterFlowTotal', unit: units[current.boilerHouseWaterFlowTotalUnit], isPerYear: false, isCosts: false}" [ngTemplateOutlet]="finalTableColumns"></ng-container>
+            <ng-container [ngTemplateOutletContext]="{key: 'boilerHouseWaterFlowTotal', unit: units[selectedUnits?.volumeUnitSelected], isPerYear: true, isCosts: false}" [ngTemplateOutlet]="finalTableColumns"></ng-container>
           </tr>
           <tr>
             <td>{{'COST_OF_BOILER_WATER_YEAR' | translate}}</td>
-            <ng-container [ngTemplateOutletContext]="{key: 'boilerHouseWaterCost', unit: null, isPerYear: false, isCosts: true}" [ngTemplateOutlet]="finalTableColumns"></ng-container>
+            <ng-container [ngTemplateOutletContext]="{key: 'boilerHouseWaterCost', unit: null, isPerYear: true, isCosts: true}" [ngTemplateOutlet]="finalTableColumns"></ng-container>
           </tr>
           <tr>
             <td>{{'COST_OF_CHEMICALS_FSLASH_UNIT' | translate}}</td>
-            <ng-container [ngTemplateOutletContext]="{key: 'costChemM3', unit: 'm3', isPerYear: false, isCosts: true}" [ngTemplateOutlet]="finalTableColumns"></ng-container>
+            <ng-container [ngTemplateOutletContext]="{key: 'costChemM3', unit: units[selectedUnits?.volumeUnitSelected], isPerYear: false, isCosts: true}" [ngTemplateOutlet]="finalTableColumns"></ng-container>
           </tr>
           <tr>
             <td>{{'COST_OF_CHEMICALS_FSLASH_YR' | translate}}</td>
@@ -709,11 +688,11 @@
               </tr>
               <tr>
                 <td>{{'MASS_FLOW_FSLASH_YR' | translate}}</td>
-                <ng-container [ngTemplateOutletContext]="{key: 'mBoiler', unit: units[current.mBoilerUnit], isPerYear: false, isCosts: false}" [ngTemplateOutlet]="finalTableColumns"></ng-container>
+                <ng-container [ngTemplateOutletContext]="{key: 'mBoiler', unit: units[selectedUnits?.massFlowUnitSelected], isPerYear: false, isCosts: false}" [ngTemplateOutlet]="finalTableColumns"></ng-container>
               </tr>
               <tr>
                 <td>{{'MASS_FLOW' | translate}}</td>
-                <ng-container [ngTemplateOutletContext]="{key: 'steamGeneratedkgPerHour', unit: units[current.steamGeneratedkgPerHourUnit], isPerYear: false, isCosts: false}" [ngTemplateOutlet]="finalTableColumns"></ng-container>
+                <ng-container [ngTemplateOutletContext]="{key: 'steamGeneratedkgPerHour', unit: units[selectedUnits?.smallMassFlowUnitSelected], isPerYear: false, isCosts: false}" [ngTemplateOutlet]="finalTableColumns"></ng-container>
               </tr>
               <tr class="text-bold">
                 <td>{{'COST_FSLASH_YR' | translate}}</td>
@@ -758,11 +737,11 @@
               <tbody>
                 <tr>
                   <td>{{'COST_FSLASH_UNIT' | translate}}</td>
-                  <ng-container [ngTemplateOutletContext]="{key: 'CostOfEffm3', unit: 'm3', isPerYear: false, isCosts: true}" [ngTemplateOutlet]="finalTableColumns"></ng-container>
+                  <ng-container [ngTemplateOutletContext]="{key: 'CostOfEffm3', unit: units[selectedUnits?.volumeUnitSelected], isPerYear: false, isCosts: true}" [ngTemplateOutlet]="finalTableColumns"></ng-container>
                 </tr>
                 <tr>
                   <td>{{'QUANTITY' | translate}}</td>
-                  <ng-container [ngTemplateOutletContext]="{key: 'BoilerHouseTotalVolumeOfWaterEffluent', unit: units[current.boilerHouseTotalVolumeOfWaterEffluentUnit], isPerYear: true, isCosts: false}" [ngTemplateOutlet]="finalTableColumns"></ng-container>
+                  <ng-container [ngTemplateOutletContext]="{key: 'BoilerHouseTotalVolumeOfWaterEffluent', unit: units[selectedUnits?.volumeUnitSelected], isPerYear: true, isCosts: false}" [ngTemplateOutlet]="finalTableColumns"></ng-container>
                 </tr>
                 <tr class="text-bold">
                   <td>{{'COST_FSLASH_YR' | translate}}</td>
@@ -800,8 +779,8 @@
           </tr>
           <tr>
             <td>{{'STEAM_GENERATED' | translate}}</td>
-            <td *ngIf="current.mBoiler; else emptyCol">{{current.mBoiler | number: '0.0-2'}} {{units[current.mBoilerUnit]}}</td>
-            <td *ngIf="potential.mBoiler; else emptyCol">{{potential.mBoiler | number: '0.0-2'}} {{units[potential.mBoilerUnit]}}</td>
+            <td *ngIf="current.mBoiler; else emptyCol">{{current.mBoiler | number: '0.0-2'}} {{units[selectedUnits?.massFlowUnitSelected]}}</td>
+            <td *ngIf="potential.mBoiler; else emptyCol">{{potential.mBoiler | number: '0.0-2'}} {{units[selectedUnits?.massFlowUnitSelected]}}</td>
             <td>–</td>
           </tr>
           <tr>
@@ -861,31 +840,27 @@
           </tr>
           <tr>
             <td>{{'CO2_EMITTED' | translate}}</td>
-            <td *ngIf="current?.tonnesOfCO2 && current?.mBoiler; else emptyCol">{{(current.tonnesOfCO2 / current.mBoiler) | number: '0.0-2'}} {{units[current.tonnesOfCO2Unit]}}/tonne</td>
-            <td *ngIf="current?.tonnesOfCO2; else emptyCol">{{current.tonnesOfCO2 | number: '0.0-2'}} {{units[current?.tonnesOfCO2Unit]}}/{{'YR' | translate}}</td>
-            <td *ngIf="potential?.tonnesOfCO2 && potential?.mBoiler; else emptyCol">{{(potential.tonnesOfCO2 / potential.mBoiler) | number: '0.0-2'}} {{units[potential.tonnesOfCO2Unit]}}/tonne</td>
-            <td *ngIf="potential?.tonnesOfCO2; else emptyCol">{{potential.tonnesOfCO2 | number: '0.0-2'}} {{units[current?.tonnesOfCO2Unit]}}/{{'YR' | translate}}</td>
-            <td *ngIf="current?.tonnesOfCO2; else emptyCol">{{(current.tonnesOfCO2 - potential?.tonnesOfCO2 || 0) | number: '0.0-2'}} {{units[current?.tonnesOfCO2Unit]}}/{{'YR' | translate}}</td>
+            <td *ngIf="current?.tonnesOfCO2 && current?.mBoiler; else emptyCol">{{(current.tonnesOfCO2 / current.mBoiler) | number: '0.0-2'}} {{units[selectedUnits?.emissionUnitSelected]}}/tonne</td>
+            <td *ngIf="current?.tonnesOfCO2; else emptyCol">{{current.tonnesOfCO2 | number: '0.0-2'}} {{units[selectedUnits?.emissionUnitSelected]}}/{{'YR' | translate}}</td>
+            <td *ngIf="potential?.tonnesOfCO2 && potential?.mBoiler; else emptyCol">{{(potential.tonnesOfCO2 / potential.mBoiler) | number: '0.0-2'}} {{units[selectedUnits?.emissionUnitSelected]}}/tonne</td>
+            <td *ngIf="potential?.tonnesOfCO2; else emptyCol">{{potential.tonnesOfCO2 | number: '0.0-2'}} {{units[selectedUnits?.emissionUnitSelected]}}/{{'YR' | translate}}</td>
+            <td *ngIf="current?.tonnesOfCO2; else emptyCol">{{(current.tonnesOfCO2 - potential?.tonnesOfCO2 || 0) | number: '0.0-2'}} {{units[selectedUnits?.emissionUnitSelected]}}/{{'YR' | translate}}</td>
           </tr>
           <tr>
             <td>{{'WATER_CONSUMED' | translate}}</td>
-            <td *ngIf="current?.boilerHouseWaterFlowTotal && current.mBoiler; else emptyCol">{{(current.boilerHouseWaterFlowTotal / current.mBoiler) | number: '0.0-2'}} {{units[current.boilerHouseWaterFlowTotalUnit]}}/tonne</td>
-            <td *ngIf="current?.boilerHouseWaterFlowTotal; else emptyCol">{{current.boilerHouseWaterFlowTotal | number: '0.0-2'}} {{units[current.boilerHouseWaterFlowTotalUnit]}}/{{'YR' | translate}}</td>
-            <td *ngIf="potential?.boilerHouseWaterFlowTotal && potential?.mBoiler; else emptyCol">{{(potential.boilerHouseWaterFlowTotal / potential.mBoiler) | number: '0.0-2'}} {{units[potential.boilerHouseWaterFlowTotalUnit]}}/tonne</td>
-            <td *ngIf="potential?.boilerHouseWaterFlowTotal; else emptyCol">{{potential.boilerHouseWaterFlowTotal | number: '0.0-2'}} {{units[potential.boilerHouseWaterFlowTotalUnit]}}/{{'YR' | translate}}</td>
-            <td *ngIf="current?.boilerHouseWaterFlowTotal; else emptyCol">
-              {{(current.boilerHouseWaterFlowTotal - potential.boilerHouseWaterFlowTotal || 0) | number: '0.0-2'}} {{units[potential?.boilerHouseWaterFlowTotalUnit]}}/{{'YR' | translate}}
-            </td>
+            <td *ngIf="current?.boilerHouseWaterFlowTotal && current.mBoiler; else emptyCol">{{(current.boilerHouseWaterFlowTotal / current.mBoiler) | number: '0.0-2'}} {{units[selectedUnits?.volumeUnitSelected]}}/tonne</td>
+            <td *ngIf="current?.boilerHouseWaterFlowTotal; else emptyCol">{{current.boilerHouseWaterFlowTotal | number: '0.0-2'}} {{units[selectedUnits?.volumeUnitSelected]}}/{{'YR' | translate}}</td>
+            <td *ngIf="potential?.boilerHouseWaterFlowTotal && potential?.mBoiler; else emptyCol">{{(potential.boilerHouseWaterFlowTotal / potential.mBoiler) | number: '0.0-2'}} {{units[selectedUnits?.volumeUnitSelected]}}/tonne</td>
+            <td *ngIf="potential?.boilerHouseWaterFlowTotal; else emptyCol">{{potential.boilerHouseWaterFlowTotal | number: '0.0-2'}} {{units[selectedUnits?.volumeUnitSelected]}}/{{'YR' | translate}}</td>
+            <td *ngIf="current?.boilerHouseWaterFlowTotal; else emptyCol">{{(current.boilerHouseWaterFlowTotal - potential.boilerHouseWaterFlowTotal || 0) | number: '0.0-2'}} {{units[selectedUnits?.volumeUnitSelected]}}/{{'YR' | translate}}</td>
           </tr>
           <tr>
             <td>{{'EFFLUENT_CONSUMED' | translate}}</td>
-            <td *ngIf="current?.boilerHouseTotalVolumeOfWaterEffluent && current.mBoiler; else emptyCol">{{(current.boilerHouseTotalVolumeOfWaterEffluent / current.mBoiler) | number: '0.0-2'}} {{units[current.boilerHouseTotalVolumeOfWaterEffluentUnit]}}/tonne</td>
-            <td *ngIf="current?.boilerHouseTotalVolumeOfWaterEffluent; else emptyCol">{{current.boilerHouseTotalVolumeOfWaterEffluent | number: '0.0-2'}} {{units[current.boilerHouseTotalVolumeOfWaterEffluentUnit]}}/{{'YR' | translate}}</td>
-            <td *ngIf="potential?.boilerHouseTotalVolumeOfWaterEffluent && potential?.mBoiler; else emptyCol">{{(potential.boilerHouseTotalVolumeOfWaterEffluent / potential.mBoiler) | number: '0.0-2'}} {{units[potential.boilerHouseTotalVolumeOfWaterEffluentUnit]}}/tonne</td>
-            <td *ngIf="potential?.boilerHouseTotalVolumeOfWaterEffluent; else emptyCol">{{potential.boilerHouseTotalVolumeOfWaterEffluent | number: '0.0-2'}} {{units[potential.boilerHouseTotalVolumeOfWaterEffluentUnit]}}/{{'YR' | translate}}</td>
-            <td *ngIf="current?.boilerHouseTotalVolumeOfWaterEffluent; else emptyCol">
-              {{(current.boilerHouseTotalVolumeOfWaterEffluent - potential.boilerHouseTotalVolumeOfWaterEffluent || 0) | number: '0.0-2'}} {{units[potential?.boilerHouseTotalVolumeOfWaterEffluentUnit]}}/{{'YR' | translate}}
-            </td>
+            <td *ngIf="current?.boilerHouseTotalVolumeOfWaterEffluent && current.mBoiler; else emptyCol">{{(current.boilerHouseTotalVolumeOfWaterEffluent / current.mBoiler) | number: '0.0-2'}} {{units[selectedUnits?.volumeUnitSelected]}}/tonne</td>
+            <td *ngIf="current?.boilerHouseTotalVolumeOfWaterEffluent; else emptyCol">{{current.boilerHouseTotalVolumeOfWaterEffluent | number: '0.0-2'}} {{units[selectedUnits?.volumeUnitSelected]}}/{{'YR' | translate}}</td>
+            <td *ngIf="potential?.boilerHouseTotalVolumeOfWaterEffluent && potential?.mBoiler; else emptyCol">{{(potential.boilerHouseTotalVolumeOfWaterEffluent / potential.mBoiler) | number: '0.0-2'}} {{units[selectedUnits?.volumeUnitSelected]}}/tonne</td>
+            <td *ngIf="potential?.boilerHouseTotalVolumeOfWaterEffluent; else emptyCol">{{potential.boilerHouseTotalVolumeOfWaterEffluent | number: '0.0-2'}} {{units[selectedUnits?.volumeUnitSelected]}}/{{'YR' | translate}}</td>
+            <td *ngIf="current?.boilerHouseTotalVolumeOfWaterEffluent; else emptyCol">{{(current.boilerHouseTotalVolumeOfWaterEffluent - potential.boilerHouseTotalVolumeOfWaterEffluent || 0) | number: '0.0-2'}} {{units[selectedUnits?.volumeUnitSelected]}}/{{'YR' | translate}}</td>
           </tr>
           </tbody>
         </table>
@@ -906,12 +881,12 @@
             <td *ngIf="current?.qfuel && potential?.qfuel">{{(current.qfuel * 0.0036) - (potential.qfuel * 0.0036) | number: '0.0-2'}} Gj/{{'YR' | translate}}</td>
             <td class="text-left">
               <img class="thumb-img" src="/assets/img/steam_generation/energy_saving/co2-emissions.png" alt="co2 emissions">
-              {{current?.qfuel ? (current.qfuel - (potential?.qfuel || 0) | number: '0.0-2') : 0}} {{units[current?.qfuelUnit]}}
+              {{current?.qfuel ? (current.qfuel - (potential?.qfuel || 0) | number: '0.0-2') : 0}} {{units[selectedUnits?.energyUnitSelected]}}
             </td>
           </tr>
           <tr>
             <td class="orange text-uppercase"><i class="sga-co2-emissions"></i>{{'CO2_EMISSIONS' | translate}}</td>
-            <td *ngIf="current?.tonnesOfCO2; else emptyCol">{{(current.tonnesOfCO2 - potential?.tonnesOfCO2 || 0) | number: '0.0-2'}} {{units[current?.tonnesOfCO2Unit]}}/{{'YR' | translate}}</td>
+            <td *ngIf="current?.tonnesOfCO2; else emptyCol">{{(current.tonnesOfCO2 - potential?.tonnesOfCO2 || 0) | number: '0.0-2'}} {{units[selectedUnits?.emissionUnitSelected]}}/{{'YR' | translate}}</td>
             <td class="text-left">
               <img class="thumb-img" src="/assets/img/steam_generation/energy_saving/thermal-energy.png" alt="Thermal energy">
               {{current?.tonnesOfCO2 ? ((current.tonnesOfCO2 - potential.tonnesOfCO2 || 0) * 45.46 | number: '0.0-0') : 0}} {{'TREES' | translate}}
@@ -919,7 +894,7 @@
           </tr>
           <tr>
             <td class="steel text-uppercase"><i class="sga-water-consumption"></i>{{'WATER_CONSUMPTION' | translate}}</td>
-            <td *ngIf="current?.boilerHouseWaterFlowTotal; else emptyCol">{{(current.boilerHouseWaterFlowTotal - potential.boilerHouseWaterFlowTotal || 0) | number: '0.0-2'}} {{units[potential?.boilerHouseWaterFlowTotalUnit]}}/{{'YR' | translate}}</td>
+            <td *ngIf="current?.boilerHouseWaterFlowTotal; else emptyCol">{{(current.boilerHouseWaterFlowTotal - potential.boilerHouseWaterFlowTotal || 0) | number: '0.0-2'}} {{units[selectedUnits?.volumeUnitSelected]}}/{{'YR' | translate}}</td>
             <td class="text-left">
               <img class="thumb-img" src="/assets/img/steam_generation/energy_saving/water-consumption.png" alt="water consumption">
               {{(current.boilerHouseWaterFlowTotal - potential.boilerHouseWaterFlowTotal || 0) / 2500 | number: '0.0-2'}} {{'OLYMPIC_POOLS' | translate}}
@@ -928,7 +903,7 @@
           <tr>
             <td class="blue text-uppercase"><i class="sga-water-effluent"></i>{{'WATER_EFFLUENT' | translate}}</td>
             <td *ngIf="current?.boilerHouseTotalVolumeOfWaterEffluent; else emptyCol">
-              {{(current.boilerHouseTotalVolumeOfWaterEffluent - potential.boilerHouseTotalVolumeOfWaterEffluent || 0) | number: '0.0-2'}} {{units[potential?.boilerHouseTotalVolumeOfWaterEffluentUnit]}}/{{'YR' | translate}}
+              {{(current.boilerHouseTotalVolumeOfWaterEffluent - potential.boilerHouseTotalVolumeOfWaterEffluent || 0) | number: '0.0-2'}} {{units[selectedUnits?.volumeUnitSelected]}}/{{'YR' | translate}}
             </td>
             <td class="text-left">
               <img class="thumb-img" src="/assets/img/steam_generation/energy_saving/water-effluent.png" alt="water effluent">
