@@ -573,7 +573,11 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       .calculateCalorific(data)
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(({ fuelCarbonContent, fuelEnergyPerUnit }) =>
-        this.setBenchmarkInputValue({fuelEnergyPerUnit, fuelCarbonContent}, null, {emitEvent: false})
+        this.setBenchmarkInputValue(
+          {fuelEnergyPerUnit, fuelCarbonContent: fuelCarbonContent || null},
+          null,
+          {emitEvent: false}
+        )
       );
   }
 

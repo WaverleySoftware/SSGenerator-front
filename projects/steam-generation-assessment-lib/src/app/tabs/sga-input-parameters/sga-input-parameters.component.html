@@ -38,17 +38,16 @@
                            #fuel></form-list>
 
                 <input [label]="'FUEL_CALORIFIC_VALUE' | translate"
-                       [unitsStr]="[sizingUnits['BoilerHouseEnergyUnits']?.unit, sizingUnits[getFuelTypeName(fuel?.item?.value)]?.unit]"
+                       [unitsStr]="[sizingUnits['BoilerHouseEnergyUnits']?.unit, fuelCalorificUnit]"
                        [value]="getValue('fuelEnergyPerUnit') | decimalPlace: 9"
                        [sga-decimal-places]="9"
-                       [disabled]="sizingUnits['BoilerHouseEnergyUnits']?.unit === sizingUnits[getFuelTypeName(fuel?.item?.value)]?.unit"
                        formControlName="fuelEnergyPerUnit"
                        type="number"
                        spirax-input
                        required/>
 
                 <input [label]="'CO2_EMISSIONS_PER_UNIT_FUEL' | translate"
-                       [unitsStr]="[sizingUnits['WeightUnit']?.unit, sizingUnits[getFuelTypeName(fuel?.item?.value)]?.unit]"
+                       [unitsStr]="[sizingUnits['WeightUnit']?.unit, co2EmissionUnit]"
                        [value]="getValue('fuelCarbonContent') | decimalPlace: 9"
                        [sga-decimal-places]="9"
                        [disabled]="sizingUnits['WeightUnit']?.unit === sizingUnits[getFuelTypeName(fuel?.item?.value)]?.unit"

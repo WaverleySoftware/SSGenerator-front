@@ -1,7 +1,7 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ViewChild } from "@angular/core";
 import { SgaFormService } from '../../services/sga-form.service';
 import { InputParametersTFormInterface, TForm, TFormValueGetterInterface } from '../../interfaces/forms.interface';
-import { PreferenceService } from 'sizing-shared-lib';
+import { PreferenceService, UnitsService } from 'sizing-shared-lib';
 import { FuelTypesEnumerationLetter } from '../../interfaces/fuel-type.interface';
 import {
   SgaCalcBoilerEfficiencyReqInterface,
@@ -17,6 +17,7 @@ import { BenchmarkInputsInterface } from '../../interfaces/benchmarkInputs.inter
 import { TabDirective } from "ngx-bootstrap/tabs/tab.directive";
 import { SgaBoilerSchemeInterface } from "../../interfaces/sga-boiler-scheme.interface";
 import { FormGroup } from "@angular/forms";
+import { FormListComponent } from "../../components";
 
 
 @Component({
@@ -32,6 +33,8 @@ export class SgaInputParametersComponent {
   @Output() calculateWaterTreatment = new EventEmitter<SgaCalcWaterTreatmentReqInterface>();
   @Output() setTab: EventEmitter<number> = new EventEmitter<number>();
 
+  @ViewChild('fuel', {static: false}) fuelRef: FormListComponent;
+
   private readonly formValueGetter: TFormValueGetterInterface = this.formService
     .createFormValueGetter(this.formService.getInputParamsFg());
   structure: SgFormStructureInterface = sgaFormStructure;
@@ -41,7 +44,11 @@ export class SgaInputParametersComponent {
       [item.preference.name]: { decimal: item.preference.decimalPlaces, unit: item.preference.unitName }
     }), {})));
 
-  constructor(private formService: SgaFormService, public preferenceService: PreferenceService) {}
+  constructor(
+    private formService: SgaFormService,
+    private preferenceService: PreferenceService,
+    private unitsService: UnitsService
+  ) {}
 
   get getBoilerSchemeState(): SgaBoilerSchemeInterface {
     const fg = this.formGroup.get('benchmarkInputs') as FormGroup;
@@ -60,6 +67,46 @@ export class SgaInputParametersComponent {
       isEconomizerPresent, isBlowdownVesselPresent,
       isCoolingWaterUsed, isAutoTdsControlPResent, isFlashVesselPresent,
       isHeatExchangerPresent, pressurisedDeaerator, isDsiPresent };
+  }
+
+  get fuelCalorificUnit(): string {
+    let fuelUnitId = this.formGroup.get('selectedUnits.fuelUnitSelected').value || 108;
+    const calorificCtrl = this.formGroup.get('benchmarkInputs.fuelEnergyPerUnit');
+
+    if (
+      fuelUnitId === 355 /*DecaTherms*/ ||
+      fuelUnitId === 354 /*mcf(1000ft3)*/ ||
+      (this.fuelRef && this.fuelRef.item && this.fuelRef.item.value === 'O-Other')
+    ) {
+      fuelUnitId = 108; // kWh
+    }
+
+    const unit = this.unitsService.units.find(({id}) => id === fuelUnitId);
+
+    if (
+      (this.fuelRef && this.fuelRef.item && this.fuelRef.item.value === 'O-Other') ||
+      (unit && (unit.type === 'BoilerHouseEnergy' || unit.type === 'BoilerHouseElectricalFuel'))
+    ) {
+      if (calorificCtrl.enabled) {
+        calorificCtrl.disable({emitEvent: false});
+      }
+    } else if (calorificCtrl.disabled) {
+      calorificCtrl.enable({emitEvent: false});
+    }
+
+    return unit && unit.units;
+  }
+
+  get co2EmissionUnit(): string {
+    let fuelUnitId = this.formGroup.get('selectedUnits.fuelUnitSelected').value || 16;
+
+    if (fuelUnitId === 355 /*DecaTherms*/ || fuelUnitId === 354 /*mcf(1000ft3)*/) {
+      fuelUnitId = 16;
+    }
+
+    const unit = this.unitsService.units.find(({id}) => id === fuelUnitId);
+
+    return unit && unit.units;
   }
 
   getInvalidBlock(structure): boolean {
