@@ -87,10 +87,10 @@ export class SgaInputParametersComponent {
       (this.fuelRef && this.fuelRef.item && this.fuelRef.item.value === 'O-Other') ||
       (unit && (unit.type === 'BoilerHouseEnergy' || unit.type === 'BoilerHouseElectricalFuel'))
     ) {
-      if (calorificCtrl.enabled) {
+      if (calorificCtrl && calorificCtrl.enabled) {
         calorificCtrl.disable({emitEvent: false});
       }
-    } else if (calorificCtrl.disabled) {
+    } else if (calorificCtrl && calorificCtrl.disabled) {
       calorificCtrl.enable({emitEvent: false});
     }
 

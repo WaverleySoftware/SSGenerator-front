@@ -1,1 +1,178 @@
-<h1>Coming soon...</h1>
+<form class="form-horizontal" role="form" [formGroup]="theFormGroup" (ngSubmit)="onSubmit()">
+  <div class="row">
+    <div class="col-xs-12">
+      <button type="submit"
+              class="btn btn-dynamic btn-primary pull-right"
+              [disabled]="theFormGroup.invalid"
+              [title]="'SAVE' | translate:true">
+        <i class="fa fa-save">  {{'SAVE' | translate:true}}</i>
+      </button>
+    </div>
+  </div>
+
+  <div class="row"><div class="col-xs-12"><br></div></div>
+
+  <alert-block *ngIf="alertData.visible"
+               (close-callback)="alertData.visible = false"
+               [type]="alertData.type"
+               [auto-close]="true"
+               [message]="alertData.message | translate"></alert-block>
+
+  <div class="panel panel-primary">
+    <div class="panel-heading" role="tab" id="fuelTypeOptionsHeading">
+      <h4 class="panel-title">
+        <a role="button"
+           data-toggle="collapse"
+           data-parent="#accordion"
+           href="#collapseFuelTypeOptions"
+           aria-expanded="true"
+           aria-controls="collapseFuelTypeOptions">{{"FUEL_TYPE" | translate}}</a>
+      </h4>
+    </div>
+
+    <div id="collapseFuelTypeOptions"
+         class="panel-collapse collapse show"
+         role="tabpanel"
+         aria-labelledby="fuelTypeOptionsHeading">
+      <div class="panel-body">
+        <div class="form-group">
+          <div class="col-lg-3 col-md-6 col-xs-12 text-right">
+            <label class="control-label">{{"FUEL_TYPE" | translate}}</label>
+          </div>
+          <div class="col-lg-2 col-md-6 col-xs-12" *ngIf="fuelTypes$ | async as fuelTypes">
+            <select class="form-control" formControlName="SteamGenerationFuelType" (ngModelChange)="changeFuelType($event)">
+              <option *ngFor="let fuelType of fuelTypes" [value]="fuelType?.value">
+                {{fuelType?.translationText}}
+              </option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel panel-primary">
+    <div class="panel-heading" role="tab" id="defaultOptionsHeading">
+      <h4 class="panel-title">
+        <a role="button"
+           data-toggle="collapse"
+           data-parent="#accordion"
+           href="#collapseDefaultOptions"
+           aria-expanded="true"
+           aria-controls="collapseDefaultOptions">{{"DEFAULT_OPTIONS" | translate}}</a>
+      </h4>
+    </div>
+
+    <div id="collapseDefaultOptions"
+         class="panel-collapse collapse show"
+         role="tabpanel"
+         aria-labelledby="defaultOptionsHeading">
+      <div class="panel-body">
+        <div class="form-group">
+          <div class="col-lg-4 col-md-4 col-xs-12 text-right">
+              <label class="control-label">{{'COST_OF_FUEL_PER_UNIT' | translate}}</label>
+            </div>
+          <div class="col-lg-2 col-md-4 col-xs-12">
+            <div class="input-group">
+              <input class="form-control" type="number" formControlName="SteamGenerationFuelCost" />
+              <span class="input-group-addon">$</span>
+            </div>
+          </div>
+          <div class="col-lg-2 col-md-4 col-xs-12">
+            <select class="form-control" formControlName="SteamGenerationFuelUnit">
+              <option *ngFor="let unit of fuelUnits"
+                      [label]="unit?.units"
+                      [value]="unit?.id">
+                {{unit?.units}}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="col-lg-4 col-md-4 col-xs-12 text-right">
+              <label class="control-label">{{'COST_OF_WATER_FSLASH_UNIT' | translate}}</label>
+            </div>
+          <div class="col-lg-2 col-md-4 col-xs-12">
+            <div class="input-group">
+              <input class="form-control" type="number" formControlName="SteamGenerationWaterCost" />
+              <span class="input-group-addon">$</span>
+            </div>
+          </div>
+          <div class="col-lg-2 col-md-4 col-xs-12">
+            <select class="form-control" formControlName="SteamGenerationWaterCostUnit">
+              <option *ngFor="let unit of volumeUnits"
+                      [label]="unit.units"
+                      [value]="unit.id">
+                {{unit.units}}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="col-lg-4 col-md-4 col-xs-12 text-right">
+              <label class="control-label">{{'COST_OF_EFFLUENT_FSLASH_UNIT' | translate}}</label>
+            </div>
+          <div class="col-lg-2 col-md-4 col-xs-12">
+            <div class="input-group">
+              <input class="form-control" type="number" formControlName="SteamGenerationEffluentCost" />
+              <span class="input-group-addon">$</span>
+            </div>
+          </div>
+          <div class="col-lg-2 col-md-4 col-xs-12">
+            <select class="form-control" formControlName="SteamGenerationEffluentCostUnit">
+              <option *ngFor="let unit of volumeUnits"
+                      [label]="unit.units"
+                      [value]="unit.id">
+                {{unit.units}}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="col-lg-4 col-md-4 col-xs-12 text-right">
+              <label class="control-label">{{'COST_OF_CHEMICALS_FSLASH_UNIT_OF_WATER' | translate}}</label>
+            </div>
+          <div class="col-lg-2 col-md-4 col-xs-12">
+            <div class="input-group">
+              <input class="form-control" type="number" formControlName="SteamGenerationWaterTreatmentCost" />
+              <span class="input-group-addon">$</span>
+            </div>
+          </div>
+          <div class="col-lg-2 col-md-4 col-xs-12">
+            <select class="form-control" formControlName="SteamGenerationWaterTreatmentCostUnit">
+              <option *ngFor="let unit of volumeUnits"
+                      [label]="unit.units"
+                      [value]="unit.id">
+                {{unit.units}}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="col-lg-4 col-md-4 col-xs-12 text-right">
+              <label class="control-label">{{'COST_OF_CO2_PER_UNIT_MASS' | translate}}</label>
+            </div>
+          <div class="col-lg-2 col-md-4 col-xs-12">
+            <div class="input-group">
+              <input class="form-control" type="number" formControlName="SteamGenerationCO2Cost" />
+              <span class="input-group-addon">$</span>
+            </div>
+          </div>
+          <div class="col-lg-2 col-md-4 col-xs-12">
+            <select class="form-control" formControlName="SteamGenerationCO2CostUnit">
+              <option *ngFor="let unit of emissionUnits"
+                      [label]="unit.units"
+                      [value]="unit.id">
+                {{unit.units}}
+              </option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>

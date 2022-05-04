@@ -6,6 +6,7 @@ import "rxjs/add/operator/map";
 import "rxjs/add/operator/catch";
 
 import { DisplayGroup } from "../../shared/translation/translation.model";
+import { BehaviorSubject } from "rxjs";
 
 
 
@@ -15,7 +16,7 @@ import { DisplayGroup } from "../../shared/translation/translation.model";
 export class TranslationService {
   displayGroup: DisplayGroup = null;
   layoutDisplayGroup: DisplayGroup = null;
-  displayGroupChange: Subject<DisplayGroup> = new Subject<DisplayGroup>();
+  displayGroupChange: BehaviorSubject<DisplayGroup> = new BehaviorSubject<DisplayGroup>(null);
 
   constructor(private http: HttpClient) {
     // When the class in constructed, initialise the subject so that whenever it is called, its subscriber resolves the result to the current Display Group object.

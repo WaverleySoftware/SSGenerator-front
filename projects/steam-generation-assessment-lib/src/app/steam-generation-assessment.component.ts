@@ -899,7 +899,12 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       const newValues = {};
       const fuelControl = this.sizingModuleForm.get('benchmarkInputs.inputFuelId');
       const fuelId = fuelControl && fuelControl.value;
-      const enumerationDefinition = this.getEnumerationDefinition('FuelTypeList_BoilerHouseInput', fuelId && {id: fuelId});
+      let fuelValue: string;
+      if (!fuelId) {
+        const defaultFuelType = this.modulePreferenceService.allModulePreferences.find(({name}) => name === 'SteamGenerationFuelType');
+        fuelValue = defaultFuelType && defaultFuelType.value;
+      }
+      const enumerationDefinition = this.getEnumerationDefinition('FuelTypeList_BoilerHouseInput', {id: fuelId, value: fuelValue});
       const fuelTypeName = enumerationDefinition &&
         enumerationDefinition.value &&
         FuelTypesEnumerationLetter[enumerationDefinition.value.charAt(0).toUpperCase()];
@@ -1155,7 +1160,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     let item = enumerations.enumerationDefinitions[0];
 
     if (value) {
-      const key = Object.keys(value)[0];
+      const key = Object.keys(value).filter(v => !!value[v])[0];
       const searchVal = value[key];
       item = enumerations && enumerations.enumerationDefinitions.find((v) => v[key] === searchVal);
     }
