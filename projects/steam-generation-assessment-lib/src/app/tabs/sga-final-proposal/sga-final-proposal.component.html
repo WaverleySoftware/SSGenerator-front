@@ -112,9 +112,9 @@
             </tr>
             <tr class="filled">
               <td>{{'OVERALL_STEAM_GENERATION_EFFICIENCY' | translate}}</td>
-              <td *ngIf="current.energyToGenerateUnitofSteam; else emptyCol">{{current.energyToGenerateUnitofSteam | number: '0.0-2'}} {{units[specificEnergyUnitId]}}</td>
+              <td *ngIf="current.energyToGenerateUnitofSteam; else emptyCol">{{current.energyToGenerateUnitofSteam | number: '0.0-2'}} {{units[selectedUnits?.specificEnergyUnitsSelected]}}</td>
               <td>–</td>
-              <td *ngIf="potential.energyToGenerateUnitofSteam; else emptyCol">{{potential.energyToGenerateUnitofSteam | number: '0.0-2'}} {{units[specificEnergyUnitId]}}</td>
+              <td *ngIf="potential.energyToGenerateUnitofSteam; else emptyCol">{{potential.energyToGenerateUnitofSteam | number: '0.0-2'}} {{units[selectedUnits?.specificEnergyUnitsSelected]}}</td>
               <td>-</td>
               <td *ngIf="current.energyToGenerateUnitofSteam && potential.energyToGenerateUnitofSteam; else emptyCol">{{(current.energyToGenerateUnitofSteam - potential.energyToGenerateUnitofSteam) | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
               <td *ngIf="current.energyToGenerateUnitofSteam && potential.energyToGenerateUnitofSteam; else emptyCol">{{savingPercent(current.totalCostOfSteamPerTonne, potential.totalCostOfSteamPerTonne) | number: '0.0-2'}}%</td>
@@ -213,7 +213,7 @@
       </tr>
       <tr>
         <td>{{'ENERGY_FSLASH_UNIT_MASS' | translate}}</td>
-        <ng-container [ngTemplateOutletContext]="{key: 'energyToGenerateUnitofSteam', unit: units[specificEnergyUnitId]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
+        <ng-container [ngTemplateOutletContext]="{key: 'energyToGenerateUnitofSteam', unit: units[selectedUnits?.specificEnergyUnitsSelected]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
       </tr>
       <tr class="text-bold">
         <td>{{'COST_FSLASH_YR' | translate}}</td>

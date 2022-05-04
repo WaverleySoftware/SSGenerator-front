@@ -984,7 +984,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       const preference = sizingPreference && sizingPreference.preference;
       const newUnitId = preference && Number(preference.value);
 
-      if (unitControl && unitControl.value && unitControl.value !== newUnitId) {
+      if (unitControl && unitControl.value !== newUnitId) {
         if (name === fuelTypeName && unitControl.value !== newUnitId) {
           const unitConvert = this.createConvert('FUEL_TYPE_NAME', SelectedUnitPreferenceEnum[fuelTypeName], newUnitId)
           unitConverts = unitConverts.concat(unitConvert);
@@ -1429,14 +1429,5 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       this.sizingModuleResults.benchmark &&
       this.sizingModuleResults.overallProposal &&
       this.sizingModuleResults.proposedSetup);
-  }
-
-  get specificEnergyUnitId(): number {
-    if (!this.preferenceService.sizingUnitPreferences) {
-      return null;
-    }
-    const specificEnergyUnitsPreference = this.preferenceService.sizingUnitPreferences.find(({unitType}) => unitType === 'BoilerHouseSpecificEnergyUnits');
-
-    return specificEnergyUnitsPreference && specificEnergyUnitsPreference.preference && Number(specificEnergyUnitsPreference.preference.value);
   }
 }

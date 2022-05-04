@@ -16,7 +16,6 @@ export class SgaFinalProposalComponent implements OnInit {
   @Input() potential: Partial<BenchmarkResBenchmarkInterface>; // Overall...
   @Input() formGroup: TForm<InputParametersTFormInterface>;
   @Input() currency: string;
-  @Input() specificEnergyUnitId: number;
   @Input() verticalChart: ChartBarDataInterface[] = verticalChart;
   @Input() horizontalChart: ChartBarDataInterface[] = horizontalChart;
   @Input() units: { [key: number]: string };

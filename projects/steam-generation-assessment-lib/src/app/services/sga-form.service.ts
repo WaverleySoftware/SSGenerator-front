@@ -39,7 +39,8 @@ export class SgaFormService {
         pressureUnitSelected: [null],
         temperatureUnitSelected: [null],
         tdsUnitSelected: [null],
-        fuelUnitSelected: [null]
+        fuelUnitSelected: [null],
+        specificEnergyUnitsSelected: [null]
       },
       benchmarkInputs: {
         hoursOfOperation: [8736, Validators.required, validateBenchmarkInput(this.apiService)],

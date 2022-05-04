@@ -27,7 +27,6 @@
                          [data]="sizingModuleResults?.benchmark"
                          [currency]="currency$ | async"
                          [units]="units"
-                         [specificEnergyUnitId]="specificEnergyUnitId"
                          [chartData]="benchmarkChartData"></app-sga-benchmark>
     </tab>
     <tab [heading]="'PROPOSED_SETUP' | translate"
@@ -56,7 +55,6 @@
                               [current]="sizingModuleResults?.benchmark"
                               [potential]="sizingModuleResults?.overallProposal"
                               [verticalChart]="proposalVerticalChart"
-                              [specificEnergyUnitId]="specificEnergyUnitId"
                               [horizontalChart]="finalProposalHorizontalChart"></app-sga-final-proposal>
     </tab>
   </tabset>

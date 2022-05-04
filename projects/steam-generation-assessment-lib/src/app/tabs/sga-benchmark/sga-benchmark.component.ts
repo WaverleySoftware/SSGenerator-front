@@ -13,7 +13,6 @@ import { SelectedUnitsInterface } from "../../interfaces/selectedUnits.interface
 export class SgaBenchmarkComponent {
   @Input() data: BenchmarkResBenchmarkInterface;
   @Input() currency: string;
-  @Input() specificEnergyUnitId: number;
   @Input() formGroup: TForm<InputParametersTFormInterface>;
   @Input() chartData: ChartBarDataInterface[];
   @Input() units: { [key: number]: string };

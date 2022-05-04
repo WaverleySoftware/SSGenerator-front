@@ -250,7 +250,7 @@
           </tr>
           <tr class="filled">
             <td>{{'OVERALL_STEAM_GENERATION_EFFICIENCY' | translate}}</td>
-            <td *ngIf="data?.energyToGenerateUnitofSteam; else emptyCol">{{data.energyToGenerateUnitofSteam | number : '0.0-2'}} {{units[specificEnergyUnitId]}}</td>
+            <td *ngIf="data?.energyToGenerateUnitofSteam; else emptyCol">{{data.energyToGenerateUnitofSteam | number : '0.0-2'}} {{units[selectedUnits?.specificEnergyUnitsSelected]}}</td>
             <td>-</td>
           </tr>
           </tbody>
@@ -303,7 +303,7 @@
               <span>{{'COST_FSLASH_UNIT_ENERGY' | translate}}</span><span *ngIf="data?.totalCostOfSteamPerkWhOfFuel; else emptyDash">{{data.totalCostOfSteamPerkWhOfFuel | number : '0.0-2'}} {{currency}}/{{units[selectedUnits?.energyUnitSelected]}}</span>
             </li>
             <li>
-              <span>{{'ENERGY_FSLASH_UNIT_MASS' | translate}}</span><span *ngIf="data?.energyToGenerateUnitofSteam; else emptyDash">{{data.energyToGenerateUnitofSteam | number : '0.0-2'}} {{units[specificEnergyUnitId]}}</span>
+              <span>{{'ENERGY_FSLASH_UNIT_MASS' | translate}}</span><span *ngIf="data?.energyToGenerateUnitofSteam; else emptyDash">{{data.energyToGenerateUnitofSteam | number : '0.0-2'}} {{units[selectedUnits?.specificEnergyUnitsSelected]}}</span>
             </li>
             <li class="text-bold">
               <span>{{'COST_FSLASH_YR' | translate}}</span><span *ngIf="data?.totalCostOfSteamPerYear; else emptyDash">{{data.totalCostOfSteamPerYear | number : '0.0-2'}} {{currency}}/{{'YR' | translate}}</span>

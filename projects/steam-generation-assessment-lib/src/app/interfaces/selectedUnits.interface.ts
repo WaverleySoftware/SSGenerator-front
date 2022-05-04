@@ -11,6 +11,7 @@ export interface SelectedUnitsInterface {
   temperatureUnitSelected: number;
   tdsUnitSelected: number;
   fuelUnitSelected: number;
+  specificEnergyUnitsSelected: number;
 }
 
 export enum SelectedUnitPreferenceEnum {

@@ -1,6 +1,6 @@
 export const SGA_SIZING_UNITS_LIST: {name: string; masterTextKey: string; selectedUnitName: string;}[] = [
   { name: 'BoilerHouseEnergyUnits', masterTextKey: 'ENERGY', selectedUnitName: 'energyUnitSelected' },
-  { name: 'BoilerHouseSpecificEnergyUnits', masterTextKey: 'SPECIFIC_ENERGY', selectedUnitName: null },
+  { name: 'BoilerHouseSpecificEnergyUnits', masterTextKey: 'SPECIFIC_ENERGY', selectedUnitName: 'specificEnergyUnitsSelected' },
   { name: 'WeightUnit', masterTextKey: 'SMALL_WEIGHT', selectedUnitName: 'smallWeightUnitSelected' },
   { name: 'BHCurrency', masterTextKey: 'CURRENCY', selectedUnitName: null },
   { name: 'BoilerHouseEmissionUnits', masterTextKey: 'CO2_EMISSIONS', selectedUnitName: 'emissionUnitSelected' },
