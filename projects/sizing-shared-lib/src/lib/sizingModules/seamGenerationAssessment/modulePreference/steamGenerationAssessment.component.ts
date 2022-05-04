@@ -132,19 +132,22 @@ export class SteamGenerationAssessmentModulePreferencesComponent implements OnIn
       name
     }));
 
+    this.theFormGroup.disable();
     this.adminService.manageModulePreferences(data)
-      .pipe(takeUntil(this.ngUnsubscribe), tap((done)=>{
+      .pipe(takeUntil(this.ngUnsubscribe), tap(()=>{},()=>{
+        this.alertData.visible = true;
+        this.alertData.type = 'danger';
+        this.alertData.message = 'MODULE_PREFERENCES_FAILED_TO_SAVE_MESSAGE';
+      }, ()=>this.theFormGroup.enable()))
+      .subscribe((done) => {
         this.alertData.visible = true;
         this.alertData.type = done ? 'success' : 'danger';
         this.alertData.message = done ?
           'MODULE_PREFERENCES_SAVED_SUCCESSFULLY_MESSAGE' :
           'MODULE_PREFERENCES_FAILED_TO_SAVE_MESSAGE';
-      },()=>{
-        this.alertData.visible = true;
-        this.alertData.type = 'danger';
-        this.alertData.message = 'MODULE_PREFERENCES_FAILED_TO_SAVE_MESSAGE';
-      }))
-      .subscribe();
+
+        if (done) { this.theFormGroup.markAsPristine(); }
+      });
   }
 
   public changeFuelType(fuelTypeValue: string): void {
