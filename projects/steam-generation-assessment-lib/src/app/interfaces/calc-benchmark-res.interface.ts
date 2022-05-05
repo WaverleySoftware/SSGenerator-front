@@ -206,6 +206,7 @@ export interface BenchmarkResBenchmarkViewInterface {
   costChemM3: number;
   chemCostTotalPerYear: number;
   waterAndChemicalsCostTotalPerYear: number;
+  o2ScavengingChemicalCostPerYear: number;
 }
 
 export interface BenchmarkResFeaturesInterface {
