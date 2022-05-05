@@ -95,9 +95,9 @@
             <tr>
               <td>{{'TOTAL_COST_OF_STEAM_FSLASH_UNIT_MASS' | translate}}</td>
               <td>–</td>
-              <td *ngIf="current.totalCostOfSteamPerTonne; else emptyCol">{{current.totalCostOfSteamPerTonne | number: '0.0-2'}} {{currency}}/{{units[current.totalCostOfSteamPerTonneUnit]}}</td>
+              <td *ngIf="current.totalCostOfSteamPerTonne; else emptyCol">{{current.totalCostOfSteamPerTonne | number: '0.0-2'}} {{currency}}/{{units[selectedUnits?.massFlowUnitSelected]?.replace('/yr', '')}}</td>
               <td>-</td>
-              <td *ngIf="potential.totalCostOfSteamPerTonne; else emptyCol">{{potential.totalCostOfSteamPerTonne | number: '0.0-2'}} {{currency}}/{{units[potential.totalCostOfSteamPerTonneUnit]}}</td>
+              <td *ngIf="potential.totalCostOfSteamPerTonne; else emptyCol">{{potential.totalCostOfSteamPerTonne | number: '0.0-2'}} {{currency}}/{{units[selectedUnits?.massFlowUnitSelected]?.replace('/yr', '')}}</td>
               <td>–</td>
               <td>–</td>
             </tr>

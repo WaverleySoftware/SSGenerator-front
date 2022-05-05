@@ -533,7 +533,7 @@
                                                formControlName="atmosphericDeaerator"
                                                label="ATMOSPHERIC_DEAERATOR"
                                                [defaultChecked]="formGroup.get('benchmarkInputs.atmosphericDeaerator').value"
-                                               (valueChange)="setFormValue({pressurisedDeaerator: false, atmosphericDeaerator: true}); setFormValue('temperatureOfFeedtank', null); toggleInput('isDsiPresent', 'pressureOfFeedtank', null)"
+                                               (valueChange)="setFormValue({pressurisedDeaerator: false, atmosphericDeaerator: true, temperatureOfFeedtank: null}); toggleInput('isDsiPresent', ['pressureOfFeedtank', 'pressureOfSteamSupplyingDsi'], null)"
                                                name="deaeratorType">
                         <img src="/assets/img/steam_generation/deaerator_type_1.png" alt="deaerator_type_1">
                       </spirax-form-radio-group>
@@ -543,7 +543,7 @@
                                                formControlName="pressurisedDeaerator"
                                                label="PRESSURLSED_DEAERATOR"
                                                [defaultChecked]="formGroup.get('benchmarkInputs.pressurisedDeaerator').value"
-                                               (valueChange)="setFormValue({pressurisedDeaerator: true, atmosphericDeaerator: false}); toggleInput('pressureOfFeedtank', ['pressureOfSteamSupplyingDsi'], null); toggleInput(null, 'isDsiPresent', false)"
+                                               (valueChange)="setFormValue({pressurisedDeaerator: true, atmosphericDeaerator: false}); toggleInput(['pressureOfFeedtank', 'pressureOfSteamSupplyingDsi'], null, null); toggleInput(null, 'isDsiPresent', false)"
                                                name="deaeratorType">
                         <img src="/assets/img/steam_generation/boiler-scheme/images/PressurisedDAImgCrop.png"
                              alt="deaerator_type_1">
@@ -614,20 +614,20 @@
                     <div class="col-md-4">
                       <ng-container *ngIf="formGroup.get('benchmarkInputs.atmosphericDeaerator')?.value; else pressureDeaerator">
                         <spirax-toggle formControlName="isDsiPresent"
-                                       (valueChange)="toggleInput($event && 'pressureOfSteamSupplyingDsi', !$event && 'pressureOfSteamSupplyingDsi', false)"
-                                       label="IS_DSI_PRESENT">
-                          <div yes>
-                            <input [label]="'PRESSURE_OF_STEAM_SUPPLYING_DSI' | translate"
-                                   [unitsStr]="[sizingUnits['PressureUnit']?.unit]"
-                                   [value]="getValue('pressureOfSteamSupplyingDsi') | decimalPlace: sizingUnits['PressureUnit']?.decimal"
-                                   [sga-decimal-places]="sizingUnits['PressureUnit']?.decimal"
-                                   formControlName="pressureOfSteamSupplyingDsi"
-                                   type="number"
-                                   spirax-input
-                                   required>
-                          </div>
-                        </spirax-toggle>
+                                       (valueChange)="toggleInput('pressureOfSteamSupplyingDsi', 'pressureOfSteamSupplyingDsi', false, $event)"
+                                       label="IS_DSI_PRESENT"></spirax-toggle>
                       </ng-container>
+
+                      <div *ngIf="formGroup.get('benchmarkInputs.pressureOfSteamSupplyingDsi').enabled">
+                        <input [label]="'PRESSURE_OF_STEAM_SUPPLYING_DSI' | translate"
+                               [unitsStr]="[sizingUnits['PressureUnit']?.unit]"
+                               [value]="getValue('pressureOfSteamSupplyingDsi') | decimalPlace: sizingUnits['PressureUnit']?.decimal"
+                               [sga-decimal-places]="sizingUnits['PressureUnit']?.decimal"
+                               formControlName="pressureOfSteamSupplyingDsi"
+                               type="number"
+                               spirax-input
+                               required>
+                      </div>
 
                       <ng-template #pressureDeaerator>
                         <div>
