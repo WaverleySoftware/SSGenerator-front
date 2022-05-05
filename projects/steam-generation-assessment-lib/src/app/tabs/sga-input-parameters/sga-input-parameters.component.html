@@ -614,7 +614,7 @@
                     <div class="col-md-4">
                       <ng-container *ngIf="formGroup.get('benchmarkInputs.atmosphericDeaerator')?.value; else pressureDeaerator">
                         <spirax-toggle formControlName="isDsiPresent"
-                                       (valueChange)="toggleInput('pressureOfSteamSupplyingDsi', 'pressureOfSteamSupplyingDsi', false, $event)"
+                                       (valueChange)="toggleInput('pressureOfSteamSupplyingDsi', 'pressureOfSteamSupplyingDsi', null, $event)"
                                        label="IS_DSI_PRESENT"></spirax-toggle>
                       </ng-container>
 
