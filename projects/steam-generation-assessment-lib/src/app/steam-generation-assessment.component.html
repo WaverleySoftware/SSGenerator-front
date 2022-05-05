@@ -24,7 +24,7 @@
     </tab>
     <tab [heading]="'BENCHMARK' | translate" [disabled]="!sizingModuleResults?.benchmark" (select)="setActiveTab($event)">
       <app-sga-benchmark [formGroup]="sizingModuleForm"
-                         [data]="sizingModuleResults?.benchmark"
+                         [data]="sizingModuleResults?.benchmarkView"
                          [currency]="currency$ | async"
                          [units]="units"
                          [chartData]="benchmarkChartData"></app-sga-benchmark>

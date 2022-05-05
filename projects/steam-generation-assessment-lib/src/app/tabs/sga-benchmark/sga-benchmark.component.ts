@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
 import { ChartBarDataInterface } from '../../interfaces/chart-bar.interface';
-import { BenchmarkResBenchmarkInterface } from "../../interfaces/calc-benchmark-res.interface";
+import { BenchmarkResBenchmarkViewInterface } from "../../interfaces/calc-benchmark-res.interface";
 import { InputParametersTFormInterface, TForm } from "../../interfaces/forms.interface";
 import { SelectedUnitsInterface } from "../../interfaces/selectedUnits.interface";
 
@@ -11,7 +11,7 @@ import { SelectedUnitsInterface } from "../../interfaces/selectedUnits.interface
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SgaBenchmarkComponent {
-  @Input() data: BenchmarkResBenchmarkInterface;
+  @Input() data: BenchmarkResBenchmarkViewInterface;
   @Input() currency: string;
   @Input() formGroup: TForm<InputParametersTFormInterface>;
   @Input() chartData: ChartBarDataInterface[];

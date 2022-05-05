@@ -2,6 +2,7 @@ import { ProposalCalculationInterface } from "./proposal-calculation.interface";
 
 export interface CalcBenchmarkResInterface {
   benchmark: BenchmarkResBenchmarkInterface;
+  benchmarkView: BenchmarkResBenchmarkViewInterface;
   features: BenchmarkResFeaturesInterface;
   messages?: string[] | any[];
   proposedSetup: BenchmarkResProposedSetupInterface;
@@ -156,6 +157,55 @@ export interface BenchmarkResBenchmarkInterface {
   propEffluentQuantitySavings: number;
   propEffluentValueSavings: number;
   propTotalSavingsForProposal: number;
+}
+
+export interface BenchmarkResBenchmarkViewInterface {
+  boilerEfficiency: number;
+  radiationLosses: number;
+  costOfRadiationLosses: number;
+  tonnesOfCO2: number;
+  tonnesOfCO2fromTds: number;
+  costOfCO2PerTonne: number;
+  costOfCO2PerYear: number;
+  mBoiler: number;
+  steamGeneratedkgPerHour: number;
+  totalCostOfSteamPerTonne: number;
+  energyToGenerateUnitofSteam: number;
+  totalCostOfSteamPerkWhOfFuel: number;
+  totalCostOfSteamPerYear: number;
+  mdsi: number;
+  fuelConsumptionPerYear: number;
+  costOfFuelPerUnit: number;
+  qfuel: number;
+  costOfFuelPerkWh: number;
+  costOfFuelPerYear: number;
+  boilerHouseTotalVolumeOfWaterEffluent: number;
+  waterTreatmentEffluent: number;
+  costOfEffm3: number;
+  costOfBoilerHouseEffluent: number;
+  costOfTdsEffluent: number;
+  waterTreatmentCostEffluent: number;
+  condensateReturnedPercentage: number;
+  mCondyWater: number;
+  mCondy: number;
+  condyCostEffluent: number;
+  condyFuelAmount: number;
+  mCondyCO2: number;
+  totalCostSavedCondensateReturn: number;
+  condyWaterAndChemicalCostSaved: number;
+  percentTdsBlowdown: number;
+  volTdsAndBdv: number;
+  energyInTdsBlowdown: number;
+  totCostTdsBlowdown: number;
+  feedTankPressureBarGauge: number;
+  tfwDegC: number;
+  boilerHouseWaterFlowTotal: number;
+  boilerFeedWaterFlow: number;
+  waterCostPerUnit: number;
+  boilerHouseWaterCost: number;
+  costChemM3: number;
+  chemCostTotalPerYear: number;
+  waterAndChemicalsCostTotalPerYear: number;
 }
 
 export interface BenchmarkResFeaturesInterface {

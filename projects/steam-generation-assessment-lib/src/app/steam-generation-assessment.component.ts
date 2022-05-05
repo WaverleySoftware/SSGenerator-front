@@ -641,7 +641,16 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
           name: 'benchmark',
           processInputs: generateSavedData(this.sizingModuleResults.benchmark),
           unitPreferences: null
-        })
+        });
+      }
+
+      if (this.sizingModuleResults.benchmarkView) {
+        this.job.jobStatusId = this.jobStatusId = 2; // Calculated
+        processConditions.push({
+          name: 'benchmarkView',
+          processInputs: generateSavedData(this.sizingModuleResults.benchmarkView),
+          unitPreferences: null
+        });
       }
 
       if (this.sizingModuleResults.features) {
@@ -1265,9 +1274,10 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     }
 
     // BENCHMARK
-    if (data.benchmark && data.features && data.proposedSetup) {
+    if (data.benchmark && data.benchmarkView && data.features && data.proposedSetup) {
       this.sizingModuleResults = {
         benchmark: parseSavedData(data.benchmark),
+        benchmarkView: parseSavedData(data.benchmarkView),
         features: parseSavedData(data.features),
         proposedSetup: parseSavedData(data.proposedSetup),
       } as CalcBenchmarkResInterface;
