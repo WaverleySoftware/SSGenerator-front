@@ -109,7 +109,7 @@ export const patchSavedDataToForm = (data: ProcessInput[], fg: FormGroup): any =
           (processInput.name === 'boilerSteamTemperature' && fg.get('isSuperheatedSteam').value)
         )
       ) {
-        control.enable({emitEvent: false});
+        setTimeout(() => control.enable({emitEvent: false}), 500);
       }
     }
   }

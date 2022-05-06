@@ -565,7 +565,7 @@
           </tr>
           <tr>
             <td>{{'MASS_EMITTED' | translate}}</td>
-            <ng-container [ngTemplateOutletContext]="{key: 'totalCostOfSteamPerTonne', unit: units[selectedUnits?.emissionUnitSelected], isPerYear: true, isCosts: false}" [ngTemplateOutlet]="finalTableColumns"></ng-container>
+            <ng-container [ngTemplateOutletContext]="{key: 'tonnesOfCO2', unit: units[selectedUnits?.emissionUnitSelected], isPerYear: true, isCosts: false}" [ngTemplateOutlet]="finalTableColumns"></ng-container>
           </tr>
           <tr class="text-bold">
             <td>{{'COST_FSLASH_YR' | translate}}</td>
