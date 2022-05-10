@@ -36,7 +36,7 @@
                               [units]="units"
                               [currency]="currency$ | async"
                               [totalSaving]="proposalSetupTotal"
-                              [verticalChart]="proposalVerticalChart"
+                              [verticalChart]="proposalSetupVerticalChart"
                               [horizontalChart]="proposalSetupHorizontalChart"
                               [isEconomizerPresent]="sizingModuleForm.get('benchmarkInputs.isEconomizerPresent')?.value"
                               (generateProposed)="calculateProposedSetup($event)"
@@ -54,7 +54,7 @@
                               [units]="units"
                               [current]="sizingModuleResults?.benchmark"
                               [potential]="sizingModuleResults?.overallProposal"
-                              [verticalChart]="proposalVerticalChart"
+                              [verticalChart]="finalProposalVerticalChart"
                               [horizontalChart]="finalProposalHorizontalChart"></app-sga-final-proposal>
     </tab>
   </tabset>

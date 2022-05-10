@@ -266,16 +266,6 @@ export interface ProposedDataInterface {
     proposedSetup: ProposedSetupInterface;
 }
 
-export enum ProposedSetupChartIndex { // ProposedSetupChartLabels
-  'improvedBoilerEfficiency',
-  'condensateReturnPlusCondensateTemperature',
-  'changingWaterTreatment',
-  'addingAutomaticTdsControl',
-  'addingFlashHeatRecoveryToAutoTdsControl',
-  'addingHeatExchangerToHeatRecoveryToTdsBlowdown',
-  'effectOfDsiOnHotwell',
-}
-
 export enum ProposedSetupChartLabels { // ProposedSetupChartIndex
   improvedBoilerEfficiency = 'Increase boiler effiency',
   condensateReturnPlusCondensateTemperature = 'Increase condensate return',

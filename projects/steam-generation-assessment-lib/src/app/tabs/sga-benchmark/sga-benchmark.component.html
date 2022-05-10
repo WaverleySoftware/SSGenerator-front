@@ -195,7 +195,7 @@
         <app-chart-bar className="sgaBenchmarkChart" [data]="chartData"></app-chart-bar>
       </div>
       <div class="col-md-8">
-        <p>{{'MAJOR_STEAM_GENERATION_OUTPUTS_AND_CONDENSARE_RETURN_SAVINGS' | translate}}</p>
+        <p>{{'MAJOR_STEAM_GENERATION_OUTPUTS_AND_CONDENSATE_RETURN_SAVINGS' | translate}}</p>
         <ng-template #emptyCol><td>-</td></ng-template>
         <table class="customTable">
           <thead>
@@ -239,12 +239,12 @@
             <td *ngIf="data?.totalCostOfSteamPerYear; else emptyCol">{{data.totalCostOfSteamPerYear | number : '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
           </tr>
           <tr>
-            <td>{{'TOTAL_COST_OF_STEAM_PER_UNIT_MASS' | translate}}</td>
+            <td>{{'TOTAL_COST_OF_STEAM_FSLASH_UNIT_MASS' | translate}}</td>
             <td>-</td>
             <td *ngIf="data?.totalCostOfSteamPerTonne; else emptyCol">{{data.totalCostOfSteamPerTonne | number : '0.0-2'}} {{units[selectedUnits?.massFlowUnitSelected]?.replace('/yr', '')}}</td>
           </tr>
           <tr>
-            <td>{{'TOTAL_COST_OF_STEAM_PER_UNIT_ENERGY' | translate}}</td>
+            <td>{{'TOTAL_COST_OF_STEAM_FSLASH_UNIT_ENERGY' | translate}}</td>
             <td>-</td>
             <td *ngIf="data?.totalCostOfSteamPerkWhOfFuel; else emptyCol">{{data.totalCostOfSteamPerkWhOfFuel | number : '0.0-2'}} {{units[selectedUnits?.energyUnitSelected]}}</td>
           </tr>

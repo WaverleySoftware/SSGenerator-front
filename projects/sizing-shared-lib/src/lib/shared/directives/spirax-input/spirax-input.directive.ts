@@ -10,7 +10,7 @@ import {
   Output,
   SimpleChanges
 } from '@angular/core';
-import { Subject, concat } from "rxjs";
+import { Subject } from "rxjs";
 import { distinctUntilChanged, takeUntil, debounceTime } from 'rxjs/operators';
 import { AbstractControl, NgControl, ValidationErrors } from '@angular/forms';
 import { UnitsService } from '../../units/units.service';
