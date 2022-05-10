@@ -153,9 +153,9 @@
       <i class="fa fa-info-circle"></i>
     </p>
 
-    <ng-template #infoTableColumns let-key="key" let-unit="unit" let-isCosts="isCosts" let-isPerYear="isPerYear">
+    <ng-template #infoTableColumns let-digits="digits" let-key="key" let-unit="unit" let-isCosts="isCosts" let-isPerYear="isPerYear">
       <td *ngIf="current[key]; else emptyCol">
-        {{current[key] | number: '0.0-2'}}
+        {{current[key] | number: digits || '0.0-2'}}
         <ng-container *ngIf="isCosts">{{currency}}</ng-container>
         <ng-container *ngIf="isCosts && unit">/</ng-container>
         <ng-container *ngIf="unit">{{unit}}</ng-container>
@@ -163,7 +163,7 @@
         <ng-container *ngIf="isPerYear">{{'YR' | translate}}</ng-container>
       </td>
       <td *ngIf="potential[key]; else emptyCol">
-        {{potential[key] | number: '0.0-2'}}
+        {{potential[key] | number: digits || '0.0-2'}}
         <ng-container *ngIf="isCosts">{{currency}}</ng-container>
         <ng-container *ngIf="isCosts && unit">/</ng-container>
         <ng-container *ngIf="unit">{{unit}}</ng-container>
@@ -171,7 +171,7 @@
         <ng-container *ngIf="isPerYear">{{'YR' | translate}}</ng-container>
       </td>
       <td *ngIf="current[key] && potential[key]; else emptyCol">
-        {{(current[key] - potential[key]) | number: '0.0-2'}}
+        {{(current[key] - potential[key]) | number: digits || '0.0-2'}}
         <ng-container *ngIf="isCosts">{{currency}}</ng-container>
         <ng-container *ngIf="isCosts && unit">/</ng-container>
         <ng-container *ngIf="unit">{{unit}}</ng-container>
@@ -189,8 +189,8 @@
       <thead>
       <tr>
         <th></th>
-        <th>{{'EXISTING_RETURNS' | translate}}</th>
-        <th>{{'POTENTIAL_RETURNS' | translate}}</th>
+        <th>{{'EXISTING_COSTS' | translate}}</th>
+        <th>{{'POTENTIAL_COSTS' | translate}}</th>
         <th>{{'SAVINGS' | translate}}</th>
       </tr>
       </thead>
@@ -200,7 +200,7 @@
         <ng-container [ngTemplateOutletContext]="{key: 'mBoiler', unit: units[selectedUnits?.massFlowUnitSelected]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
       </tr>
       <tr>
-        <td>{{'MASS_FLOW_FSLASH_HR' | translate}}</td>
+        <td>{{'MASS_FLOW_PER_H' | translate}}</td>
         <ng-container [ngTemplateOutletContext]="{key: 'steamGeneratedkgPerHour', unit: units[selectedUnits?.smallMassFlowUnitSelected]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
       </tr>
       <tr>
@@ -230,8 +230,8 @@
         <thead>
         <tr>
           <th>{{'Fuel' | translate}}</th>
-          <th>{{'EXISTING_RETURNS' | translate}}</th>
-          <th>{{'POTENTIAL_RETURNS' | translate}}</th>
+          <th>{{'EXISTING_COSTS' | translate}}</th>
+          <th>{{'POTENTIAL_COSTS' | translate}}</th>
           <th>{{'SAVINGS' | translate}}</th>
         </tr>
         </thead>
@@ -242,7 +242,7 @@
         </tr>
         <tr>
           <td>{{'COST_FSLASH_UNIT_FUEL' | translate}}</td>
-          <ng-container [ngTemplateOutletContext]="{key: 'costOfFuelPerUnit', isCosts: true, unit: units[selectedUnits?.fuelUnitSelected]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
+          <ng-container [ngTemplateOutletContext]="{key: 'costOfFuelPerUnit', isCosts: true, unit: units[selectedUnits?.fuelUnitSelected], digits: '0.0-3'}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
         </tr>
         <tr>
           <td>{{'ENERGY' | translate}}</td>
@@ -250,7 +250,7 @@
         </tr>
         <tr>
           <td>{{'COST_FSLASH_UNIT_ENERGY' | translate}}</td>
-          <ng-container [ngTemplateOutletContext]="{key: 'costOfFuelPerkWh', isCosts: true, unit: units[selectedUnits?.energyUnitSelected]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
+          <ng-container [ngTemplateOutletContext]="{key: 'costOfFuelPerkWh', isCosts: true, unit: units[selectedUnits?.energyUnitSelected], digits: '0.0-3'}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
         </tr>
         <tr class="text-bold">
           <td>{{'COST_OF_FUEL_PER_YEAR' | translate}}</td>
@@ -262,8 +262,8 @@
         <thead>
         <tr>
           <th>{{'CO2_EMISSIONS' | translate}}</th>
-          <th>{{'EXISTING_RETURNS' | translate}}</th>
-          <th>{{'POTENTIAL_RETURNS' | translate}}</th>
+          <th>{{'EXISTING_COSTS' | translate}}</th>
+          <th>{{'POTENTIAL_COSTS' | translate}}</th>
           <th>{{'SAVINGS' | translate}}</th>
         </tr>
         </thead>
@@ -286,8 +286,8 @@
         <thead>
         <tr>
           <th>{{'WATER' | translate}}</th>
-          <th>{{'EXISTING_RETURNS' | translate}}</th>
-          <th>{{'POTENTIAL_RETURNS' | translate}}</th>
+          <th>{{'EXISTING_COSTS' | translate}}</th>
+          <th>{{'POTENTIAL_COSTS' | translate}}</th>
           <th>{{'SAVINGS' | translate}}</th>
         </tr>
         </thead>
@@ -310,8 +310,8 @@
         <thead>
         <tr>
           <th>{{'WATER_TREATMENT' | translate}}</th>
-          <th>{{'EXISTING_RETURNS' | translate}}</th>
-          <th>{{'POTENTIAL_RETURNS' | translate}}</th>
+          <th>{{'EXISTING_COSTS' | translate}}</th>
+          <th>{{'POTENTIAL_COSTS' | translate}}</th>
           <th>{{'SAVINGS' | translate}}</th>
         </tr>
         </thead>
@@ -330,8 +330,8 @@
         <thead>
         <tr>
           <th>{{'EFFLUENT' | translate}}</th>
-          <th>{{'EXISTING_RETURNS' | translate}}</th>
-          <th>{{'POTENTIAL_RETURNS' | translate}}</th>
+          <th>{{'EXISTING_COSTS' | translate}}</th>
+          <th>{{'POTENTIAL_COSTS' | translate}}</th>
           <th>{{'SAVINGS' | translate}}</th>
         </tr>
         </thead>
@@ -360,8 +360,8 @@
         <thead>
         <tr>
           <th>{{'STACK_AND_RADIATION_LOSSES' | translate}}</th>
-          <th>{{'EXISTING_RETURNS' | translate}}</th>
-          <th>{{'POTENTIAL_RETURNS' | translate}}</th>
+          <th>{{'EXISTING_COSTS' | translate}}</th>
+          <th>{{'POTENTIAL_COSTS' | translate}}</th>
           <th>{{'SAVINGS' | translate}}</th>
         </tr>
         </thead>
@@ -384,8 +384,8 @@
         <thead>
         <tr>
           <th>{{'TOTAL_COST_OF_BLOWDOWN' | translate}}</th>
-          <th>{{'EXISTING_RETURNS' | translate}}</th>
-          <th>{{'POTENTIAL_RETURNS' | translate}}</th>
+          <th>{{'EXISTING_COSTS' | translate}}</th>
+          <th>{{'POTENTIAL_COSTS' | translate}}</th>
           <th>{{'SAVINGS' | translate}}</th>
         </tr>
         </thead>
@@ -407,7 +407,7 @@
           <ng-container [ngTemplateOutletContext]="{key: 'energyInTdsBlowdown', isCosts: false, isPerYear: true, unit: units[selectedUnits?.energyUnitSelected]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
         </tr>
         <tr>
-          <td>{{"CO2_EMISSION" | translate}}</td>
+          <td>{{"CO2_EMISSIONS" | translate}}</td>
           <ng-container [ngTemplateOutletContext]="{key: 'tonnesOfCO2fromTds', isCosts: false, isPerYear: true, unit: units[selectedUnits?.emissionUnitSelected]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
         </tr>
         <tr class="text-bold">
@@ -420,8 +420,8 @@
         <thead>
         <tr>
           <th>{{'EFFLUENT_FROM_WATER_TREATMENT' | translate}}</th>
-          <th>{{'EXISTING_RETURNS' | translate}}</th>
-          <th>{{'POTENTIAL_RETURNS' | translate}}</th>
+          <th>{{'EXISTING_COSTS' | translate}}</th>
+          <th>{{'POTENTIAL_COSTS' | translate}}</th>
           <th>{{'SAVINGS' | translate}}</th>
         </tr>
         </thead>
@@ -439,8 +439,8 @@
         <thead>
         <tr>
           <th>{{'02_SCAVENGING_CHEMICALS' | translate}}</th>
-          <th>{{'EXISTING_RETURNS' | translate}}</th>
-          <th>{{'POTENTIAL_RETURNS' | translate}}</th>
+          <th>{{'EXISTING_COSTS' | translate}}</th>
+          <th>{{'POTENTIAL_COSTS' | translate}}</th>
           <th>{{'SAVINGS' | translate}}</th>
         </tr>
         </thead>
@@ -468,7 +468,7 @@
       <tbody>
       <tr>
         <td>{{'PERCENT_RETURNED' | translate}}</td>
-        <ng-container [ngTemplateOutletContext]="{key: 'condensateReturnedPercentage', isCosts: false, isPerYear: true, unit: units[current.mCondyWaterUnit]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
+        <ng-container [ngTemplateOutletContext]="{key: 'condensateReturnedPercentage', isCosts: false, isPerYear: false, unit: '%'}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
       </tr>
       <tr>
         <td>{{'WATER_AND_CHEMICALS_SAVED' | translate}}</td>
@@ -483,7 +483,7 @@
         <ng-container [ngTemplateOutletContext]="{key: 'condyFuelAmount', isCosts: false, isPerYear: true, unit: units[selectedUnits?.emissionUnitSelected]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
       </tr>
       <tr>
-        <td>{{'CO2_EMISSION_REDUCED' | translate}}</td>
+        <td>{{'CO2_EMISSIONS_REDUCED' | translate}}</td>
         <ng-container [ngTemplateOutletContext]="{key: 'mCondyCO2', isCosts: false, isPerYear: true, unit: units[selectedUnits?.emissionUnitSelected]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
       </tr>
       <tr class="text-bold">
@@ -501,9 +501,9 @@
       </svg>
     </ng-template>
 
-    <ng-template #finalTableColumns let-key="key" let-unit="unit" let-isCosts="isCosts" let-isPerYear="isPerYear">
-      <td *ngIf="current[key]; else emptyCol">{{current[key] | number: '0.0-2'}}</td>
-      <td *ngIf="potential[key]; else emptyCol" align="right">{{potential[key] | number: '0.0-2'}}</td>
+    <ng-template #finalTableColumns let-digits="digits" let-key="key" let-unit="unit" let-isCosts="isCosts" let-isPerYear="isPerYear">
+      <td *ngIf="current[key]; else emptyCol">{{current[key] | number: digits || '0.0-2'}}</td>
+      <td *ngIf="potential[key]; else emptyCol" align="right">{{potential[key] | number: digits || '0.0-2'}}</td>
       <td align="left">
         <ng-container *ngIf="isCosts">{{currency}}</ng-container>
         <ng-container *ngIf="isCosts && unit">/</ng-container>
@@ -513,7 +513,7 @@
       </td>
     </ng-template>
 
-    <div class="row mb">
+    <div class="row mb fz-smaller">
       <div class="col-md-6">
         <table class="sgaFinalProposal_info pink">
           <caption>
@@ -576,7 +576,7 @@
       </div>
     </div>
 
-    <div class="row mb">
+    <div class="row mb fz-smaller">
       <div class="col-md-5">
         <table class="sgaFinalProposal_info mb">
           <caption>
@@ -594,7 +594,7 @@
           <tbody>
           <tr>
             <td>{{'COST_FSLASH_UNIT' | translate}}</td>
-            <ng-container [ngTemplateOutletContext]="{key: 'costOfFuelPerUnit', unit: units[selectedUnits?.fuelUnitSelected], isPerYear: false, isCosts: true}" [ngTemplateOutlet]="finalTableColumns"></ng-container>
+            <ng-container [ngTemplateOutletContext]="{key: 'costOfFuelPerUnit', unit: units[selectedUnits?.fuelUnitSelected], isPerYear: false, isCosts: true, digits: '0.0-3'}" [ngTemplateOutlet]="finalTableColumns"></ng-container>
           </tr>
           <tr>
             <td>{{'QUANTITY' | translate}}</td>
