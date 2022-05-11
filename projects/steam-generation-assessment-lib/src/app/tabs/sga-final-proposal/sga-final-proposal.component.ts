@@ -23,7 +23,7 @@ export class SgaFinalProposalComponent implements OnInit {
   get fuelTypeList() {
     if (this.translationService.displayGroup && this.translationService.displayGroup.enumerations) {
       const enumeration: Enumeration = this.translationService.displayGroup.enumerations
-        .find(({enumerationName}) => enumerationName === "FuelTypeList_BoilerHouseInput");
+        .find(({enumerationName, opCoOverride}) => enumerationName === "FuelTypeList_BoilerHouseInput" && !opCoOverride);
       return enumeration && enumeration.enumerationDefinitions &&
         enumeration.enumerationDefinitions.reduce((acc, {masterTextKey, id}) => ({...acc, [id]: masterTextKey}), {});
     }

@@ -58,10 +58,10 @@
             </tr>
             <tr>
               <th class="text-center">{{'QUANTITY' | translate}}</th>
-              <th class="text-center">{{'VALUE' | translate}}</th>
+              <th class="text-center">{{'COST' | translate}}</th>
 
               <th class="text-center">{{'QUANTITY' | translate}}</th>
-              <th class="text-center">{{'VALUE' | translate}}</th>
+              <th class="text-center">{{'COST' | translate}}</th>
 
               <th class="text-center">{{'SAVING' | translate}}</th>
               <th class="text-center">%</th>
@@ -78,7 +78,7 @@
             </tr>
             <tr>
               <ng-container [ngTemplateOutlet]="majorSteamOutputs"
-                            [ngTemplateOutletContext]="{name: 'BOILER_HOUSE_WATER_AND_CHEMICALS', quantity: 'boilerHouseWaterFlowTotal',value: 'waterAndChemicalsCostTotalPerYear',unit: units[selectedUnits?.volumeUnitSelected]}"></ng-container>
+                            [ngTemplateOutletContext]="{name: 'BOILER_HOUSE_WATER_AND_CHEMICALS', quantity: 'boilerHouseWaterFlowTotal',value: 'waterAndChemicalsCostTotalPerYear',unit: units[selectedUnits?.volumeUnitSelected]+'/'+('YR' | translate)}"></ng-container>
             </tr>
             <tr>
               <ng-container [ngTemplateOutlet]="majorSteamOutputs"
@@ -86,7 +86,7 @@
             </tr>
             <tr>
               <ng-container [ngTemplateOutlet]="majorSteamOutputs"
-                            [ngTemplateOutletContext]="{name: 'STEAM_GENERATION_EFFLUENT', quantity: 'boilerHouseTotalVolumeOfWaterEffluent',value: 'costOfBoilerHouseEffluent',unit: units[selectedUnits?.volumeUnitSelected]}"></ng-container>
+                            [ngTemplateOutletContext]="{name: 'STEAM_GENERATION_EFFLUENT', quantity: 'boilerHouseTotalVolumeOfWaterEffluent',value: 'costOfBoilerHouseEffluent',unit: units[selectedUnits?.volumeUnitSelected]+'/'+('YR' | translate)}"></ng-container>
             </tr>
             <tr class="filled">
               <ng-container [ngTemplateOutlet]="majorSteamOutputs"
@@ -116,7 +116,7 @@
               <td>–</td>
               <td *ngIf="potential.energyToGenerateUnitofSteam; else emptyCol">{{potential.energyToGenerateUnitofSteam | number: '0.0-2'}} {{units[selectedUnits?.specificEnergyUnitsSelected]}}</td>
               <td>-</td>
-              <td *ngIf="current.energyToGenerateUnitofSteam && potential.energyToGenerateUnitofSteam; else emptyCol">{{(current.energyToGenerateUnitofSteam - potential.energyToGenerateUnitofSteam) | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
+              <td>-</td>
               <td *ngIf="current.energyToGenerateUnitofSteam && potential.energyToGenerateUnitofSteam; else emptyCol">{{savingPercent(current.totalCostOfSteamPerTonne, potential.totalCostOfSteamPerTonne) | number: '0.0-2'}}%</td>
             </tr>
           </tbody>
@@ -209,7 +209,7 @@
       </tr>
       <tr>
         <td>{{'COST_FSLASH_UNIT_ENERGY' | translate}}</td>
-        <ng-container [ngTemplateOutletContext]="{key: 'totalCostOfSteamPerkWhOfFuel', isCosts: true, unit: units[selectedUnits?.energyUnitSelected]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
+        <ng-container [ngTemplateOutletContext]="{key: 'totalCostOfSteamPerkWhOfFuel', isCosts: true, digits: '0.0-3', unit: units[selectedUnits?.energyUnitSelected]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
       </tr>
       <tr>
         <td>{{'ENERGY_FSLASH_UNIT_MASS' | translate}}</td>
@@ -241,7 +241,7 @@
           <ng-container [ngTemplateOutletContext]="{key: 'fuelConsumptionPerYear', isPerYear: true, unit: units[selectedUnits?.fuelUnitSelected]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
         </tr>
         <tr>
-          <td>{{'COST_FSLASH_UNIT_FUEL' | translate}}</td>
+          <td>{{'COST_PER_UNIT_FUEL' | translate}}</td>
           <ng-container [ngTemplateOutletContext]="{key: 'costOfFuelPerUnit', isCosts: true, unit: units[selectedUnits?.fuelUnitSelected], digits: '0.0-3'}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
         </tr>
         <tr>
@@ -345,7 +345,7 @@
           <ng-container [ngTemplateOutletContext]="{key: 'costOfEffm3', isCosts: true, isPerYear: false, unit: units[selectedUnits?.volumeUnitSelected]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
         </tr>
         <tr class="text-bold">
-          <td>{{'COST_OF_EFFLUENT_FSLASH_YEAR' | translate}}</td>
+          <td>{{'COST_OF_EFFLUENT_PER_YEAR' | translate}}</td>
           <ng-container [ngTemplateOutletContext]="{key: 'costOfBoilerHouseEffluent', isCosts: true, isPerYear: true, unit: null}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
         </tr>
         </tbody>
@@ -368,7 +368,15 @@
         <tbody>
         <tr>
           <td>{{'PERCENT_OF_LOST_FUEL_ENERGY' | translate}}</td>
-          <ng-container [ngTemplateOutletContext]="{key: 'boilerEfficiency', isCosts: false, isPerYear: false, unit: '%'}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
+          <td *ngIf="current?.boilerEfficiency; else emptyCol">
+            {{(100 - current.boilerEfficiency) | number:'0.0-2'}}%
+          </td>
+          <td *ngIf="potential?.boilerEfficiency; else emptyCol">
+            {{(100 - potential.boilerEfficiency) | number: '0.0-2'}}%
+          </td>
+          <td *ngIf="current?.boilerEfficiency && potential?.boilerEfficiency; else emptyCol">
+            {{(current.boilerEfficiency - potential.boilerEfficiency) | number: '0.0-2'}}%
+          </td>
         </tr>
         <tr>
           <td>{{'FUEL_ENERGY' | translate}}</td>
@@ -438,7 +446,7 @@
       <ng-container>
         <thead>
         <tr>
-          <th>{{'02_SCAVENGING_CHEMICALS' | translate}}</th>
+          <th>{{'O2_SCAVENGING_CHEMICALS' | translate}}</th>
           <th>{{'EXISTING_COSTS' | translate}}</th>
           <th>{{'POTENTIAL_COSTS' | translate}}</th>
           <th>{{'SAVINGS' | translate}}</th>
@@ -447,7 +455,7 @@
         <tbody>
         <tr class="text-bold">
           <td>{{'COST_FSLASH_YR' | translate}}</td>
-          <ng-container [ngTemplateOutletContext]="{key: 'mdsi', isCosts: false, isPerYear: true, unit: units[current.mdsiUnit]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
+          <ng-container [ngTemplateOutletContext]="{key: 'mdsi', isCosts: true, isPerYear: true}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
         </tr>
         </tbody>
       </ng-container>
@@ -531,7 +539,9 @@
           <tbody>
           <tr>
             <th>{{'HEAT_LOSSES' | translate}}</th>
-            <ng-container [ngTemplateOutletContext]="{key: 'boilerEfficiency', unit: '%'}" [ngTemplateOutlet]="finalTableColumns"></ng-container>
+            <td *ngIf="current?.boilerEfficiency; else emptyCol">{{(100 - current?.boilerEfficiency) | number: '0.0-2'}}</td>
+            <td *ngIf="potential?.boilerEfficiency; else emptyCol" align="right">{{(100 - potential?.boilerEfficiency) | number: '0.0-2'}}</td>
+            <td align="left">%</td>
           </tr>
           <tr>
             <td>{{'FUEL_ENERGY' | translate}}</td>
@@ -641,7 +651,7 @@
             <ng-container [ngTemplateOutletContext]="{key: 'chemCostTotalPerYear', unit: null, isPerYear: true, isCosts: true}" [ngTemplateOutlet]="finalTableColumns"></ng-container>
           </tr>
           <tr class="text-bold">
-            <td>{{'COST_OF_CHEMICALS_FSLASH_YEAR'}}</td>
+            <td>{{'COST_OF_CHEMICALS_FSLASH_YEAR' | translate}}</td>
             <ng-container [ngTemplateOutletContext]="{key: 'waterAndChemicalsCostTotalPerYear', unit: null, isPerYear: true, isCosts: true}" [ngTemplateOutlet]="finalTableColumns"></ng-container>
           </tr>
           </tbody>
@@ -785,8 +795,8 @@
           </tr>
           <tr>
             <td>{{'FUEL' | translate}}</td>
-            <td>{{fuelTypeList[current?.fuelId] | translate}}</td>
-            <td>{{fuelTypeList[potential?.fuelId] | translate}}</td>
+            <td>{{fuelTypeList[this.formGroup.get('benchmarkInputs.inputFuelId').value] | translate}}</td>
+            <td>{{fuelTypeList[this.formGroup.get('benchmarkInputs.inputFuelId').value] | translate}}</td>
             <td>–</td>
           </tr>
           <tr>

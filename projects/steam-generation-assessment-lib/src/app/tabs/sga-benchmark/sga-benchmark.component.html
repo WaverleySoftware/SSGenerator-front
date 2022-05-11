@@ -341,7 +341,7 @@
             </li>
             <li>
               <span>{{'COST_FSLASH_UNIT_ENERGY' | translate}}</span>
-              <span *ngIf="data?.costOfFuelPerkWh; else emptyDash">{{data.costOfFuelPerkWh | number : '0.0-2'}} {{currency}}/{{units[selectedUnits?.energyUnitSelected]}}</span>
+              <span *ngIf="data?.costOfFuelPerkWh; else emptyDash">{{data.costOfFuelPerkWh | number : '0.0-3'}} {{currency}}/{{units[selectedUnits?.energyUnitSelected]}}</span>
             </li>
             <li class="text-bold">
               <span>{{'COST_OF_FUEL_PER_YEAR' | translate}}</span>

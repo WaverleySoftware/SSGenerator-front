@@ -249,14 +249,25 @@
                           [(expanded)]="structure?.utility_parameters.panels.water_effluent.status"
                           [titleTooltip]="waterEffluentTooltip" background="#EDF2F4">
               <div body>
-                <input [label]="'COST_OF_EFFLUENT_FSLASH_UNIT' | translate"
-                       [unitsStr]="[sizingUnits['BHCurrency']?.unit, sizingUnits['BoilerHouseVolumeUnits']?.unit]"
-                       [value]="getValue('costOfEffluentPerUnit') | decimalPlace: sizingUnits['BoilerHouseVolumeUnits']?.decimal"
-                       [sga-decimal-places]="sizingUnits['BoilerHouseVolumeUnits']?.decimal"
-                       formControlName="costOfEffluentPerUnit"
-                       type="number"
-                       spirax-input
-                       required>
+                <div>
+                  <input [label]="'COST_OF_EFFLUENT_FSLASH_UNIT' | translate"
+                         [unitsStr]="[sizingUnits['BHCurrency']?.unit, sizingUnits['BoilerHouseVolumeUnits']?.unit]"
+                         [value]="getValue('costOfEffluentPerUnit') | decimalPlace: sizingUnits['BoilerHouseVolumeUnits']?.decimal"
+                         [sga-decimal-places]="sizingUnits['BoilerHouseVolumeUnits']?.decimal"
+                         formControlName="costOfEffluentPerUnit"
+                         type="number"
+                         spirax-input
+                         required>
+                </div>
+                <div>
+                  <input [label]="'PERCENT_OF_EFFLUENT_BASED_ON_BOILER_HOUSE_WATER_CONSUMPTION' | translate"
+                         [unitsStr]="['%']"
+                         max="100"
+                         min="0"
+                         type="number"
+                         spirax-input
+                         required>
+                </div>
               </div>
             </spirax-panel>
           </div>

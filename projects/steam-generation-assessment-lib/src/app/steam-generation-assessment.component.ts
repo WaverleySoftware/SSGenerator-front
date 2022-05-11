@@ -470,10 +470,8 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
       }
     }
 
-    if (data.length) {
-      this.resetBenchmarkData();
-      this.setDiscardModal(true);
-    }
+    this.resetBenchmarkData();
+    this.setDiscardModal(true);
 
     return true;
   }
@@ -542,6 +540,8 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
           }
 
           // Generate charts data
+          this.proposalSetupTotal = SgaChartService.getTotalProposalChart(resObj.benchmark, resObj.overallImpactOnProposalsSelectedOnBoilerHouse);
+
           if (isFinal) {
             this.finalProposalVerticalChart = SgaChartService.generateChartFromArr([
               resObj.finalImpactOfIncreasingBoilerEfficiency,
@@ -552,12 +552,14 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
               resObj.finalImpactOfAddingAutoTDSFlashRecoveryAndHeatWxchanger,
               resObj.finalImpactOfAddingDsiToFeedtank,
             ]);
-            this.finalProposalHorizontalChart = this.proposalSetupHorizontalChart;
+            this.finalProposalHorizontalChart = this.proposalSetupHorizontalChart = SgaChartService.generateChartFromArr([
+              resObj.benchmark, resObj.overallImpactOnProposalsSelectedOnBoilerHouse
+            ], [
+              'costOfFuelPerYear', 'waterAndChemicalsCostTotalPerYear', 'costOfBoilerHouseEffluent', 'costOfCO2PerYear'
+            ]);
           } else {
             this.finalProposalVerticalChart = null;
             this.finalProposalHorizontalChart = null;
-            this.proposalSetupTotal = SgaChartService
-              .getTotalProposalChart(resObj.benchmark, resObj.overallImpactOnProposalsSelectedOnBoilerHouse);
             this.proposalSetupVerticalChart = SgaChartService.generateChartFromArr([
               resObj.improvedBoilerEfficiency,
               resObj.condensateReturnPlusCondensateTemperature,
@@ -567,10 +569,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
               resObj.addingHeatExchangerToHeatRecoveryToTdsBlowdown,
               resObj.effectOfDsiOnHotwell,
             ]);
-            this.proposalSetupHorizontalChart = SgaChartService.generateChartFromArr(
-              [resObj.benchmark, resObj.overallImpactOnProposalsSelectedOnBoilerHouse],
-              ['costOfFuelPerYear', 'waterAndChemicalsCostTotalPerYear', 'costOfBoilerHouseEffluent', 'costOfCO2PerYear']
-            );
+            this.proposalSetupHorizontalChart = SgaChartService.generateChartFromArr([resObj.benchmark, resObj.overallImpactOnProposalsSelectedOnBoilerHouse], ['costOfFuelPerYear', 'waterAndChemicalsCostTotalPerYear', 'costOfBoilerHouseEffluent', 'costOfCO2PerYear']);
           }
 
           this.sizingModuleForm.markAllAsTouched();
