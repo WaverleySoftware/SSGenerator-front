@@ -222,7 +222,7 @@
           </tr>
           <tr>
             <td>{{'FUEL_ENERGY' | translate}}</td>
-            <td *ngIf="data?.qfuel; else emptyCol">{{data.qfuel | number : '0.0-2'}} {{units[selectedUnits?.energyUnitSelected]}}</td>
+            <td *ngIf="data?.qfuel; else emptyCol">{{data.qfuel | number : '0.0-3'}} {{units[selectedUnits?.energyUnitSelected]}}</td>
             <td>-</td>
           </tr>
           <tr>
@@ -353,11 +353,11 @@
 
             <li>
               <span>{{'MASS_EMITTED' | translate}}</span>
-              <span *ngIf="data?.tonnesOfCO2; else emptyDash">{{data.tonnesOfCO2 | number : '0.0-2'}} {{units[selectedUnits?.emissionUnitSelected]}}/{{'YR' | translate}}</span>
+              <span *ngIf="data?.tonnesOfCO2; else emptyDash">{{data.tonnesOfCO2 | number : '0.0-2'}} /{{units[selectedUnits?.emissionUnitSelected]}}</span>
             </li>
             <li>
               <span>{{'COST_FSLASH_UNIT_MASS' | translate}}</span>
-              <span *ngIf="data?.costOfCO2PerTonne; else emptyDash">{{data.costOfCO2PerTonne | number : '0.0-3'}} /{{units[selectedUnits?.emissionUnitSelected]}}</span>
+              <span *ngIf="data?.costOfCO2PerTonne; else emptyDash">{{data.costOfCO2PerTonne | number : '0.0-3'}} {{currency}}/{{units[selectedUnits?.emissionUnitSelected]}}</span>
             </li>
             <li class="text-bold">
               <span>{{'COST_OF_CO2_EMISSINS_PER_YEAR' | translate}}</span>

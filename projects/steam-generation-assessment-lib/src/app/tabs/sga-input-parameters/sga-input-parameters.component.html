@@ -608,7 +608,7 @@
                              spirax-input
                              required>
                       <input [label]="'TDS_OF_FEEDWATER_IN_FEEDTANK' | translate"
-                             [unitsStr]="[sizingUnits['BoilerHouseVolumeUnits']?.unit]"
+                             [unitsStr]="[sizingUnits['BoilerHouseTDSUnits']?.unit]"
                              [disabled]="true"
                              [value]="getValue('tdsOfFeedwaterInFeedtank') | decimalPlace: sizingUnits['BoilerHouseVolumeUnits']?.decimal"
                              [sga-decimal-places]="sizingUnits['BoilerHouseVolumeUnits']?.decimal"
