@@ -1,6 +1,6 @@
 import { ProcessInput } from "sizing-shared-lib";
 import { ChartBarDataInterface } from "../interfaces/chart-bar.interface";
-import { FormGroup } from "@angular/forms";
+import { FormBuilder, FormGroup } from "@angular/forms";
 import { ProposalCalculationInterface } from "../interfaces/proposal-calculation.interface";
 
 const convertValue = (v: any) => v === 'false' ? false : v === 'true' ? true : isNaN(Number(v)) ? v : Number(v);
@@ -103,14 +103,11 @@ export const patchSavedDataToForm = (data: ProcessInput[], fg: FormGroup): any =
     if (processInput && control && control.value !== value) {
       result[processInput.name] = value;
       control.patchValue(value, {emitEvent: false});
-      if (
-        control.disabled && (
+
+      if (control.disabled && (
           processInput.name !== 'boilerSteamTemperature' ||
           (processInput.name === 'boilerSteamTemperature' && fg.get('isSuperheatedSteam').value)
-        )
-      ) {
-        setTimeout(() => control.enable({emitEvent: false}), 500);
-      }
+        )) control.enable();
     }
   }
 

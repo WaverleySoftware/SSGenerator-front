@@ -99,7 +99,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   productName = 'Steam Generation Assessment';
   nextTab: TabDirective;
   hasUnsavedDataChanges: boolean = false; // to drive GenericChangesGuard
-  sizingModuleForm: TForm<InputParametersTFormInterface> = this.formService.getInputParamsFg();
+  sizingModuleForm: TForm<InputParametersTFormInterface>;
   sizingModuleResults: CalcBenchmarkResInterface;
   setBenchmarkInputValue: TFormBenchmarkValueSetterInterface;
   getSizingFormValues: TFormValueGetterInterface;
@@ -146,6 +146,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
   ) {
     super();
 
+    this.sizingModuleForm = this.formService.getInputParamsFg(true);
     this.jobId = this.activatedRoute.snapshot.params['jobId'];
     this.projectId = this.activatedRoute.snapshot.params['projectId'];
     this.setBenchmarkInputValue = this.formService.createFormValueSetter<BenchmarkInputsInterface>(this.sizingModuleForm, 'benchmarkInputs');

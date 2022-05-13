@@ -256,8 +256,8 @@ export class SgaFormService {
     return getControlValues;
   }
 
-  getInputParamsFg(): TForm<InputParametersTFormInterface> {
-    if (!this.inputParamsFg) {
+  getInputParamsFg(isNew?: boolean): TForm<InputParametersTFormInterface> {
+    if (!this.inputParamsFg || isNew) {
       this.inputParamsFg = this.createInputParamsForm();
     }
 

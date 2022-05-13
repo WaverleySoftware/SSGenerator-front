@@ -327,7 +327,6 @@
                                  formControlName="boilerSteamGeneratedPerYear"
                                  type="number"
                                  spirax-input
-                                 disabled
                                  required>
                         </div>
                       </spirax-toggle>
@@ -573,7 +572,7 @@
                   <div class="row" body>
                     <div class="col-md-4 border-r-md">
                       <spirax-toggle formControlName="isFeedWaterMeasured"
-                                     (valueChange)="toggleInput($event && 'boilerFeedwaterConsumptionPerHour', !$event && ['boilerFeedwaterConsumptionPerHour', 'boilerFeedwaterConsumptionPerYear', null])"
+                                     (valueChange)="toggleInput('boilerFeedwaterConsumptionPerHour', ['boilerFeedwaterConsumptionPerHour', 'boilerFeedwaterConsumptionPerYear'], null, $event)"
                                      label="IS_FEEDWATER_FLOWRATE_MEASURED">
                         <div yes>
                           <input [label]="'CONSUMPTION_PER_HR' | translate"
@@ -595,7 +594,6 @@
                                  radio
                                  formControlName="boilerFeedwaterConsumptionPerYear"
                                  type="number"
-                                 disabled
                                  spirax-input
                                  required>
                         </div>
@@ -687,7 +685,6 @@
                                  radio
                                  formControlName="volumeOfCondensateReturn"
                                  type="number"
-                                 disabled
                                  spirax-input
                                  required>
                         </div>

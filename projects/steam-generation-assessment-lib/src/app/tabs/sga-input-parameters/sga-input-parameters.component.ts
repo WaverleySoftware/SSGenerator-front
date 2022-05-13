@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, ViewChild } from "@angular/core";
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from "@angular/core";
 import { SgaFormService } from '../../services/sga-form.service';
 import { InputParametersTFormInterface, TForm, TFormValueGetterInterface } from '../../interfaces/forms.interface';
 import { PreferenceService, UnitsService } from 'sizing-shared-lib';
@@ -25,7 +25,7 @@ import { FormListComponent } from "../../components";
   templateUrl: './sga-input-parameters.component.html',
   styleUrls: ['./sga-input-parameters.component.scss']
 })
-export class SgaInputParametersComponent {
+export class SgaInputParametersComponent implements OnInit {
   @Input() moduleGroupId: number;
   @Input() formGroup: TForm<InputParametersTFormInterface>;
   @Output() changeFuelType = new EventEmitter<SgaCalcCalorificReqInterface>();
@@ -37,7 +37,7 @@ export class SgaInputParametersComponent {
 
   private readonly formValueGetter: TFormValueGetterInterface = this.formService
     .createFormValueGetter(this.formService.getInputParamsFg());
-  structure: SgFormStructureInterface = sgaFormStructure;
+  structure: SgFormStructureInterface;
   sizingUnits$: Observable<{ [key: string]: {decimal: number, unit: string} }> = this.preferenceService.sizingUnitPreferencesUpdate
     .pipe(map(({list, updated}) => list.reduce((obj, item) => ({
       ...obj,
@@ -48,7 +48,12 @@ export class SgaInputParametersComponent {
     private formService: SgaFormService,
     private preferenceService: PreferenceService,
     private unitsService: UnitsService
-  ) {}
+  ) {
+    this.structure = JSON.parse(JSON.stringify(sgaFormStructure));
+  }
+
+  ngOnInit() {
+  }
 
   get getBoilerSchemeState(): SgaBoilerSchemeInterface {
     const fg = this.formGroup.get('benchmarkInputs') as FormGroup;
