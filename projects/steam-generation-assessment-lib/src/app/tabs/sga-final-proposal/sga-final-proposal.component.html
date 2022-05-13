@@ -468,27 +468,75 @@
       <tbody>
       <tr>
         <td>{{'PERCENT_RETURNED' | translate}}</td>
-        <ng-container [ngTemplateOutletContext]="{key: 'condensateReturnedPercentage', isCosts: false, isPerYear: false, unit: '%'}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
+        <td *ngIf="current?.condensateReturnedPercentage; else emptyCol">
+          {{current?.condensateReturnedPercentage | number: '0.0-2'}}%
+        </td>
+        <td *ngIf="potential?.condensateReturnedPercentage; else emptyCol">
+          {{potential?.condensateReturnedPercentage | number: '0.0-2'}}%
+        </td>
+        <td *ngIf="current?.condensateReturnedPercentage && potential?.condensateReturnedPercentage; else emptyCol">
+          {{(potential?.condensateReturnedPercentage - current?.condensateReturnedPercentage) | number: '0.0-2'}}%
+        </td>
       </tr>
       <tr>
         <td>{{'WATER_AND_CHEMICALS_SAVED' | translate}}</td>
-        <ng-container [ngTemplateOutletContext]="{key: 'mCondyWater', isCosts: false, isPerYear: true, unit: units[selectedUnits?.volumeUnitSelected]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
+        <td *ngIf="current?.mCondyWater; else emptyCol">
+          {{current?.mCondyWater | number: '0.0-2'}} {{units[selectedUnits?.volumeUnitSelected]}}/{{'YR' | translate}}
+        </td>
+        <td *ngIf="potential?.mCondyWater; else emptyCol">
+          {{potential?.mCondyWater | number: '0.0-2'}} {{units[selectedUnits?.volumeUnitSelected]}}/{{'YR' | translate}}
+        </td>
+        <td *ngIf="current?.mCondyWater && potential?.mCondyWater; else emptyCol">
+          {{(potential?.mCondyWater - current?.mCondyWater) | number: '0.0-2'}} {{units[selectedUnits?.volumeUnitSelected]}}/{{'YR' | translate}}
+        </td>
       </tr>
       <tr>
         <td>{{'EFFLUENT_REDUCED' | translate}}</td>
-        <ng-container [ngTemplateOutletContext]="{key: 'mCondyWater', isCosts: false, isPerYear: true, unit: units[selectedUnits?.volumeUnitSelected]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
+        <td *ngIf="current?.mCondyWater; else emptyCol">
+          {{current?.mCondyWater | number: '0.0-2'}} {{units[selectedUnits?.volumeUnitSelected]}}/{{'YR' | translate}}
+        </td>
+        <td *ngIf="potential?.mCondyWater; else emptyCol">
+          {{potential?.mCondyWater | number: '0.0-2'}} {{units[selectedUnits?.volumeUnitSelected]}}/{{'YR' | translate}}
+        </td>
+        <td *ngIf="current?.mCondyWater && potential?.mCondyWater; else emptyCol">
+          {{(potential?.mCondyWater - current?.mCondyWater) | number: '0.0-2'}} {{units[selectedUnits?.volumeUnitSelected]}}/{{'YR' | translate}}
+        </td>
       </tr>
       <tr>
         <td>{{'FUEL_SAVED' | translate}}</td>
-        <ng-container [ngTemplateOutletContext]="{key: 'condyFuelAmount', isCosts: false, isPerYear: true, unit: units[selectedUnits?.emissionUnitSelected]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
+        <td *ngIf="current?.condyFuelAmount; else emptyCol">
+          {{current?.condyFuelAmount | number: '0.0-2'}} {{units[selectedUnits?.emissionUnitSelected]}}/{{'YR' | translate}}
+        </td>
+        <td *ngIf="potential?.condyFuelAmount; else emptyCol">
+          {{potential?.condyFuelAmount | number: '0.0-2'}} {{units[selectedUnits?.emissionUnitSelected]}}/{{'YR' | translate}}
+        </td>
+        <td *ngIf="current?.condyFuelAmount && potential?.condyFuelAmount; else emptyCol">
+          {{(potential?.condyFuelAmount - current?.condyFuelAmount) | number: '0.0-2'}} {{units[selectedUnits?.emissionUnitSelected]}}/{{'YR' | translate}}
+        </td>
       </tr>
       <tr>
         <td>{{'CO2_EMISSIONS_REDUCED' | translate}}</td>
-        <ng-container [ngTemplateOutletContext]="{key: 'mCondyCO2', isCosts: false, isPerYear: true, unit: units[selectedUnits?.emissionUnitSelected]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
+        <td *ngIf="current?.mCondyCO2; else emptyCol">
+          {{current?.mCondyCO2 | number: '0.0-2'}} {{units[selectedUnits?.emissionUnitSelected]}}/{{'YR' | translate}}
+        </td>
+        <td *ngIf="potential?.mCondyCO2; else emptyCol">
+          {{potential?.mCondyCO2 | number: '0.0-2'}} {{units[selectedUnits?.emissionUnitSelected]}}/{{'YR' | translate}}
+        </td>
+        <td *ngIf="current?.mCondyCO2 && potential?.mCondyCO2; else emptyCol">
+          {{(potential?.mCondyCO2 - current?.mCondyCO2) | number: '0.0-2'}} {{units[selectedUnits?.emissionUnitSelected]}}/{{'YR' | translate}}
+        </td>
       </tr>
       <tr class="text-bold">
         <td>{{'TOTAL_VALUE_SAVED' | translate}}</td>
-        <ng-container [ngTemplateOutletContext]="{key: 'totalCostSavedCondensateReturn', isCosts: true, isPerYear: true, unit: null}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
+        <td *ngIf="current?.totalCostSavedCondensateReturn; else emptyCol">
+          {{current?.totalCostSavedCondensateReturn | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}
+        </td>
+        <td *ngIf="potential?.mCondyCO2; else emptyCol">
+          {{potential?.totalCostSavedCondensateReturn | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}
+        </td>
+        <td *ngIf="current?.totalCostSavedCondensateReturn && potential?.totalCostSavedCondensateReturn; else emptyCol">
+          {{(potential?.totalCostSavedCondensateReturn - current?.totalCostSavedCondensateReturn) | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}
+        </td>
       </tr>
       </tbody>
     </table>
