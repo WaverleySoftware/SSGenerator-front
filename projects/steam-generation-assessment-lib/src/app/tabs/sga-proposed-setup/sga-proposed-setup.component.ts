@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
-import { FormGroup } from "@angular/forms";
 import { ChartBarDataInterface } from "../../interfaces/chart-bar.interface";
 import { ProposedDataInterface } from "../../interfaces/steam-generation-form.interface";
 import { filter, pairwise, takeUntil } from "rxjs/operators";
