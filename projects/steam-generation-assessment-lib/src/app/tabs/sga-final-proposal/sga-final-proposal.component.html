@@ -656,9 +656,9 @@
           </tr>
           </tbody>
         </table>
-        <table class="sgaFinalProposal_info">
+        <table class="sgaFinalProposal_info mb">
           <caption>
-            <span>{{'WATER_CONSUMPTION_AND_WATER_TREATMENT_CHEMICALS' | translate}}</span>
+            <span>{{'WATER_CONSUMPTION' | translate}}</span>
             <i class="fa fa-info-circle"></i>
           </caption>
           <thead>
@@ -678,12 +678,28 @@
             <td>{{'QUANTITY' | translate}}</td>
             <ng-container [ngTemplateOutletContext]="{key: 'boilerHouseWaterFlowTotal', unit: units[selectedUnits?.volumeUnitSelected], isPerYear: true, isCosts: false}" [ngTemplateOutlet]="finalTableColumns"></ng-container>
           </tr>
-          <tr>
+          <tr class="text-bold">
             <td>{{'COST_OF_BOILER_WATER_YEAR' | translate}}</td>
             <ng-container [ngTemplateOutletContext]="{key: 'boilerHouseWaterCost', unit: null, isPerYear: true, isCosts: true}" [ngTemplateOutlet]="finalTableColumns"></ng-container>
           </tr>
+          </tbody>
+        </table>
+        <table class="sgaFinalProposal_info mb">
+          <caption>
+            <span>{{'WATER_TREATMENT' | translate}}</span>
+            <i class="fa fa-info-circle"></i>
+          </caption>
+          <thead>
           <tr>
-            <td>{{'COST_OF_CHEMICALS_FSLASH_UNIT' | translate}}</td>
+            <th>{{'POSITION_NAME' | translate}}</th>
+            <th>{{'CURRENT' | translate}}</th>
+            <th>{{'POTENTIAL' | translate}}</th>
+            <th></th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td>{{'COST_OF_CHEMICALS_FSLASH_UNIT_OF_WATER' | translate}}</td>
             <ng-container [ngTemplateOutletContext]="{key: 'costChemM3', unit: units[selectedUnits?.volumeUnitSelected], isPerYear: false, isCosts: true}" [ngTemplateOutlet]="finalTableColumns"></ng-container>
           </tr>
           <tr>
