@@ -37,12 +37,20 @@ export class SgaProposedSetupComponent implements OnInit {
       pairwise(),
       filter(v => !!v && !!v[0] && !!v[1] && JSON.stringify(v[0]) !== JSON.stringify(v[1]))
     ).subscribe((data) => this.resetFinalProposal.emit(data));
-  }
 
-  get isCondensateReturnDisable(): boolean {
-    const fg: FormGroup = this.form.get('proposedSetup') as FormGroup;
-    return fg.get('proposalCondensateReturnedPercentage').value === fg.get('benchmarkCondensateReturnedPercentage').value &&
-      fg.get('benchmarkCondensateReturn').value === fg.get('proposalCondensateReturned').value;
+    this.form.get('proposedSetup.proposalCondensateReturnedPercentage').statusChanges
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(status => {
+        if (status === 'VALID') {
+          const val = this.form.get('proposedSetup.proposalCondensateReturnedPercentage').value;
+          const valByOnePercent = this.form.get('proposedSetup.benchmarkCondensateReturn').value /
+            this.form.get('proposedSetup.benchmarkCondensateReturnedPercentage').value;
+
+          this.form
+            .get('proposedSetup.proposalCondensateReturned')
+            .setValue(Math.round((val * valByOnePercent) * 100) / 100);
+        }
+      });
   }
 
   get isTdsControlPresent(): {
