@@ -1,11 +1,13 @@
 import { ProposalCalculationInterface } from "./proposal-calculation.interface";
+import { ProposedFeaturesInterface } from "./proposed-features.interface";
+import { ProposedSetupInterface } from "./proposed-setup.interface";
 
 export interface CalcBenchmarkResInterface {
   benchmark: BenchmarkResBenchmarkInterface;
   benchmarkView: BenchmarkResBenchmarkViewInterface;
-  features: BenchmarkResFeaturesInterface;
+  features: ProposedFeaturesInterface;
   messages?: string[] | any[];
-  proposedSetup: BenchmarkResProposedSetupInterface;
+  proposedSetup: ProposedSetupInterface;
   overallProposal?: BenchmarkResBenchmarkInterface;
   proposalCalculation?: ProposalCalculationInterface;
 }
@@ -207,37 +209,4 @@ export interface BenchmarkResBenchmarkViewInterface {
   chemCostTotalPerYear: number;
   waterAndChemicalsCostTotalPerYear: number;
   o2ScavengingChemicalCostPerYear: number;
-}
-
-export interface BenchmarkResFeaturesInterface {
-  addAutoTdsAndFlashRecovery: boolean;
-  addAutoTdsAndFlashRecoveryPlusHearExchanger: boolean;
-  addAutoTdsControls: boolean;
-  addDirectSteamInjectionToFeedtank: boolean;
-  addWaterTreatmentPlant: boolean;
-  boilerEfficiencyImprovements: boolean;
-  increaseCondensateReturn: boolean;
-}
-
-export interface BenchmarkResProposedSetupInterface {
-  benchmarkBoilerEfficiency: number;
-  benchmarkCondensateReturn: number;
-  benchmarkCondensateReturnedPercentage: number;
-  benchmarkCondensateTemperature: number;
-  benchmarkDsiPressure: number;
-  benchmarkTemperatureOfFeedtank: number;
-  benchmarkWaterRejectionRate: number;
-  condensateReturnUnit: number;
-  condensateTemperatureUnit: number;
-  dsiPressureUnit: number;
-  economiserRequired: boolean;
-  proposalBoilerEfficiency: number;
-  proposalCondensateReturned: number;
-  proposalCondensateReturnedPercentage: number;
-  proposalCondensateTemperature: number;
-  proposalCostOfSodiumSulphite: number;
-  proposalDsiPressure: number;
-  proposalTemperatureOfFeedtank: number;
-  proposalWaterRejectionRate: number;
-  temperatureOfFeedtankUnit: number;
 }

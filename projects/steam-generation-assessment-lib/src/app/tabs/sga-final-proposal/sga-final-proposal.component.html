@@ -124,16 +124,8 @@
             <tr>
               <td colspan="4"></td>
               <td>{{'TOTAL_SAVINGS' | translate}}</td>
-              <td>
-                {{((current.costOfFuelPerYear || 0 - potential.costOfFuelPerYear || 0) +
-              (current.waterAndChemicalsCostTotalPerYear || 0 - potential.waterAndChemicalsCostTotalPerYear || 0) +
-              (current.costOfBoilerHouseEffluent || 0 - potential.costOfBoilerHouseEffluent || 0) +
-              (current.costOfCO2PerYear || 0 - potential.costOfCO2PerYear || 0) +
-              (current.mCondy || 0 - potential.mCondy || 0) * current.costOfEffm3) | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
-              <td>{{savingPercent(
-                (current.costOfFuelPerYear || 0) + (current.waterAndChemicalsCostTotalPerYear || 0) + (current.costOfBoilerHouseEffluent || 0) + (current.costOfCO2PerYear || 0) + (current.mCondy || 0),
-                (potential.costOfFuelPerYear || 0) + (potential.waterAndChemicalsCostTotalPerYear || 0) + (potential.costOfBoilerHouseEffluent || 0) + (potential.costOfCO2PerYear || 0) + (potential.mCondy || 0)
-              ) | number: '0.0-2'}}%</td>
+              <td *ngIf="current?.totalCostOfSteamPerYear && potential?.totalCostOfSteamPerYear; else emptyCol">{{current?.totalCostOfSteamPerYear - potential?.totalCostOfSteamPerYear | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
+              <td *ngIf="current?.totalCostOfSteamPerYear && potential?.totalCostOfSteamPerYear; else emptyCol">{{savingPercent(current?.totalCostOfSteamPerYear, potential?.totalCostOfSteamPerYear) | number: '0.0-2'}}%</td>
             </tr>
           </tfoot>
         </table>

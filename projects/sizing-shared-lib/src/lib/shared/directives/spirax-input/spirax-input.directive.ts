@@ -148,11 +148,11 @@ export class SpiraxInputDirective implements OnInit, OnChanges, OnDestroy {
     let errorMessage: string = null;
 
     if (errors.min) {
-      error = errors.message || 'THE_VALUE_IS_BELOW_THE_MINIMUM_ALLOWED_MESSAGE';
+      error = errors.message || 'THE_VALUE_MUST_BE_GREATER_THAN_THE_MINIMUM_VALUE_MESSAGE';
       attemptValue =  errors.min && errors.min.min;
     }
     if (errors.max) {
-      error = errors.message || 'THE_VALUE_IS_BELOW_THE_MAXIMUM_ALLOWED_MESSAGE';
+      error = errors.message || 'THE_VALUE_MUST_BE_LESS_THEN_THE_MAXIMUM_VALUE_MESSAGE';
       attemptValue =  errors.max && errors.max.max;
     }
     if (errors.error) {
@@ -165,7 +165,7 @@ export class SpiraxInputDirective implements OnInit, OnChanges, OnDestroy {
     if (error) {
       errorMessage = this.translatePipe.transform(error);
 
-      if (attemptValue) {
+      if (attemptValue || attemptValue === 0) {
         if (!isNaN(attemptValue) && this.unitsStr && this.unitsStr[0]) {
           const units = this.unitsStr[1] ? `${this.unitsStr[0]}/${this.unitsStr[1]}` : this.unitsStr[0];
           errorMessage += ` ${attemptValue} ${units || ''}`

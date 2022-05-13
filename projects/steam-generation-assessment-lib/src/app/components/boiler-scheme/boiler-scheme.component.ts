@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from "@angular/core";
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, ViewChild } from "@angular/core";
 import { SgaBoilerSchemeInterface, SgaBoilerSchemeTabsInterface } from "../../interfaces/sga-boiler-scheme.interface";
 import { SteamGenerationAssessmentService } from "../../services/steam-generation-assessment.service";
 

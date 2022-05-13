@@ -217,7 +217,7 @@
                           [(expanded)]="structure?.utility_parameters.panels.water_treatment_chemicals.status"
                           [titleTooltip]="waterChemicalsTooltip" background="#EDF2F4">
               <spirax-toggle body formControlName="boilerWaterTreatmentChemicalCostsIsKnown"
-                             (valueChange)="toggleInput( ['totalChemicalCostPerYear', 'o2ScavengingChemicalsCostSavings'], ['totalChemicalCostPerYear', 'o2ScavengingChemicalsCostSavings'], null, $event)"
+                             (valueChange)="toggleInput( 'totalChemicalCostPerYear', 'totalChemicalCostPerYear', null, $event)"
                              label="ARE_CHEMICAL_COST_KNOWN">
                 <div yes>
                   <input [label]="'TOTAL_CHEMICAL_COSTS_PER_YEAR' | translate"
@@ -262,6 +262,9 @@
                 <div>
                   <input [label]="'PERCENT_OF_EFFLUENT_BASED_ON_BOILER_HOUSE_WATER_CONSUMPTION' | translate"
                          [unitsStr]="['%']"
+                         [value]="getValue('percentOfEffluentBoilerHouseWater') | decimalPlace: 2"
+                         [sga-decimal-places]="2"
+                         formControlName="percentOfEffluentBoilerHouseWater"
                          max="100"
                          min="0"
                          type="number"

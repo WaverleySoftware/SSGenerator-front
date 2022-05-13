@@ -58,4 +58,5 @@ export interface BenchmarkInputsInterface {
   percentageOfCondensateReturn?: number;
   volumeOfCondensateReturn?: number;
   isDsiPresent:	boolean;
+  percentOfEffluentBoilerHouseWater: number;
 }

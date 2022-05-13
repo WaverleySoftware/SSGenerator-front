@@ -2,8 +2,8 @@ import { AbstractControl, AsyncValidatorFn, FormGroup, ValidationErrors } from '
 import { SgaApiService } from '../services/sga-api.service';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { ProposedSetupInterface } from '../interfaces/steam-generation-form.interface';
 import { SgaErrorInterface, SgaValidationErrorResInterface } from "../interfaces/api-requests.interface";
+import { ProposedSetupInterface } from '../interfaces/proposed-setup.interface';
 
 const getControlNameFromReqError = (error: SgaErrorInterface): {name: string, error: string} => {
   if (!error) { return null; }

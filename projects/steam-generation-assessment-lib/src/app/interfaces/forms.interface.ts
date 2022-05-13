@@ -28,11 +28,6 @@ export interface InputParametersCreateFormInterface {
   benchmarkInputs: { [key in keyof BenchmarkInputsInterface]: any };
 }
 
-export interface ProposedSetupFormInterface {
-  proposedSetup: ProposedSetupInterface;
-  features: ProposedFeaturesInterface;
-}
-
 export interface ProposedSetupTFormInterface {
   proposedSetup: TForm<ProposedSetupInterface>;
   features: TForm<ProposedFeaturesInterface>;

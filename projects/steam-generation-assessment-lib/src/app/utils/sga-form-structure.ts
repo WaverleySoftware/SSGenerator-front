@@ -22,7 +22,7 @@ export default {
       },
       water_effluent: {
         status: true,
-        fields: ['costOfEffluentPerUnit']
+        fields: ['costOfEffluentPerUnit', 'percentOfEffluentBoilerHouseWater']
       }
     },
     fields: ['hoursOfOperation']
