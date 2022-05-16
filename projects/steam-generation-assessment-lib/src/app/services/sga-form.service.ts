@@ -298,8 +298,8 @@ export class SgaFormService {
     return this.inputParamsFg;
   }
 
-  getProposedSetupForm(): TForm<ProposedSetupTFormInterface> {
-    if (!this.proposedSetupFg) {
+  getProposedSetupForm(isNew?: boolean): TForm<ProposedSetupTFormInterface> {
+    if (!this.proposedSetupFg || isNew) {
       this.proposedSetupFg = this.createProposedSetupForm();
     }
 

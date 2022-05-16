@@ -27,10 +27,11 @@ export class SgaProposedSetupComponent implements OnInit {
   @Input() units: { [key: number]: string };
   private ngUnsubscribe = new Subject<void>();
   verticalChartLabels: string[] = verticalChartLabels;
-  form: TForm<ProposedSetupTFormInterface> = this.formService.getProposedSetupForm();
+  form: TForm<ProposedSetupTFormInterface>;
   inputParamsFg: TForm<InputParametersTFormInterface> = this.formService.getInputParamsFg();
 
   constructor(private apiService: SgaApiService, private formService: SgaFormService) {
+    this.form = this.formService.getProposedSetupForm(true);
     this.form.get('proposedSetup').valueChanges.pipe(
       takeUntil(this.ngUnsubscribe),
       pairwise(),
