@@ -269,7 +269,7 @@
           <ng-container [ngTemplateOutletContext]="{key: 'costOfCO2PerTonne', isCosts: true, isPerYear: false, unit: units[selectedUnits?.emissionUnitSelected]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
         </tr>
         <tr class="text-bold">
-          <td>{{"COST_OF_CO2_EMISSIONS_FSLASH_YEAR"}}</td>
+          <td>{{"COST_OF_CO2_EMISSINS_PER_YEAR" | translate}}</td>
           <ng-container [ngTemplateOutletContext]="{key: 'costOfCO2PerYear', isCosts: true, isPerYear: true, unit: null}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
         </tr>
         </tbody>
@@ -781,7 +781,7 @@
               <tbody>
                 <tr>
                   <td>{{'PERCENT_RETURNED' | translate}}</td>
-                  <ng-container [ngTemplateOutletContext]="{key: 'сondensateReturnedPercentage', unit: '%', isPerYear: false, isCosts: false}" [ngTemplateOutlet]="finalTableColumns"></ng-container>
+                  <ng-container [ngTemplateOutletContext]="{key: 'condensateReturnedPercentage', unit: '%', isPerYear: false, isCosts: false}" [ngTemplateOutlet]="finalTableColumns"></ng-container>
                 </tr>
               </tbody>
             </table>
