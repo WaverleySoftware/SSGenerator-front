@@ -280,10 +280,6 @@ i[class^="sga-"] {
         background-color: var(--color-steel-40);
       }
     }
-
-    .staticScheme {
-      margin: 0 auto;
-    }
   }
 
   .mb {
@@ -377,6 +373,97 @@ i[class^="sga-"] {
 
   .fz-smaller {
     font-size: 1.1rem;
+  }
+
+  .arrow {
+    &-vertical, &-before, &-after {
+      &:before {
+        color: var(--color-background-panel);
+        border-color: currentColor;
+        content: "";
+        display: block;
+        border-style: solid;
+        background: linear-gradient(to left top, transparent 40%, currentColor 40%, currentColor 60%, transparent 40%);
+        width: 30px;
+        height: 30px;
+        border-right-width: 8px;
+        border-top-width: 8px;
+        border-bottom-width: 0;
+        border-left-width: 0;
+        position: absolute;
+        top: calc(50% - 10px);
+        @media screen and (max-width: 1200px){
+          display: none;
+        }
+      }
+
+      &.pink:before {
+        color: var(--color-pink-20);
+      }
+      &.green:before {
+        color: var(--color-green-20);
+      }
+      &.orange:before {
+        color: var(--color-orange-20);
+      }
+    }
+
+    &-before:before {
+      left: -45px;
+      transform: rotate(45deg);
+    }
+    &-after:before {
+      left: initial;
+      right: -45px;
+      transform: rotate(225deg);
+    }
+
+    &-vertical {
+      &.arrow {
+        &-before:before {
+          transform: rotate(135deg);
+          top: -45px;
+          left: 50%;
+        }
+        &-after:before {
+          transform: rotate(-45deg);
+          top: initial;
+          bottom: -45px;
+          left: 50%;
+        }
+      }
+    }
+
+    &-align {
+      &-start {
+        &:before {
+          top: 10%;
+        }
+        &.arrow-vertical:before {
+          left: 10%;
+        }
+      }
+      &-end {
+        &:before {
+          top: 90%;
+        }
+        &.arrow-vertical:before {
+          left: 90%;
+        }
+      }
+    }
+
+    &-side {
+      &-top:before { transform: rotate(-45deg); }
+      &-right:before { transform: rotate(45deg); }
+      &-bottom:before { transform: rotate(135deg); }
+      &-left:before { transform: rotate(225deg); }
+    }
+  }
+
+  .staticScheme {
+    margin: 0 auto;
+    padding: 50% 30px;
   }
 }
 

@@ -40,14 +40,22 @@
       </div>
       <div class="col-md-12">
         <table class="customTable">
-          <ng-template #majorSteamOutputs let-quantity="quantity" let-value="value" let-unit="unit" let-name="name">
-            <td>{{name | translate}}</td>
-            <td *ngIf="current[quantity]; else emptyCol">{{current[quantity] | number: '0.0-2'}} {{unit}}</td>
-            <td *ngIf="current[value]; else emptyCol">{{current[value] | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
-            <td *ngIf="potential[quantity]; else emptyCol">{{potential[quantity] | number: '0.0-2'}} {{unit}}</td>
-            <td *ngIf="potential[value]; else emptyCol">{{potential[value] | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
-            <td *ngIf="current[value] && potential[value]; else emptyCol">{{current[value] - potential[value] | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
-            <td *ngIf="current[value] && potential[value]; else emptyCol">{{savingPercent(current[value], potential[value]) | number: '0.0-2'}}%</td>
+          <ng-template #majorSteamOutputs
+                       let-bold="bold"
+                       let-quantity="quantity"
+                       let-value="value"
+                       let-unit="unit"
+                       let-name="name"
+                       let-perYear="perYear">
+            <tr [ngClass]="{filled: bold}">
+              <td>{{name | translate}}</td>
+              <td *ngIf="current[quantity]; else emptyCol">{{current[quantity] | number: '0.0-2'}} {{unit}}{{perYear && ('YR' | translate)}}</td>
+              <td *ngIf="current[value]; else emptyCol">{{current[value] | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
+              <td *ngIf="potential[quantity]; else emptyCol">{{potential[quantity] | number: '0.0-2'}} {{unit}}{{perYear && ('YR' | translate)}}</td>
+              <td *ngIf="potential[value]; else emptyCol">{{potential[value] | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
+              <td *ngIf="current[value] && potential[value]; else emptyCol">{{current[value] - potential[value] | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
+              <td *ngIf="current[value] && potential[value]; else emptyCol">{{savingPercent(current[value], potential[value]) | number: '0.0-2'}}%</td>
+            </tr>
           </ng-template>
           <thead>
             <tr>
@@ -68,57 +76,74 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <ng-container [ngTemplateOutlet]="majorSteamOutputs"
-                            [ngTemplateOutletContext]="{name: 'FUEL_QUANTITY', quantity: 'fuelConsumptionPerYear',value: 'costOfFuelPerYear',unit: units[selectedUnits?.fuelUnitSelected]}"></ng-container>
-            </tr>
-            <tr>
-              <ng-container [ngTemplateOutlet]="majorSteamOutputs"
-                            [ngTemplateOutletContext]="{name: 'FUEL_ENERGY', quantity: 'qfuel',value: null,unit: units[selectedUnits?.energyUnitSelected]}"></ng-container>
-            </tr>
-            <tr>
-              <ng-container [ngTemplateOutlet]="majorSteamOutputs"
-                            [ngTemplateOutletContext]="{name: 'BOILER_HOUSE_WATER_AND_CHEMICALS', quantity: 'boilerHouseWaterFlowTotal',value: 'waterAndChemicalsCostTotalPerYear',unit: units[selectedUnits?.volumeUnitSelected]+'/'+('YR' | translate)}"></ng-container>
-            </tr>
-            <tr>
-              <ng-container [ngTemplateOutlet]="majorSteamOutputs"
-                            [ngTemplateOutletContext]="{name: 'CO2_EMISSIONS', quantity: 'tonnesOfCO2',value: 'costOfCO2PerYear',unit: units[selectedUnits?.emissionUnitSelected]}"></ng-container>
-            </tr>
-            <tr>
-              <ng-container [ngTemplateOutlet]="majorSteamOutputs"
-                            [ngTemplateOutletContext]="{name: 'STEAM_GENERATION_EFFLUENT', quantity: 'boilerHouseTotalVolumeOfWaterEffluent',value: 'costOfBoilerHouseEffluent',unit: units[selectedUnits?.volumeUnitSelected]+'/'+('YR' | translate)}"></ng-container>
-            </tr>
-            <tr class="filled">
-              <ng-container [ngTemplateOutlet]="majorSteamOutputs"
-                            [ngTemplateOutletContext]="{name: 'TOTAL_STEAM_GENERATED', quantity: 'mBoiler',value: 'totalCostOfSteamPerYear',unit: units[selectedUnits?.massFlowUnitSelected]}"></ng-container>
-            </tr>
-            <tr>
-              <td>{{'TOTAL_COST_OF_STEAM_FSLASH_UNIT_MASS' | translate}}</td>
-              <td>–</td>
-              <td *ngIf="current.totalCostOfSteamPerTonne; else emptyCol">{{current.totalCostOfSteamPerTonne | number: '0.0-2'}} {{currency}}/{{units[selectedUnits?.massFlowUnitSelected]?.replace('/yr', '')}}</td>
-              <td>-</td>
-              <td *ngIf="potential.totalCostOfSteamPerTonne; else emptyCol">{{potential.totalCostOfSteamPerTonne | number: '0.0-2'}} {{currency}}/{{units[selectedUnits?.massFlowUnitSelected]?.replace('/yr', '')}}</td>
-              <td>–</td>
-              <td>–</td>
-            </tr>
-            <tr>
-              <td>{{'TOTAL_COST_OF_STEAM_FSLASH_UNIT_ENERGY' | translate}}</td>
-              <td>–</td>
-              <td *ngIf="current.totalCostOfSteamPerkWhOfFuel; else emptyCol">{{current.totalCostOfSteamPerkWhOfFuel | number: '0.0-2'}} {{currency}}/{{units[selectedUnits?.energyUnitSelected]}}</td>
-              <td>–</td>
-              <td *ngIf="potential.totalCostOfSteamPerkWhOfFuel; else emptyCol">{{potential.totalCostOfSteamPerkWhOfFuel | number: '0.0-2'}} {{currency}}/{{units[selectedUnits?.energyUnitSelected]}}</td>
-              <td>–</td>
-              <td>–</td>
-            </tr>
-            <tr class="filled">
-              <td>{{'OVERALL_STEAM_GENERATION_EFFICIENCY' | translate}}</td>
-              <td *ngIf="current.energyToGenerateUnitofSteam; else emptyCol">{{current.energyToGenerateUnitofSteam | number: '0.0-2'}} {{units[selectedUnits?.specificEnergyUnitsSelected]}}</td>
-              <td>–</td>
-              <td *ngIf="potential.energyToGenerateUnitofSteam; else emptyCol">{{potential.energyToGenerateUnitofSteam | number: '0.0-2'}} {{units[selectedUnits?.specificEnergyUnitsSelected]}}</td>
-              <td>-</td>
-              <td>-</td>
-              <td *ngIf="current.energyToGenerateUnitofSteam && potential.energyToGenerateUnitofSteam; else emptyCol">{{savingPercent(current.totalCostOfSteamPerTonne, potential.totalCostOfSteamPerTonne) | number: '0.0-2'}}%</td>
-            </tr>
+          <ng-container [ngTemplateOutlet]="majorSteamOutputs"
+                        [ngTemplateOutletContext]="{
+                        name: 'FUEL_QUANTITY',
+                        quantity: 'fuelConsumptionPerYear',
+                        value: 'costOfFuelPerYear',
+                        unit: units[selectedUnits?.fuelUnitSelected],
+                        perYear: true}"></ng-container>
+          <ng-container [ngTemplateOutlet]="majorSteamOutputs"
+                        [ngTemplateOutletContext]="{
+                        name: 'FUEL_ENERGY',
+                        quantity: 'qfuel',
+                        value: null,
+                        unit: units[selectedUnits?.energyUnitSelected],
+                        perYear: true}"></ng-container>
+          <ng-container [ngTemplateOutlet]="majorSteamOutputs"
+                        [ngTemplateOutletContext]="{
+                        name: 'BOILER_HOUSE_WATER_AND_CHEMICALS',
+                        quantity: 'boilerHouseWaterFlowTotal',
+                        value: 'waterAndChemicalsCostTotalPerYear',
+                        unit: units[selectedUnits?.volumeUnitSelected],
+                        perYear: true}"></ng-container>
+          <ng-container [ngTemplateOutlet]="majorSteamOutputs"
+                        [ngTemplateOutletContext]="{
+                        name: 'CO2_EMISSIONS',
+                        quantity: 'tonnesOfCO2',
+                        value: 'costOfCO2PerYear',
+                        unit: units[selectedUnits?.emissionUnitSelected]}"></ng-container>
+          <ng-container [ngTemplateOutlet]="majorSteamOutputs"
+                        [ngTemplateOutletContext]="{
+                        name: 'STEAM_GENERATION_EFFLUENT',
+                        quantity: 'boilerHouseTotalVolumeOfWaterEffluent',
+                        value: 'costOfBoilerHouseEffluent',
+                        unit: units[selectedUnits?.volumeUnitSelected],
+                        perYear: true}"></ng-container>
+          <ng-container [ngTemplateOutlet]="majorSteamOutputs"
+                        [ngTemplateOutletContext]="{
+                        name: 'TOTAL_STEAM_GENERATED',
+                        quantity: 'mBoiler',
+                        value: 'totalCostOfSteamPerYear',
+                        unit: units[selectedUnits?.massFlowUnitSelected],
+                        bold: true}"></ng-container>
+          <tr>
+            <td>{{'TOTAL_COST_OF_STEAM_FSLASH_UNIT_MASS' | translate}}</td>
+            <td>–</td>
+            <td *ngIf="current.totalCostOfSteamPerTonne; else emptyCol">{{current.totalCostOfSteamPerTonne | number: '0.0-2'}} {{currency}}/{{units[selectedUnits?.massFlowUnitSelected]?.replace('/yr', '')}}</td>
+            <td>-</td>
+            <td *ngIf="potential.totalCostOfSteamPerTonne; else emptyCol">{{potential.totalCostOfSteamPerTonne | number: '0.0-2'}} {{currency}}/{{units[selectedUnits?.massFlowUnitSelected]?.replace('/yr', '')}}</td>
+            <td>–</td>
+            <td>–</td>
+          </tr>
+          <tr>
+            <td>{{'TOTAL_COST_OF_STEAM_FSLASH_UNIT_ENERGY' | translate}}</td>
+            <td>–</td>
+            <td *ngIf="current.totalCostOfSteamPerkWhOfFuel; else emptyCol">{{current.totalCostOfSteamPerkWhOfFuel | number: '0.0-2'}} {{currency}}/{{units[selectedUnits?.energyUnitSelected]}}</td>
+            <td>–</td>
+            <td *ngIf="potential.totalCostOfSteamPerkWhOfFuel; else emptyCol">{{potential.totalCostOfSteamPerkWhOfFuel | number: '0.0-2'}} {{currency}}/{{units[selectedUnits?.energyUnitSelected]}}</td>
+            <td>–</td>
+            <td>–</td>
+          </tr>
+          <tr class="filled">
+            <td>{{'OVERALL_STEAM_GENERATION_EFFICIENCY' | translate}}</td>
+            <td *ngIf="current.energyToGenerateUnitofSteam; else emptyCol">{{current.energyToGenerateUnitofSteam | number: '0.0-2'}} {{units[selectedUnits?.specificEnergyUnitsSelected]}}</td>
+            <td>–</td>
+            <td *ngIf="potential.energyToGenerateUnitofSteam; else emptyCol">{{potential.energyToGenerateUnitofSteam | number: '0.0-2'}} {{units[selectedUnits?.specificEnergyUnitsSelected]}}</td>
+            <td>-</td>
+            <td>-</td>
+            <td *ngIf="current.energyToGenerateUnitofSteam && potential.energyToGenerateUnitofSteam; else emptyCol">{{savingPercent(current.totalCostOfSteamPerTonne, potential.totalCostOfSteamPerTonne) | number: '0.0-2'}}%</td>
+          </tr>
           </tbody>
           <tfoot>
             <tr>
@@ -427,6 +452,7 @@
         </thead>
         <tbody>
         <tr>
+          <td>{{'VOLUME' | translate}}</td>
           <ng-container [ngTemplateOutletContext]="{key: 'waterTreatmentEffluent', isCosts: false, isPerYear: true, unit: units[selectedUnits?.volumeUnitSelected]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
         </tr>
         <tr class="text-bold">
@@ -563,14 +589,14 @@
 
     <div class="row mb fz-smaller">
       <div class="col-md-6">
-        <table class="sgaFinalProposal_info pink">
+        <table class="sgaFinalProposal_info pink arrow-after arrow-vertical arrow-align-end">
           <caption>
             <span>{{'STACK_AND_RADIATION_LOSSES' | translate}}</span>
             <i class="fa fa-info-circle"></i>
           </caption>
           <thead>
           <tr>
-            <th>{{'POSITION_NAME' | translate}}</th>
+            <th></th>
             <th>{{'CURRENT' | translate}}</th>
             <th>{{'POTENTIAL' | translate}}</th>
             <th></th>
@@ -578,7 +604,7 @@
           </thead>
           <tbody>
           <tr>
-            <th>{{'HEAT_LOSSES' | translate}}</th>
+            <td>{{'HEAT_LOSSES' | translate}}</td>
             <td *ngIf="current?.boilerEfficiency; else emptyCol">{{(100 - current?.boilerEfficiency) | number: '0.0-2'}}</td>
             <td *ngIf="potential?.boilerEfficiency; else emptyCol" align="right">{{(100 - potential?.boilerEfficiency) | number: '0.0-2'}}</td>
             <td align="left">%</td>
@@ -595,14 +621,14 @@
         </table>
       </div>
       <div class="col-md-6">
-        <table class="sgaFinalProposal_info pink">
+        <table class="sgaFinalProposal_info pink arrow-after arrow-vertical arrow-align-start">
           <caption>
             <span>{{'CO2_EMISSIONS' | translate}}</span>
             <i class="fa fa-info-circle"></i>
           </caption>
           <thead>
           <tr>
-           <th>{{'POSITION_NAME' | translate}}</th>
+           <th></th>
            <th>{{'CURRENT' | translate}}</th>
            <th>{{'POTENTIAL' | translate}}</th>
             <th></th>
@@ -628,14 +654,14 @@
 
     <div class="row mb fz-smaller">
       <div class="col-md-5">
-        <table class="sgaFinalProposal_info mb">
+        <table class="sgaFinalProposal_info mb arrow-after arrow-side-right">
           <caption>
             <span>{{'FUEL_CONSUMPTION' | translate}}</span>
             <i class="fa fa-info-circle"></i>
           </caption>
           <thead>
           <tr>
-            <th>{{'POSITION_NAME' | translate}}</th>
+            <th></th>
             <th>{{'CURRENT' | translate}}</th>
             <th>{{'POTENTIAL' | translate}}</th>
             <th></th>
@@ -656,14 +682,14 @@
           </tr>
           </tbody>
         </table>
-        <table class="sgaFinalProposal_info mb">
+        <table class="sgaFinalProposal_info mb arrow-after arrow-side-right">
           <caption>
             <span>{{'WATER_CONSUMPTION' | translate}}</span>
             <i class="fa fa-info-circle"></i>
           </caption>
           <thead>
           <tr>
-            <th>{{'POSITION_NAME' | translate}}</th>
+            <th></th>
             <th>{{'CURRENT' | translate}}</th>
             <th>{{'POTENTIAL' | translate}}</th>
             <th></th>
@@ -684,14 +710,14 @@
           </tr>
           </tbody>
         </table>
-        <table class="sgaFinalProposal_info mb">
+        <table class="sgaFinalProposal_info mb arrow-after arrow-align-start arrow-side-right">
           <caption>
             <span>{{'WATER_TREATMENT' | translate}}</span>
             <i class="fa fa-info-circle"></i>
           </caption>
           <thead>
           <tr>
-            <th>{{'POSITION_NAME' | translate}}</th>
+            <th></th>
             <th>{{'CURRENT' | translate}}</th>
             <th>{{'POTENTIAL' | translate}}</th>
             <th></th>
@@ -716,85 +742,72 @@
       <div class="col-md-7">
         <div class="row">
           <div class="col-lg-4 col-md-2 col-sm-4 col-md-offset-0 col-sm-offset-4 mb hide-xs">
-            <div class="flex justify-content-between mb">
-              <i class="sga-arrow pink arrow-up"></i>
-              <i class="sga-arrow pink arrow-up"></i>
-            </div>
-            <div class="flex justify-content-between mb">
-              <i class="sga-arrow"></i>
-              <i class="sga-arrow orange"></i>
-            </div>
-            <img class="img-responsive staticScheme mb"
+            <img class="img-responsive staticScheme"
                  src="/assets/img/steam_generation/benchmark_statistic_scheme.png"
                  alt="benchmark_statistic_scheme">
-            <div class="flex justify-content-between mb">
-              <i class="sga-arrow"></i>
-              <i class="sga-arrow arrow-left green"></i>
-            </div>
-            <i class="sga-arrow pink arrow-down"></i>
           </div>
           <div class="col-lg-8 col-md-10 col-sm-12 mb">
-            <table class="sgaFinalProposal_info orange mb">
-              <caption>
-                <span>{{'STEAM_CONSUMPTION' | translate}}</span>
-                <i class="fa fa-info-circle"></i>
-              </caption>
-              <thead>
-              <tr>
-                <th>{{'POSITION_NAME' | translate}}</th>
-                <th>{{'CURRENT' | translate}}</th>
-                <th>{{'POTENTIAL' | translate}}</th>
-                <th></th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr>
-                <td>{{'COST_FSLASH_UNIT_MASS' | translate}}</td>
-                <ng-container [ngTemplateOutletContext]="{key: 'totalCostOfSteamPerTonne', unit: 'tonne', isPerYear: false, isCosts: true}" [ngTemplateOutlet]="finalTableColumns"></ng-container>
-              </tr>
-              <tr>
-                <td>{{'MASS_FLOW_FSLASH_YR' | translate}}</td>
-                <ng-container [ngTemplateOutletContext]="{key: 'mBoiler', unit: units[selectedUnits?.massFlowUnitSelected], isPerYear: false, isCosts: false}" [ngTemplateOutlet]="finalTableColumns"></ng-container>
-              </tr>
-              <tr>
-                <td>{{'MASS_FLOW' | translate}}</td>
-                <ng-container [ngTemplateOutletContext]="{key: 'steamGeneratedkgPerHour', unit: units[selectedUnits?.smallMassFlowUnitSelected], isPerYear: false, isCosts: false}" [ngTemplateOutlet]="finalTableColumns"></ng-container>
-              </tr>
-              <tr class="text-bold">
-                <td>{{'COST_FSLASH_YR' | translate}}</td>
-                <ng-container [ngTemplateOutletContext]="{key: 'totalCostOfSteamPerYear', unit: null, isPerYear: true, isCosts: true}" [ngTemplateOutlet]="finalTableColumns"></ng-container>
-              </tr>
-              </tbody>
-            </table>
-            <table class="sgaFinalProposal_info green">
-              <caption>
-                <span>{{'CONDENSATE_RETURNED' | translate}}</span>
-                <i class="fa fa-info-circle"></i>
-              </caption>
-              <thead>
-              <tr>
-                <th>{{'POSITION_NAME' | translate}}</th>
-                <th>{{'CURRENT' | translate}}</th>
-                <th>{{'POTENTIAL' | translate}}</th>
-              </tr>
-              </thead>
-              <tbody>
+            <table class="sgaFinalProposal_info orange mb arrow-before">
+                <caption>
+                  <span>{{'STEAM_CONSUMPTION' | translate}}</span>
+                  <i class="fa fa-info-circle"></i>
+                </caption>
+                <thead>
+                <tr>
+                  <th></th>
+                  <th>{{'CURRENT' | translate}}</th>
+                  <th>{{'POTENTIAL' | translate}}</th>
+                  <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                  <td>{{'COST_FSLASH_UNIT_MASS' | translate}}</td>
+                  <ng-container [ngTemplateOutletContext]="{key: 'totalCostOfSteamPerTonne', unit: 'tonne', isPerYear: false, isCosts: true}" [ngTemplateOutlet]="finalTableColumns"></ng-container>
+                </tr>
+                <tr>
+                  <td>{{'MASS_FLOW_FSLASH_YR' | translate}}</td>
+                  <ng-container [ngTemplateOutletContext]="{key: 'mBoiler', unit: units[selectedUnits?.massFlowUnitSelected], isPerYear: false, isCosts: false}" [ngTemplateOutlet]="finalTableColumns"></ng-container>
+                </tr>
+                <tr>
+                  <td>{{'MASS_FLOW' | translate}}</td>
+                  <ng-container [ngTemplateOutletContext]="{key: 'steamGeneratedkgPerHour', unit: units[selectedUnits?.smallMassFlowUnitSelected], isPerYear: false, isCosts: false}" [ngTemplateOutlet]="finalTableColumns"></ng-container>
+                </tr>
+                <tr class="text-bold">
+                  <td>{{'COST_FSLASH_YR' | translate}}</td>
+                  <ng-container [ngTemplateOutletContext]="{key: 'totalCostOfSteamPerYear', unit: null, isPerYear: true, isCosts: true}" [ngTemplateOutlet]="finalTableColumns"></ng-container>
+                </tr>
+                </tbody>
+              </table>
+            <table class="sgaFinalProposal_info green arrow-before">
+                <caption>
+                  <span>{{'CONDENSATE_RETURNED' | translate}}</span>
+                  <i class="fa fa-info-circle"></i>
+                </caption>
+                <thead>
+                <tr>
+                  <th></th>
+                  <th>{{'CURRENT' | translate}}</th>
+                  <th>{{'POTENTIAL' | translate}}</th>
+                </tr>
+                </thead>
+                <tbody>
                 <tr>
                   <td>{{'PERCENT_RETURNED' | translate}}</td>
                   <ng-container [ngTemplateOutletContext]="{key: 'condensateReturnedPercentage', unit: '%', isPerYear: false, isCosts: false}" [ngTemplateOutlet]="finalTableColumns"></ng-container>
                 </tr>
-              </tbody>
-            </table>
+                </tbody>
+              </table>
           </div>
           <div class="col-sm-12">
-            <table class="sgaFinalProposal_info pink">
+            <table class="sgaFinalProposal_info pink arrow-before arrow-vertical arrow-align-start">
               <caption>
                 <span>{{'STEAM_GENERATION_EFFLUENT' | translate}}</span>
                 <i class="fa fa-info-circle"></i>
               </caption>
               <thead>
               <tr>
-                <th>{{'POSITION_NAME' | translate}}</th>
+                <th></th>
                 <th>{{'CURRENT' | translate}}</th>
                 <th>{{'POTENTIAL' | translate}}</th>
                 <th></th>

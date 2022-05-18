@@ -217,12 +217,12 @@
           <tbody>
           <tr>
             <td>{{'FUEL_QUANTITY' | translate}}</td>
-            <td *ngIf="data?.fuelConsumptionPerYear; else emptyCol">{{data.fuelConsumptionPerYear | number : '0.0-2'}} {{units[selectedUnits?.fuelUnitSelected]}}</td>
+            <td *ngIf="data?.fuelConsumptionPerYear; else emptyCol">{{data.fuelConsumptionPerYear | number : '0.0-2'}} {{units[selectedUnits?.fuelUnitSelected]}}/{{'YR' | translate}}</td>
             <td *ngIf="data?.costOfFuelPerYear; else emptyCol">{{data.costOfFuelPerYear | number : '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
           </tr>
           <tr>
             <td>{{'FUEL_ENERGY' | translate}}</td>
-            <td *ngIf="data?.qfuel; else emptyCol">{{data.qfuel | number : '0.0-3'}} {{units[selectedUnits?.energyUnitSelected]}}</td>
+            <td *ngIf="data?.qfuel; else emptyCol">{{data.qfuel | number : '0.0-3'}} {{units[selectedUnits?.energyUnitSelected]}}/{{'YR' | translate}}</td>
             <td>-</td>
           </tr>
           <tr>
