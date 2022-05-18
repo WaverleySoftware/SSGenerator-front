@@ -50,10 +50,10 @@
             <tr [ngClass]="{filled: bold}">
               <td>{{name | translate}}</td>
               <td *ngIf="current[quantity]; else emptyCol">{{current[quantity] | number: '0.0-2'}} {{unit}}{{perYear && ('YR' | translate)}}</td>
-              <td *ngIf="current[value]; else emptyCol">{{current[value] | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
+              <td *ngIf="current[value]; else emptyCol">{{current[value] | number: '0.0-3'}} {{currency}}/{{'YR' | translate}}</td>
               <td *ngIf="potential[quantity]; else emptyCol">{{potential[quantity] | number: '0.0-2'}} {{unit}}{{perYear && ('YR' | translate)}}</td>
-              <td *ngIf="potential[value]; else emptyCol">{{potential[value] | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
-              <td *ngIf="current[value] && potential[value]; else emptyCol">{{current[value] - potential[value] | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
+              <td *ngIf="potential[value]; else emptyCol">{{potential[value] | number: '0.0-3'}} {{currency}}/{{'YR' | translate}}</td>
+              <td *ngIf="current[value] && potential[value]; else emptyCol">{{current[value] - potential[value] | number: '0.0-3'}} {{currency}}/{{'YR' | translate}}</td>
               <td *ngIf="current[value] && potential[value]; else emptyCol">{{savingPercent(current[value], potential[value]) | number: '0.0-2'}}%</td>
             </tr>
           </ng-template>
@@ -120,18 +120,18 @@
           <tr>
             <td>{{'TOTAL_COST_OF_STEAM_FSLASH_UNIT_MASS' | translate}}</td>
             <td>–</td>
-            <td *ngIf="current.totalCostOfSteamPerTonne; else emptyCol">{{current.totalCostOfSteamPerTonne | number: '0.0-2'}} {{currency}}/{{units[selectedUnits?.massFlowUnitSelected]?.replace('/yr', '')}}</td>
+            <td *ngIf="current.totalCostOfSteamPerTonne; else emptyCol">{{current.totalCostOfSteamPerTonne | number: '0.0-3'}} {{currency}}/{{units[selectedUnits?.massFlowUnitSelected]?.replace('/yr', '')}}</td>
             <td>-</td>
-            <td *ngIf="potential.totalCostOfSteamPerTonne; else emptyCol">{{potential.totalCostOfSteamPerTonne | number: '0.0-2'}} {{currency}}/{{units[selectedUnits?.massFlowUnitSelected]?.replace('/yr', '')}}</td>
+            <td *ngIf="potential.totalCostOfSteamPerTonne; else emptyCol">{{potential.totalCostOfSteamPerTonne | number: '0.0-3'}} {{currency}}/{{units[selectedUnits?.massFlowUnitSelected]?.replace('/yr', '')}}</td>
             <td>–</td>
             <td>–</td>
           </tr>
           <tr>
             <td>{{'TOTAL_COST_OF_STEAM_FSLASH_UNIT_ENERGY' | translate}}</td>
             <td>–</td>
-            <td *ngIf="current.totalCostOfSteamPerkWhOfFuel; else emptyCol">{{current.totalCostOfSteamPerkWhOfFuel | number: '0.0-2'}} {{currency}}/{{units[selectedUnits?.energyUnitSelected]}}</td>
+            <td *ngIf="current.totalCostOfSteamPerkWhOfFuel; else emptyCol">{{current.totalCostOfSteamPerkWhOfFuel | number: '0.0-3'}} {{currency}}/{{units[selectedUnits?.energyUnitSelected]}}</td>
             <td>–</td>
-            <td *ngIf="potential.totalCostOfSteamPerkWhOfFuel; else emptyCol">{{potential.totalCostOfSteamPerkWhOfFuel | number: '0.0-2'}} {{currency}}/{{units[selectedUnits?.energyUnitSelected]}}</td>
+            <td *ngIf="potential.totalCostOfSteamPerkWhOfFuel; else emptyCol">{{potential.totalCostOfSteamPerkWhOfFuel | number: '0.0-3'}} {{currency}}/{{units[selectedUnits?.energyUnitSelected]}}</td>
             <td>–</td>
             <td>–</td>
           </tr>
@@ -149,7 +149,7 @@
             <tr>
               <td colspan="4"></td>
               <td>{{'TOTAL_SAVINGS' | translate}}</td>
-              <td *ngIf="current?.totalCostOfSteamPerYear && potential?.totalCostOfSteamPerYear; else emptyCol">{{current?.totalCostOfSteamPerYear - potential?.totalCostOfSteamPerYear | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
+              <td *ngIf="current?.totalCostOfSteamPerYear && potential?.totalCostOfSteamPerYear; else emptyCol">{{current?.totalCostOfSteamPerYear - potential?.totalCostOfSteamPerYear | number: '0.0-3'}} {{currency}}/{{'YR' | translate}}</td>
               <td *ngIf="current?.totalCostOfSteamPerYear && potential?.totalCostOfSteamPerYear; else emptyCol">{{savingPercent(current?.totalCostOfSteamPerYear, potential?.totalCostOfSteamPerYear) | number: '0.0-2'}}%</td>
             </tr>
           </tfoot>
@@ -555,13 +555,13 @@
       <tr class="text-bold">
         <td>{{'TOTAL_VALUE_SAVED' | translate}}</td>
         <td *ngIf="current?.totalCostSavedCondensateReturn; else emptyCol">
-          {{current?.totalCostSavedCondensateReturn | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}
+          {{current?.totalCostSavedCondensateReturn | number: '0.0-3'}} {{currency}}/{{'YR' | translate}}
         </td>
         <td *ngIf="potential?.mCondyCO2; else emptyCol">
-          {{potential?.totalCostSavedCondensateReturn | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}
+          {{potential?.totalCostSavedCondensateReturn | number: '0.0-3'}} {{currency}}/{{'YR' | translate}}
         </td>
         <td *ngIf="current?.totalCostSavedCondensateReturn && potential?.totalCostSavedCondensateReturn; else emptyCol">
-          {{(potential?.totalCostSavedCondensateReturn - current?.totalCostSavedCondensateReturn) | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}
+          {{(potential?.totalCostSavedCondensateReturn - current?.totalCostSavedCondensateReturn) | number: '0.0-3'}} {{currency}}/{{'YR' | translate}}
         </td>
       </tr>
       </tbody>

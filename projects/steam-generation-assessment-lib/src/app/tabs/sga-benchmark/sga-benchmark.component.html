@@ -26,7 +26,7 @@
               </li>
               <li class="text-bold">
                 <span>{{'COST_FSLASH_YR' | translate}}</span>
-                <span *ngIf="data?.costOfRadiationLosses; else emptyDash">{{data.costOfRadiationLosses | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</span>
+                <span *ngIf="data?.costOfRadiationLosses; else emptyDash">{{data.costOfRadiationLosses | number: '0.0-3'}} {{currency}}/{{'YR' | translate}}</span>
               </li>
             </ul>
           </div>
@@ -37,7 +37,7 @@
             <ul class="sgaBenchmark_block__list">
               <li>
                 <span>{{'COST_FSLASH_UNIT_MASS' | translate}}</span>
-                <span *ngIf="data?.costOfCO2PerTonne; else emptyDash">{{data.costOfCO2PerTonne | number: '0.0-2'}} {{currency}}/{{units[selectedUnits?.emissionUnitSelected]}}</span>
+                <span *ngIf="data?.costOfCO2PerTonne; else emptyDash">{{data.costOfCO2PerTonne | number: '0.0-3'}} {{currency}}/{{units[selectedUnits?.emissionUnitSelected]}}</span>
               </li>
               <li>
                 <span>{{'MASS_EMITTED' | translate}}</span>
@@ -45,7 +45,7 @@
               </li>
               <li class="text-bold">
                 <span>{{'COST_FSLASH_YR' | translate}}</span>
-                <span *ngIf="data?.costOfCO2PerYear; else emptyDash">{{data.costOfCO2PerYear | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</span>
+                <span *ngIf="data?.costOfCO2PerYear; else emptyDash">{{data.costOfCO2PerYear | number: '0.0-3'}} {{currency}}/{{'YR' | translate}}</span>
               </li>
             </ul>
           </div>
@@ -68,7 +68,7 @@
               <li class="text-bold">
                 <span>{{'COST_OF_FUEL_PER_YEAR' | translate}}</span>
                 <span *ngIf="data?.costOfFuelPerYear; else emptyDash">
-                  {{data.costOfFuelPerYear | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}
+                  {{data.costOfFuelPerYear | number: '0.0-3'}} {{currency}}/{{'YR' | translate}}
                 </span>
               </li>
             </ul>
@@ -79,7 +79,7 @@
             <ul class="sgaBenchmark_block__list">
               <li>
                 <span>{{'COST_OF_WATER_UNIT_VOLUME' | translate}}</span>
-                <span *ngIf="data?.waterCostPerUnit; else emptyDash">{{data.waterCostPerUnit | number: '0.0-2'}} {{currency}}/{{units[selectedUnits?.volumeUnitSelected]}}</span>
+                <span *ngIf="data?.waterCostPerUnit; else emptyDash">{{data.waterCostPerUnit | number: '0.0-3'}} {{currency}}/{{units[selectedUnits?.volumeUnitSelected]}}</span>
               </li>
               <li>
                 <span>{{'QUANTITY' | translate}}</span>
@@ -87,7 +87,7 @@
               </li>
               <li class="text-bold">
                 <span>{{'COST_OF_BOILER_WATER_YEAR' | translate}}</span>
-                <span *ngIf="data?.boilerHouseWaterCost; else emptyDash">{{data.boilerHouseWaterCost | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</span>
+                <span *ngIf="data?.boilerHouseWaterCost; else emptyDash">{{data.boilerHouseWaterCost | number: '0.0-3'}} {{currency}}/{{'YR' | translate}}</span>
               </li>
             </ul>
           </div>
@@ -97,15 +97,15 @@
             <ul class="sgaBenchmark_block__list">
               <li>
                 <span>{{'COST_OF_CHEMICALS_FSLASH_UNIT_OF_WATER' | translate}}</span>
-                <span *ngIf="data?.costChemM3; else emptyDash">{{data.costChemM3 | number: '0.0-2'}} {{currency}}/{{units[selectedUnits?.volumeUnitSelected]}}</span>
+                <span *ngIf="data?.costChemM3; else emptyDash">{{data.costChemM3 | number: '0.0-3'}} {{currency}}/{{units[selectedUnits?.volumeUnitSelected]}}</span>
               </li>
               <li>
                 <span>{{'CHEMICALS_PER_YR' | translate}}</span>
-                <span *ngIf="data?.chemCostTotalPerYear; else emptyDash">{{data.chemCostTotalPerYear | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</span>
+                <span *ngIf="data?.chemCostTotalPerYear; else emptyDash">{{data.chemCostTotalPerYear | number: '0.0-3'}} {{currency}}/{{'YR' | translate}}</span>
               </li>
               <li class="text-bold">
                 <span>{{'COST_OF_CHEMICALS_PER_YEAR' | translate}}</span>
-                <span *ngIf="data?.waterAndChemicalsCostTotalPerYear; else emptyDash">{{data.waterAndChemicalsCostTotalPerYear | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</span>
+                <span *ngIf="data?.waterAndChemicalsCostTotalPerYear; else emptyDash">{{data.waterAndChemicalsCostTotalPerYear | number: '0.0-3'}} {{currency}}/{{'YR' | translate}}</span>
               </li>
             </ul>
           </div>
@@ -133,7 +133,7 @@
             <ul class="sgaBenchmark_block__list">
               <li>
                 <span>{{'COST_FSLASH_UNIT_MASS' | translate}}</span>
-                <span *ngIf="data?.totalCostOfSteamPerTonne; else emptyDash">{{data.totalCostOfSteamPerTonne | number: '0.0-2'}} {{currency}}/{{units[selectedUnits?.massFlowUnitSelected]?.replace('/yr', '')}}</span>
+                <span *ngIf="data?.totalCostOfSteamPerTonne; else emptyDash">{{data.totalCostOfSteamPerTonne | number: '0.0-3'}} {{currency}}/{{units[selectedUnits?.massFlowUnitSelected]?.replace('/yr', '')}}</span>
               </li>
               <li>
                 <span>{{'MASS_FLOW_FSLASH_YR' | translate}}</span>
@@ -145,7 +145,7 @@
               </li>
               <li class="text-bold">
                 <span>{{'COST_FSLASH_YR' | translate}}</span>
-                <span *ngIf="data?.totalCostOfSteamPerYear; else emptyDash">{{data.totalCostOfSteamPerYear | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</span>
+                <span *ngIf="data?.totalCostOfSteamPerYear; else emptyDash">{{data.totalCostOfSteamPerYear | number: '0.0-3'}} {{currency}}/{{'YR' | translate}}</span>
               </li>
             </ul>
           </div>
@@ -172,7 +172,7 @@
             <ul class="sgaBenchmark_block__list">
               <li>
                 <span>{{'COST_FSLASH_UNIT' | translate}}</span>
-                <span *ngIf="data?.costOfEffm3; else emptyDash">{{data.costOfEffm3 | number: '0.0-2'}} {{currency}}/{{units[selectedUnits?.volumeUnitSelected]}}</span>
+                <span *ngIf="data?.costOfEffm3; else emptyDash">{{data.costOfEffm3 | number: '0.0-3'}} {{currency}}/{{units[selectedUnits?.volumeUnitSelected]}}</span>
               </li>
               <li>
                 <span>{{'QUANTITY' | translate}}</span>
@@ -180,7 +180,7 @@
               </li>
               <li class="text-bold">
                 <span>{{'COST_FSLASH_YR' | translate}}</span>
-                <span *ngIf="data?.costOfBoilerHouseEffluent; else emptyDash">{{data.costOfBoilerHouseEffluent | number: '0.0-0'}} {{currency}}/{{'YR' | translate}}</span>
+                <span *ngIf="data?.costOfBoilerHouseEffluent; else emptyDash">{{data.costOfBoilerHouseEffluent | number: '0.0-3'}} {{currency}}/{{'YR' | translate}}</span>
               </li>
             </ul>
           </div>
@@ -218,7 +218,7 @@
           <tr>
             <td>{{'FUEL_QUANTITY' | translate}}</td>
             <td *ngIf="data?.fuelConsumptionPerYear; else emptyCol">{{data.fuelConsumptionPerYear | number : '0.0-2'}} {{units[selectedUnits?.fuelUnitSelected]}}/{{'YR' | translate}}</td>
-            <td *ngIf="data?.costOfFuelPerYear; else emptyCol">{{data.costOfFuelPerYear | number : '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
+            <td *ngIf="data?.costOfFuelPerYear; else emptyCol">{{data.costOfFuelPerYear | number : '0.0-3'}} {{currency}}/{{'YR' | translate}}</td>
           </tr>
           <tr>
             <td>{{'FUEL_ENERGY' | translate}}</td>
@@ -228,22 +228,22 @@
           <tr>
             <td>{{'BOILER_HOUSE_WATER_AND_CHEMICALS' | translate}}</td>
             <td *ngIf="data?.boilerHouseWaterFlowTotal; else emptyCol">{{data.boilerHouseWaterFlowTotal | number : '0.0-2'}} {{units[selectedUnits?.volumeUnitSelected]}}/{{'YR' | translate}}</td>
-            <td *ngIf="data?.waterAndChemicalsCostTotalPerYear; else emptyCol">{{data.waterAndChemicalsCostTotalPerYear | number : '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
+            <td *ngIf="data?.waterAndChemicalsCostTotalPerYear; else emptyCol">{{data.waterAndChemicalsCostTotalPerYear | number : '0.0-3'}} {{currency}}/{{'YR' | translate}}</td>
           </tr>
           <tr>
             <td>{{'CO2_EMISSIONS' | translate}}</td>
             <td *ngIf="data?.tonnesOfCO2; else emptyCol">{{data.tonnesOfCO2 | number : '0.0-2'}} {{units[selectedUnits?.emissionUnitSelected]}}/{{'YR' | translate}}</td>
-            <td *ngIf="data?.costOfCO2PerYear; else emptyCol">{{data.costOfCO2PerYear | number : '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
+            <td *ngIf="data?.costOfCO2PerYear; else emptyCol">{{data.costOfCO2PerYear | number : '0.0-3'}} {{currency}}/{{'YR' | translate}}</td>
           </tr>
           <tr>
             <td>{{'STEAM_GENERATION_EFFLUENT' | translate}}</td>
             <td *ngIf="data?.boilerHouseTotalVolumeOfWaterEffluent; else emptyCol">{{data.boilerHouseTotalVolumeOfWaterEffluent | number : '0.0-2'}} {{units[selectedUnits?.volumeUnitSelected]}}/{{'YR' | translate}}</td>
-            <td *ngIf="data?.costOfBoilerHouseEffluent; else emptyCol">{{data.costOfBoilerHouseEffluent | number : '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
+            <td *ngIf="data?.costOfBoilerHouseEffluent; else emptyCol">{{data.costOfBoilerHouseEffluent | number : '0.0-3'}} {{currency}}/{{'YR' | translate}}</td>
           </tr>
           <tr class="filled">
             <td>{{'TOTAL_STEAM_GENERATED' | translate}}</td>
             <td *ngIf="data?.mBoiler; else emptyCol">{{data.mBoiler | number : '0.0-2'}} {{units[selectedUnits?.massFlowUnitSelected]}}</td>
-            <td *ngIf="data?.totalCostOfSteamPerYear; else emptyCol">{{data.totalCostOfSteamPerYear | number : '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
+            <td *ngIf="data?.totalCostOfSteamPerYear; else emptyCol">{{data.totalCostOfSteamPerYear | number : '0.0-3'}} {{currency}}/{{'YR' | translate}}</td>
           </tr>
           <tr>
             <td>{{'TOTAL_COST_OF_STEAM_FSLASH_UNIT_MASS' | translate}}</td>
@@ -304,16 +304,16 @@
               <span>{{'MASS_FLOW_PER_H' | translate}}</span><span *ngIf="data?.steamGeneratedkgPerHour; else emptyDash">{{data.steamGeneratedkgPerHour | number : '0.0-2'}} {{units[selectedUnits?.smallMassFlowUnitSelected]}}</span>
             </li>
             <li>
-              <span>{{'COST_FSLASH_UNIT_MASS' | translate}}</span><span *ngIf="data?.totalCostOfSteamPerTonne; else emptyDash">{{data.totalCostOfSteamPerTonne | number : '0.0-2'}} {{currency}}/{{units[selectedUnits?.massFlowUnitSelected]?.replace('/yr', '')}}</span>
+              <span>{{'COST_FSLASH_UNIT_MASS' | translate}}</span><span *ngIf="data?.totalCostOfSteamPerTonne; else emptyDash">{{data.totalCostOfSteamPerTonne | number : '0.0-3'}} {{currency}}/{{units[selectedUnits?.massFlowUnitSelected]?.replace('/yr', '')}}</span>
             </li>
             <li>
-              <span>{{'COST_FSLASH_UNIT_ENERGY' | translate}}</span><span *ngIf="data?.totalCostOfSteamPerkWhOfFuel; else emptyDash">{{data.totalCostOfSteamPerkWhOfFuel | number : '0.0-2'}} {{currency}}/{{units[selectedUnits?.energyUnitSelected]}}</span>
+              <span>{{'COST_FSLASH_UNIT_ENERGY' | translate}}</span><span *ngIf="data?.totalCostOfSteamPerkWhOfFuel; else emptyDash">{{data.totalCostOfSteamPerkWhOfFuel | number : '0.0-3'}} {{currency}}/{{units[selectedUnits?.energyUnitSelected]}}</span>
             </li>
             <li>
               <span>{{'ENERGY_FSLASH_UNIT_MASS' | translate}}</span><span *ngIf="data?.energyToGenerateUnitofSteam; else emptyDash">{{data.energyToGenerateUnitofSteam | number : '0.0-2'}} {{units[selectedUnits?.specificEnergyUnitsSelected]}}</span>
             </li>
             <li class="text-bold">
-              <span>{{'COST_FSLASH_YR' | translate}}</span><span *ngIf="data?.totalCostOfSteamPerYear; else emptyDash">{{data.totalCostOfSteamPerYear | number : '0.0-2'}} {{currency}}/{{'YR' | translate}}</span>
+              <span>{{'COST_FSLASH_YR' | translate}}</span><span *ngIf="data?.totalCostOfSteamPerYear; else emptyDash">{{data.totalCostOfSteamPerYear | number : '0.0-3'}} {{currency}}/{{'YR' | translate}}</span>
             </li>
           </ul>
         </div>
@@ -345,7 +345,7 @@
             </li>
             <li class="text-bold">
               <span>{{'COST_OF_FUEL_PER_YEAR' | translate}}</span>
-              <span *ngIf="data?.costOfFuelPerYear; else emptyDash">{{data.costOfFuelPerYear | number : '0.0-2'}} {{currency}}/{{'YR' | translate}}</span>
+              <span *ngIf="data?.costOfFuelPerYear; else emptyDash">{{data.costOfFuelPerYear | number : '0.0-3'}} {{currency}}/{{'YR' | translate}}</span>
             </li>
           </ul>
           <ul class="sgaBenchmark_block__list">
@@ -361,7 +361,7 @@
             </li>
             <li class="text-bold">
               <span>{{'COST_OF_CO2_EMISSINS_PER_YEAR' | translate}}</span>
-              <span *ngIf="data?.costOfCO2PerYear; else emptyDash">{{data.costOfCO2PerYear | number : '0.0-2'}} {{currency}}/{{'YR' | translate}}</span>
+              <span *ngIf="data?.costOfCO2PerYear; else emptyDash">{{data.costOfCO2PerYear | number : '0.0-3'}} {{currency}}/{{'YR' | translate}}</span>
             </li>
           </ul>
           <ul class="sgaBenchmark_block__list">
@@ -372,22 +372,22 @@
             </li>
             <li>
               <span>{{'COST_OF_WATER_UNIT_VOLUME' | translate}}</span>
-              <span *ngIf="data?.waterCostPerUnit; else emptyDash">{{data.waterCostPerUnit | number : '0.0-2'}} {{currency}}/{{units[selectedUnits?.volumeUnitSelected]}}</span>
+              <span *ngIf="data?.waterCostPerUnit; else emptyDash">{{data.waterCostPerUnit | number : '0.0-3'}} {{currency}}/{{units[selectedUnits?.volumeUnitSelected]}}</span>
             </li>
             <li class="text-bold">
               <span>{{'COST_OF_BOILER_WATER_YEAR' | translate}}</span>
-              <span *ngIf="data?.boilerHouseWaterCost; else emptyDash">{{data.boilerHouseWaterCost | number : '0.0-2'}} {{currency}}/{{'YR' | translate}}</span>
+              <span *ngIf="data?.boilerHouseWaterCost; else emptyDash">{{data.boilerHouseWaterCost | number : '0.0-3'}} {{currency}}/{{'YR' | translate}}</span>
             </li>
           </ul>
           <ul class="sgaBenchmark_block__list">
             <li class="listTitle">{{'WATER_TREATMENT' | translate}}</li>
             <li>
               <span>{{'COST_OF_CHEMICALS_FSLASH_UNIT_OF_WATER' | translate}}</span>
-              <span *ngIf="data?.costChemM3; else emptyDash">{{data.costChemM3 | number : '0.0-2'}} {{currency}}/{{units[selectedUnits?.volumeUnitSelected]}}</span>
+              <span *ngIf="data?.costChemM3; else emptyDash">{{data.costChemM3 | number : '0.0-3'}} {{currency}}/{{units[selectedUnits?.volumeUnitSelected]}}</span>
             </li>
             <li class="text-bold">
               <span>{{'COST_OF_CHEMICALS_PER_YEAR' | translate}}</span>
-              <span *ngIf="data?.chemCostTotalPerYear; else emptyDash">{{data.chemCostTotalPerYear | number : '0.0-2'}} {{currency}}/{{'YR' | translate}}</span>
+              <span *ngIf="data?.chemCostTotalPerYear; else emptyDash">{{data.chemCostTotalPerYear | number : '0.0-3'}} {{currency}}/{{'YR' | translate}}</span>
             </li>
           </ul>
           <ul class="sgaBenchmark_block__list">
@@ -399,11 +399,11 @@
             </li>
             <li>
               <span>{{'COST_FSLASH_UNIT' | translate}}</span>
-              <span *ngIf="data?.costOfEffm3; else emptyDash">{{data.costOfEffm3 | number : '0.0-2'}} {{currency}}/{{units[selectedUnits?.volumeUnitSelected]}}</span>
+              <span *ngIf="data?.costOfEffm3; else emptyDash">{{data.costOfEffm3 | number : '0.0-3'}} {{currency}}/{{units[selectedUnits?.volumeUnitSelected]}}</span>
             </li>
             <li class="text-bold">
               <span>{{'COST_OF_EFFLUENT_PER_YEAR' | translate}}</span>
-              <span *ngIf="data?.costOfBoilerHouseEffluent; else emptyDash">{{data.costOfBoilerHouseEffluent | number : '0.0-2'}} {{currency}}/{{'YR' | translate}}</span>
+              <span *ngIf="data?.costOfBoilerHouseEffluent; else emptyDash">{{data.costOfBoilerHouseEffluent | number : '0.0-3'}} {{currency}}/{{'YR' | translate}}</span>
             </li>
           </ul>
         </div>
@@ -441,7 +441,7 @@
             </li>
             <li class="text-bold">
               <span>{{'COST_FSLASH_YR' | translate}}</span>
-              <span *ngIf="data?.costOfRadiationLosses; else emptyDash">{{data.costOfRadiationLosses | number : '0.0-2'}} {{currency}}/{{'YR' | translate}}</span>
+              <span *ngIf="data?.costOfRadiationLosses; else emptyDash">{{data.costOfRadiationLosses | number : '0.0-3'}} {{currency}}/{{'YR' | translate}}</span>
             </li>
           </ul>
           <ul class="sgaBenchmark_block__list">
@@ -468,7 +468,7 @@
             </li>
             <li class="text-bold">
               <span>{{'COST_FSLASH_YR' | translate}}</span>
-              <span *ngIf="data?.totCostTdsBlowdown; else emptyDash">{{data.totCostTdsBlowdown | number : '0.0-2'}} {{currency}}/{{'YR' | translate}}</span>
+              <span *ngIf="data?.totCostTdsBlowdown; else emptyDash">{{data.totCostTdsBlowdown | number : '0.0-3'}} {{currency}}/{{'YR' | translate}}</span>
             </li>
           </ul>
           <ul class="sgaBenchmark_block__list">
@@ -479,14 +479,14 @@
             </li>
             <li class="text-bold">
               <span>{{'COST_FSLASH_YR' | translate}}</span>
-              <span *ngIf="data?.waterTreatmentCostEffluent; else emptyDash">{{data.waterTreatmentCostEffluent | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</span>
+              <span *ngIf="data?.waterTreatmentCostEffluent; else emptyDash">{{data.waterTreatmentCostEffluent | number: '0.0-3'}} {{currency}}/{{'YR' | translate}}</span>
             </li>
           </ul>
           <ul class="sgaBenchmark_block__list">
             <li class="listTitle">{{'O2_SCAVENGING_CHEMICALS_COST' | translate}}</li>
             <li class="text-bold">
               <span>{{'COST_FSLASH_YR' | translate}}</span>
-              <span *ngIf="data?.o2ScavengingChemicalCostPerYear; else emptyDash">{{data.o2ScavengingChemicalCostPerYear}} {{currency}}/{{'YR' | translate}}</span>
+              <span *ngIf="data?.o2ScavengingChemicalCostPerYear; else emptyDash">{{data.o2ScavengingChemicalCostPerYear | number: '0.0-3'}} {{currency}}/{{'YR' | translate}}</span>
             </li>
           </ul>
         </div>
@@ -530,7 +530,7 @@
             </li>
             <li class="text-bold">
               <span>{{'TOTAL_VALUE_SAVED' | translate}}</span>
-              <span *ngIf="data?.totalCostSavedCondensateReturn; else emptyDash">{{data.totalCostSavedCondensateReturn | number : '0.0-2'}} {{currency}}/{{'YR' | translate}}</span>
+              <span *ngIf="data?.totalCostSavedCondensateReturn; else emptyDash">{{data.totalCostSavedCondensateReturn | number : '0.0-3'}} {{currency}}/{{'YR' | translate}}</span>
             </li>
           </ul>
         </div>
