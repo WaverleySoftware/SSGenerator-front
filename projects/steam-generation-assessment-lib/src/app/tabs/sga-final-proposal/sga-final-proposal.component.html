@@ -49,9 +49,9 @@
                        let-perYear="perYear">
             <tr [ngClass]="{filled: bold}">
               <td>{{name | translate}}</td>
-              <td *ngIf="current[quantity]; else emptyCol">{{current[quantity] | number: '0.0-2'}} {{unit}}{{perYear && ('YR' | translate)}}</td>
+              <td *ngIf="current[quantity]; else emptyCol">{{current[quantity] | number: '0.0-2'}} {{unit}}/{{perYear && ('YR' | translate)}}</td>
               <td *ngIf="current[value]; else emptyCol">{{current[value] | number: '0.0-3'}} {{currency}}/{{'YR' | translate}}</td>
-              <td *ngIf="potential[quantity]; else emptyCol">{{potential[quantity] | number: '0.0-2'}} {{unit}}{{perYear && ('YR' | translate)}}</td>
+              <td *ngIf="potential[quantity]; else emptyCol">{{potential[quantity] | number: '0.0-2'}} {{unit}}/{{perYear && ('YR' | translate)}}</td>
               <td *ngIf="potential[value]; else emptyCol">{{potential[value] | number: '0.0-3'}} {{currency}}/{{'YR' | translate}}</td>
               <td *ngIf="current[value] && potential[value]; else emptyCol">{{current[value] - potential[value] | number: '0.0-3'}} {{currency}}/{{'YR' | translate}}</td>
               <td *ngIf="current[value] && potential[value]; else emptyCol">{{savingPercent(current[value], potential[value]) | number: '0.0-2'}}%</td>
