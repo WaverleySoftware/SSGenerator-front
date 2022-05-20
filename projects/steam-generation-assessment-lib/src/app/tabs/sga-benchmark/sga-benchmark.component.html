@@ -99,13 +99,9 @@
                 <span>{{'COST_OF_CHEMICALS_FSLASH_UNIT_OF_WATER' | translate}}</span>
                 <span *ngIf="data?.costChemM3; else emptyDash">{{data.costChemM3 | number: '0.0-3'}} {{currency}}/{{units[selectedUnits?.volumeUnitSelected]}}</span>
               </li>
-              <li>
+              <li class="text-bold">
                 <span>{{'CHEMICALS_PER_YR' | translate}}</span>
                 <span *ngIf="data?.chemCostTotalPerYear; else emptyDash">{{data.chemCostTotalPerYear | number: '0.0-3'}} {{currency}}/{{'YR' | translate}}</span>
-              </li>
-              <li class="text-bold">
-                <span>{{'COST_OF_CHEMICALS_PER_YEAR' | translate}}</span>
-                <span *ngIf="data?.waterAndChemicalsCostTotalPerYear; else emptyDash">{{data.waterAndChemicalsCostTotalPerYear | number: '0.0-3'}} {{currency}}/{{'YR' | translate}}</span>
               </li>
             </ul>
           </div>
@@ -248,12 +244,12 @@
           <tr>
             <td>{{'TOTAL_COST_OF_STEAM_FSLASH_UNIT_MASS' | translate}}</td>
             <td>-</td>
-            <td *ngIf="data?.totalCostOfSteamPerTonne; else emptyCol">{{data.totalCostOfSteamPerTonne | number : '0.0-2'}} {{units[selectedUnits?.massFlowUnitSelected]?.replace('/yr', '')}}</td>
+            <td *ngIf="data?.totalCostOfSteamPerTonne; else emptyCol">{{data.totalCostOfSteamPerTonne | number : '0.0-2'}} {{currency}}/{{units[selectedUnits?.massFlowUnitSelected]?.replace('/yr', '')}}</td>
           </tr>
           <tr>
             <td>{{'TOTAL_COST_OF_STEAM_FSLASH_UNIT_ENERGY' | translate}}</td>
             <td>-</td>
-            <td *ngIf="data?.totalCostOfSteamPerkWhOfFuel; else emptyCol">{{data.totalCostOfSteamPerkWhOfFuel | number : '0.0-2'}} {{units[selectedUnits?.energyUnitSelected]}}</td>
+            <td *ngIf="data?.totalCostOfSteamPerkWhOfFuel; else emptyCol">{{data.totalCostOfSteamPerkWhOfFuel | number : '0.0-3'}} {{currency}}/{{units[selectedUnits?.energyUnitSelected]}}</td>
           </tr>
           <tr class="filled">
             <td>{{'OVERALL_STEAM_GENERATION_EFFICIENCY' | translate}}</td>
