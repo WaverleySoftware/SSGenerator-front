@@ -752,13 +752,9 @@
             <td>{{'COST_OF_CHEMICALS_FSLASH_UNIT_OF_WATER' | translate}}</td>
             <ng-container [ngTemplateOutletContext]="{key: 'costChemM3', unit: units[selectedUnits?.volumeUnitSelected], isPerYear: false, isCosts: true}" [ngTemplateOutlet]="finalTableColumns"></ng-container>
           </tr>
-          <tr>
+          <tr class="text-bold">
             <td>{{'COST_OF_CHEMICALS_FSLASH_YR' | translate}}</td>
             <ng-container [ngTemplateOutletContext]="{key: 'chemCostTotalPerYear', unit: null, isPerYear: true, isCosts: true}" [ngTemplateOutlet]="finalTableColumns"></ng-container>
-          </tr>
-          <tr class="text-bold">
-            <td>{{'COST_OF_CHEMICALS_FSLASH_YEAR' | translate}}</td>
-            <ng-container [ngTemplateOutletContext]="{key: 'waterAndChemicalsCostTotalPerYear', unit: null, isPerYear: true, isCosts: true}" [ngTemplateOutlet]="finalTableColumns"></ng-container>
           </tr>
           </tbody>
         </table>
