@@ -170,7 +170,7 @@
       <i class="fa fa-info-circle"></i>
     </p>
 
-    <ng-template #infoTableColumns let-digits="digits" let-key="key" let-unit="unit" let-isCosts="isCosts" let-isPerYear="isPerYear">
+    <ng-template #infoTableColumns let-digits="digits" let-key="key" let-unit="unit" let-isCosts="isCosts" let-isPerYear="isPerYear" let-hideSavings="hideSavings">
       <td *ngIf="current[key]; else emptyCol">
         {{current[key] | number: digits || '0.0-2'}}
         <ng-container *ngIf="isCosts">{{currency}}</ng-container>
@@ -179,7 +179,7 @@
         <ng-container *ngIf="isPerYear && (isCosts || unit)">/</ng-container>
         <ng-container *ngIf="isPerYear">{{'YR' | translate}}</ng-container>
       </td>
-      <td *ngIf="potential[key]; else emptyCol">
+      <td *ngIf="potential[key] && !hideSavings; else emptyCol">
         {{potential[key] | number: digits || '0.0-2'}}
         <ng-container *ngIf="isCosts">{{currency}}</ng-container>
         <ng-container *ngIf="isCosts && unit">/</ng-container>
@@ -187,7 +187,7 @@
         <ng-container *ngIf="isPerYear && (isCosts || unit)">/</ng-container>
         <ng-container *ngIf="isPerYear">{{'YR' | translate}}</ng-container>
       </td>
-      <td *ngIf="current[key] && potential[key]; else emptyCol">
+      <td *ngIf="current[key] && potential[key] && !hideSavings; else emptyCol">
         {{(current[key] - potential[key]) | number: digits || '0.0-2'}}
         <ng-container *ngIf="isCosts">{{currency}}</ng-container>
         <ng-container *ngIf="isCosts && unit">/</ng-container>
@@ -259,7 +259,13 @@
         </tr>
         <tr>
           <td>{{'COST_PER_UNIT_FUEL' | translate}}</td>
-          <ng-container [ngTemplateOutletContext]="{key: 'costOfFuelPerUnit', isCosts: true, unit: units[selectedUnits?.fuelUnitSelected], digits: '0.0-3'}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
+          <ng-container
+            [ngTemplateOutletContext]="{
+            key: 'costOfFuelPerUnit',
+            isCosts: true,
+            hideSavings: true,
+            unit: units[selectedUnits?.fuelUnitSelected],
+            digits: '0.0-3'}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
         </tr>
         <tr>
           <td>{{'ENERGY' | translate}}</td>
@@ -267,7 +273,13 @@
         </tr>
         <tr>
           <td>{{'COST_FSLASH_UNIT_ENERGY' | translate}}</td>
-          <ng-container [ngTemplateOutletContext]="{key: 'costOfFuelPerkWh', isCosts: true, unit: units[selectedUnits?.energyUnitSelected], digits: '0.0-3'}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
+          <ng-container
+            [ngTemplateOutletContext]="{
+            key: 'costOfFuelPerkWh',
+            isCosts: true,
+            hideSavings: true,
+            unit: units[selectedUnits?.energyUnitSelected],
+            digits: '0.0-3'}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
         </tr>
         <tr class="text-bold">
           <td>{{'COST_OF_FUEL_PER_YEAR' | translate}}</td>
@@ -291,7 +303,13 @@
         </tr>
         <tr>
           <td>{{'COST_FSLASH_UNIT_MASS' | translate}}</td>
-          <ng-container [ngTemplateOutletContext]="{key: 'costOfCO2PerTonne', isCosts: true, isPerYear: false, unit: units[selectedUnits?.emissionUnitSelected]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
+          <ng-container
+            [ngTemplateOutletContext]="{
+            key: 'costOfCO2PerTonne',
+            isCosts: true,
+            isPerYear: false,
+            hideSavings: true,
+            unit: units[selectedUnits?.emissionUnitSelected]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
         </tr>
         <tr class="text-bold">
           <td>{{"COST_OF_CO2_EMISSINS_PER_YEAR" | translate}}</td>
@@ -359,7 +377,13 @@
         </tr>
         <tr>
           <td>{{'COST_FSLASH_UNIT' | translate}}</td>
-          <ng-container [ngTemplateOutletContext]="{key: 'costOfEffm3', isCosts: true, isPerYear: false, unit: units[selectedUnits?.volumeUnitSelected]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
+          <ng-container
+            [ngTemplateOutletContext]="{
+            key: 'costOfEffm3',
+            isCosts: true,
+            isPerYear: false,
+            hideSavings: true,
+            unit: units[selectedUnits?.volumeUnitSelected]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
         </tr>
         <tr class="text-bold">
           <td>{{'COST_OF_EFFLUENT_PER_YEAR' | translate}}</td>
