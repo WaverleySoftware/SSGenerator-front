@@ -874,13 +874,6 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
           listItemId: null,
           value2: null,
           childInputs: null,
-        }, {
-          name: 'savingsIncludingCondensateEffluent',
-          value: this.proposalSetupTotal.savingsIncludingCondensateEffluent.toString(),
-          unitId: null,
-          listItemId: null,
-          value2: null,
-          childInputs: null,
         }],
         unitPreferences: null
       });

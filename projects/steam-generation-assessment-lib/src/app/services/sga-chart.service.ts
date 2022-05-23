@@ -48,7 +48,7 @@ export class SgaChartService {
   }
 
   static getTotalProposalChart(current: BenchmarkResBenchmarkInterface, proposal: BenchmarkResBenchmarkInterface): SgaTotalSavingInterface {
-    if (!current || !proposal) return {steamGenerationSavings: 0, savingsIncludingCondensateEffluent: 0};
+    if (!current || !proposal) return {steamGenerationSavings: 0};
 
     const deltaCostOfFuelPerYear = Math.round(proposal.costOfFuelPerYear - current.costOfFuelPerYear);
     const deltaWaterAndChemicalsCostTotalPerYear = Math.round(
@@ -60,8 +60,7 @@ export class SgaChartService {
     const deltaCostOfCO2PerYear = Math.round(proposal.costOfCO2PerYear - current.costOfCO2PerYear) || 0;
 
     return {
-      steamGenerationSavings: Math.round(proposal.totalCostOfSteamPerYear - current.totalCostOfSteamPerYear) || 0,
-      savingsIncludingCondensateEffluent: deltaCostOfFuelPerYear +
+      steamGenerationSavings: deltaCostOfFuelPerYear +
         deltaWaterAndChemicalsCostTotalPerYear + deltaCostOfBoilerHouseEffluent +
         (deltaMCondy * deltaCostOfEffm3) + deltaCostOfCO2PerYear
     }

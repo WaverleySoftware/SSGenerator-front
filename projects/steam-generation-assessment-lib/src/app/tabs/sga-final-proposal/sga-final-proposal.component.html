@@ -836,15 +836,15 @@
               <tbody>
                 <tr>
                   <td>{{'COST_FSLASH_UNIT' | translate}}</td>
-                  <ng-container [ngTemplateOutletContext]="{key: 'CostOfEffm3', unit: units[selectedUnits?.volumeUnitSelected], isPerYear: false, isCosts: true}" [ngTemplateOutlet]="finalTableColumns"></ng-container>
+                  <ng-container [ngTemplateOutletContext]="{key: 'costChemM3', unit: units[selectedUnits?.volumeUnitSelected], isPerYear: false, isCosts: true}" [ngTemplateOutlet]="finalTableColumns"></ng-container>
                 </tr>
                 <tr>
                   <td>{{'QUANTITY' | translate}}</td>
-                  <ng-container [ngTemplateOutletContext]="{key: 'BoilerHouseTotalVolumeOfWaterEffluent', unit: units[selectedUnits?.volumeUnitSelected], isPerYear: true, isCosts: false}" [ngTemplateOutlet]="finalTableColumns"></ng-container>
+                  <ng-container [ngTemplateOutletContext]="{key: 'boilerHouseTotalVolumeOfWaterEffluent', unit: units[selectedUnits?.volumeUnitSelected], isPerYear: true, isCosts: false}" [ngTemplateOutlet]="finalTableColumns"></ng-container>
                 </tr>
                 <tr class="text-bold">
                   <td>{{'COST_FSLASH_YR' | translate}}</td>
-                  <ng-container [ngTemplateOutletContext]="{key: 'CostOfBoilerHouseEffluent', unit: null, isPerYear: true, isCosts: true}" [ngTemplateOutlet]="finalTableColumns"></ng-container>
+                  <ng-container [ngTemplateOutletContext]="{key: 'costOfBoilerHouseEffluent', unit: null, isPerYear: true, isCosts: true}" [ngTemplateOutlet]="finalTableColumns"></ng-container>
                 </tr>
               </tbody>
             </table>
