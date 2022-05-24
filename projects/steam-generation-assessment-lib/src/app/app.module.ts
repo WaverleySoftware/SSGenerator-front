@@ -17,6 +17,7 @@ import { DecimalPlacePipe } from './pipes/decimal-place.pipe';
 import { SgaDecimalPlacesDirective } from './directives/sga-decimal-places.directive';
 import { SgaChartService } from "./services/sga-chart.service";
 import { TooltipModule } from "ngx-bootstrap";
+import { FinalProposalSummarySubTabComponent } from './components/final-proposal-summary-sub-tab/final-proposal-summary-sub-tab.component';
 
 const providers = [SteamGenerationAssessmentService, SgaFormService, SgaApiService, SgaChartService];
 
@@ -33,7 +34,8 @@ const providers = [SteamGenerationAssessmentService, SgaFormService, SgaApiServi
     DisableControlDirective,
     NoCommaPipe,
     DecimalPlacePipe,
-    SgaDecimalPlacesDirective
+    SgaDecimalPlacesDirective,
+    FinalProposalSummarySubTabComponent
   ],
   imports: [
     CommonModule,

@@ -42,7 +42,7 @@
                 <input type="number"
                        formControlName="benchmarkCondensateReturn"
                        [value]="form.get('proposedSetup.benchmarkCondensateReturn').value | decimalPlace : 2"
-                       [unitsStr]="[units[data?.proposedSetup?.condensateReturnUnit] || '-']"
+                       [unitsStr]="[units[data?.condensateReturnUnit] || '-']"
                        [sga-decimal-places]="2"
                        readonly
                        disabled
@@ -52,7 +52,7 @@
                 <input type="number"
                        formControlName="proposalCondensateReturned"
                        [value]="form.get('proposedSetup.proposalCondensateReturned').value | decimalPlace : 2"
-                       [unitsStr]="[units[data?.proposedSetup?.condensateReturnUnit] || '-']"
+                       [unitsStr]="[units[data?.condensateReturnUnit] || '-']"
                        [sga-decimal-places]="2"
                        [disabled]="true"
                        spirax-input/>
@@ -64,7 +64,7 @@
                 <input type="number"
                        formControlName="benchmarkCondensateTemperature"
                        [value]="form.get('proposedSetup.benchmarkCondensateTemperature').value | decimalPlace : 2"
-                       [unitsStr]="[units[data?.proposedSetup?.condensateTemperatureUnit] || '-']"
+                       [unitsStr]="[units[data?.condensateTemperatureUnit] || '-']"
                        [sga-decimal-places]="2"
                        readonly
                        disabled
@@ -74,7 +74,7 @@
                 <input type="number"
                        formControlName="proposalCondensateTemperature"
                        [value]="form.get('proposedSetup.proposalCondensateTemperature').value | decimalPlace : 2"
-                       [unitsStr]="[units[data?.proposedSetup?.condensateTemperatureUnit] || '-']"
+                       [unitsStr]="[units[data?.condensateTemperatureUnit] || '-']"
                        [sga-decimal-places]="2"
                        spirax-input/>
               </div>
@@ -132,7 +132,7 @@
                 <input type="number"
                        formControlName="benchmarkTemperatureOfFeedtank"
                        [value]="form.get('proposedSetup.benchmarkTemperatureOfFeedtank').value | decimalPlace : 2"
-                       [unitsStr]="[units[data?.proposedSetup?.temperatureOfFeedtankUnit] || '-']"
+                       [unitsStr]="[units[data?.temperatureOfFeedtankUnit] || '-']"
                        [sga-decimal-places]="2"
                        spirax-input disabled/>
               </div>
@@ -140,7 +140,7 @@
                 <input type="number"
                        formControlName="proposalTemperatureOfFeedtank"
                        [value]="form.get('proposedSetup.proposalTemperatureOfFeedtank').value | decimalPlace : 2"
-                       [unitsStr]="[units[data?.proposedSetup?.temperatureOfFeedtankUnit] || '-']"
+                       [unitsStr]="[units[data?.temperatureOfFeedtankUnit] || '-']"
                        [sga-decimal-places]="2"
                        spirax-input/>
               </div>
@@ -151,7 +151,7 @@
                 <input type="number"
                        formControlName="benchmarkDsiPressure"
                        [value]="form.get('proposedSetup.benchmarkDsiPressure').value | decimalPlace : 2"
-                       [unitsStr]="[units[data?.proposedSetup?.dsiPressureUnit] || '-']"
+                       [unitsStr]="[units[data?.dsiPressureUnit] || '-']"
                        [sga-decimal-places]="2"
                        spirax-input disabled/>
               </div>
@@ -159,7 +159,7 @@
                 <input type="number"
                        formControlName="proposalDsiPressure"
                        [value]="form.get('proposedSetup.proposalDsiPressure').value | decimalPlace : 2"
-                       [unitsStr]="[units[data?.proposedSetup?.dsiPressureUnit] || '-']"
+                       [unitsStr]="[units[data?.dsiPressureUnit] || '-']"
                        [sga-decimal-places]="2"
                        spirax-input/>
               </div>
@@ -209,7 +209,7 @@
                     <input type="checkbox"
                            formControlName="boilerEfficiencyImprovements"
                            (change)="changeFeature($event)"
-                           [disableControl]="data?.proposedSetup?.benchmarkBoilerEfficiency === data?.proposedSetup?.proposalBoilerEfficiency"
+                           [disableControl]="data?.benchmarkBoilerEfficiency === data?.proposalBoilerEfficiency"
                            [value]="true">
                     <span>{{'BOILER_EFFICIENCY_IMPROVEMENTS' | translate}}</span>
                   </label>
@@ -219,7 +219,7 @@
                     <input type="checkbox"
                            formControlName="increaseCondensateReturn"
                            (change)="changeFeature($event)"
-                           [disableControl]="data?.proposedSetup?.benchmarkCondensateReturnedPercentage === data?.proposedSetup?.proposalCondensateReturnedPercentage"
+                           [disableControl]="data?.benchmarkCondensateReturnedPercentage === data?.proposalCondensateReturnedPercentage"
                            [value]="true">
                     <span>{{'INCREASE_CONDENSATE_RETURN' | translate}}</span>
                   </label>
@@ -278,7 +278,7 @@
                     <input type="checkbox"
                            formControlName="addDirectSteamInjectionToFeedtank"
                            (change)="changeFeature($event)"
-                           [disableControl]="data?.proposedSetup?.benchmarkDsiPressure !== 0 || data?.proposedSetup?.proposalDsiPressure === 0"
+                           [disableControl]="data?.benchmarkDsiPressure !== 0 || data?.proposalDsiPressure === 0"
                            [value]="true">
                     <span>{{'DIRECT_STEAM_INJECTION_TO_FEEDTANK' | translate}}</span>
                   </label>

@@ -527,21 +527,26 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
         if (res && res.proposal) {
           const resObj: ProposalCalculationReducedResponseInterface = res.proposal.reduce((acc, item) => {
             const key = Object.keys(item)[0];
+            if (key === 'benchmark' || key === 'overallImpactOnProposalsSelectedOnBoilerHouse') {
+              return { ...acc, [key]: item[key], [key+'View']: item['view']}
+            }
             return { ...acc, [key]: item['view'] }
           }, {});
 
+          this.sizingModuleResults.benchmark = resObj.benchmark;
+          this.sizingModuleResults.benchmarkView = resObj.benchmarkView;
           this.sizingModuleResults.proposedSetup = proposalInputs.proposedSetup;
           this.sizingModuleResults.features = proposalInputs.features;
           this.sizingModuleResults.overallProposal = resObj.overallImpactOnProposalsSelectedOnBoilerHouse;
+          this.sizingModuleResults.overallProposalView = resObj.overallImpactOnProposalsSelectedOnBoilerHouseView;
           this.sizingModuleResults.proposalCalculation = this.setProposalCalculation(resObj);
           this.isSpecSheetEnabled = !!this.sizingModuleResults.proposalCalculation;
 
-          if (resObj.benchmark) {
-            this.sizingModuleResults.benchmark = resObj.benchmark;
-          }
-
           // Generate charts data
-          this.proposalSetupTotal = SgaChartService.getTotalProposalChart(resObj.benchmark, resObj.overallImpactOnProposalsSelectedOnBoilerHouse);
+          this.proposalSetupTotal = SgaChartService.getTotalProposalChart(
+            this.sizingModuleResults.benchmarkView,
+            this.sizingModuleResults.overallProposalView
+          );
 
           if (isFinal) {
             this.finalProposalVerticalChart = SgaChartService.generateChartFromArr([
@@ -554,7 +559,7 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
               resObj.finalImpactOfAddingDsiToFeedtank,
             ]);
             this.finalProposalHorizontalChart = this.proposalSetupHorizontalChart = SgaChartService.generateChartFromArr([
-              resObj.benchmark, resObj.overallImpactOnProposalsSelectedOnBoilerHouse
+              this.sizingModuleResults.benchmarkView, this.sizingModuleResults.overallProposalView
             ], [
               'costOfFuelPerYear', 'waterAndChemicalsCostTotalPerYear', 'costOfBoilerHouseEffluent', 'costOfCO2PerYear'
             ]);
@@ -570,7 +575,11 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
               resObj.addingHeatExchangerToHeatRecoveryToTdsBlowdown,
               resObj.effectOfDsiOnHotwell,
             ]);
-            this.proposalSetupHorizontalChart = SgaChartService.generateChartFromArr([resObj.benchmark, resObj.overallImpactOnProposalsSelectedOnBoilerHouse], ['costOfFuelPerYear', 'waterAndChemicalsCostTotalPerYear', 'costOfBoilerHouseEffluent', 'costOfCO2PerYear']);
+            this.proposalSetupHorizontalChart = SgaChartService.generateChartFromArr([
+              this.sizingModuleResults.benchmarkView, this.sizingModuleResults.overallProposalView
+              ], [
+                'costOfFuelPerYear', 'waterAndChemicalsCostTotalPerYear', 'costOfBoilerHouseEffluent', 'costOfCO2PerYear'
+            ]);
           }
 
           this.sizingModuleForm.markAllAsTouched();
@@ -705,6 +714,15 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
         processConditions.push({
           name: 'overallProposal',
           processInputs: generateSavedData(this.sizingModuleResults.overallProposal),
+          unitPreferences: null
+        });
+      }
+
+      if (this.sizingModuleResults.overallProposalView) {
+        this.job.jobStatusId = this.jobStatusId = 3; // Proposal generated
+        processConditions.push({
+          name: 'overallProposalView',
+          processInputs: generateSavedData(this.sizingModuleResults.overallProposalView),
           unitPreferences: null
         });
       }
@@ -1346,6 +1364,9 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     if (data.overallProposal) {
       this.sizingModuleResults.overallProposal = parseSavedData(data.overallProposal) as BenchmarkResBenchmarkInterface;
     }
+    if (data.overallProposalView) {
+      this.sizingModuleResults.overallProposalView = parseSavedData(data.overallProposalView) as BenchmarkResBenchmarkInterface;
+    }
 
     const proposalCalculation = parseProposalCalcSavedData(data);
     this.isSpecSheetEnabled = !!proposalCalculation;
@@ -1473,8 +1494,8 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
     return !!(this.finalProposalHorizontalChart &&
       this.finalProposalVerticalChart &&
       this.sizingModuleResults &&
-      this.sizingModuleResults.benchmark &&
-      this.sizingModuleResults.overallProposal &&
+      this.sizingModuleResults.benchmarkView &&
+      this.sizingModuleResults.overallProposalView &&
       this.sizingModuleResults.proposedSetup);
   }
 }

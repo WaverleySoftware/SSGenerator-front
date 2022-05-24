@@ -27,6 +27,7 @@ export interface ProposalCalculationReducedResponseInterface {
   addingFlashHeatRecoveryToAutoTdsControl: ProposalCalculationItemInterface;
   addingHeatExchangerToHeatRecoveryToTdsBlowdown: ProposalCalculationItemInterface;
   benchmark: BenchmarkResBenchmarkInterface;
+  benchmarkView?: BenchmarkResBenchmarkInterface;
   changingWaterTreatment: ProposalCalculationItemInterface;
   condensateReturnPlusCondensateTemperature: ProposalCalculationItemInterface;
   effectOfDsiOnHotwell: ProposalCalculationItemInterface;
@@ -40,6 +41,7 @@ export interface ProposalCalculationReducedResponseInterface {
   impactOfProposalsCombined: ProposalCalculationItemInterface;
   improvedBoilerEfficiency: ProposalCalculationItemInterface;
   overallImpactOnProposalsSelectedOnBoilerHouse: BenchmarkResBenchmarkInterface;
+  overallImpactOnProposalsSelectedOnBoilerHouseView?: BenchmarkResBenchmarkInterface;
 }
 
 export interface ProposalCalculationItemInterface {

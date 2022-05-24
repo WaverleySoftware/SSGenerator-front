@@ -22,7 +22,7 @@
                                 (calculateEfficiency)="calculateBoilerEfficiency($event)"
                                 (calculateWaterTreatment)="calculateWaterTreatment($event)"></app-sga-input-parameters>
     </tab>
-    <tab [heading]="'BENCHMARK' | translate" [disabled]="!sizingModuleResults?.benchmark" (select)="setActiveTab($event)">
+    <tab [heading]="'BENCHMARK' | translate" [disabled]="!sizingModuleResults?.benchmarkView" (select)="setActiveTab($event)">
       <app-sga-benchmark [formGroup]="sizingModuleForm"
                          [data]="sizingModuleResults?.benchmarkView"
                          [currency]="currency$ | async"
@@ -30,9 +30,9 @@
                          [chartData]="benchmarkChartData"></app-sga-benchmark>
     </tab>
     <tab [heading]="'PROPOSED_SETUP' | translate"
-         [disabled]="!sizingModuleResults?.proposedSetup || !sizingModuleResults?.features"
+         [disabled]="!sizingModuleResults?.proposedSetup"
          (select)="setActiveTab($event)">
-      <app-sga-proposed-setup [data]="sizingModuleResults"
+      <app-sga-proposed-setup [data]="sizingModuleResults?.proposedSetup"
                               [units]="units"
                               [currency]="currency$ | async"
                               [totalSaving]="proposalSetupTotal"
@@ -52,8 +52,10 @@
       <app-sga-final-proposal [currency]="currency$ | async"
                               [formGroup]="sizingModuleForm"
                               [units]="units"
-                              [current]="sizingModuleResults?.benchmark"
-                              [potential]="sizingModuleResults?.overallProposal"
+                              [current]="sizingModuleResults?.benchmarkView"
+                              [originalCurrent]="sizingModuleResults?.benchmark"
+                              [potential]="sizingModuleResults?.overallProposalView"
+                              [originalPotential]="sizingModuleResults?.overallProposal"
                               [verticalChart]="finalProposalVerticalChart"
                               [horizontalChart]="finalProposalHorizontalChart"></app-sga-final-proposal>
     </tab>

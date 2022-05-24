@@ -8,6 +8,7 @@ import { SgaFormService } from "../../services/sga-form.service";
 import { horizontalChart, verticalChart, verticalChartLabels } from "../../utils/proposed-setup-def-data";
 import { SgaTotalSavingInterface } from "../../interfaces/sga-chart-data.Interface";
 import { InputParametersTFormInterface, ProposedSetupTFormInterface, TForm } from "../../interfaces/forms.interface";
+import { ProposedSetupInterface } from "../../interfaces/proposed-setup.interface";
 
 @Component({
   selector: 'app-sga-proposed-setup',
@@ -17,7 +18,7 @@ import { InputParametersTFormInterface, ProposedSetupTFormInterface, TForm } fro
 export class SgaProposedSetupComponent implements OnInit {
   private readonly reverseOsmosisId = 'fb8d5710-4b05-44d9-a21e-a3d5c697d7ce';
   @Input() isEconomizerPresent: boolean;
-  @Input() data: ProposedDataInterface
+  @Input() data: ProposedSetupInterface
   @Input() currency: string;
 	@Input('verticalChart') verticalChartData: ChartBarDataInterface[];
 	@Input('horizontalChart') horizontalChartData: ChartBarDataInterface[];
@@ -53,6 +54,8 @@ export class SgaProposedSetupComponent implements OnInit {
       });
   }
 
+  ngOnInit() {}
+
   get isTdsControlPresent(): {
     isAutoTds: boolean;
     isFlashVessel: boolean;
@@ -66,8 +69,6 @@ export class SgaProposedSetupComponent implements OnInit {
       isWaterTreatmentPlant: this.inputParamsFg.get('benchmarkInputs.waterTreatmentMethod').value === this.reverseOsmosisId
     }
   }
-
-  ngOnInit() {}
 
   onSubmit() {
     if (this.form.invalid) {
@@ -89,9 +90,7 @@ export class SgaProposedSetupComponent implements OnInit {
     };
 
     if (proposal.invalid) {
-      params.proposalBoilerEfficiency = this.data
-        && this.data.proposedSetup
-        && this.data.proposedSetup.proposalBoilerEfficiency;
+      params.proposalBoilerEfficiency = this.data && this.data.proposalBoilerEfficiency;
 
       if (!economiserRequired) {
         proposal.markAsUntouched();
