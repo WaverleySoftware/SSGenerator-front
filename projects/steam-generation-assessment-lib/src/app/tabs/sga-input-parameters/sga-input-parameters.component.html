@@ -621,7 +621,9 @@
                              spirax-input
                              required>
 
-                      <spirax-toggle formControlName="areChemicalsAddedDirectlyToFeedtank" label="ARE_CHEMICALS_ADDED_DIRECTLY_TO_FEEDTANK"></spirax-toggle>
+                      <spirax-toggle formControlName="areChemicalsAddedDirectlyToFeedtank"
+                                     (ngModelChange)="clearFieldsError('tdsOfFeedwaterInFeedtank')"
+                                     label="ARE_CHEMICALS_ADDED_DIRECTLY_TO_FEEDTANK"></spirax-toggle>
                     </div>
                     <div class="col-md-4">
                       <ng-container *ngIf="formGroup.get('benchmarkInputs.atmosphericDeaerator')?.value; else pressureDeaerator">

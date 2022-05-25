@@ -213,18 +213,11 @@ export class SteamGenerationAssessmentComponent extends BaseSizingModule impleme
         this.showMessage(res && res.messages);
         this.sizingModuleForm.markAsUntouched();
         this.sizingModuleResults = res;
-        // Round Proposal form values
-        const proposedSetup = {}
-        for (let key of Object.keys(res.proposedSetup)) {
-          if (typeof res.proposedSetup[key] === 'number') {
-            proposedSetup[key] = Math.round(res.proposedSetup[key] * 100) / 100;
-          } else {
-            proposedSetup[key] = res.proposedSetup[key];
-          }
-        }
         // Set proposal form values
-        this.formService.getProposedSetupForm()
-          .patchValue({features: res.features, proposedSetup}, {emitEvent: false});
+        this.formService.getProposedSetupForm().patchValue({
+          features: res.features,
+          proposedSetup: res.proposedSetup
+        }, {emitEvent: false});
         this.benchmarkChartData = this.chartService.generateBenchmark(this.sizingModuleResults.benchmark);
         setTimeout(() => {
           this.setActiveTab(1);
