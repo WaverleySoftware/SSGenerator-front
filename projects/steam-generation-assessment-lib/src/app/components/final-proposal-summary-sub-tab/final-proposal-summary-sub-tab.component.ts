@@ -34,8 +34,25 @@ export class FinalProposalSummarySubTabComponent implements OnInit {
 		return this.units[this.selectedUnits.massFlowUnitSelected].replace('/yr', '')
 	}
 
-	get fuelEnergyInGJ(): {current: number; potential: number } {
+	get fuelEnergyData(): {current: number; potential: number; unit: string } {
+		if (this.units && this.selectedUnits && this.selectedUnits.energyUnitSelected === 244) { // 244 = MMbtu
+			return {
+				unit: this.units[this.selectedUnits.energyUnitSelected] || '-',
+				current: this.current && this.current.qfuel || 0,
+				potential: this.potential && this.potential.qfuel || 0
+			}
+		}
+
+		if (this.units && this.selectedUnits && this.selectedUnits.energyUnitSelected === 243) { // 243 = Mbtu
+			return {
+				unit: this.units[244] || '-',
+				current: this.current && this.current.qfuel * 1000 || 0,
+				potential: this.potential && this.potential.qfuel * 1000 || 0
+			}
+		}
+
 		return {
+			unit: 'GJ',
 			current: this.originalCurrent && this.originalCurrent.qfuel * 0.0036 || 0,
 			potential: this.originalPotential && this.originalPotential.qfuel * 0.0036 || 0
 		}

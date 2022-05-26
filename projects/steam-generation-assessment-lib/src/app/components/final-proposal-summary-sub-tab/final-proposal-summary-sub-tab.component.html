@@ -74,20 +74,20 @@
       <tbody>
       <tr>
         <td>{{'FUEL_CONSUMED' | translate}}</td>
-        <td *ngIf="fuelEnergyInGJ?.current && current?.mBoiler; else emptyCol">
-          <div>{{fuelEnergyInGJ?.current / current?.mBoiler | number: '0.0-2'}}Gj/{{massFlowUnit}}</div>
+        <td *ngIf="fuelEnergyData?.current && current?.mBoiler; else emptyCol">
+          <div>{{fuelEnergyData?.current / current?.mBoiler | number: '0.0-2'}} {{fuelEnergyData?.unit}}/{{massFlowUnit}}</div>
         </td>
-        <td *ngIf="fuelEnergyInGJ?.current; else emptyCol">
-          {{fuelEnergyInGJ?.current | number: '0.0-2'}} Gj/{{'YR' | translate}}
+        <td *ngIf="fuelEnergyData?.current; else emptyCol">
+          {{fuelEnergyData?.current | number: '0.0-2'}} {{fuelEnergyData?.unit}}/{{'YR' | translate}}
         </td>
-        <td *ngIf="fuelEnergyInGJ?.potential && potential?.mBoiler; else emptyCol">
-          {{fuelEnergyInGJ?.potential / potential.mBoiler | number: '0.0-2'}} Gj/{{massFlowUnit}}
+        <td *ngIf="fuelEnergyData?.potential && potential?.mBoiler; else emptyCol">
+          {{fuelEnergyData?.potential / potential.mBoiler | number: '0.0-2'}} {{fuelEnergyData?.unit}}/{{massFlowUnit}}
         </td>
-        <td *ngIf="fuelEnergyInGJ?.potential; else emptyCol">
-          {{fuelEnergyInGJ?.potential | number: '0.0-2'}} Gj/{{'YR' | translate}}
+        <td *ngIf="fuelEnergyData?.potential; else emptyCol">
+          {{fuelEnergyData?.potential | number: '0.0-2'}} {{fuelEnergyData?.unit}}/{{'YR' | translate}}
         </td>
-        <td *ngIf="fuelEnergyInGJ?.current && fuelEnergyInGJ?.potential">
-          {{fuelEnergyInGJ?.current - fuelEnergyInGJ?.potential | number: '0.0-2'}} Gj/{{'YR' | translate}}
+        <td *ngIf="fuelEnergyData?.current && fuelEnergyData?.potential">
+          {{fuelEnergyData?.current - fuelEnergyData?.potential | number: '0.0-2'}} {{fuelEnergyData?.unit}}/{{'YR' | translate}}
         </td>
       </tr>
       <tr>
@@ -160,8 +160,8 @@
       <tbody>
       <tr>
         <td class="green text-uppercase"><i class="sga-thermal-energy"></i>{{'THERMAL_ENERGY' | translate}}</td>
-        <td *ngIf="fuelEnergyInGJ?.current && fuelEnergyInGJ?.potential; else emptyCol">
-          {{(fuelEnergyInGJ?.current - fuelEnergyInGJ?.potential) | number: '0.0-2'}} Gj/{{'YR' | translate}}
+        <td *ngIf="fuelEnergyData?.current && fuelEnergyData?.potential; else emptyCol">
+          {{(fuelEnergyData?.current - fuelEnergyData?.potential) | number: '0.0-2'}} {{fuelEnergyData?.unit}}/{{'YR' | translate}}
         </td>
         <td class="text-left">
           <img class="thumb-img" src="/assets/img/steam_generation/energy_saving/co2-emissions.png" alt="co2 emissions">
