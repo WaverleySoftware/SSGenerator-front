@@ -863,10 +863,14 @@
     <h5 class="sgaBaseTabs_title_md">{{'FINAL_PROPOSAL' | translate}}</h5>
     <ng-template tabHeading><i class="fa fa-leaf"></i></ng-template>
 
-    <app-final-proposal-summary-sub-tab [currency]="currency"
-                                        [current]="originalCurrent"
-                                        [potential]="originalPotential"
+    <app-final-proposal-summary-sub-tab *ngIf="current && potential && selectedUnits"
+                                        [currency]="currency"
+                                        [current]="current"
+                                        [originalCurrent]="originalCurrent"
+                                        [potential]="potential"
+                                        [originalPotential]="originalPotential"
                                         [fuelTypeList]="fuelTypeList"
+                                        [selectedUnits]="selectedUnits"
                                         [units]="units"></app-final-proposal-summary-sub-tab>
   </tab>
 </tabset>

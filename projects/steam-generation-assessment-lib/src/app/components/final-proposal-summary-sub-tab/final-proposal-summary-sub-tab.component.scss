@@ -1,0 +1,56 @@
+i[class^="sga-"] {
+  font-family: 'sga-icons', sans-serif !important;
+  speak: never;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid;
+  font-size: 21px;
+  margin-right: 19px;
+
+  &.sga-water-effluent {
+    color: var(--color-blue);
+    border-color: var(--color-blue);
+    &:before {
+      content: "\e903";
+    }
+  }
+  &.sga-co2-emissions {
+    color: var(--color-orange);
+    border-color: var(--color-orange);
+    &:before {
+      content: "\e900";
+    }
+  }
+  &.sga-thermal-energy {
+    color: var(--color-green);
+    border-color: var(--color-green);
+    &:before {
+      content: "\e901";
+    }
+  }
+  &.sga-water-consumption {
+    color: var(--color-steel);
+    border-color: var(--color-steel);
+    &:before {
+      content: "\e902";
+    }
+  }
+}
+
+.tableMargin {
+  margin-bottom: 20px;
+  .sgaBaseTabs_title_sm {
+    margin-bottom: 5px;
+  }
+}
