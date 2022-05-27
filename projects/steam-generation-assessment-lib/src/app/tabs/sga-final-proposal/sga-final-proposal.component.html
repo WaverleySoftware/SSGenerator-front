@@ -21,7 +21,7 @@
                    *ngIf="horizontalChart"
                    [legend]="false"
                    [data]="horizontalChart"
-                   [labels]="['POTENTIAL' | translate, 'CURRENT' | translate]"></app-chart-bar>
+                   [labels]="['CURRENT' | translate, 'POTENTIAL' | translate]"></app-chart-bar>
   </tab>
   <tab>
     <h5 class="sgaBaseTabs_title_md">{{'PROPOSED_SETUP' | translate}}</h5>
@@ -53,7 +53,7 @@
               <td *ngIf="current[value]; else emptyCol">{{current[value] | number: '0.0-3'}} {{currency}}/{{'YR' | translate}}</td>
               <td *ngIf="potential[quantity]; else emptyCol">{{potential[quantity] | number: '0.0-2'}} {{unit}}{{perYear && '/' + ('YR' | translate)}}</td>
               <td *ngIf="potential[value]; else emptyCol">{{potential[value] | number: '0.0-3'}} {{currency}}/{{'YR' | translate}}</td>
-              <td *ngIf="current[value] && potential[value]; else emptyCol">{{current[value] - potential[value] | number: '0.0-3'}} {{currency}}/{{'YR' | translate}}</td>
+              <td *ngIf="current[value] && potential[value]; else emptyCol">{{current[value] - potential[value] | number: '0.0-2'}} {{currency}}/{{'YR' | translate}}</td>
               <td *ngIf="current[value] && potential[value]; else emptyCol">{{savingPercent(current[value], potential[value]) | number: '0.0-2'}}%</td>
             </tr>
           </ng-template>
@@ -333,7 +333,14 @@
         </tr>
         <tr>
           <td>{{'COST_OF_WATER_UNIT_VOLUME' | translate}}</td>
-          <ng-container [ngTemplateOutletContext]="{key: 'waterCostPerUnit', isCosts: true, isPerYear: false, unit: units[selectedUnits?.volumeUnitSelected]}" [ngTemplateOutlet]="infoTableColumns"></ng-container>
+          <ng-container
+            [ngTemplateOutletContext]="{
+            key: 'waterCostPerUnit',
+            isCosts: true,
+            isPerYear: false,
+            hideSavings: true,
+            unit: units[selectedUnits?.volumeUnitSelected]}"
+            [ngTemplateOutlet]="infoTableColumns"></ng-container>
         </tr>
         <tr class="text-bold">
           <td>{{'COST_OF_BOILER_WATER_YEAR' | translate}}</td>
@@ -555,7 +562,7 @@
       <tr>
         <td>{{'FUEL_SAVED' | translate}}</td>
         <td *ngIf="current?.condyFuelAmount; else emptyCol">
-          {{current?.condyFuelAmount | number: '0.0-2'}} {{units[selectedUnits?.emissionUnitSelected]}}/{{'YR' | translate}}
+          {{current?.condyFuelAmount | number: '0.0-2'}} {{units[selectedUnits?.energyUnitSelected]}}/{{'YR' | translate}}
         </td>
         <td *ngIf="potential?.condyFuelAmount; else emptyCol">
           {{potential?.condyFuelAmount | number: '0.0-2'}} {{units[selectedUnits?.emissionUnitSelected]}}/{{'YR' | translate}}
@@ -815,6 +822,7 @@
                   <th></th>
                   <th>{{'CURRENT' | translate}}</th>
                   <th>{{'POTENTIAL' | translate}}</th>
+                  <th></th>
                 </tr>
                 </thead>
                 <tbody>

@@ -195,7 +195,7 @@
                              *ngIf="!!horizontalChartData"
                              [legend]="false"
                              [data]="horizontalChartData"
-                             [labels]="['POTENTIAL', 'CURRENT']"></app-chart-bar>
+                             [labels]="['CURRENT' | translate, 'POTENTIAL' | translate]"></app-chart-bar>
               <p>{{'TOTAL_STEAM_GENERATION_SAVINGS' | translate}}: <span class="text-bold">{{currency}}{{(totalSaving?.steamGenerationSavings >= 0 ? totalSaving?.steamGenerationSavings : 0) | number: '0.0-2'}}</span> </p>
             </div>
             <form class="col-md-5" [formGroup]="form">
